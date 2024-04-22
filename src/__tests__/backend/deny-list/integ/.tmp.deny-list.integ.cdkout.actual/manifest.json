@@ -1,0 +1,430 @@
+{
+  "version": "32.0.0",
+  "artifacts": {
+    "TestDenyList.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "TestDenyList.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "TestDenyList": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "TestDenyList.template.json",
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/df059e140e8109ee12b72003b660310cbc49e1c687b4578f0721508aba7b11e1.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "TestDenyList.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "TestDenyList.assets"
+      ],
+      "metadata": {
+        "/TestDenyList/MockDataBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataBucket4719A0C1"
+          }
+        ],
+        "/TestDenyList/MockDataBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataBucketPolicy6DD22337"
+          }
+        ],
+        "/TestDenyList/MockDataBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataBucketAutoDeleteObjectsCustomResourceCF89404C"
+          }
+        ],
+        "/TestDenyList/DefaultCrNodeVersionMap": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DefaultCrNodeVersionMap"
+          }
+        ],
+        "/TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/TestDenyList/MockData/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataAwsCliLayerE631E742"
+          }
+        ],
+        "/TestDenyList/MockData/CustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataCustomResourceF4AE582D"
+          }
+        ],
+        "/TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+          }
+        ],
+        "/TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF"
+          }
+        ],
+        "/TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+          }
+        ],
+        "/TestDenyList/Monitoring/Watchful/Dashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringWatchfulDashboard9EB9FD4D"
+          }
+        ],
+        "/TestDenyList/Monitoring/Watchful/WatchfulDashboard": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringWatchfulWatchfulDashboard1D7DDB1C"
+          }
+        ],
+        "/TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/ErrorsAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringWatchfulTestDenyListPrunePruneHandlerDB8102B7ErrorsAlarm0390629D"
+          }
+        ],
+        "/TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/ThrottlesAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringWatchfulTestDenyListPrunePruneHandlerDB8102B7ThrottlesAlarmA7473C59"
+          }
+        ],
+        "/TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/DurationAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringWatchfulTestDenyListPrunePruneHandlerDB8102B7DurationAlarm35FDCAC9"
+          }
+        ],
+        "/TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/ErrorsAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringWatchfulTestDenyListPrunePruneQueueHandlerE748308EErrorsAlarmB31B15A4"
+          }
+        ],
+        "/TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/ThrottlesAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringWatchfulTestDenyListPrunePruneQueueHandlerE748308EThrottlesAlarm2D33ECEB"
+          }
+        ],
+        "/TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/DurationAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringWatchfulTestDenyListPrunePruneQueueHandlerE748308EDurationAlarm1FFC9E9E"
+          }
+        ],
+        "/TestDenyList/Monitoring/HighSeverityDashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MonitoringHighSeverityDashboard17D9CD74"
+          }
+        ],
+        "/TestDenyList/OverviewDashboard/Overview dashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OverviewDashboardOverviewdashboard17E450B5"
+          }
+        ],
+        "/TestDenyList/OverviewDashboard/OverviewDashboard--lambdaServiceQuota/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OverviewDashboardOverviewDashboardlambdaServiceQuotaAA204E67"
+          }
+        ],
+        "/TestDenyList/DenyList/Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketC1C9D3D9"
+          }
+        ],
+        "/TestDenyList/DenyList/Bucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketPolicyFE28C82A"
+          }
+        ],
+        "/TestDenyList/DenyList/Bucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketAutoDeleteObjectsCustomResource8261EE69"
+          }
+        ],
+        "/TestDenyList/DenyList/Bucket/Notifications/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketNotificationsEF0449EB"
+          }
+        ],
+        "/TestDenyList/DenyList/Bucket/AllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7"
+          }
+        ],
+        "/TestDenyList/DenyList/FailoverBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListFailoverBucketC0405145"
+          }
+        ],
+        "/TestDenyList/DenyList/FailoverBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListFailoverBucketPolicy7EF208CC"
+          }
+        ],
+        "/TestDenyList/DenyList/FailoverBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF"
+          }
+        ],
+        "/TestDenyList/DenyList/SnapshotCommand": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListSnapshotCommand31529C83"
+          }
+        ],
+        "/TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketDeploymentAwsCliLayer4F94CAE9"
+          }
+        ],
+        "/TestDenyList/DenyList/BucketDeployment/CustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketDeploymentCustomResource68E58740"
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/DeleteQueue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPruneDeleteQueueF9D9EBE3"
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneHandlerServiceRole234C8EF9"
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E"
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneHandler5F946B07"
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneQueueHandlerServiceRole9BB94361"
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8"
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneQueueHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneQueueHandler087D6B50"
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneQueueHandler/SqsEventSource:TestDenyListPruneDeleteQueue888622B9/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneQueueHandlerSqsEventSourceTestDenyListPruneDeleteQueue888622B95BDFDCF8"
+          }
+        ],
+        "/TestDenyList/DenyList/PeriodicPrune/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPeriodicPruneC53BF9DB"
+          }
+        ],
+        "/TestDenyList/DenyList/PeriodicPrune/AllowEventRuleTestDenyListPrunePruneHandlerDB8102B7": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278"
+          }
+        ],
+        "/TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+          }
+        ],
+        "/TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36"
+          }
+        ],
+        "/TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691"
+          }
+        ],
+        "/TestDenyList/CatalogBuilderMock/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CatalogBuilderMockServiceRole8558CA02"
+          }
+        ],
+        "/TestDenyList/CatalogBuilderMock/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CatalogBuilderMock263D4D67"
+          }
+        ],
+        "/TestDenyList/ClientTest/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestServiceRole4F7802CF"
+          }
+        ],
+        "/TestDenyList/ClientTest/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestServiceRoleDefaultPolicy3CB30A97"
+          }
+        ],
+        "/TestDenyList/ClientTest/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestBE4CEC14"
+          }
+        ],
+        "/TestDenyList/ClientTest/Trigger/Default/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestTriggerE52E42D1"
+          }
+        ],
+        "/TestDenyList/ClientTest/CurrentVersion/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestCurrentVersionAB7E7F65e11065956a7261197591f667f0b11710"
+          }
+        ],
+        "/TestDenyList/ClientTest/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestPolicy7C5CF4ED"
+          }
+        ],
+        "/TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A"
+          }
+        ],
+        "/TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWSCDKTriggerCustomResourceProviderCustomResourceProviderHandler97BECD91"
+          }
+        ],
+        "/TestDenyList/PruneTest/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestServiceRole91D2E3A2"
+          }
+        ],
+        "/TestDenyList/PruneTest/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestServiceRoleDefaultPolicyBD33ABA2"
+          }
+        ],
+        "/TestDenyList/PruneTest/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTest66C7D9FC"
+          }
+        ],
+        "/TestDenyList/PruneTest/Trigger/Default/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestTriggerF2CD183D"
+          }
+        ],
+        "/TestDenyList/PruneTest/CurrentVersion/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestCurrentVersion332993F8be5c5432c58b0acf3b95e5e334e6715e"
+          }
+        ],
+        "/TestDenyList/PruneTest/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestPolicyA887E151"
+          }
+        ],
+        "/TestDenyList/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/TestDenyList/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "TestDenyList"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

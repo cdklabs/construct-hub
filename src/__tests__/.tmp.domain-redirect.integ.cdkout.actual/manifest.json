@@ -1,0 +1,112 @@
+{
+  "version": "32.0.0",
+  "artifacts": {
+    "DomainRedirectIntegrationTest.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "DomainRedirectIntegrationTest.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "DomainRedirectIntegrationTest": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/us-east-1",
+      "properties": {
+        "templateFile": "DomainRedirectIntegrationTest.template.json",
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/1cbeb58ecb2aeb60b5589dc055708eb00c502ee5b233f3ade989552b9842bb6e.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "DomainRedirectIntegrationTest.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "DomainRedirectIntegrationTest.assets"
+      ],
+      "metadata": {
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicy54E1AEDA"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyDomainRedirectCertificateCertificateRequestorFunctionD2A136F7"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyDomainRedirectCertificateCertificateRequestorResourceFBF8557C"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Distribution/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyDomainRedirectDistributionCF05BA92"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/ARecord/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyDomainRedirectARecordB42CD602"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/AaaaRecord/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyDomainRedirectAaaaRecord9897C577"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/DomainRedirectBucketsA177hj/RedirectBucket-constructs.dev/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DomainRedirectBucketsA177hjRedirectBucketconstructsdevAF40E4F7"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/AWSCloudFrontPartitionHostedZoneIdMap": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWSCloudFrontPartitionHostedZoneIdMap"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "DomainRedirectIntegrationTest"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

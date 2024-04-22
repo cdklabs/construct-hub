@@ -242,7 +242,7 @@ dashboard can be configured using the `backendDashboardName` property of the
 
 ```ts
 import { App, Stack } from '@aws-cdk/core';
-import { ConstructHub } from 'construct-hub';
+import { ConstructHub } from '@gd-constructs/construct-hub';
 
 // The usual... you might have used `cdk init app` instead!
 const app = new App();
@@ -267,7 +267,7 @@ alarm:
 import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
 import { Topic } from '@aws-cdk/aws-sns';
 import { App, Stack } from '@aws-cdk/core';
-import { ConstructHub } from 'construct-hub';
+import { ConstructHub } from '@gd-constructs/construct-hub';
 
 // The usual... you might have used `cdk init app` instead!
 const app = new App();

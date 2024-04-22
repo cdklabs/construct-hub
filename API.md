@@ -2,43 +2,43 @@
 
 ## Constructs <a name="Constructs" id="Constructs"></a>
 
-### ConstructHub <a name="ConstructHub" id="construct-hub.ConstructHub"></a>
+### ConstructHub <a name="ConstructHub" id="@gd-constructs/construct-hub.ConstructHub"></a>
 
 - *Implements:* aws-cdk-lib.aws_iam.IGrantable
 
 Construct Hub.
 
-#### Initializers <a name="Initializers" id="construct-hub.ConstructHub.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.ConstructHub.Initializer"></a>
 
 ```typescript
-import { ConstructHub } from 'construct-hub'
+import { ConstructHub } from '@gd-constructs/construct-hub'
 
 new ConstructHub(scope: Construct, id: string, props?: ConstructHubProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.ConstructHub.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
-| <code><a href="#construct-hub.ConstructHub.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#construct-hub.ConstructHub.Initializer.parameter.props">props</a></code> | <code><a href="#construct-hub.ConstructHubProps">ConstructHubProps</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.Initializer.parameter.props">props</a></code> | <code><a href="#@gd-constructs/construct-hub.ConstructHubProps">ConstructHubProps</a></code> | *No description.* |
 
 ---
 
-##### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.ConstructHub.Initializer.parameter.scope"></a>
+##### `scope`<sup>Required</sup> <a name="scope" id="@gd-constructs/construct-hub.ConstructHub.Initializer.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="construct-hub.ConstructHub.Initializer.parameter.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.ConstructHub.Initializer.parameter.id"></a>
 
 - *Type:* string
 
 ---
 
-##### `props`<sup>Optional</sup> <a name="props" id="construct-hub.ConstructHub.Initializer.parameter.props"></a>
+##### `props`<sup>Optional</sup> <a name="props" id="@gd-constructs/construct-hub.ConstructHub.Initializer.parameter.props"></a>
 
-- *Type:* <a href="#construct-hub.ConstructHubProps">ConstructHubProps</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.ConstructHubProps">ConstructHubProps</a>
 
 ---
 
@@ -46,11 +46,11 @@ new ConstructHub(scope: Construct, id: string, props?: ConstructHubProps)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.ConstructHub.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.toString">toString</a></code> | Returns a string representation of this construct. |
 
 ---
 
-##### `toString` <a name="toString" id="construct-hub.ConstructHub.toString"></a>
+##### `toString` <a name="toString" id="@gd-constructs/construct-hub.ConstructHub.toString"></a>
 
 ```typescript
 public toString(): string
@@ -62,21 +62,21 @@ Returns a string representation of this construct.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.ConstructHub.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="construct-hub.ConstructHub.isConstruct"></a>
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@gd-constructs/construct-hub.ConstructHub.isConstruct"></a>
 
 ```typescript
-import { ConstructHub } from 'construct-hub'
+import { ConstructHub } from '@gd-constructs/construct-hub'
 
 ConstructHub.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
 
-###### `x`<sup>Required</sup> <a name="x" id="construct-hub.ConstructHub.isConstruct.parameter.x"></a>
+###### `x`<sup>Required</sup> <a name="x" id="@gd-constructs/construct-hub.ConstructHub.isConstruct.parameter.x"></a>
 
 - *Type:* any
 
@@ -88,16 +88,16 @@ Any object.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.ConstructHub.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#construct-hub.ConstructHub.property.allAlarms">allAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all alarms configured by this ConstructHub instance. |
-| <code><a href="#construct-hub.ConstructHub.property.grantPrincipal">grantPrincipal</a></code> | <code>aws-cdk-lib.aws_iam.IPrincipal</code> | The principal to grant permissions to. |
-| <code><a href="#construct-hub.ConstructHub.property.highSeverityAlarms">highSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all high-severity alarms from this ConstructHub instance. |
-| <code><a href="#construct-hub.ConstructHub.property.ingestionQueue">ingestionQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | *No description.* |
-| <code><a href="#construct-hub.ConstructHub.property.lowSeverityAlarms">lowSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all low-severity alarms from this ConstructHub instance. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.property.allAlarms">allAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all alarms configured by this ConstructHub instance. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.property.grantPrincipal">grantPrincipal</a></code> | <code>aws-cdk-lib.aws_iam.IPrincipal</code> | The principal to grant permissions to. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.property.highSeverityAlarms">highSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all high-severity alarms from this ConstructHub instance. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.property.ingestionQueue">ingestionQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHub.property.lowSeverityAlarms">lowSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all low-severity alarms from this ConstructHub instance. |
 
 ---
 
-##### `node`<sup>Required</sup> <a name="node" id="construct-hub.ConstructHub.property.node"></a>
+##### `node`<sup>Required</sup> <a name="node" id="@gd-constructs/construct-hub.ConstructHub.property.node"></a>
 
 ```typescript
 public readonly node: Node;
@@ -109,7 +109,7 @@ The tree node.
 
 ---
 
-##### `allAlarms`<sup>Required</sup> <a name="allAlarms" id="construct-hub.ConstructHub.property.allAlarms"></a>
+##### `allAlarms`<sup>Required</sup> <a name="allAlarms" id="@gd-constructs/construct-hub.ConstructHub.property.allAlarms"></a>
 
 ```typescript
 public readonly allAlarms: IAlarm[];
@@ -121,7 +121,7 @@ Returns a list of all alarms configured by this ConstructHub instance.
 
 ---
 
-##### `grantPrincipal`<sup>Required</sup> <a name="grantPrincipal" id="construct-hub.ConstructHub.property.grantPrincipal"></a>
+##### `grantPrincipal`<sup>Required</sup> <a name="grantPrincipal" id="@gd-constructs/construct-hub.ConstructHub.property.grantPrincipal"></a>
 
 ```typescript
 public readonly grantPrincipal: IPrincipal;
@@ -133,7 +133,7 @@ The principal to grant permissions to.
 
 ---
 
-##### `highSeverityAlarms`<sup>Required</sup> <a name="highSeverityAlarms" id="construct-hub.ConstructHub.property.highSeverityAlarms"></a>
+##### `highSeverityAlarms`<sup>Required</sup> <a name="highSeverityAlarms" id="@gd-constructs/construct-hub.ConstructHub.property.highSeverityAlarms"></a>
 
 ```typescript
 public readonly highSeverityAlarms: IAlarm[];
@@ -148,7 +148,7 @@ issue.
 
 ---
 
-##### `ingestionQueue`<sup>Required</sup> <a name="ingestionQueue" id="construct-hub.ConstructHub.property.ingestionQueue"></a>
+##### `ingestionQueue`<sup>Required</sup> <a name="ingestionQueue" id="@gd-constructs/construct-hub.ConstructHub.property.ingestionQueue"></a>
 
 ```typescript
 public readonly ingestionQueue: IQueue;
@@ -158,7 +158,7 @@ public readonly ingestionQueue: IQueue;
 
 ---
 
-##### `lowSeverityAlarms`<sup>Required</sup> <a name="lowSeverityAlarms" id="construct-hub.ConstructHub.property.lowSeverityAlarms"></a>
+##### `lowSeverityAlarms`<sup>Required</sup> <a name="lowSeverityAlarms" id="@gd-constructs/construct-hub.ConstructHub.property.lowSeverityAlarms"></a>
 
 ```typescript
 public readonly lowSeverityAlarms: IAlarm[];
@@ -175,7 +175,7 @@ that something unusual (not necessarily bad) is happening.
 ---
 
 
-### S3StorageFactory <a name="S3StorageFactory" id="construct-hub.S3StorageFactory"></a>
+### S3StorageFactory <a name="S3StorageFactory" id="@gd-constructs/construct-hub.S3StorageFactory"></a>
 
 Create s3 storage resources.
 
@@ -183,12 +183,12 @@ Create s3 storage resources.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.S3StorageFactory.toString">toString</a></code> | Returns a string representation of this construct. |
-| <code><a href="#construct-hub.S3StorageFactory.newBucket">newBucket</a></code> | Create a new bucket in a storage config aware manner. |
+| <code><a href="#@gd-constructs/construct-hub.S3StorageFactory.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@gd-constructs/construct-hub.S3StorageFactory.newBucket">newBucket</a></code> | Create a new bucket in a storage config aware manner. |
 
 ---
 
-##### `toString` <a name="toString" id="construct-hub.S3StorageFactory.toString"></a>
+##### `toString` <a name="toString" id="@gd-constructs/construct-hub.S3StorageFactory.toString"></a>
 
 ```typescript
 public toString(): string
@@ -196,7 +196,7 @@ public toString(): string
 
 Returns a string representation of this construct.
 
-##### `newBucket` <a name="newBucket" id="construct-hub.S3StorageFactory.newBucket"></a>
+##### `newBucket` <a name="newBucket" id="@gd-constructs/construct-hub.S3StorageFactory.newBucket"></a>
 
 ```typescript
 public newBucket(scope: Construct, id: string, props?: BucketProps): Bucket
@@ -204,19 +204,19 @@ public newBucket(scope: Construct, id: string, props?: BucketProps): Bucket
 
 Create a new bucket in a storage config aware manner.
 
-###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.S3StorageFactory.newBucket.parameter.scope"></a>
+###### `scope`<sup>Required</sup> <a name="scope" id="@gd-constructs/construct-hub.S3StorageFactory.newBucket.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
 ---
 
-###### `id`<sup>Required</sup> <a name="id" id="construct-hub.S3StorageFactory.newBucket.parameter.id"></a>
+###### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.S3StorageFactory.newBucket.parameter.id"></a>
 
 - *Type:* string
 
 ---
 
-###### `props`<sup>Optional</sup> <a name="props" id="construct-hub.S3StorageFactory.newBucket.parameter.props"></a>
+###### `props`<sup>Optional</sup> <a name="props" id="@gd-constructs/construct-hub.S3StorageFactory.newBucket.parameter.props"></a>
 
 - *Type:* aws-cdk-lib.aws_s3.BucketProps
 
@@ -226,22 +226,22 @@ Create a new bucket in a storage config aware manner.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.S3StorageFactory.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
-| <code><a href="#construct-hub.S3StorageFactory.getOrCreate">getOrCreate</a></code> | Retrieve or create the storage factory for the current scope. |
+| <code><a href="#@gd-constructs/construct-hub.S3StorageFactory.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+| <code><a href="#@gd-constructs/construct-hub.S3StorageFactory.getOrCreate">getOrCreate</a></code> | Retrieve or create the storage factory for the current scope. |
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="construct-hub.S3StorageFactory.isConstruct"></a>
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@gd-constructs/construct-hub.S3StorageFactory.isConstruct"></a>
 
 ```typescript
-import { S3StorageFactory } from 'construct-hub'
+import { S3StorageFactory } from '@gd-constructs/construct-hub'
 
 S3StorageFactory.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
 
-###### `x`<sup>Required</sup> <a name="x" id="construct-hub.S3StorageFactory.isConstruct.parameter.x"></a>
+###### `x`<sup>Required</sup> <a name="x" id="@gd-constructs/construct-hub.S3StorageFactory.isConstruct.parameter.x"></a>
 
 - *Type:* any
 
@@ -249,10 +249,10 @@ Any object.
 
 ---
 
-##### `getOrCreate` <a name="getOrCreate" id="construct-hub.S3StorageFactory.getOrCreate"></a>
+##### `getOrCreate` <a name="getOrCreate" id="@gd-constructs/construct-hub.S3StorageFactory.getOrCreate"></a>
 
 ```typescript
-import { S3StorageFactory } from 'construct-hub'
+import { S3StorageFactory } from '@gd-constructs/construct-hub'
 
 S3StorageFactory.getOrCreate(scope: Construct, props?: S3StorageFactoryProps)
 ```
@@ -261,15 +261,15 @@ Retrieve or create the storage factory for the current scope.
 
 This is stack singleton.
 
-###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.S3StorageFactory.getOrCreate.parameter.scope"></a>
+###### `scope`<sup>Required</sup> <a name="scope" id="@gd-constructs/construct-hub.S3StorageFactory.getOrCreate.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
 ---
 
-###### `props`<sup>Optional</sup> <a name="props" id="construct-hub.S3StorageFactory.getOrCreate.parameter.props"></a>
+###### `props`<sup>Optional</sup> <a name="props" id="@gd-constructs/construct-hub.S3StorageFactory.getOrCreate.parameter.props"></a>
 
-- *Type:* <a href="#construct-hub.S3StorageFactoryProps">S3StorageFactoryProps</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.S3StorageFactoryProps">S3StorageFactoryProps</a>
 
 ---
 
@@ -277,11 +277,11 @@ This is stack singleton.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.S3StorageFactory.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@gd-constructs/construct-hub.S3StorageFactory.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 
 ---
 
-##### `node`<sup>Required</sup> <a name="node" id="construct-hub.S3StorageFactory.property.node"></a>
+##### `node`<sup>Required</sup> <a name="node" id="@gd-constructs/construct-hub.S3StorageFactory.property.node"></a>
 
 ```typescript
 public readonly node: Node;
@@ -296,14 +296,14 @@ The tree node.
 
 ## Structs <a name="Structs" id="Structs"></a>
 
-### AlarmActions <a name="AlarmActions" id="construct-hub.AlarmActions"></a>
+### AlarmActions <a name="AlarmActions" id="@gd-constructs/construct-hub.AlarmActions"></a>
 
 CloudWatch alarm actions to perform.
 
-#### Initializer <a name="Initializer" id="construct-hub.AlarmActions.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.AlarmActions.Initializer"></a>
 
 ```typescript
-import { AlarmActions } from 'construct-hub'
+import { AlarmActions } from '@gd-constructs/construct-hub'
 
 const alarmActions: AlarmActions = { ... }
 ```
@@ -312,14 +312,14 @@ const alarmActions: AlarmActions = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.AlarmActions.property.highSeverity">highSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of high-severity alarms. |
-| <code><a href="#construct-hub.AlarmActions.property.highSeverityAction">highSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of high-severity alarms. |
-| <code><a href="#construct-hub.AlarmActions.property.normalSeverity">normalSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of normal severity. |
-| <code><a href="#construct-hub.AlarmActions.property.normalSeverityAction">normalSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of normal severity. |
+| <code><a href="#@gd-constructs/construct-hub.AlarmActions.property.highSeverity">highSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of high-severity alarms. |
+| <code><a href="#@gd-constructs/construct-hub.AlarmActions.property.highSeverityAction">highSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of high-severity alarms. |
+| <code><a href="#@gd-constructs/construct-hub.AlarmActions.property.normalSeverity">normalSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of normal severity. |
+| <code><a href="#@gd-constructs/construct-hub.AlarmActions.property.normalSeverityAction">normalSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of normal severity. |
 
 ---
 
-##### `highSeverity`<sup>Optional</sup> <a name="highSeverity" id="construct-hub.AlarmActions.property.highSeverity"></a>
+##### `highSeverity`<sup>Optional</sup> <a name="highSeverity" id="@gd-constructs/construct-hub.AlarmActions.property.highSeverity"></a>
 
 ```typescript
 public readonly highSeverity: string;
@@ -335,7 +335,7 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
-##### `highSeverityAction`<sup>Optional</sup> <a name="highSeverityAction" id="construct-hub.AlarmActions.property.highSeverityAction"></a>
+##### `highSeverityAction`<sup>Optional</sup> <a name="highSeverityAction" id="@gd-constructs/construct-hub.AlarmActions.property.highSeverityAction"></a>
 
 ```typescript
 public readonly highSeverityAction: IAlarmAction;
@@ -351,7 +351,7 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
-##### `normalSeverity`<sup>Optional</sup> <a name="normalSeverity" id="construct-hub.AlarmActions.property.normalSeverity"></a>
+##### `normalSeverity`<sup>Optional</sup> <a name="normalSeverity" id="@gd-constructs/construct-hub.AlarmActions.property.normalSeverity"></a>
 
 ```typescript
 public readonly normalSeverity: string;
@@ -368,7 +368,7 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
-##### `normalSeverityAction`<sup>Optional</sup> <a name="normalSeverityAction" id="construct-hub.AlarmActions.property.normalSeverityAction"></a>
+##### `normalSeverityAction`<sup>Optional</sup> <a name="normalSeverityAction" id="@gd-constructs/construct-hub.AlarmActions.property.normalSeverityAction"></a>
 
 ```typescript
 public readonly normalSeverityAction: IAlarmAction;
@@ -385,14 +385,14 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
-### Category <a name="Category" id="construct-hub.Category"></a>
+### Category <a name="Category" id="@gd-constructs/construct-hub.Category"></a>
 
 A category of packages.
 
-#### Initializer <a name="Initializer" id="construct-hub.Category.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.Category.Initializer"></a>
 
 ```typescript
-import { Category } from 'construct-hub'
+import { Category } from '@gd-constructs/construct-hub'
 
 const category: Category = { ... }
 ```
@@ -401,12 +401,12 @@ const category: Category = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.Category.property.title">title</a></code> | <code>string</code> | The title on the category button as it appears in the Construct Hub home page. |
-| <code><a href="#construct-hub.Category.property.url">url</a></code> | <code>string</code> | The URL that this category links to. |
+| <code><a href="#@gd-constructs/construct-hub.Category.property.title">title</a></code> | <code>string</code> | The title on the category button as it appears in the Construct Hub home page. |
+| <code><a href="#@gd-constructs/construct-hub.Category.property.url">url</a></code> | <code>string</code> | The URL that this category links to. |
 
 ---
 
-##### `title`<sup>Required</sup> <a name="title" id="construct-hub.Category.property.title"></a>
+##### `title`<sup>Required</sup> <a name="title" id="@gd-constructs/construct-hub.Category.property.title"></a>
 
 ```typescript
 public readonly title: string;
@@ -418,7 +418,7 @@ The title on the category button as it appears in the Construct Hub home page.
 
 ---
 
-##### `url`<sup>Required</sup> <a name="url" id="construct-hub.Category.property.url"></a>
+##### `url`<sup>Required</sup> <a name="url" id="@gd-constructs/construct-hub.Category.property.url"></a>
 
 ```typescript
 public readonly url: string;
@@ -441,14 +441,14 @@ this category button will have. You can use any query options such as
 ```
 
 
-### CodeArtifactDomainProps <a name="CodeArtifactDomainProps" id="construct-hub.CodeArtifactDomainProps"></a>
+### CodeArtifactDomainProps <a name="CodeArtifactDomainProps" id="@gd-constructs/construct-hub.CodeArtifactDomainProps"></a>
 
 Information pertaining to an existing CodeArtifact Domain.
 
-#### Initializer <a name="Initializer" id="construct-hub.CodeArtifactDomainProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.CodeArtifactDomainProps.Initializer"></a>
 
 ```typescript
-import { CodeArtifactDomainProps } from 'construct-hub'
+import { CodeArtifactDomainProps } from '@gd-constructs/construct-hub'
 
 const codeArtifactDomainProps: CodeArtifactDomainProps = { ... }
 ```
@@ -457,12 +457,12 @@ const codeArtifactDomainProps: CodeArtifactDomainProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.CodeArtifactDomainProps.property.name">name</a></code> | <code>string</code> | The name of the CodeArtifact domain. |
-| <code><a href="#construct-hub.CodeArtifactDomainProps.property.upstreams">upstreams</a></code> | <code>string[]</code> | Any upstream repositories in this CodeArtifact domain that should be configured on the internal CodeArtifact repository. |
+| <code><a href="#@gd-constructs/construct-hub.CodeArtifactDomainProps.property.name">name</a></code> | <code>string</code> | The name of the CodeArtifact domain. |
+| <code><a href="#@gd-constructs/construct-hub.CodeArtifactDomainProps.property.upstreams">upstreams</a></code> | <code>string[]</code> | Any upstream repositories in this CodeArtifact domain that should be configured on the internal CodeArtifact repository. |
 
 ---
 
-##### `name`<sup>Required</sup> <a name="name" id="construct-hub.CodeArtifactDomainProps.property.name"></a>
+##### `name`<sup>Required</sup> <a name="name" id="@gd-constructs/construct-hub.CodeArtifactDomainProps.property.name"></a>
 
 ```typescript
 public readonly name: string;
@@ -474,7 +474,7 @@ The name of the CodeArtifact domain.
 
 ---
 
-##### `upstreams`<sup>Optional</sup> <a name="upstreams" id="construct-hub.CodeArtifactDomainProps.property.upstreams"></a>
+##### `upstreams`<sup>Optional</sup> <a name="upstreams" id="@gd-constructs/construct-hub.CodeArtifactDomainProps.property.upstreams"></a>
 
 ```typescript
 public readonly upstreams: string[];
@@ -486,12 +486,12 @@ Any upstream repositories in this CodeArtifact domain that should be configured 
 
 ---
 
-### CodeArtifactProps <a name="CodeArtifactProps" id="construct-hub.sources.CodeArtifactProps"></a>
+### CodeArtifactProps <a name="CodeArtifactProps" id="@gd-constructs/construct-hub.sources.CodeArtifactProps"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.sources.CodeArtifactProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.sources.CodeArtifactProps.Initializer"></a>
 
 ```typescript
-import { sources } from 'construct-hub'
+import { sources } from '@gd-constructs/construct-hub'
 
 const codeArtifactProps: sources.CodeArtifactProps = { ... }
 ```
@@ -500,12 +500,12 @@ const codeArtifactProps: sources.CodeArtifactProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.sources.CodeArtifactProps.property.repository">repository</a></code> | <code>aws-cdk-lib.aws_codeartifact.CfnRepository</code> | The CodeArtifact repository where packages are obtained from. |
-| <code><a href="#construct-hub.sources.CodeArtifactProps.property.bucket">bucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket where packages will be staged. |
+| <code><a href="#@gd-constructs/construct-hub.sources.CodeArtifactProps.property.repository">repository</a></code> | <code>aws-cdk-lib.aws_codeartifact.CfnRepository</code> | The CodeArtifact repository where packages are obtained from. |
+| <code><a href="#@gd-constructs/construct-hub.sources.CodeArtifactProps.property.bucket">bucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket where packages will be staged. |
 
 ---
 
-##### `repository`<sup>Required</sup> <a name="repository" id="construct-hub.sources.CodeArtifactProps.property.repository"></a>
+##### `repository`<sup>Required</sup> <a name="repository" id="@gd-constructs/construct-hub.sources.CodeArtifactProps.property.repository"></a>
 
 ```typescript
 public readonly repository: CfnRepository;
@@ -517,7 +517,7 @@ The CodeArtifact repository where packages are obtained from.
 
 ---
 
-##### `bucket`<sup>Optional</sup> <a name="bucket" id="construct-hub.sources.CodeArtifactProps.property.bucket"></a>
+##### `bucket`<sup>Optional</sup> <a name="bucket" id="@gd-constructs/construct-hub.sources.CodeArtifactProps.property.bucket"></a>
 
 ```typescript
 public readonly bucket: IBucket;
@@ -529,14 +529,14 @@ The S3 bucket where packages will be staged.
 
 ---
 
-### ConstructHubProps <a name="ConstructHubProps" id="construct-hub.ConstructHubProps"></a>
+### ConstructHubProps <a name="ConstructHubProps" id="@gd-constructs/construct-hub.ConstructHubProps"></a>
 
 Props for `ConstructHub`.
 
-#### Initializer <a name="Initializer" id="construct-hub.ConstructHubProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.ConstructHubProps.Initializer"></a>
 
 ```typescript
-import { ConstructHubProps } from 'construct-hub'
+import { ConstructHubProps } from '@gd-constructs/construct-hub'
 
 const constructHubProps: ConstructHubProps = { ... }
 ```
@@ -545,72 +545,72 @@ const constructHubProps: ConstructHubProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.ConstructHubProps.property.additionalDomains">additionalDomains</a></code> | <code><a href="#construct-hub.DomainRedirectSource">DomainRedirectSource</a>[]</code> | Additional domains which will be set up to redirect to the primary construct hub domain. |
-| <code><a href="#construct-hub.ConstructHubProps.property.alarmActions">alarmActions</a></code> | <code><a href="#construct-hub.AlarmActions">AlarmActions</a></code> | Actions to perform when alarms are set. |
-| <code><a href="#construct-hub.ConstructHubProps.property.allowedLicenses">allowedLicenses</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a>[]</code> | The allowed licenses for packages indexed by this instance of ConstructHub. |
-| <code><a href="#construct-hub.ConstructHubProps.property.appRegistryApplication">appRegistryApplication</a></code> | <code>boolean</code> | Create an AppRegistry application associated with the stack containing this construct. |
-| <code><a href="#construct-hub.ConstructHubProps.property.backendDashboardName">backendDashboardName</a></code> | <code>string</code> | The name of the CloudWatch dashboard that represents the health of backend systems. |
-| <code><a href="#construct-hub.ConstructHubProps.property.categories">categories</a></code> | <code><a href="#construct-hub.Category">Category</a>[]</code> | Browse categories. |
-| <code><a href="#construct-hub.ConstructHubProps.property.codeArtifactDomain">codeArtifactDomain</a></code> | <code><a href="#construct-hub.CodeArtifactDomainProps">CodeArtifactDomainProps</a></code> | When using a CodeArtifact package source, it is often desirable to have ConstructHub provision it's internal CodeArtifact repository in the same CodeArtifact domain, and to configure the package source repository as an upstream of the internal repository. |
-| <code><a href="#construct-hub.ConstructHubProps.property.denyList">denyList</a></code> | <code><a href="#construct-hub.DenyListRule">DenyListRule</a>[]</code> | A list of packages to block from the construct hub. |
-| <code><a href="#construct-hub.ConstructHubProps.property.domain">domain</a></code> | <code><a href="#construct-hub.Domain">Domain</a></code> | Connect the hub to a domain (requires a hosted zone and a certificate). |
-| <code><a href="#construct-hub.ConstructHubProps.property.failoverStorage">failoverStorage</a></code> | <code>boolean</code> | Wire construct hub to use the failover storage buckets. |
-| <code><a href="#construct-hub.ConstructHubProps.property.featuredPackages">featuredPackages</a></code> | <code><a href="#construct-hub.FeaturedPackages">FeaturedPackages</a></code> | Configuration for packages to feature on the home page. |
-| <code><a href="#construct-hub.ConstructHubProps.property.featureFlags">featureFlags</a></code> | <code><a href="#construct-hub.FeatureFlags">FeatureFlags</a></code> | Configure feature flags for the web app. |
-| <code><a href="#construct-hub.ConstructHubProps.property.feedConfiguration">feedConfiguration</a></code> | <code><a href="#construct-hub.FeedConfiguration">FeedConfiguration</a></code> | Configuration for generating RSS/Atom feeds with the latest packages. |
-| <code><a href="#construct-hub.ConstructHubProps.property.fetchPackageStats">fetchPackageStats</a></code> | <code>boolean</code> | Configure whether or not the backend should periodically query NPM for the number of downloads a package has in the past week, and display download counts on the web app. |
-| <code><a href="#construct-hub.ConstructHubProps.property.isolateSensitiveTasks">isolateSensitiveTasks</a></code> | <code>boolean</code> | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
-| <code><a href="#construct-hub.ConstructHubProps.property.logRetention">logRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | How long to retain CloudWatch logs for. |
-| <code><a href="#construct-hub.ConstructHubProps.property.packageLinks">packageLinks</a></code> | <code><a href="#construct-hub.PackageLinkConfig">PackageLinkConfig</a>[]</code> | Configuration for custom package page links. |
-| <code><a href="#construct-hub.ConstructHubProps.property.packageSources">packageSources</a></code> | <code><a href="#construct-hub.IPackageSource">IPackageSource</a>[]</code> | The package sources to register with this ConstructHub instance. |
-| <code><a href="#construct-hub.ConstructHubProps.property.packageTagGroups">packageTagGroups</a></code> | <code><a href="#construct-hub.PackageTagGroup">PackageTagGroup</a>[]</code> | Optional configuration for grouping custom package tags. |
-| <code><a href="#construct-hub.ConstructHubProps.property.packageTags">packageTags</a></code> | <code><a href="#construct-hub.PackageTag">PackageTag</a>[]</code> | Configuration for custom package tags. |
-| <code><a href="#construct-hub.ConstructHubProps.property.preloadScript">preloadScript</a></code> | <code><a href="#construct-hub.PreloadFile">PreloadFile</a></code> | Javascript to run on webapp before app loads. |
-| <code><a href="#construct-hub.ConstructHubProps.property.reprocessAge">reprocessAge</a></code> | <code>aws-cdk-lib.Duration</code> | Package versions that have been published before this time window will not be reprocessed. |
-| <code><a href="#construct-hub.ConstructHubProps.property.reprocessFrequency">reprocessFrequency</a></code> | <code>aws-cdk-lib.Duration</code> | How frequently all packages should get fully reprocessed. |
-| <code><a href="#construct-hub.ConstructHubProps.property.sensitiveTaskIsolation">sensitiveTaskIsolation</a></code> | <code><a href="#construct-hub.Isolation">Isolation</a></code> | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.additionalDomains">additionalDomains</a></code> | <code><a href="#@gd-constructs/construct-hub.DomainRedirectSource">DomainRedirectSource</a>[]</code> | Additional domains which will be set up to redirect to the primary construct hub domain. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.alarmActions">alarmActions</a></code> | <code><a href="#@gd-constructs/construct-hub.AlarmActions">AlarmActions</a></code> | Actions to perform when alarms are set. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.allowedLicenses">allowedLicenses</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>[]</code> | The allowed licenses for packages indexed by this instance of ConstructHub. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.appRegistryApplication">appRegistryApplication</a></code> | <code>boolean</code> | Create an AppRegistry application associated with the stack containing this construct. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.backendDashboardName">backendDashboardName</a></code> | <code>string</code> | The name of the CloudWatch dashboard that represents the health of backend systems. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.categories">categories</a></code> | <code><a href="#@gd-constructs/construct-hub.Category">Category</a>[]</code> | Browse categories. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.codeArtifactDomain">codeArtifactDomain</a></code> | <code><a href="#@gd-constructs/construct-hub.CodeArtifactDomainProps">CodeArtifactDomainProps</a></code> | When using a CodeArtifact package source, it is often desirable to have ConstructHub provision it's internal CodeArtifact repository in the same CodeArtifact domain, and to configure the package source repository as an upstream of the internal repository. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.denyList">denyList</a></code> | <code><a href="#@gd-constructs/construct-hub.DenyListRule">DenyListRule</a>[]</code> | A list of packages to block from the construct hub. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.domain">domain</a></code> | <code><a href="#@gd-constructs/construct-hub.Domain">Domain</a></code> | Connect the hub to a domain (requires a hosted zone and a certificate). |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.failoverStorage">failoverStorage</a></code> | <code>boolean</code> | Wire construct hub to use the failover storage buckets. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.featuredPackages">featuredPackages</a></code> | <code><a href="#@gd-constructs/construct-hub.FeaturedPackages">FeaturedPackages</a></code> | Configuration for packages to feature on the home page. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.featureFlags">featureFlags</a></code> | <code><a href="#@gd-constructs/construct-hub.FeatureFlags">FeatureFlags</a></code> | Configure feature flags for the web app. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.feedConfiguration">feedConfiguration</a></code> | <code><a href="#@gd-constructs/construct-hub.FeedConfiguration">FeedConfiguration</a></code> | Configuration for generating RSS/Atom feeds with the latest packages. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.fetchPackageStats">fetchPackageStats</a></code> | <code>boolean</code> | Configure whether or not the backend should periodically query NPM for the number of downloads a package has in the past week, and display download counts on the web app. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.isolateSensitiveTasks">isolateSensitiveTasks</a></code> | <code>boolean</code> | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.logRetention">logRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | How long to retain CloudWatch logs for. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.packageLinks">packageLinks</a></code> | <code><a href="#@gd-constructs/construct-hub.PackageLinkConfig">PackageLinkConfig</a>[]</code> | Configuration for custom package page links. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.packageSources">packageSources</a></code> | <code><a href="#@gd-constructs/construct-hub.IPackageSource">IPackageSource</a>[]</code> | The package sources to register with this ConstructHub instance. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.packageTagGroups">packageTagGroups</a></code> | <code><a href="#@gd-constructs/construct-hub.PackageTagGroup">PackageTagGroup</a>[]</code> | Optional configuration for grouping custom package tags. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.packageTags">packageTags</a></code> | <code><a href="#@gd-constructs/construct-hub.PackageTag">PackageTag</a>[]</code> | Configuration for custom package tags. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.preloadScript">preloadScript</a></code> | <code><a href="#@gd-constructs/construct-hub.PreloadFile">PreloadFile</a></code> | Javascript to run on webapp before app loads. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.reprocessAge">reprocessAge</a></code> | <code>aws-cdk-lib.Duration</code> | Package versions that have been published before this time window will not be reprocessed. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.reprocessFrequency">reprocessFrequency</a></code> | <code>aws-cdk-lib.Duration</code> | How frequently all packages should get fully reprocessed. |
+| <code><a href="#@gd-constructs/construct-hub.ConstructHubProps.property.sensitiveTaskIsolation">sensitiveTaskIsolation</a></code> | <code><a href="#@gd-constructs/construct-hub.Isolation">Isolation</a></code> | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
 
 ---
 
-##### `additionalDomains`<sup>Optional</sup> <a name="additionalDomains" id="construct-hub.ConstructHubProps.property.additionalDomains"></a>
+##### `additionalDomains`<sup>Optional</sup> <a name="additionalDomains" id="@gd-constructs/construct-hub.ConstructHubProps.property.additionalDomains"></a>
 
 ```typescript
 public readonly additionalDomains: DomainRedirectSource[];
 ```
 
-- *Type:* <a href="#construct-hub.DomainRedirectSource">DomainRedirectSource</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.DomainRedirectSource">DomainRedirectSource</a>[]
 - *Default:* []
 
 Additional domains which will be set up to redirect to the primary construct hub domain.
 
 ---
 
-##### `alarmActions`<sup>Optional</sup> <a name="alarmActions" id="construct-hub.ConstructHubProps.property.alarmActions"></a>
+##### `alarmActions`<sup>Optional</sup> <a name="alarmActions" id="@gd-constructs/construct-hub.ConstructHubProps.property.alarmActions"></a>
 
 ```typescript
 public readonly alarmActions: AlarmActions;
 ```
 
-- *Type:* <a href="#construct-hub.AlarmActions">AlarmActions</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.AlarmActions">AlarmActions</a>
 
 Actions to perform when alarms are set.
 
 ---
 
-##### `allowedLicenses`<sup>Optional</sup> <a name="allowedLicenses" id="construct-hub.ConstructHubProps.property.allowedLicenses"></a>
+##### `allowedLicenses`<sup>Optional</sup> <a name="allowedLicenses" id="@gd-constructs/construct-hub.ConstructHubProps.property.allowedLicenses"></a>
 
 ```typescript
 public readonly allowedLicenses: SpdxLicense[];
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>[]
 - *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.cddl(),...SpdxLicense.epl(),SpdxLicense.ISC,...SpdxLicense.mit(),SpdxLicense.MPL_2_0]
 
 The allowed licenses for packages indexed by this instance of ConstructHub.
 
 ---
 
-##### `appRegistryApplication`<sup>Optional</sup> <a name="appRegistryApplication" id="construct-hub.ConstructHubProps.property.appRegistryApplication"></a>
+##### `appRegistryApplication`<sup>Optional</sup> <a name="appRegistryApplication" id="@gd-constructs/construct-hub.ConstructHubProps.property.appRegistryApplication"></a>
 
 ```typescript
 public readonly appRegistryApplication: boolean;
@@ -623,7 +623,7 @@ Create an AppRegistry application associated with the stack containing this cons
 
 ---
 
-##### `backendDashboardName`<sup>Optional</sup> <a name="backendDashboardName" id="construct-hub.ConstructHubProps.property.backendDashboardName"></a>
+##### `backendDashboardName`<sup>Optional</sup> <a name="backendDashboardName" id="@gd-constructs/construct-hub.ConstructHubProps.property.backendDashboardName"></a>
 
 ```typescript
 public readonly backendDashboardName: string;
@@ -635,13 +635,13 @@ The name of the CloudWatch dashboard that represents the health of backend syste
 
 ---
 
-##### `categories`<sup>Optional</sup> <a name="categories" id="construct-hub.ConstructHubProps.property.categories"></a>
+##### `categories`<sup>Optional</sup> <a name="categories" id="@gd-constructs/construct-hub.ConstructHubProps.property.categories"></a>
 
 ```typescript
 public readonly categories: Category[];
 ```
 
-- *Type:* <a href="#construct-hub.Category">Category</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.Category">Category</a>[]
 
 Browse categories.
 
@@ -650,13 +650,13 @@ with a link to the relevant search query.
 
 ---
 
-##### `codeArtifactDomain`<sup>Optional</sup> <a name="codeArtifactDomain" id="construct-hub.ConstructHubProps.property.codeArtifactDomain"></a>
+##### `codeArtifactDomain`<sup>Optional</sup> <a name="codeArtifactDomain" id="@gd-constructs/construct-hub.ConstructHubProps.property.codeArtifactDomain"></a>
 
 ```typescript
 public readonly codeArtifactDomain: CodeArtifactDomainProps;
 ```
 
-- *Type:* <a href="#construct-hub.CodeArtifactDomainProps">CodeArtifactDomainProps</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.CodeArtifactDomainProps">CodeArtifactDomainProps</a>
 - *Default:* none.
 
 When using a CodeArtifact package source, it is often desirable to have ConstructHub provision it's internal CodeArtifact repository in the same CodeArtifact domain, and to configure the package source repository as an upstream of the internal repository.
@@ -666,32 +666,32 @@ are available to ConstructHub's backend processing.
 
 ---
 
-##### `denyList`<sup>Optional</sup> <a name="denyList" id="construct-hub.ConstructHubProps.property.denyList"></a>
+##### `denyList`<sup>Optional</sup> <a name="denyList" id="@gd-constructs/construct-hub.ConstructHubProps.property.denyList"></a>
 
 ```typescript
 public readonly denyList: DenyListRule[];
 ```
 
-- *Type:* <a href="#construct-hub.DenyListRule">DenyListRule</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.DenyListRule">DenyListRule</a>[]
 - *Default:* []
 
 A list of packages to block from the construct hub.
 
 ---
 
-##### `domain`<sup>Optional</sup> <a name="domain" id="construct-hub.ConstructHubProps.property.domain"></a>
+##### `domain`<sup>Optional</sup> <a name="domain" id="@gd-constructs/construct-hub.ConstructHubProps.property.domain"></a>
 
 ```typescript
 public readonly domain: Domain;
 ```
 
-- *Type:* <a href="#construct-hub.Domain">Domain</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.Domain">Domain</a>
 
 Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
-##### `failoverStorage`<sup>Optional</sup> <a name="failoverStorage" id="construct-hub.ConstructHubProps.property.failoverStorage"></a>
+##### `failoverStorage`<sup>Optional</sup> <a name="failoverStorage" id="@gd-constructs/construct-hub.ConstructHubProps.property.failoverStorage"></a>
 
 ```typescript
 public readonly failoverStorage: boolean;
@@ -709,38 +709,38 @@ with the necessary data.
 
 ---
 
-##### `featuredPackages`<sup>Optional</sup> <a name="featuredPackages" id="construct-hub.ConstructHubProps.property.featuredPackages"></a>
+##### `featuredPackages`<sup>Optional</sup> <a name="featuredPackages" id="@gd-constructs/construct-hub.ConstructHubProps.property.featuredPackages"></a>
 
 ```typescript
 public readonly featuredPackages: FeaturedPackages;
 ```
 
-- *Type:* <a href="#construct-hub.FeaturedPackages">FeaturedPackages</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.FeaturedPackages">FeaturedPackages</a>
 - *Default:* Display the 10 most recently updated packages
 
 Configuration for packages to feature on the home page.
 
 ---
 
-##### `featureFlags`<sup>Optional</sup> <a name="featureFlags" id="construct-hub.ConstructHubProps.property.featureFlags"></a>
+##### `featureFlags`<sup>Optional</sup> <a name="featureFlags" id="@gd-constructs/construct-hub.ConstructHubProps.property.featureFlags"></a>
 
 ```typescript
 public readonly featureFlags: FeatureFlags;
 ```
 
-- *Type:* <a href="#construct-hub.FeatureFlags">FeatureFlags</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.FeatureFlags">FeatureFlags</a>
 
 Configure feature flags for the web app.
 
 ---
 
-##### `feedConfiguration`<sup>Optional</sup> <a name="feedConfiguration" id="construct-hub.ConstructHubProps.property.feedConfiguration"></a>
+##### `feedConfiguration`<sup>Optional</sup> <a name="feedConfiguration" id="@gd-constructs/construct-hub.ConstructHubProps.property.feedConfiguration"></a>
 
 ```typescript
 public readonly feedConfiguration: FeedConfiguration;
 ```
 
-- *Type:* <a href="#construct-hub.FeedConfiguration">FeedConfiguration</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.FeedConfiguration">FeedConfiguration</a>
 
 Configuration for generating RSS/Atom feeds with the latest packages.
 
@@ -749,7 +749,7 @@ the generated RSS/ATOM feed would not contain release notes
 
 ---
 
-##### `fetchPackageStats`<sup>Optional</sup> <a name="fetchPackageStats" id="construct-hub.ConstructHubProps.property.fetchPackageStats"></a>
+##### `fetchPackageStats`<sup>Optional</sup> <a name="fetchPackageStats" id="@gd-constructs/construct-hub.ConstructHubProps.property.fetchPackageStats"></a>
 
 ```typescript
 public readonly fetchPackageStats: boolean;
@@ -762,7 +762,7 @@ Configure whether or not the backend should periodically query NPM for the numbe
 
 ---
 
-##### ~~`isolateSensitiveTasks`~~<sup>Optional</sup> <a name="isolateSensitiveTasks" id="construct-hub.ConstructHubProps.property.isolateSensitiveTasks"></a>
+##### ~~`isolateSensitiveTasks`~~<sup>Optional</sup> <a name="isolateSensitiveTasks" id="@gd-constructs/construct-hub.ConstructHubProps.property.isolateSensitiveTasks"></a>
 
 - *Deprecated:* use sensitiveTaskIsolation instead.
 
@@ -782,7 +782,7 @@ This implies the creation of additonal resources, including:
 
 ---
 
-##### `logRetention`<sup>Optional</sup> <a name="logRetention" id="construct-hub.ConstructHubProps.property.logRetention"></a>
+##### `logRetention`<sup>Optional</sup> <a name="logRetention" id="@gd-constructs/construct-hub.ConstructHubProps.property.logRetention"></a>
 
 ```typescript
 public readonly logRetention: RetentionDays;
@@ -794,69 +794,69 @@ How long to retain CloudWatch logs for.
 
 ---
 
-##### `packageLinks`<sup>Optional</sup> <a name="packageLinks" id="construct-hub.ConstructHubProps.property.packageLinks"></a>
+##### `packageLinks`<sup>Optional</sup> <a name="packageLinks" id="@gd-constructs/construct-hub.ConstructHubProps.property.packageLinks"></a>
 
 ```typescript
 public readonly packageLinks: PackageLinkConfig[];
 ```
 
-- *Type:* <a href="#construct-hub.PackageLinkConfig">PackageLinkConfig</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.PackageLinkConfig">PackageLinkConfig</a>[]
 
 Configuration for custom package page links.
 
 ---
 
-##### `packageSources`<sup>Optional</sup> <a name="packageSources" id="construct-hub.ConstructHubProps.property.packageSources"></a>
+##### `packageSources`<sup>Optional</sup> <a name="packageSources" id="@gd-constructs/construct-hub.ConstructHubProps.property.packageSources"></a>
 
 ```typescript
 public readonly packageSources: IPackageSource[];
 ```
 
-- *Type:* <a href="#construct-hub.IPackageSource">IPackageSource</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.IPackageSource">IPackageSource</a>[]
 - *Default:* a standard npmjs.com package source will be configured.
 
 The package sources to register with this ConstructHub instance.
 
 ---
 
-##### `packageTagGroups`<sup>Optional</sup> <a name="packageTagGroups" id="construct-hub.ConstructHubProps.property.packageTagGroups"></a>
+##### `packageTagGroups`<sup>Optional</sup> <a name="packageTagGroups" id="@gd-constructs/construct-hub.ConstructHubProps.property.packageTagGroups"></a>
 
 ```typescript
 public readonly packageTagGroups: PackageTagGroup[];
 ```
 
-- *Type:* <a href="#construct-hub.PackageTagGroup">PackageTagGroup</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.PackageTagGroup">PackageTagGroup</a>[]
 
 Optional configuration for grouping custom package tags.
 
 ---
 
-##### `packageTags`<sup>Optional</sup> <a name="packageTags" id="construct-hub.ConstructHubProps.property.packageTags"></a>
+##### `packageTags`<sup>Optional</sup> <a name="packageTags" id="@gd-constructs/construct-hub.ConstructHubProps.property.packageTags"></a>
 
 ```typescript
 public readonly packageTags: PackageTag[];
 ```
 
-- *Type:* <a href="#construct-hub.PackageTag">PackageTag</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.PackageTag">PackageTag</a>[]
 
 Configuration for custom package tags.
 
 ---
 
-##### `preloadScript`<sup>Optional</sup> <a name="preloadScript" id="construct-hub.ConstructHubProps.property.preloadScript"></a>
+##### `preloadScript`<sup>Optional</sup> <a name="preloadScript" id="@gd-constructs/construct-hub.ConstructHubProps.property.preloadScript"></a>
 
 ```typescript
 public readonly preloadScript: PreloadFile;
 ```
 
-- *Type:* <a href="#construct-hub.PreloadFile">PreloadFile</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.PreloadFile">PreloadFile</a>
 - *Default:* create an empty file
 
 Javascript to run on webapp before app loads.
 
 ---
 
-##### `reprocessAge`<sup>Optional</sup> <a name="reprocessAge" id="construct-hub.ConstructHubProps.property.reprocessAge"></a>
+##### `reprocessAge`<sup>Optional</sup> <a name="reprocessAge" id="@gd-constructs/construct-hub.ConstructHubProps.property.reprocessAge"></a>
 
 ```typescript
 public readonly reprocessAge: Duration;
@@ -869,7 +869,7 @@ Package versions that have been published before this time window will not be re
 
 ---
 
-##### `reprocessFrequency`<sup>Optional</sup> <a name="reprocessFrequency" id="construct-hub.ConstructHubProps.property.reprocessFrequency"></a>
+##### `reprocessFrequency`<sup>Optional</sup> <a name="reprocessFrequency" id="@gd-constructs/construct-hub.ConstructHubProps.property.reprocessFrequency"></a>
 
 ```typescript
 public readonly reprocessFrequency: Duration;
@@ -886,13 +886,13 @@ See the operator runbook for more information about reprocessing.
 
 ---
 
-##### `sensitiveTaskIsolation`<sup>Optional</sup> <a name="sensitiveTaskIsolation" id="construct-hub.ConstructHubProps.property.sensitiveTaskIsolation"></a>
+##### `sensitiveTaskIsolation`<sup>Optional</sup> <a name="sensitiveTaskIsolation" id="@gd-constructs/construct-hub.ConstructHubProps.property.sensitiveTaskIsolation"></a>
 
 ```typescript
 public readonly sensitiveTaskIsolation: Isolation;
 ```
 
-- *Type:* <a href="#construct-hub.Isolation">Isolation</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.Isolation">Isolation</a>
 - *Default:* Isolation.NO_INTERNET_ACCESS
 
 Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments.
@@ -905,14 +905,14 @@ This implies the creation of additonal resources, including:
 
 ---
 
-### DenyListRule <a name="DenyListRule" id="construct-hub.DenyListRule"></a>
+### DenyListRule <a name="DenyListRule" id="@gd-constructs/construct-hub.DenyListRule"></a>
 
 An entry in the list of packages blocked from display in the construct hub.
 
-#### Initializer <a name="Initializer" id="construct-hub.DenyListRule.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.DenyListRule.Initializer"></a>
 
 ```typescript
-import { DenyListRule } from 'construct-hub'
+import { DenyListRule } from '@gd-constructs/construct-hub'
 
 const denyListRule: DenyListRule = { ... }
 ```
@@ -921,13 +921,13 @@ const denyListRule: DenyListRule = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.DenyListRule.property.packageName">packageName</a></code> | <code>string</code> | The name of the package to block (npm). |
-| <code><a href="#construct-hub.DenyListRule.property.reason">reason</a></code> | <code>string</code> | The reason why this package/version is denied. |
-| <code><a href="#construct-hub.DenyListRule.property.version">version</a></code> | <code>string</code> | The package version to block (must be a valid version such as "1.0.3"). |
+| <code><a href="#@gd-constructs/construct-hub.DenyListRule.property.packageName">packageName</a></code> | <code>string</code> | The name of the package to block (npm). |
+| <code><a href="#@gd-constructs/construct-hub.DenyListRule.property.reason">reason</a></code> | <code>string</code> | The reason why this package/version is denied. |
+| <code><a href="#@gd-constructs/construct-hub.DenyListRule.property.version">version</a></code> | <code>string</code> | The package version to block (must be a valid version such as "1.0.3"). |
 
 ---
 
-##### `packageName`<sup>Required</sup> <a name="packageName" id="construct-hub.DenyListRule.property.packageName"></a>
+##### `packageName`<sup>Required</sup> <a name="packageName" id="@gd-constructs/construct-hub.DenyListRule.property.packageName"></a>
 
 ```typescript
 public readonly packageName: string;
@@ -939,7 +939,7 @@ The name of the package to block (npm).
 
 ---
 
-##### `reason`<sup>Required</sup> <a name="reason" id="construct-hub.DenyListRule.property.reason"></a>
+##### `reason`<sup>Required</sup> <a name="reason" id="@gd-constructs/construct-hub.DenyListRule.property.reason"></a>
 
 ```typescript
 public readonly reason: string;
@@ -954,7 +954,7 @@ emitted to the construct hub logs.
 
 ---
 
-##### `version`<sup>Optional</sup> <a name="version" id="construct-hub.DenyListRule.property.version"></a>
+##### `version`<sup>Optional</sup> <a name="version" id="@gd-constructs/construct-hub.DenyListRule.property.version"></a>
 
 ```typescript
 public readonly version: string;
@@ -967,14 +967,14 @@ The package version to block (must be a valid version such as "1.0.3").
 
 ---
 
-### Domain <a name="Domain" id="construct-hub.Domain"></a>
+### Domain <a name="Domain" id="@gd-constructs/construct-hub.Domain"></a>
 
 Domain configuration for the website.
 
-#### Initializer <a name="Initializer" id="construct-hub.Domain.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.Domain.Initializer"></a>
 
 ```typescript
-import { Domain } from 'construct-hub'
+import { Domain } from '@gd-constructs/construct-hub'
 
 const domain: Domain = { ... }
 ```
@@ -983,13 +983,13 @@ const domain: Domain = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.Domain.property.cert">cert</a></code> | <code>aws-cdk-lib.aws_certificatemanager.ICertificate</code> | The certificate to use for serving the Construct Hub over a custom domain. |
-| <code><a href="#construct-hub.Domain.property.zone">zone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The root domain name where this instance of Construct Hub will be served. |
-| <code><a href="#construct-hub.Domain.property.monitorCertificateExpiration">monitorCertificateExpiration</a></code> | <code>boolean</code> | Whether the certificate should be monitored for expiration, meaning high severity alarms will be raised if it is due to expire in less than 45 days. |
+| <code><a href="#@gd-constructs/construct-hub.Domain.property.cert">cert</a></code> | <code>aws-cdk-lib.aws_certificatemanager.ICertificate</code> | The certificate to use for serving the Construct Hub over a custom domain. |
+| <code><a href="#@gd-constructs/construct-hub.Domain.property.zone">zone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The root domain name where this instance of Construct Hub will be served. |
+| <code><a href="#@gd-constructs/construct-hub.Domain.property.monitorCertificateExpiration">monitorCertificateExpiration</a></code> | <code>boolean</code> | Whether the certificate should be monitored for expiration, meaning high severity alarms will be raised if it is due to expire in less than 45 days. |
 
 ---
 
-##### `cert`<sup>Required</sup> <a name="cert" id="construct-hub.Domain.property.cert"></a>
+##### `cert`<sup>Required</sup> <a name="cert" id="@gd-constructs/construct-hub.Domain.property.cert"></a>
 
 ```typescript
 public readonly cert: ICertificate;
@@ -1002,7 +1002,7 @@ The certificate to use for serving the Construct Hub over a custom domain.
 
 ---
 
-##### `zone`<sup>Required</sup> <a name="zone" id="construct-hub.Domain.property.zone"></a>
+##### `zone`<sup>Required</sup> <a name="zone" id="@gd-constructs/construct-hub.Domain.property.zone"></a>
 
 ```typescript
 public readonly zone: IHostedZone;
@@ -1014,7 +1014,7 @@ The root domain name where this instance of Construct Hub will be served.
 
 ---
 
-##### `monitorCertificateExpiration`<sup>Optional</sup> <a name="monitorCertificateExpiration" id="construct-hub.Domain.property.monitorCertificateExpiration"></a>
+##### `monitorCertificateExpiration`<sup>Optional</sup> <a name="monitorCertificateExpiration" id="@gd-constructs/construct-hub.Domain.property.monitorCertificateExpiration"></a>
 
 ```typescript
 public readonly monitorCertificateExpiration: boolean;
@@ -1027,14 +1027,14 @@ Whether the certificate should be monitored for expiration, meaning high severit
 
 ---
 
-### DomainRedirectSource <a name="DomainRedirectSource" id="construct-hub.DomainRedirectSource"></a>
+### DomainRedirectSource <a name="DomainRedirectSource" id="@gd-constructs/construct-hub.DomainRedirectSource"></a>
 
 Source domain of the redirect.
 
-#### Initializer <a name="Initializer" id="construct-hub.DomainRedirectSource.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.DomainRedirectSource.Initializer"></a>
 
 ```typescript
-import { DomainRedirectSource } from 'construct-hub'
+import { DomainRedirectSource } from '@gd-constructs/construct-hub'
 
 const domainRedirectSource: DomainRedirectSource = { ... }
 ```
@@ -1043,12 +1043,12 @@ const domainRedirectSource: DomainRedirectSource = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.DomainRedirectSource.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The route53 zone which hosts the source domain. |
-| <code><a href="#construct-hub.DomainRedirectSource.property.certificate">certificate</a></code> | <code>aws-cdk-lib.aws_certificatemanager.ICertificate</code> | The ACM certificate to use for the CloudFront distribution. |
+| <code><a href="#@gd-constructs/construct-hub.DomainRedirectSource.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The route53 zone which hosts the source domain. |
+| <code><a href="#@gd-constructs/construct-hub.DomainRedirectSource.property.certificate">certificate</a></code> | <code>aws-cdk-lib.aws_certificatemanager.ICertificate</code> | The ACM certificate to use for the CloudFront distribution. |
 
 ---
 
-##### `hostedZone`<sup>Required</sup> <a name="hostedZone" id="construct-hub.DomainRedirectSource.property.hostedZone"></a>
+##### `hostedZone`<sup>Required</sup> <a name="hostedZone" id="@gd-constructs/construct-hub.DomainRedirectSource.property.hostedZone"></a>
 
 ```typescript
 public readonly hostedZone: IHostedZone;
@@ -1060,7 +1060,7 @@ The route53 zone which hosts the source domain.
 
 ---
 
-##### `certificate`<sup>Optional</sup> <a name="certificate" id="construct-hub.DomainRedirectSource.property.certificate"></a>
+##### `certificate`<sup>Optional</sup> <a name="certificate" id="@gd-constructs/construct-hub.DomainRedirectSource.property.certificate"></a>
 
 ```typescript
 public readonly certificate: ICertificate;
@@ -1073,14 +1073,14 @@ The ACM certificate to use for the CloudFront distribution.
 
 ---
 
-### FeaturedPackages <a name="FeaturedPackages" id="construct-hub.FeaturedPackages"></a>
+### FeaturedPackages <a name="FeaturedPackages" id="@gd-constructs/construct-hub.FeaturedPackages"></a>
 
 Configuration for packages to feature on the home page.
 
-#### Initializer <a name="Initializer" id="construct-hub.FeaturedPackages.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.FeaturedPackages.Initializer"></a>
 
 ```typescript
-import { FeaturedPackages } from 'construct-hub'
+import { FeaturedPackages } from '@gd-constructs/construct-hub'
 
 const featuredPackages: FeaturedPackages = { ... }
 ```
@@ -1089,30 +1089,30 @@ const featuredPackages: FeaturedPackages = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.FeaturedPackages.property.sections">sections</a></code> | <code><a href="#construct-hub.FeaturedPackagesSection">FeaturedPackagesSection</a>[]</code> | Grouped sections of packages on the homepage. |
+| <code><a href="#@gd-constructs/construct-hub.FeaturedPackages.property.sections">sections</a></code> | <code><a href="#@gd-constructs/construct-hub.FeaturedPackagesSection">FeaturedPackagesSection</a>[]</code> | Grouped sections of packages on the homepage. |
 
 ---
 
-##### `sections`<sup>Required</sup> <a name="sections" id="construct-hub.FeaturedPackages.property.sections"></a>
+##### `sections`<sup>Required</sup> <a name="sections" id="@gd-constructs/construct-hub.FeaturedPackages.property.sections"></a>
 
 ```typescript
 public readonly sections: FeaturedPackagesSection[];
 ```
 
-- *Type:* <a href="#construct-hub.FeaturedPackagesSection">FeaturedPackagesSection</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.FeaturedPackagesSection">FeaturedPackagesSection</a>[]
 
 Grouped sections of packages on the homepage.
 
 ---
 
-### FeaturedPackagesDetail <a name="FeaturedPackagesDetail" id="construct-hub.FeaturedPackagesDetail"></a>
+### FeaturedPackagesDetail <a name="FeaturedPackagesDetail" id="@gd-constructs/construct-hub.FeaturedPackagesDetail"></a>
 
 Customization options for a specific package on the home page.
 
-#### Initializer <a name="Initializer" id="construct-hub.FeaturedPackagesDetail.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.FeaturedPackagesDetail.Initializer"></a>
 
 ```typescript
-import { FeaturedPackagesDetail } from 'construct-hub'
+import { FeaturedPackagesDetail } from '@gd-constructs/construct-hub'
 
 const featuredPackagesDetail: FeaturedPackagesDetail = { ... }
 ```
@@ -1121,12 +1121,12 @@ const featuredPackagesDetail: FeaturedPackagesDetail = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.FeaturedPackagesDetail.property.name">name</a></code> | <code>string</code> | The name of the package. |
-| <code><a href="#construct-hub.FeaturedPackagesDetail.property.comment">comment</a></code> | <code>string</code> | An additional comment to include with the package. |
+| <code><a href="#@gd-constructs/construct-hub.FeaturedPackagesDetail.property.name">name</a></code> | <code>string</code> | The name of the package. |
+| <code><a href="#@gd-constructs/construct-hub.FeaturedPackagesDetail.property.comment">comment</a></code> | <code>string</code> | An additional comment to include with the package. |
 
 ---
 
-##### `name`<sup>Required</sup> <a name="name" id="construct-hub.FeaturedPackagesDetail.property.name"></a>
+##### `name`<sup>Required</sup> <a name="name" id="@gd-constructs/construct-hub.FeaturedPackagesDetail.property.name"></a>
 
 ```typescript
 public readonly name: string;
@@ -1138,7 +1138,7 @@ The name of the package.
 
 ---
 
-##### `comment`<sup>Optional</sup> <a name="comment" id="construct-hub.FeaturedPackagesDetail.property.comment"></a>
+##### `comment`<sup>Optional</sup> <a name="comment" id="@gd-constructs/construct-hub.FeaturedPackagesDetail.property.comment"></a>
 
 ```typescript
 public readonly comment: string;
@@ -1150,14 +1150,14 @@ An additional comment to include with the package.
 
 ---
 
-### FeaturedPackagesSection <a name="FeaturedPackagesSection" id="construct-hub.FeaturedPackagesSection"></a>
+### FeaturedPackagesSection <a name="FeaturedPackagesSection" id="@gd-constructs/construct-hub.FeaturedPackagesSection"></a>
 
 Customization options for one section of the home page.
 
-#### Initializer <a name="Initializer" id="construct-hub.FeaturedPackagesSection.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.FeaturedPackagesSection.Initializer"></a>
 
 ```typescript
-import { FeaturedPackagesSection } from 'construct-hub'
+import { FeaturedPackagesSection } from '@gd-constructs/construct-hub'
 
 const featuredPackagesSection: FeaturedPackagesSection = { ... }
 ```
@@ -1166,13 +1166,13 @@ const featuredPackagesSection: FeaturedPackagesSection = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.FeaturedPackagesSection.property.name">name</a></code> | <code>string</code> | The name of the section (displayed as a header). |
-| <code><a href="#construct-hub.FeaturedPackagesSection.property.showLastUpdated">showLastUpdated</a></code> | <code>number</code> | Show the N most recently updated packages in this section. |
-| <code><a href="#construct-hub.FeaturedPackagesSection.property.showPackages">showPackages</a></code> | <code><a href="#construct-hub.FeaturedPackagesDetail">FeaturedPackagesDetail</a>[]</code> | Show an explicit list of packages. |
+| <code><a href="#@gd-constructs/construct-hub.FeaturedPackagesSection.property.name">name</a></code> | <code>string</code> | The name of the section (displayed as a header). |
+| <code><a href="#@gd-constructs/construct-hub.FeaturedPackagesSection.property.showLastUpdated">showLastUpdated</a></code> | <code>number</code> | Show the N most recently updated packages in this section. |
+| <code><a href="#@gd-constructs/construct-hub.FeaturedPackagesSection.property.showPackages">showPackages</a></code> | <code><a href="#@gd-constructs/construct-hub.FeaturedPackagesDetail">FeaturedPackagesDetail</a>[]</code> | Show an explicit list of packages. |
 
 ---
 
-##### `name`<sup>Required</sup> <a name="name" id="construct-hub.FeaturedPackagesSection.property.name"></a>
+##### `name`<sup>Required</sup> <a name="name" id="@gd-constructs/construct-hub.FeaturedPackagesSection.property.name"></a>
 
 ```typescript
 public readonly name: string;
@@ -1184,7 +1184,7 @@ The name of the section (displayed as a header).
 
 ---
 
-##### `showLastUpdated`<sup>Optional</sup> <a name="showLastUpdated" id="construct-hub.FeaturedPackagesSection.property.showLastUpdated"></a>
+##### `showLastUpdated`<sup>Optional</sup> <a name="showLastUpdated" id="@gd-constructs/construct-hub.FeaturedPackagesSection.property.showLastUpdated"></a>
 
 ```typescript
 public readonly showLastUpdated: number;
@@ -1198,13 +1198,13 @@ Cannot be used with `showPackages`.
 
 ---
 
-##### `showPackages`<sup>Optional</sup> <a name="showPackages" id="construct-hub.FeaturedPackagesSection.property.showPackages"></a>
+##### `showPackages`<sup>Optional</sup> <a name="showPackages" id="@gd-constructs/construct-hub.FeaturedPackagesSection.property.showPackages"></a>
 
 ```typescript
 public readonly showPackages: FeaturedPackagesDetail[];
 ```
 
-- *Type:* <a href="#construct-hub.FeaturedPackagesDetail">FeaturedPackagesDetail</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.FeaturedPackagesDetail">FeaturedPackagesDetail</a>[]
 
 Show an explicit list of packages.
 
@@ -1212,14 +1212,14 @@ Cannot be used with `showLastUpdated`.
 
 ---
 
-### FeatureFlags <a name="FeatureFlags" id="construct-hub.FeatureFlags"></a>
+### FeatureFlags <a name="FeatureFlags" id="@gd-constructs/construct-hub.FeatureFlags"></a>
 
 Enable/disable features for the web app.
 
-#### Initializer <a name="Initializer" id="construct-hub.FeatureFlags.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.FeatureFlags.Initializer"></a>
 
 ```typescript
-import { FeatureFlags } from 'construct-hub'
+import { FeatureFlags } from '@gd-constructs/construct-hub'
 
 const featureFlags: FeatureFlags = { ... }
 ```
@@ -1228,12 +1228,12 @@ const featureFlags: FeatureFlags = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.FeatureFlags.property.homeRedesign">homeRedesign</a></code> | <code>boolean</code> | *No description.* |
-| <code><a href="#construct-hub.FeatureFlags.property.searchRedesign">searchRedesign</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.FeatureFlags.property.homeRedesign">homeRedesign</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.FeatureFlags.property.searchRedesign">searchRedesign</a></code> | <code>boolean</code> | *No description.* |
 
 ---
 
-##### `homeRedesign`<sup>Optional</sup> <a name="homeRedesign" id="construct-hub.FeatureFlags.property.homeRedesign"></a>
+##### `homeRedesign`<sup>Optional</sup> <a name="homeRedesign" id="@gd-constructs/construct-hub.FeatureFlags.property.homeRedesign"></a>
 
 ```typescript
 public readonly homeRedesign: boolean;
@@ -1243,7 +1243,7 @@ public readonly homeRedesign: boolean;
 
 ---
 
-##### `searchRedesign`<sup>Optional</sup> <a name="searchRedesign" id="construct-hub.FeatureFlags.property.searchRedesign"></a>
+##### `searchRedesign`<sup>Optional</sup> <a name="searchRedesign" id="@gd-constructs/construct-hub.FeatureFlags.property.searchRedesign"></a>
 
 ```typescript
 public readonly searchRedesign: boolean;
@@ -1253,14 +1253,14 @@ public readonly searchRedesign: boolean;
 
 ---
 
-### FeedConfiguration <a name="FeedConfiguration" id="construct-hub.FeedConfiguration"></a>
+### FeedConfiguration <a name="FeedConfiguration" id="@gd-constructs/construct-hub.FeedConfiguration"></a>
 
 Configuration for generating RSS and ATOM feed for the latest packages.
 
-#### Initializer <a name="Initializer" id="construct-hub.FeedConfiguration.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.FeedConfiguration.Initializer"></a>
 
 ```typescript
-import { FeedConfiguration } from 'construct-hub'
+import { FeedConfiguration } from '@gd-constructs/construct-hub'
 
 const feedConfiguration: FeedConfiguration = { ... }
 ```
@@ -1269,13 +1269,13 @@ const feedConfiguration: FeedConfiguration = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.FeedConfiguration.property.feedDescription">feedDescription</a></code> | <code>string</code> | description used in the generated feed. |
-| <code><a href="#construct-hub.FeedConfiguration.property.feedTitle">feedTitle</a></code> | <code>string</code> | Title used in the generated feed. |
-| <code><a href="#construct-hub.FeedConfiguration.property.githubTokenSecret">githubTokenSecret</a></code> | <code>aws-cdk-lib.aws_secretsmanager.ISecret</code> | Github token for generating release notes. |
+| <code><a href="#@gd-constructs/construct-hub.FeedConfiguration.property.feedDescription">feedDescription</a></code> | <code>string</code> | description used in the generated feed. |
+| <code><a href="#@gd-constructs/construct-hub.FeedConfiguration.property.feedTitle">feedTitle</a></code> | <code>string</code> | Title used in the generated feed. |
+| <code><a href="#@gd-constructs/construct-hub.FeedConfiguration.property.githubTokenSecret">githubTokenSecret</a></code> | <code>aws-cdk-lib.aws_secretsmanager.ISecret</code> | Github token for generating release notes. |
 
 ---
 
-##### `feedDescription`<sup>Optional</sup> <a name="feedDescription" id="construct-hub.FeedConfiguration.property.feedDescription"></a>
+##### `feedDescription`<sup>Optional</sup> <a name="feedDescription" id="@gd-constructs/construct-hub.FeedConfiguration.property.feedDescription"></a>
 
 ```typescript
 public readonly feedDescription: string;
@@ -1287,7 +1287,7 @@ description used in the generated feed.
 
 ---
 
-##### `feedTitle`<sup>Optional</sup> <a name="feedTitle" id="construct-hub.FeedConfiguration.property.feedTitle"></a>
+##### `feedTitle`<sup>Optional</sup> <a name="feedTitle" id="@gd-constructs/construct-hub.FeedConfiguration.property.feedTitle"></a>
 
 ```typescript
 public readonly feedTitle: string;
@@ -1299,7 +1299,7 @@ Title used in the generated feed.
 
 ---
 
-##### `githubTokenSecret`<sup>Optional</sup> <a name="githubTokenSecret" id="construct-hub.FeedConfiguration.property.githubTokenSecret"></a>
+##### `githubTokenSecret`<sup>Optional</sup> <a name="githubTokenSecret" id="@gd-constructs/construct-hub.FeedConfiguration.property.githubTokenSecret"></a>
 
 ```typescript
 public readonly githubTokenSecret: ISecret;
@@ -1313,12 +1313,12 @@ When missing no release notes will be included in the generated RSS/ATOM feed
 
 ---
 
-### FilterTypeValue <a name="FilterTypeValue" id="construct-hub.FilterTypeValue"></a>
+### FilterTypeValue <a name="FilterTypeValue" id="@gd-constructs/construct-hub.FilterTypeValue"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.FilterTypeValue.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.FilterTypeValue.Initializer"></a>
 
 ```typescript
-import { FilterTypeValue } from 'construct-hub'
+import { FilterTypeValue } from '@gd-constructs/construct-hub'
 
 const filterTypeValue: FilterTypeValue = { ... }
 ```
@@ -1327,11 +1327,11 @@ const filterTypeValue: FilterTypeValue = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.FilterTypeValue.property.type">type</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.FilterTypeValue.property.type">type</a></code> | <code>string</code> | *No description.* |
 
 ---
 
-##### `type`<sup>Required</sup> <a name="type" id="construct-hub.FilterTypeValue.property.type"></a>
+##### `type`<sup>Required</sup> <a name="type" id="@gd-constructs/construct-hub.FilterTypeValue.property.type"></a>
 
 ```typescript
 public readonly type: string;
@@ -1341,12 +1341,12 @@ public readonly type: string;
 
 ---
 
-### Highlight <a name="Highlight" id="construct-hub.Highlight"></a>
+### Highlight <a name="Highlight" id="@gd-constructs/construct-hub.Highlight"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.Highlight.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.Highlight.Initializer"></a>
 
 ```typescript
-import { Highlight } from 'construct-hub'
+import { Highlight } from '@gd-constructs/construct-hub'
 
 const highlight: Highlight = { ... }
 ```
@@ -1355,13 +1355,13 @@ const highlight: Highlight = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.Highlight.property.label">label</a></code> | <code>string</code> | The label for the tag being applied. |
-| <code><a href="#construct-hub.Highlight.property.color">color</a></code> | <code>string</code> | The hex value string for the color of the tag when displayed. |
-| <code><a href="#construct-hub.Highlight.property.icon">icon</a></code> | <code>string</code> | Icon displayed next to highlight on package card. |
+| <code><a href="#@gd-constructs/construct-hub.Highlight.property.label">label</a></code> | <code>string</code> | The label for the tag being applied. |
+| <code><a href="#@gd-constructs/construct-hub.Highlight.property.color">color</a></code> | <code>string</code> | The hex value string for the color of the tag when displayed. |
+| <code><a href="#@gd-constructs/construct-hub.Highlight.property.icon">icon</a></code> | <code>string</code> | Icon displayed next to highlight on package card. |
 
 ---
 
-##### `label`<sup>Required</sup> <a name="label" id="construct-hub.Highlight.property.label"></a>
+##### `label`<sup>Required</sup> <a name="label" id="@gd-constructs/construct-hub.Highlight.property.label"></a>
 
 ```typescript
 public readonly label: string;
@@ -1373,7 +1373,7 @@ The label for the tag being applied.
 
 ---
 
-##### `color`<sup>Optional</sup> <a name="color" id="construct-hub.Highlight.property.color"></a>
+##### `color`<sup>Optional</sup> <a name="color" id="@gd-constructs/construct-hub.Highlight.property.color"></a>
 
 ```typescript
 public readonly color: string;
@@ -1385,7 +1385,7 @@ The hex value string for the color of the tag when displayed.
 
 ---
 
-##### `icon`<sup>Optional</sup> <a name="icon" id="construct-hub.Highlight.property.icon"></a>
+##### `icon`<sup>Optional</sup> <a name="icon" id="@gd-constructs/construct-hub.Highlight.property.icon"></a>
 
 ```typescript
 public readonly icon: string;
@@ -1397,12 +1397,12 @@ Icon displayed next to highlight on package card.
 
 ---
 
-### Keyword <a name="Keyword" id="construct-hub.Keyword"></a>
+### Keyword <a name="Keyword" id="@gd-constructs/construct-hub.Keyword"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.Keyword.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.Keyword.Initializer"></a>
 
 ```typescript
-import { Keyword } from 'construct-hub'
+import { Keyword } from '@gd-constructs/construct-hub'
 
 const keyword: Keyword = { ... }
 ```
@@ -1411,12 +1411,12 @@ const keyword: Keyword = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.Keyword.property.label">label</a></code> | <code>string</code> | The label for the tag being applied. |
-| <code><a href="#construct-hub.Keyword.property.color">color</a></code> | <code>string</code> | The hex value string for the color of the tag when displayed. |
+| <code><a href="#@gd-constructs/construct-hub.Keyword.property.label">label</a></code> | <code>string</code> | The label for the tag being applied. |
+| <code><a href="#@gd-constructs/construct-hub.Keyword.property.color">color</a></code> | <code>string</code> | The hex value string for the color of the tag when displayed. |
 
 ---
 
-##### `label`<sup>Required</sup> <a name="label" id="construct-hub.Keyword.property.label"></a>
+##### `label`<sup>Required</sup> <a name="label" id="@gd-constructs/construct-hub.Keyword.property.label"></a>
 
 ```typescript
 public readonly label: string;
@@ -1428,7 +1428,7 @@ The label for the tag being applied.
 
 ---
 
-##### `color`<sup>Optional</sup> <a name="color" id="construct-hub.Keyword.property.color"></a>
+##### `color`<sup>Optional</sup> <a name="color" id="@gd-constructs/construct-hub.Keyword.property.color"></a>
 
 ```typescript
 public readonly color: string;
@@ -1440,12 +1440,12 @@ The hex value string for the color of the tag when displayed.
 
 ---
 
-### LinkedResource <a name="LinkedResource" id="construct-hub.LinkedResource"></a>
+### LinkedResource <a name="LinkedResource" id="@gd-constructs/construct-hub.LinkedResource"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.LinkedResource.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.LinkedResource.Initializer"></a>
 
 ```typescript
-import { LinkedResource } from 'construct-hub'
+import { LinkedResource } from '@gd-constructs/construct-hub'
 
 const linkedResource: LinkedResource = { ... }
 ```
@@ -1454,13 +1454,13 @@ const linkedResource: LinkedResource = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.LinkedResource.property.name">name</a></code> | <code>string</code> | The name of the linked resource. |
-| <code><a href="#construct-hub.LinkedResource.property.url">url</a></code> | <code>string</code> | The URL where the linked resource can be found. |
-| <code><a href="#construct-hub.LinkedResource.property.primary">primary</a></code> | <code>boolean</code> | Whether this is the primary resource of the bound package source. |
+| <code><a href="#@gd-constructs/construct-hub.LinkedResource.property.name">name</a></code> | <code>string</code> | The name of the linked resource. |
+| <code><a href="#@gd-constructs/construct-hub.LinkedResource.property.url">url</a></code> | <code>string</code> | The URL where the linked resource can be found. |
+| <code><a href="#@gd-constructs/construct-hub.LinkedResource.property.primary">primary</a></code> | <code>boolean</code> | Whether this is the primary resource of the bound package source. |
 
 ---
 
-##### `name`<sup>Required</sup> <a name="name" id="construct-hub.LinkedResource.property.name"></a>
+##### `name`<sup>Required</sup> <a name="name" id="@gd-constructs/construct-hub.LinkedResource.property.name"></a>
 
 ```typescript
 public readonly name: string;
@@ -1472,7 +1472,7 @@ The name of the linked resource.
 
 ---
 
-##### `url`<sup>Required</sup> <a name="url" id="construct-hub.LinkedResource.property.url"></a>
+##### `url`<sup>Required</sup> <a name="url" id="@gd-constructs/construct-hub.LinkedResource.property.url"></a>
 
 ```typescript
 public readonly url: string;
@@ -1484,7 +1484,7 @@ The URL where the linked resource can be found.
 
 ---
 
-##### `primary`<sup>Optional</sup> <a name="primary" id="construct-hub.LinkedResource.property.primary"></a>
+##### `primary`<sup>Optional</sup> <a name="primary" id="@gd-constructs/construct-hub.LinkedResource.property.primary"></a>
 
 ```typescript
 public readonly primary: boolean;
@@ -1501,12 +1501,12 @@ dashboard.
 
 ---
 
-### NpmJsProps <a name="NpmJsProps" id="construct-hub.sources.NpmJsProps"></a>
+### NpmJsProps <a name="NpmJsProps" id="@gd-constructs/construct-hub.sources.NpmJsProps"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.sources.NpmJsProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.sources.NpmJsProps.Initializer"></a>
 
 ```typescript
-import { sources } from 'construct-hub'
+import { sources } from '@gd-constructs/construct-hub'
 
 const npmJsProps: sources.NpmJsProps = { ... }
 ```
@@ -1515,14 +1515,14 @@ const npmJsProps: sources.NpmJsProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.sources.NpmJsProps.property.canaryPackage">canaryPackage</a></code> | <code>string</code> | The package that is monitored by the package canary, if enabled by `enableCanary`. |
-| <code><a href="#construct-hub.sources.NpmJsProps.property.canarySla">canarySla</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance. |
-| <code><a href="#construct-hub.sources.NpmJsProps.property.enableCanary">enableCanary</a></code> | <code>boolean</code> | Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics. |
-| <code><a href="#construct-hub.sources.NpmJsProps.property.stagingBucket">stagingBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The bucket to use for staging npm packages. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJsProps.property.canaryPackage">canaryPackage</a></code> | <code>string</code> | The package that is monitored by the package canary, if enabled by `enableCanary`. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJsProps.property.canarySla">canarySla</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJsProps.property.enableCanary">enableCanary</a></code> | <code>boolean</code> | Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJsProps.property.stagingBucket">stagingBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The bucket to use for staging npm packages. |
 
 ---
 
-##### `canaryPackage`<sup>Optional</sup> <a name="canaryPackage" id="construct-hub.sources.NpmJsProps.property.canaryPackage"></a>
+##### `canaryPackage`<sup>Optional</sup> <a name="canaryPackage" id="@gd-constructs/construct-hub.sources.NpmJsProps.property.canaryPackage"></a>
 
 ```typescript
 public readonly canaryPackage: string;
@@ -1535,7 +1535,7 @@ The package that is monitored by the package canary, if enabled by `enableCanary
 
 ---
 
-##### `canarySla`<sup>Optional</sup> <a name="canarySla" id="construct-hub.sources.NpmJsProps.property.canarySla"></a>
+##### `canarySla`<sup>Optional</sup> <a name="canarySla" id="@gd-constructs/construct-hub.sources.NpmJsProps.property.canarySla"></a>
 
 ```typescript
 public readonly canarySla: Duration;
@@ -1551,7 +1551,7 @@ alarm will trigger if this SLA is breached by the `canaryPackage`.
 
 ---
 
-##### `enableCanary`<sup>Optional</sup> <a name="enableCanary" id="construct-hub.sources.NpmJsProps.property.enableCanary"></a>
+##### `enableCanary`<sup>Optional</sup> <a name="enableCanary" id="@gd-constructs/construct-hub.sources.NpmJsProps.property.enableCanary"></a>
 
 ```typescript
 public readonly enableCanary: boolean;
@@ -1564,7 +1564,7 @@ Registers a package canary, which will track availability of a canary package in
 
 ---
 
-##### `stagingBucket`<sup>Optional</sup> <a name="stagingBucket" id="construct-hub.sources.NpmJsProps.property.stagingBucket"></a>
+##### `stagingBucket`<sup>Optional</sup> <a name="stagingBucket" id="@gd-constructs/construct-hub.sources.NpmJsProps.property.stagingBucket"></a>
 
 ```typescript
 public readonly stagingBucket: IBucket;
@@ -1577,12 +1577,12 @@ The bucket to use for staging npm packages.
 
 ---
 
-### PackageLinkConfig <a name="PackageLinkConfig" id="construct-hub.PackageLinkConfig"></a>
+### PackageLinkConfig <a name="PackageLinkConfig" id="@gd-constructs/construct-hub.PackageLinkConfig"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.PackageLinkConfig.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.PackageLinkConfig.Initializer"></a>
 
 ```typescript
-import { PackageLinkConfig } from 'construct-hub'
+import { PackageLinkConfig } from '@gd-constructs/construct-hub'
 
 const packageLinkConfig: PackageLinkConfig = { ... }
 ```
@@ -1591,14 +1591,14 @@ const packageLinkConfig: PackageLinkConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageLinkConfig.property.configKey">configKey</a></code> | <code>string</code> | The location of the value inside the constructHub.packageLinks key of a module's package.json. |
-| <code><a href="#construct-hub.PackageLinkConfig.property.linkLabel">linkLabel</a></code> | <code>string</code> | The name of the link, appears before the ":" on the website. |
-| <code><a href="#construct-hub.PackageLinkConfig.property.allowedDomains">allowedDomains</a></code> | <code>string[]</code> | allowList of domains for this link. |
-| <code><a href="#construct-hub.PackageLinkConfig.property.linkText">linkText</a></code> | <code>string</code> | optional text to display as the hyperlink text. |
+| <code><a href="#@gd-constructs/construct-hub.PackageLinkConfig.property.configKey">configKey</a></code> | <code>string</code> | The location of the value inside the constructHub.packageLinks key of a module's package.json. |
+| <code><a href="#@gd-constructs/construct-hub.PackageLinkConfig.property.linkLabel">linkLabel</a></code> | <code>string</code> | The name of the link, appears before the ":" on the website. |
+| <code><a href="#@gd-constructs/construct-hub.PackageLinkConfig.property.allowedDomains">allowedDomains</a></code> | <code>string[]</code> | allowList of domains for this link. |
+| <code><a href="#@gd-constructs/construct-hub.PackageLinkConfig.property.linkText">linkText</a></code> | <code>string</code> | optional text to display as the hyperlink text. |
 
 ---
 
-##### `configKey`<sup>Required</sup> <a name="configKey" id="construct-hub.PackageLinkConfig.property.configKey"></a>
+##### `configKey`<sup>Required</sup> <a name="configKey" id="@gd-constructs/construct-hub.PackageLinkConfig.property.configKey"></a>
 
 ```typescript
 public readonly configKey: string;
@@ -1610,7 +1610,7 @@ The location of the value inside the constructHub.packageLinks key of a module's
 
 ---
 
-##### `linkLabel`<sup>Required</sup> <a name="linkLabel" id="construct-hub.PackageLinkConfig.property.linkLabel"></a>
+##### `linkLabel`<sup>Required</sup> <a name="linkLabel" id="@gd-constructs/construct-hub.PackageLinkConfig.property.linkLabel"></a>
 
 ```typescript
 public readonly linkLabel: string;
@@ -1622,7 +1622,7 @@ The name of the link, appears before the ":" on the website.
 
 ---
 
-##### `allowedDomains`<sup>Optional</sup> <a name="allowedDomains" id="construct-hub.PackageLinkConfig.property.allowedDomains"></a>
+##### `allowedDomains`<sup>Optional</sup> <a name="allowedDomains" id="@gd-constructs/construct-hub.PackageLinkConfig.property.allowedDomains"></a>
 
 ```typescript
 public readonly allowedDomains: string[];
@@ -1635,7 +1635,7 @@ allowList of domains for this link.
 
 ---
 
-##### `linkText`<sup>Optional</sup> <a name="linkText" id="construct-hub.PackageLinkConfig.property.linkText"></a>
+##### `linkText`<sup>Optional</sup> <a name="linkText" id="@gd-constructs/construct-hub.PackageLinkConfig.property.linkText"></a>
 
 ```typescript
 public readonly linkText: string;
@@ -1648,14 +1648,14 @@ optional text to display as the hyperlink text.
 
 ---
 
-### PackageSourceBindOptions <a name="PackageSourceBindOptions" id="construct-hub.PackageSourceBindOptions"></a>
+### PackageSourceBindOptions <a name="PackageSourceBindOptions" id="@gd-constructs/construct-hub.PackageSourceBindOptions"></a>
 
 Options for binding a package source.
 
-#### Initializer <a name="Initializer" id="construct-hub.PackageSourceBindOptions.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.PackageSourceBindOptions.Initializer"></a>
 
 ```typescript
-import { PackageSourceBindOptions } from 'construct-hub'
+import { PackageSourceBindOptions } from '@gd-constructs/construct-hub'
 
 const packageSourceBindOptions: PackageSourceBindOptions = { ... }
 ```
@@ -1664,18 +1664,18 @@ const packageSourceBindOptions: PackageSourceBindOptions = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base URL of the bound ConstructHub instance. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.ingestion">ingestion</a></code> | <code>aws-cdk-lib.aws_iam.IGrantable</code> | The `IGrantable` that will process downstream messages from the bound package source. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.licenseList">licenseList</a></code> | <code><a href="#construct-hub.ILicenseList">ILicenseList</a></code> | The license list applied by the bound Construct Hub instance. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.monitoring">monitoring</a></code> | <code><a href="#construct-hub.IMonitoring">IMonitoring</a></code> | The monitoring instance to use for registering alarms, etc. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.overviewDashboard">overviewDashboard</a></code> | <code><a href="#construct-hub.IOverviewDashboard">IOverviewDashboard</a></code> | The overview dashboard to add widgets to. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.queue">queue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | The SQS queue to which messages should be sent. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.denyList">denyList</a></code> | <code><a href="#construct-hub.IDenyList">IDenyList</a></code> | The configured `DenyList` for the bound Construct Hub instance, if any. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.repository">repository</a></code> | <code><a href="#construct-hub.IRepository">IRepository</a></code> | The CodeArtifact repository that is internally used by ConstructHub. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindOptions.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base URL of the bound ConstructHub instance. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindOptions.property.ingestion">ingestion</a></code> | <code>aws-cdk-lib.aws_iam.IGrantable</code> | The `IGrantable` that will process downstream messages from the bound package source. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindOptions.property.licenseList">licenseList</a></code> | <code><a href="#@gd-constructs/construct-hub.ILicenseList">ILicenseList</a></code> | The license list applied by the bound Construct Hub instance. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindOptions.property.monitoring">monitoring</a></code> | <code><a href="#@gd-constructs/construct-hub.IMonitoring">IMonitoring</a></code> | The monitoring instance to use for registering alarms, etc. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindOptions.property.overviewDashboard">overviewDashboard</a></code> | <code><a href="#@gd-constructs/construct-hub.IOverviewDashboard">IOverviewDashboard</a></code> | The overview dashboard to add widgets to. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindOptions.property.queue">queue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | The SQS queue to which messages should be sent. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindOptions.property.denyList">denyList</a></code> | <code><a href="#@gd-constructs/construct-hub.IDenyList">IDenyList</a></code> | The configured `DenyList` for the bound Construct Hub instance, if any. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindOptions.property.repository">repository</a></code> | <code><a href="#@gd-constructs/construct-hub.IRepository">IRepository</a></code> | The CodeArtifact repository that is internally used by ConstructHub. |
 
 ---
 
-##### `baseUrl`<sup>Required</sup> <a name="baseUrl" id="construct-hub.PackageSourceBindOptions.property.baseUrl"></a>
+##### `baseUrl`<sup>Required</sup> <a name="baseUrl" id="@gd-constructs/construct-hub.PackageSourceBindOptions.property.baseUrl"></a>
 
 ```typescript
 public readonly baseUrl: string;
@@ -1687,7 +1687,7 @@ The base URL of the bound ConstructHub instance.
 
 ---
 
-##### `ingestion`<sup>Required</sup> <a name="ingestion" id="construct-hub.PackageSourceBindOptions.property.ingestion"></a>
+##### `ingestion`<sup>Required</sup> <a name="ingestion" id="@gd-constructs/construct-hub.PackageSourceBindOptions.property.ingestion"></a>
 
 ```typescript
 public readonly ingestion: IGrantable;
@@ -1702,13 +1702,13 @@ from the URLs sent to the `queue`.
 
 ---
 
-##### `licenseList`<sup>Required</sup> <a name="licenseList" id="construct-hub.PackageSourceBindOptions.property.licenseList"></a>
+##### `licenseList`<sup>Required</sup> <a name="licenseList" id="@gd-constructs/construct-hub.PackageSourceBindOptions.property.licenseList"></a>
 
 ```typescript
 public readonly licenseList: ILicenseList;
 ```
 
-- *Type:* <a href="#construct-hub.ILicenseList">ILicenseList</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.ILicenseList">ILicenseList</a>
 
 The license list applied by the bound Construct Hub instance.
 
@@ -1718,31 +1718,31 @@ filter.
 
 ---
 
-##### `monitoring`<sup>Required</sup> <a name="monitoring" id="construct-hub.PackageSourceBindOptions.property.monitoring"></a>
+##### `monitoring`<sup>Required</sup> <a name="monitoring" id="@gd-constructs/construct-hub.PackageSourceBindOptions.property.monitoring"></a>
 
 ```typescript
 public readonly monitoring: IMonitoring;
 ```
 
-- *Type:* <a href="#construct-hub.IMonitoring">IMonitoring</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.IMonitoring">IMonitoring</a>
 
 The monitoring instance to use for registering alarms, etc.
 
 ---
 
-##### `overviewDashboard`<sup>Required</sup> <a name="overviewDashboard" id="construct-hub.PackageSourceBindOptions.property.overviewDashboard"></a>
+##### `overviewDashboard`<sup>Required</sup> <a name="overviewDashboard" id="@gd-constructs/construct-hub.PackageSourceBindOptions.property.overviewDashboard"></a>
 
 ```typescript
 public readonly overviewDashboard: IOverviewDashboard;
 ```
 
-- *Type:* <a href="#construct-hub.IOverviewDashboard">IOverviewDashboard</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.IOverviewDashboard">IOverviewDashboard</a>
 
 The overview dashboard to add widgets to.
 
 ---
 
-##### `queue`<sup>Required</sup> <a name="queue" id="construct-hub.PackageSourceBindOptions.property.queue"></a>
+##### `queue`<sup>Required</sup> <a name="queue" id="@gd-constructs/construct-hub.PackageSourceBindOptions.property.queue"></a>
 
 ```typescript
 public readonly queue: IQueue;
@@ -1757,25 +1757,25 @@ the package discovery schema.
 
 ---
 
-##### `denyList`<sup>Optional</sup> <a name="denyList" id="construct-hub.PackageSourceBindOptions.property.denyList"></a>
+##### `denyList`<sup>Optional</sup> <a name="denyList" id="@gd-constructs/construct-hub.PackageSourceBindOptions.property.denyList"></a>
 
 ```typescript
 public readonly denyList: IDenyList;
 ```
 
-- *Type:* <a href="#construct-hub.IDenyList">IDenyList</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.IDenyList">IDenyList</a>
 
 The configured `DenyList` for the bound Construct Hub instance, if any.
 
 ---
 
-##### `repository`<sup>Optional</sup> <a name="repository" id="construct-hub.PackageSourceBindOptions.property.repository"></a>
+##### `repository`<sup>Optional</sup> <a name="repository" id="@gd-constructs/construct-hub.PackageSourceBindOptions.property.repository"></a>
 
 ```typescript
 public readonly repository: IRepository;
 ```
 
-- *Type:* <a href="#construct-hub.IRepository">IRepository</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.IRepository">IRepository</a>
 
 The CodeArtifact repository that is internally used by ConstructHub.
 
@@ -1784,14 +1784,14 @@ may be undefined if no CodeArtifact repository is internally used.
 
 ---
 
-### PackageSourceBindResult <a name="PackageSourceBindResult" id="construct-hub.PackageSourceBindResult"></a>
+### PackageSourceBindResult <a name="PackageSourceBindResult" id="@gd-constructs/construct-hub.PackageSourceBindResult"></a>
 
 The result of binding a package source.
 
-#### Initializer <a name="Initializer" id="construct-hub.PackageSourceBindResult.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.PackageSourceBindResult.Initializer"></a>
 
 ```typescript
-import { PackageSourceBindResult } from 'construct-hub'
+import { PackageSourceBindResult } from '@gd-constructs/construct-hub'
 
 const packageSourceBindResult: PackageSourceBindResult = { ... }
 ```
@@ -1800,13 +1800,13 @@ const packageSourceBindResult: PackageSourceBindResult = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageSourceBindResult.property.dashboardWidgets">dashboardWidgets</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IWidget[][]</code> | Widgets to add to the operator dashbaord for monitoring the health of the bound package source. |
-| <code><a href="#construct-hub.PackageSourceBindResult.property.name">name</a></code> | <code>string</code> | The name of the bound package source. |
-| <code><a href="#construct-hub.PackageSourceBindResult.property.links">links</a></code> | <code><a href="#construct-hub.LinkedResource">LinkedResource</a>[]</code> | An optional list of linked resources to be displayed on the monitoring dashboard. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindResult.property.dashboardWidgets">dashboardWidgets</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IWidget[][]</code> | Widgets to add to the operator dashbaord for monitoring the health of the bound package source. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindResult.property.name">name</a></code> | <code>string</code> | The name of the bound package source. |
+| <code><a href="#@gd-constructs/construct-hub.PackageSourceBindResult.property.links">links</a></code> | <code><a href="#@gd-constructs/construct-hub.LinkedResource">LinkedResource</a>[]</code> | An optional list of linked resources to be displayed on the monitoring dashboard. |
 
 ---
 
-##### `dashboardWidgets`<sup>Required</sup> <a name="dashboardWidgets" id="construct-hub.PackageSourceBindResult.property.dashboardWidgets"></a>
+##### `dashboardWidgets`<sup>Required</sup> <a name="dashboardWidgets" id="@gd-constructs/construct-hub.PackageSourceBindResult.property.dashboardWidgets"></a>
 
 ```typescript
 public readonly dashboardWidgets: IWidget[][];
@@ -1822,7 +1822,7 @@ represents a row of widgets on the dashboard.
 
 ---
 
-##### `name`<sup>Required</sup> <a name="name" id="construct-hub.PackageSourceBindResult.property.name"></a>
+##### `name`<sup>Required</sup> <a name="name" id="@gd-constructs/construct-hub.PackageSourceBindResult.property.name"></a>
 
 ```typescript
 public readonly name: string;
@@ -1837,29 +1837,29 @@ dashboards (so it should be a meaningful identification of the source).
 
 ---
 
-##### `links`<sup>Optional</sup> <a name="links" id="construct-hub.PackageSourceBindResult.property.links"></a>
+##### `links`<sup>Optional</sup> <a name="links" id="@gd-constructs/construct-hub.PackageSourceBindResult.property.links"></a>
 
 ```typescript
 public readonly links: LinkedResource[];
 ```
 
-- *Type:* <a href="#construct-hub.LinkedResource">LinkedResource</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.LinkedResource">LinkedResource</a>[]
 
 An optional list of linked resources to be displayed on the monitoring dashboard.
 
 ---
 
-### PackageTag <a name="PackageTag" id="construct-hub.PackageTag"></a>
+### PackageTag <a name="PackageTag" id="@gd-constructs/construct-hub.PackageTag"></a>
 
 Configuration for applying custom tags to relevant packages.
 
 Custom tags are
 displayed on the package details page, and can be used for searching.
 
-#### Initializer <a name="Initializer" id="construct-hub.PackageTag.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.PackageTag.Initializer"></a>
 
 ```typescript
-import { PackageTag } from 'construct-hub'
+import { PackageTag } from '@gd-constructs/construct-hub'
 
 const packageTag: PackageTag = { ... }
 ```
@@ -1868,15 +1868,15 @@ const packageTag: PackageTag = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageTag.property.id">id</a></code> | <code>string</code> | Identifier for tag, used for search. |
-| <code><a href="#construct-hub.PackageTag.property.highlight">highlight</a></code> | <code><a href="#construct-hub.Highlight">Highlight</a></code> | Configuration for higlighting tag on package card. |
-| <code><a href="#construct-hub.PackageTag.property.keyword">keyword</a></code> | <code><a href="#construct-hub.Keyword">Keyword</a></code> | Configuration for showing tag as keyword. |
-| <code><a href="#construct-hub.PackageTag.property.searchFilter">searchFilter</a></code> | <code><a href="#construct-hub.SearchFilter">SearchFilter</a></code> | Configuration for showing tag as search filter. |
-| <code><a href="#construct-hub.PackageTag.property.condition">condition</a></code> | <code><a href="#construct-hub.TagCondition">TagCondition</a></code> | The description of the logic that dictates whether the package has the tag applied. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTag.property.id">id</a></code> | <code>string</code> | Identifier for tag, used for search. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTag.property.highlight">highlight</a></code> | <code><a href="#@gd-constructs/construct-hub.Highlight">Highlight</a></code> | Configuration for higlighting tag on package card. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTag.property.keyword">keyword</a></code> | <code><a href="#@gd-constructs/construct-hub.Keyword">Keyword</a></code> | Configuration for showing tag as keyword. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTag.property.searchFilter">searchFilter</a></code> | <code><a href="#@gd-constructs/construct-hub.SearchFilter">SearchFilter</a></code> | Configuration for showing tag as search filter. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTag.property.condition">condition</a></code> | <code><a href="#@gd-constructs/construct-hub.TagCondition">TagCondition</a></code> | The description of the logic that dictates whether the package has the tag applied. |
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="construct-hub.PackageTag.property.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.PackageTag.property.id"></a>
 
 ```typescript
 public readonly id: string;
@@ -1890,63 +1890,63 @@ Must be unique amongst tags.
 
 ---
 
-##### `highlight`<sup>Optional</sup> <a name="highlight" id="construct-hub.PackageTag.property.highlight"></a>
+##### `highlight`<sup>Optional</sup> <a name="highlight" id="@gd-constructs/construct-hub.PackageTag.property.highlight"></a>
 
 ```typescript
 public readonly highlight: Highlight;
 ```
 
-- *Type:* <a href="#construct-hub.Highlight">Highlight</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.Highlight">Highlight</a>
 - *Default:* don't highlight tag
 
 Configuration for higlighting tag on package card.
 
 ---
 
-##### `keyword`<sup>Optional</sup> <a name="keyword" id="construct-hub.PackageTag.property.keyword"></a>
+##### `keyword`<sup>Optional</sup> <a name="keyword" id="@gd-constructs/construct-hub.PackageTag.property.keyword"></a>
 
 ```typescript
 public readonly keyword: Keyword;
 ```
 
-- *Type:* <a href="#construct-hub.Keyword">Keyword</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.Keyword">Keyword</a>
 - *Default:* don't show tag in keyword list
 
 Configuration for showing tag as keyword.
 
 ---
 
-##### `searchFilter`<sup>Optional</sup> <a name="searchFilter" id="construct-hub.PackageTag.property.searchFilter"></a>
+##### `searchFilter`<sup>Optional</sup> <a name="searchFilter" id="@gd-constructs/construct-hub.PackageTag.property.searchFilter"></a>
 
 ```typescript
 public readonly searchFilter: SearchFilter;
 ```
 
-- *Type:* <a href="#construct-hub.SearchFilter">SearchFilter</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SearchFilter">SearchFilter</a>
 - *Default:* don't show tag in search filters
 
 Configuration for showing tag as search filter.
 
 ---
 
-##### `condition`<sup>Required</sup> <a name="condition" id="construct-hub.PackageTag.property.condition"></a>
+##### `condition`<sup>Required</sup> <a name="condition" id="@gd-constructs/construct-hub.PackageTag.property.condition"></a>
 
 ```typescript
 public readonly condition: TagCondition;
 ```
 
-- *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagCondition">TagCondition</a>
 
 The description of the logic that dictates whether the package has the tag applied.
 
 ---
 
-### PackageTagBase <a name="PackageTagBase" id="construct-hub.PackageTagBase"></a>
+### PackageTagBase <a name="PackageTagBase" id="@gd-constructs/construct-hub.PackageTagBase"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.PackageTagBase.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.PackageTagBase.Initializer"></a>
 
 ```typescript
-import { PackageTagBase } from 'construct-hub'
+import { PackageTagBase } from '@gd-constructs/construct-hub'
 
 const packageTagBase: PackageTagBase = { ... }
 ```
@@ -1955,14 +1955,14 @@ const packageTagBase: PackageTagBase = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageTagBase.property.id">id</a></code> | <code>string</code> | Identifier for tag, used for search. |
-| <code><a href="#construct-hub.PackageTagBase.property.highlight">highlight</a></code> | <code><a href="#construct-hub.Highlight">Highlight</a></code> | Configuration for higlighting tag on package card. |
-| <code><a href="#construct-hub.PackageTagBase.property.keyword">keyword</a></code> | <code><a href="#construct-hub.Keyword">Keyword</a></code> | Configuration for showing tag as keyword. |
-| <code><a href="#construct-hub.PackageTagBase.property.searchFilter">searchFilter</a></code> | <code><a href="#construct-hub.SearchFilter">SearchFilter</a></code> | Configuration for showing tag as search filter. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagBase.property.id">id</a></code> | <code>string</code> | Identifier for tag, used for search. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagBase.property.highlight">highlight</a></code> | <code><a href="#@gd-constructs/construct-hub.Highlight">Highlight</a></code> | Configuration for higlighting tag on package card. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagBase.property.keyword">keyword</a></code> | <code><a href="#@gd-constructs/construct-hub.Keyword">Keyword</a></code> | Configuration for showing tag as keyword. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagBase.property.searchFilter">searchFilter</a></code> | <code><a href="#@gd-constructs/construct-hub.SearchFilter">SearchFilter</a></code> | Configuration for showing tag as search filter. |
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="construct-hub.PackageTagBase.property.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.PackageTagBase.property.id"></a>
 
 ```typescript
 public readonly id: string;
@@ -1976,53 +1976,53 @@ Must be unique amongst tags.
 
 ---
 
-##### `highlight`<sup>Optional</sup> <a name="highlight" id="construct-hub.PackageTagBase.property.highlight"></a>
+##### `highlight`<sup>Optional</sup> <a name="highlight" id="@gd-constructs/construct-hub.PackageTagBase.property.highlight"></a>
 
 ```typescript
 public readonly highlight: Highlight;
 ```
 
-- *Type:* <a href="#construct-hub.Highlight">Highlight</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.Highlight">Highlight</a>
 - *Default:* don't highlight tag
 
 Configuration for higlighting tag on package card.
 
 ---
 
-##### `keyword`<sup>Optional</sup> <a name="keyword" id="construct-hub.PackageTagBase.property.keyword"></a>
+##### `keyword`<sup>Optional</sup> <a name="keyword" id="@gd-constructs/construct-hub.PackageTagBase.property.keyword"></a>
 
 ```typescript
 public readonly keyword: Keyword;
 ```
 
-- *Type:* <a href="#construct-hub.Keyword">Keyword</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.Keyword">Keyword</a>
 - *Default:* don't show tag in keyword list
 
 Configuration for showing tag as keyword.
 
 ---
 
-##### `searchFilter`<sup>Optional</sup> <a name="searchFilter" id="construct-hub.PackageTagBase.property.searchFilter"></a>
+##### `searchFilter`<sup>Optional</sup> <a name="searchFilter" id="@gd-constructs/construct-hub.PackageTagBase.property.searchFilter"></a>
 
 ```typescript
 public readonly searchFilter: SearchFilter;
 ```
 
-- *Type:* <a href="#construct-hub.SearchFilter">SearchFilter</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SearchFilter">SearchFilter</a>
 - *Default:* don't show tag in search filters
 
 Configuration for showing tag as search filter.
 
 ---
 
-### PackageTagConfig <a name="PackageTagConfig" id="construct-hub.PackageTagConfig"></a>
+### PackageTagConfig <a name="PackageTagConfig" id="@gd-constructs/construct-hub.PackageTagConfig"></a>
 
 Serialized tag declaration to be passed to lambdas via environment variables.
 
-#### Initializer <a name="Initializer" id="construct-hub.PackageTagConfig.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.PackageTagConfig.Initializer"></a>
 
 ```typescript
-import { PackageTagConfig } from 'construct-hub'
+import { PackageTagConfig } from '@gd-constructs/construct-hub'
 
 const packageTagConfig: PackageTagConfig = { ... }
 ```
@@ -2031,15 +2031,15 @@ const packageTagConfig: PackageTagConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageTagConfig.property.id">id</a></code> | <code>string</code> | Identifier for tag, used for search. |
-| <code><a href="#construct-hub.PackageTagConfig.property.highlight">highlight</a></code> | <code><a href="#construct-hub.Highlight">Highlight</a></code> | Configuration for higlighting tag on package card. |
-| <code><a href="#construct-hub.PackageTagConfig.property.keyword">keyword</a></code> | <code><a href="#construct-hub.Keyword">Keyword</a></code> | Configuration for showing tag as keyword. |
-| <code><a href="#construct-hub.PackageTagConfig.property.searchFilter">searchFilter</a></code> | <code><a href="#construct-hub.SearchFilter">SearchFilter</a></code> | Configuration for showing tag as search filter. |
-| <code><a href="#construct-hub.PackageTagConfig.property.condition">condition</a></code> | <code><a href="#construct-hub.TagConditionConfig">TagConditionConfig</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagConfig.property.id">id</a></code> | <code>string</code> | Identifier for tag, used for search. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagConfig.property.highlight">highlight</a></code> | <code><a href="#@gd-constructs/construct-hub.Highlight">Highlight</a></code> | Configuration for higlighting tag on package card. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagConfig.property.keyword">keyword</a></code> | <code><a href="#@gd-constructs/construct-hub.Keyword">Keyword</a></code> | Configuration for showing tag as keyword. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagConfig.property.searchFilter">searchFilter</a></code> | <code><a href="#@gd-constructs/construct-hub.SearchFilter">SearchFilter</a></code> | Configuration for showing tag as search filter. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagConfig.property.condition">condition</a></code> | <code><a href="#@gd-constructs/construct-hub.TagConditionConfig">TagConditionConfig</a></code> | *No description.* |
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="construct-hub.PackageTagConfig.property.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.PackageTagConfig.property.id"></a>
 
 ```typescript
 public readonly id: string;
@@ -2053,61 +2053,61 @@ Must be unique amongst tags.
 
 ---
 
-##### `highlight`<sup>Optional</sup> <a name="highlight" id="construct-hub.PackageTagConfig.property.highlight"></a>
+##### `highlight`<sup>Optional</sup> <a name="highlight" id="@gd-constructs/construct-hub.PackageTagConfig.property.highlight"></a>
 
 ```typescript
 public readonly highlight: Highlight;
 ```
 
-- *Type:* <a href="#construct-hub.Highlight">Highlight</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.Highlight">Highlight</a>
 - *Default:* don't highlight tag
 
 Configuration for higlighting tag on package card.
 
 ---
 
-##### `keyword`<sup>Optional</sup> <a name="keyword" id="construct-hub.PackageTagConfig.property.keyword"></a>
+##### `keyword`<sup>Optional</sup> <a name="keyword" id="@gd-constructs/construct-hub.PackageTagConfig.property.keyword"></a>
 
 ```typescript
 public readonly keyword: Keyword;
 ```
 
-- *Type:* <a href="#construct-hub.Keyword">Keyword</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.Keyword">Keyword</a>
 - *Default:* don't show tag in keyword list
 
 Configuration for showing tag as keyword.
 
 ---
 
-##### `searchFilter`<sup>Optional</sup> <a name="searchFilter" id="construct-hub.PackageTagConfig.property.searchFilter"></a>
+##### `searchFilter`<sup>Optional</sup> <a name="searchFilter" id="@gd-constructs/construct-hub.PackageTagConfig.property.searchFilter"></a>
 
 ```typescript
 public readonly searchFilter: SearchFilter;
 ```
 
-- *Type:* <a href="#construct-hub.SearchFilter">SearchFilter</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SearchFilter">SearchFilter</a>
 - *Default:* don't show tag in search filters
 
 Configuration for showing tag as search filter.
 
 ---
 
-##### `condition`<sup>Required</sup> <a name="condition" id="construct-hub.PackageTagConfig.property.condition"></a>
+##### `condition`<sup>Required</sup> <a name="condition" id="@gd-constructs/construct-hub.PackageTagConfig.property.condition"></a>
 
 ```typescript
 public readonly condition: TagConditionConfig;
 ```
 
-- *Type:* <a href="#construct-hub.TagConditionConfig">TagConditionConfig</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagConditionConfig">TagConditionConfig</a>
 
 ---
 
-### PackageTagGroupConfig <a name="PackageTagGroupConfig" id="construct-hub.PackageTagGroupConfig"></a>
+### PackageTagGroupConfig <a name="PackageTagGroupConfig" id="@gd-constructs/construct-hub.PackageTagGroupConfig"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.PackageTagGroupConfig.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.PackageTagGroupConfig.Initializer"></a>
 
 ```typescript
-import { PackageTagGroupConfig } from 'construct-hub'
+import { PackageTagGroupConfig } from '@gd-constructs/construct-hub'
 
 const packageTagGroupConfig: PackageTagGroupConfig = { ... }
 ```
@@ -2116,14 +2116,14 @@ const packageTagGroupConfig: PackageTagGroupConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageTagGroupConfig.property.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#construct-hub.PackageTagGroupConfig.property.filterType">filterType</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#construct-hub.PackageTagGroupConfig.property.label">label</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#construct-hub.PackageTagGroupConfig.property.tooltip">tooltip</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroupConfig.property.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroupConfig.property.filterType">filterType</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroupConfig.property.label">label</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroupConfig.property.tooltip">tooltip</a></code> | <code>string</code> | *No description.* |
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="construct-hub.PackageTagGroupConfig.property.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.PackageTagGroupConfig.property.id"></a>
 
 ```typescript
 public readonly id: string;
@@ -2133,7 +2133,7 @@ public readonly id: string;
 
 ---
 
-##### `filterType`<sup>Optional</sup> <a name="filterType" id="construct-hub.PackageTagGroupConfig.property.filterType"></a>
+##### `filterType`<sup>Optional</sup> <a name="filterType" id="@gd-constructs/construct-hub.PackageTagGroupConfig.property.filterType"></a>
 
 ```typescript
 public readonly filterType: string;
@@ -2143,7 +2143,7 @@ public readonly filterType: string;
 
 ---
 
-##### `label`<sup>Optional</sup> <a name="label" id="construct-hub.PackageTagGroupConfig.property.label"></a>
+##### `label`<sup>Optional</sup> <a name="label" id="@gd-constructs/construct-hub.PackageTagGroupConfig.property.label"></a>
 
 ```typescript
 public readonly label: string;
@@ -2153,7 +2153,7 @@ public readonly label: string;
 
 ---
 
-##### `tooltip`<sup>Optional</sup> <a name="tooltip" id="construct-hub.PackageTagGroupConfig.property.tooltip"></a>
+##### `tooltip`<sup>Optional</sup> <a name="tooltip" id="@gd-constructs/construct-hub.PackageTagGroupConfig.property.tooltip"></a>
 
 ```typescript
 public readonly tooltip: string;
@@ -2163,12 +2163,12 @@ public readonly tooltip: string;
 
 ---
 
-### PackageTagGroupProps <a name="PackageTagGroupProps" id="construct-hub.PackageTagGroupProps"></a>
+### PackageTagGroupProps <a name="PackageTagGroupProps" id="@gd-constructs/construct-hub.PackageTagGroupProps"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.PackageTagGroupProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.PackageTagGroupProps.Initializer"></a>
 
 ```typescript
-import { PackageTagGroupProps } from 'construct-hub'
+import { PackageTagGroupProps } from '@gd-constructs/construct-hub'
 
 const packageTagGroupProps: PackageTagGroupProps = { ... }
 ```
@@ -2177,19 +2177,19 @@ const packageTagGroupProps: PackageTagGroupProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageTagGroupProps.property.filterType">filterType</a></code> | <code><a href="#construct-hub.FilterType">FilterType</a></code> | Allows to specify the group filter type. |
-| <code><a href="#construct-hub.PackageTagGroupProps.property.label">label</a></code> | <code>string</code> | Group label to display. |
-| <code><a href="#construct-hub.PackageTagGroupProps.property.tooltip">tooltip</a></code> | <code>string</code> | Optional message to show within a tooltip next to the filter label. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroupProps.property.filterType">filterType</a></code> | <code><a href="#@gd-constructs/construct-hub.FilterType">FilterType</a></code> | Allows to specify the group filter type. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroupProps.property.label">label</a></code> | <code>string</code> | Group label to display. |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroupProps.property.tooltip">tooltip</a></code> | <code>string</code> | Optional message to show within a tooltip next to the filter label. |
 
 ---
 
-##### `filterType`<sup>Optional</sup> <a name="filterType" id="construct-hub.PackageTagGroupProps.property.filterType"></a>
+##### `filterType`<sup>Optional</sup> <a name="filterType" id="@gd-constructs/construct-hub.PackageTagGroupProps.property.filterType"></a>
 
 ```typescript
 public readonly filterType: FilterType;
 ```
 
-- *Type:* <a href="#construct-hub.FilterType">FilterType</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.FilterType">FilterType</a>
 
 Allows to specify the group filter type.
 
@@ -2197,7 +2197,7 @@ Defaults to checkbox if not specified
 
 ---
 
-##### `label`<sup>Optional</sup> <a name="label" id="construct-hub.PackageTagGroupProps.property.label"></a>
+##### `label`<sup>Optional</sup> <a name="label" id="@gd-constructs/construct-hub.PackageTagGroupProps.property.label"></a>
 
 ```typescript
 public readonly label: string;
@@ -2211,7 +2211,7 @@ Falls back to id if not provided
 
 ---
 
-##### `tooltip`<sup>Optional</sup> <a name="tooltip" id="construct-hub.PackageTagGroupProps.property.tooltip"></a>
+##### `tooltip`<sup>Optional</sup> <a name="tooltip" id="@gd-constructs/construct-hub.PackageTagGroupProps.property.tooltip"></a>
 
 ```typescript
 public readonly tooltip: string;
@@ -2223,14 +2223,14 @@ Optional message to show within a tooltip next to the filter label.
 
 ---
 
-### S3StorageFactoryProps <a name="S3StorageFactoryProps" id="construct-hub.S3StorageFactoryProps"></a>
+### S3StorageFactoryProps <a name="S3StorageFactoryProps" id="@gd-constructs/construct-hub.S3StorageFactoryProps"></a>
 
 Properties for `S3StorageFactory`.
 
-#### Initializer <a name="Initializer" id="construct-hub.S3StorageFactoryProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.S3StorageFactoryProps.Initializer"></a>
 
 ```typescript
-import { S3StorageFactoryProps } from 'construct-hub'
+import { S3StorageFactoryProps } from '@gd-constructs/construct-hub'
 
 const s3StorageFactoryProps: S3StorageFactoryProps = { ... }
 ```
@@ -2239,11 +2239,11 @@ const s3StorageFactoryProps: S3StorageFactoryProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.S3StorageFactoryProps.property.failover">failover</a></code> | <code>boolean</code> | When enabled, the factory will return the failover buckets instead of the primary. |
+| <code><a href="#@gd-constructs/construct-hub.S3StorageFactoryProps.property.failover">failover</a></code> | <code>boolean</code> | When enabled, the factory will return the failover buckets instead of the primary. |
 
 ---
 
-##### `failover`<sup>Optional</sup> <a name="failover" id="construct-hub.S3StorageFactoryProps.property.failover"></a>
+##### `failover`<sup>Optional</sup> <a name="failover" id="@gd-constructs/construct-hub.S3StorageFactoryProps.property.failover"></a>
 
 ```typescript
 public readonly failover: boolean;
@@ -2256,12 +2256,12 @@ When enabled, the factory will return the failover buckets instead of the primar
 
 ---
 
-### SearchFilter <a name="SearchFilter" id="construct-hub.SearchFilter"></a>
+### SearchFilter <a name="SearchFilter" id="@gd-constructs/construct-hub.SearchFilter"></a>
 
-#### Initializer <a name="Initializer" id="construct-hub.SearchFilter.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.SearchFilter.Initializer"></a>
 
 ```typescript
-import { SearchFilter } from 'construct-hub'
+import { SearchFilter } from '@gd-constructs/construct-hub'
 
 const searchFilter: SearchFilter = { ... }
 ```
@@ -2270,13 +2270,13 @@ const searchFilter: SearchFilter = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.SearchFilter.property.display">display</a></code> | <code>string</code> | Display name for filter. |
-| <code><a href="#construct-hub.SearchFilter.property.group">group</a></code> | <code><a href="#construct-hub.PackageTagGroup">PackageTagGroup</a></code> | PackageTagGroup to include filter in. |
-| <code><a href="#construct-hub.SearchFilter.property.groupBy">groupBy</a></code> | <code>string</code> | Name of group to include filter in. |
+| <code><a href="#@gd-constructs/construct-hub.SearchFilter.property.display">display</a></code> | <code>string</code> | Display name for filter. |
+| <code><a href="#@gd-constructs/construct-hub.SearchFilter.property.group">group</a></code> | <code><a href="#@gd-constructs/construct-hub.PackageTagGroup">PackageTagGroup</a></code> | PackageTagGroup to include filter in. |
+| <code><a href="#@gd-constructs/construct-hub.SearchFilter.property.groupBy">groupBy</a></code> | <code>string</code> | Name of group to include filter in. |
 
 ---
 
-##### `display`<sup>Required</sup> <a name="display" id="construct-hub.SearchFilter.property.display"></a>
+##### `display`<sup>Required</sup> <a name="display" id="@gd-constructs/construct-hub.SearchFilter.property.display"></a>
 
 ```typescript
 public readonly display: string;
@@ -2288,19 +2288,19 @@ Display name for filter.
 
 ---
 
-##### `group`<sup>Optional</sup> <a name="group" id="construct-hub.SearchFilter.property.group"></a>
+##### `group`<sup>Optional</sup> <a name="group" id="@gd-constructs/construct-hub.SearchFilter.property.group"></a>
 
 ```typescript
 public readonly group: PackageTagGroup;
 ```
 
-- *Type:* <a href="#construct-hub.PackageTagGroup">PackageTagGroup</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.PackageTagGroup">PackageTagGroup</a>
 
 PackageTagGroup to include filter in.
 
 ---
 
-##### ~~`groupBy`~~<sup>Optional</sup> <a name="groupBy" id="construct-hub.SearchFilter.property.groupBy"></a>
+##### ~~`groupBy`~~<sup>Optional</sup> <a name="groupBy" id="@gd-constructs/construct-hub.SearchFilter.property.groupBy"></a>
 
 - *Deprecated:* use `group` instead
 
@@ -2314,14 +2314,14 @@ Name of group to include filter in.
 
 ---
 
-### TagConditionConfig <a name="TagConditionConfig" id="construct-hub.TagConditionConfig"></a>
+### TagConditionConfig <a name="TagConditionConfig" id="@gd-constructs/construct-hub.TagConditionConfig"></a>
 
 Serialized config for a tag condition.
 
-#### Initializer <a name="Initializer" id="construct-hub.TagConditionConfig.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.TagConditionConfig.Initializer"></a>
 
 ```typescript
-import { TagConditionConfig } from 'construct-hub'
+import { TagConditionConfig } from '@gd-constructs/construct-hub'
 
 const tagConditionConfig: TagConditionConfig = { ... }
 ```
@@ -2330,36 +2330,36 @@ const tagConditionConfig: TagConditionConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.TagConditionConfig.property.type">type</a></code> | <code><a href="#construct-hub.TagConditionLogicType">TagConditionLogicType</a></code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionConfig.property.children">children</a></code> | <code><a href="#construct-hub.TagConditionConfig">TagConditionConfig</a>[]</code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionConfig.property.key">key</a></code> | <code>string[]</code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionConfig.property.options">options</a></code> | <code>{[ key: string ]: any}</code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionConfig.property.source">source</a></code> | <code><a href="#construct-hub.TagConditionSource">TagConditionSource</a></code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionConfig.property.value">value</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionConfig.property.type">type</a></code> | <code><a href="#@gd-constructs/construct-hub.TagConditionLogicType">TagConditionLogicType</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionConfig.property.children">children</a></code> | <code><a href="#@gd-constructs/construct-hub.TagConditionConfig">TagConditionConfig</a>[]</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionConfig.property.key">key</a></code> | <code>string[]</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionConfig.property.options">options</a></code> | <code>{[ key: string ]: any}</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionConfig.property.source">source</a></code> | <code><a href="#@gd-constructs/construct-hub.TagConditionSource">TagConditionSource</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionConfig.property.value">value</a></code> | <code>string</code> | *No description.* |
 
 ---
 
-##### `type`<sup>Required</sup> <a name="type" id="construct-hub.TagConditionConfig.property.type"></a>
+##### `type`<sup>Required</sup> <a name="type" id="@gd-constructs/construct-hub.TagConditionConfig.property.type"></a>
 
 ```typescript
 public readonly type: TagConditionLogicType;
 ```
 
-- *Type:* <a href="#construct-hub.TagConditionLogicType">TagConditionLogicType</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagConditionLogicType">TagConditionLogicType</a>
 
 ---
 
-##### `children`<sup>Optional</sup> <a name="children" id="construct-hub.TagConditionConfig.property.children"></a>
+##### `children`<sup>Optional</sup> <a name="children" id="@gd-constructs/construct-hub.TagConditionConfig.property.children"></a>
 
 ```typescript
 public readonly children: TagConditionConfig[];
 ```
 
-- *Type:* <a href="#construct-hub.TagConditionConfig">TagConditionConfig</a>[]
+- *Type:* <a href="#@gd-constructs/construct-hub.TagConditionConfig">TagConditionConfig</a>[]
 
 ---
 
-##### `key`<sup>Optional</sup> <a name="key" id="construct-hub.TagConditionConfig.property.key"></a>
+##### `key`<sup>Optional</sup> <a name="key" id="@gd-constructs/construct-hub.TagConditionConfig.property.key"></a>
 
 ```typescript
 public readonly key: string[];
@@ -2369,7 +2369,7 @@ public readonly key: string[];
 
 ---
 
-##### `options`<sup>Optional</sup> <a name="options" id="construct-hub.TagConditionConfig.property.options"></a>
+##### `options`<sup>Optional</sup> <a name="options" id="@gd-constructs/construct-hub.TagConditionConfig.property.options"></a>
 
 ```typescript
 public readonly options: {[ key: string ]: any};
@@ -2379,17 +2379,17 @@ public readonly options: {[ key: string ]: any};
 
 ---
 
-##### `source`<sup>Optional</sup> <a name="source" id="construct-hub.TagConditionConfig.property.source"></a>
+##### `source`<sup>Optional</sup> <a name="source" id="@gd-constructs/construct-hub.TagConditionConfig.property.source"></a>
 
 ```typescript
 public readonly source: TagConditionSource;
 ```
 
-- *Type:* <a href="#construct-hub.TagConditionSource">TagConditionSource</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagConditionSource">TagConditionSource</a>
 
 ---
 
-##### `value`<sup>Optional</sup> <a name="value" id="construct-hub.TagConditionConfig.property.value"></a>
+##### `value`<sup>Optional</sup> <a name="value" id="@gd-constructs/construct-hub.TagConditionConfig.property.value"></a>
 
 ```typescript
 public readonly value: string;
@@ -2399,14 +2399,14 @@ public readonly value: string;
 
 ---
 
-### TagConditionIncludesOptions <a name="TagConditionIncludesOptions" id="construct-hub.TagConditionIncludesOptions"></a>
+### TagConditionIncludesOptions <a name="TagConditionIncludesOptions" id="@gd-constructs/construct-hub.TagConditionIncludesOptions"></a>
 
 Options for `includes` operator.
 
-#### Initializer <a name="Initializer" id="construct-hub.TagConditionIncludesOptions.Initializer"></a>
+#### Initializer <a name="Initializer" id="@gd-constructs/construct-hub.TagConditionIncludesOptions.Initializer"></a>
 
 ```typescript
-import { TagConditionIncludesOptions } from 'construct-hub'
+import { TagConditionIncludesOptions } from '@gd-constructs/construct-hub'
 
 const tagConditionIncludesOptions: TagConditionIncludesOptions = { ... }
 ```
@@ -2415,12 +2415,12 @@ const tagConditionIncludesOptions: TagConditionIncludesOptions = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.TagConditionIncludesOptions.property.atLeast">atLeast</a></code> | <code>number</code> | The value must appear at least this many times. |
-| <code><a href="#construct-hub.TagConditionIncludesOptions.property.caseSensitive">caseSensitive</a></code> | <code>boolean</code> | String matches must match the casing of the original string. |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionIncludesOptions.property.atLeast">atLeast</a></code> | <code>number</code> | The value must appear at least this many times. |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionIncludesOptions.property.caseSensitive">caseSensitive</a></code> | <code>boolean</code> | String matches must match the casing of the original string. |
 
 ---
 
-##### `atLeast`<sup>Optional</sup> <a name="atLeast" id="construct-hub.TagConditionIncludesOptions.property.atLeast"></a>
+##### `atLeast`<sup>Optional</sup> <a name="atLeast" id="@gd-constructs/construct-hub.TagConditionIncludesOptions.property.atLeast"></a>
 
 ```typescript
 public readonly atLeast: number;
@@ -2433,7 +2433,7 @@ The value must appear at least this many times.
 
 ---
 
-##### `caseSensitive`<sup>Optional</sup> <a name="caseSensitive" id="construct-hub.TagConditionIncludesOptions.property.caseSensitive"></a>
+##### `caseSensitive`<sup>Optional</sup> <a name="caseSensitive" id="@gd-constructs/construct-hub.TagConditionIncludesOptions.property.caseSensitive"></a>
 
 ```typescript
 public readonly caseSensitive: boolean;
@@ -2451,29 +2451,29 @@ is ignored if the value we are checking is an array.
 
 ## Classes <a name="Classes" id="Classes"></a>
 
-### CodeArtifact <a name="CodeArtifact" id="construct-hub.sources.CodeArtifact"></a>
+### CodeArtifact <a name="CodeArtifact" id="@gd-constructs/construct-hub.sources.CodeArtifact"></a>
 
-- *Implements:* <a href="#construct-hub.IPackageSource">IPackageSource</a>
+- *Implements:* <a href="#@gd-constructs/construct-hub.IPackageSource">IPackageSource</a>
 
 A package source that obtains package data from an npm CodeArtifact repository.
 
-#### Initializers <a name="Initializers" id="construct-hub.sources.CodeArtifact.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.sources.CodeArtifact.Initializer"></a>
 
 ```typescript
-import { sources } from 'construct-hub'
+import { sources } from '@gd-constructs/construct-hub'
 
 new sources.CodeArtifact(props: CodeArtifactProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.sources.CodeArtifact.Initializer.parameter.props">props</a></code> | <code>construct-hub.sources.CodeArtifactProps</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.sources.CodeArtifact.Initializer.parameter.props">props</a></code> | <code>@gd-constructs/construct-hub.sources.CodeArtifactProps</code> | *No description.* |
 
 ---
 
-##### `props`<sup>Required</sup> <a name="props" id="construct-hub.sources.CodeArtifact.Initializer.parameter.props"></a>
+##### `props`<sup>Required</sup> <a name="props" id="@gd-constructs/construct-hub.sources.CodeArtifact.Initializer.parameter.props"></a>
 
-- *Type:* construct-hub.sources.CodeArtifactProps
+- *Type:* @gd-constructs/construct-hub.sources.CodeArtifactProps
 
 ---
 
@@ -2481,15 +2481,15 @@ new sources.CodeArtifact(props: CodeArtifactProps)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.sources.CodeArtifact.bind">bind</a></code> | Binds the package source to a scope and target queue. |
-| <code><a href="#construct-hub.sources.CodeArtifact.metricDeletedCount">metricDeletedCount</a></code> | The number of package versions that were deleted from CodeArtifact (those events are not handled currently). |
-| <code><a href="#construct-hub.sources.CodeArtifact.metricDenyListedCount">metricDenyListedCount</a></code> | The count of package versions that were ignored due to being in the deny list. |
-| <code><a href="#construct-hub.sources.CodeArtifact.metricIneligibleLicense">metricIneligibleLicense</a></code> | The number of package versions that were ignored due to using an ineloigible license. |
-| <code><a href="#construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount">metricNotJsiiEnabledCount</a></code> | The number of package versions that do not have a jsii assembly in the package. |
+| <code><a href="#@gd-constructs/construct-hub.sources.CodeArtifact.bind">bind</a></code> | Binds the package source to a scope and target queue. |
+| <code><a href="#@gd-constructs/construct-hub.sources.CodeArtifact.metricDeletedCount">metricDeletedCount</a></code> | The number of package versions that were deleted from CodeArtifact (those events are not handled currently). |
+| <code><a href="#@gd-constructs/construct-hub.sources.CodeArtifact.metricDenyListedCount">metricDenyListedCount</a></code> | The count of package versions that were ignored due to being in the deny list. |
+| <code><a href="#@gd-constructs/construct-hub.sources.CodeArtifact.metricIneligibleLicense">metricIneligibleLicense</a></code> | The number of package versions that were ignored due to using an ineloigible license. |
+| <code><a href="#@gd-constructs/construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount">metricNotJsiiEnabledCount</a></code> | The number of package versions that do not have a jsii assembly in the package. |
 
 ---
 
-##### `bind` <a name="bind" id="construct-hub.sources.CodeArtifact.bind"></a>
+##### `bind` <a name="bind" id="@gd-constructs/construct-hub.sources.CodeArtifact.bind"></a>
 
 ```typescript
 public bind(scope: Construct, __1: PackageSourceBindOptions): PackageSourceBindResult
@@ -2497,19 +2497,19 @@ public bind(scope: Construct, __1: PackageSourceBindOptions): PackageSourceBindR
 
 Binds the package source to a scope and target queue.
 
-###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.sources.CodeArtifact.bind.parameter.scope"></a>
+###### `scope`<sup>Required</sup> <a name="scope" id="@gd-constructs/construct-hub.sources.CodeArtifact.bind.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
 ---
 
-###### `__1`<sup>Required</sup> <a name="__1" id="construct-hub.sources.CodeArtifact.bind.parameter.__1"></a>
+###### `__1`<sup>Required</sup> <a name="__1" id="@gd-constructs/construct-hub.sources.CodeArtifact.bind.parameter.__1"></a>
 
-- *Type:* <a href="#construct-hub.PackageSourceBindOptions">PackageSourceBindOptions</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.PackageSourceBindOptions">PackageSourceBindOptions</a>
 
 ---
 
-##### `metricDeletedCount` <a name="metricDeletedCount" id="construct-hub.sources.CodeArtifact.metricDeletedCount"></a>
+##### `metricDeletedCount` <a name="metricDeletedCount" id="@gd-constructs/construct-hub.sources.CodeArtifact.metricDeletedCount"></a>
 
 ```typescript
 public metricDeletedCount(opts?: MetricOptions): Metric
@@ -2517,13 +2517,13 @@ public metricDeletedCount(opts?: MetricOptions): Metric
 
 The number of package versions that were deleted from CodeArtifact (those events are not handled currently).
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricDeletedCount.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.CodeArtifact.metricDeletedCount.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricDenyListedCount` <a name="metricDenyListedCount" id="construct-hub.sources.CodeArtifact.metricDenyListedCount"></a>
+##### `metricDenyListedCount` <a name="metricDenyListedCount" id="@gd-constructs/construct-hub.sources.CodeArtifact.metricDenyListedCount"></a>
 
 ```typescript
 public metricDenyListedCount(opts?: MetricOptions): Metric
@@ -2531,13 +2531,13 @@ public metricDenyListedCount(opts?: MetricOptions): Metric
 
 The count of package versions that were ignored due to being in the deny list.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricDenyListedCount.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.CodeArtifact.metricDenyListedCount.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricIneligibleLicense` <a name="metricIneligibleLicense" id="construct-hub.sources.CodeArtifact.metricIneligibleLicense"></a>
+##### `metricIneligibleLicense` <a name="metricIneligibleLicense" id="@gd-constructs/construct-hub.sources.CodeArtifact.metricIneligibleLicense"></a>
 
 ```typescript
 public metricIneligibleLicense(opts?: MetricOptions): Metric
@@ -2545,13 +2545,13 @@ public metricIneligibleLicense(opts?: MetricOptions): Metric
 
 The number of package versions that were ignored due to using an ineloigible license.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricIneligibleLicense.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.CodeArtifact.metricIneligibleLicense.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricNotJsiiEnabledCount` <a name="metricNotJsiiEnabledCount" id="construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount"></a>
+##### `metricNotJsiiEnabledCount` <a name="metricNotJsiiEnabledCount" id="@gd-constructs/construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount"></a>
 
 ```typescript
 public metricNotJsiiEnabledCount(opts?: MetricOptions): Metric
@@ -2559,7 +2559,7 @@ public metricNotJsiiEnabledCount(opts?: MetricOptions): Metric
 
 The number of package versions that do not have a jsii assembly in the package.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
@@ -2568,12 +2568,12 @@ The number of package versions that do not have a jsii assembly in the package.
 
 
 
-### FilterType <a name="FilterType" id="construct-hub.FilterType"></a>
+### FilterType <a name="FilterType" id="@gd-constructs/construct-hub.FilterType"></a>
 
-#### Initializers <a name="Initializers" id="construct-hub.FilterType.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.FilterType.Initializer"></a>
 
 ```typescript
-import { FilterType } from 'construct-hub'
+import { FilterType } from '@gd-constructs/construct-hub'
 
 new FilterType()
 ```
@@ -2587,11 +2587,11 @@ new FilterType()
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.FilterType.bind">bind</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.FilterType.bind">bind</a></code> | *No description.* |
 
 ---
 
-##### `bind` <a name="bind" id="construct-hub.FilterType.bind"></a>
+##### `bind` <a name="bind" id="@gd-constructs/construct-hub.FilterType.bind"></a>
 
 ```typescript
 public bind(): FilterTypeValue
@@ -2601,52 +2601,52 @@ public bind(): FilterTypeValue
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.FilterType.checkbox">checkbox</a></code> | *No description.* |
-| <code><a href="#construct-hub.FilterType.radio">radio</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.FilterType.checkbox">checkbox</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.FilterType.radio">radio</a></code> | *No description.* |
 
 ---
 
-##### `checkbox` <a name="checkbox" id="construct-hub.FilterType.checkbox"></a>
+##### `checkbox` <a name="checkbox" id="@gd-constructs/construct-hub.FilterType.checkbox"></a>
 
 ```typescript
-import { FilterType } from 'construct-hub'
+import { FilterType } from '@gd-constructs/construct-hub'
 
 FilterType.checkbox()
 ```
 
-##### `radio` <a name="radio" id="construct-hub.FilterType.radio"></a>
+##### `radio` <a name="radio" id="@gd-constructs/construct-hub.FilterType.radio"></a>
 
 ```typescript
-import { FilterType } from 'construct-hub'
+import { FilterType } from '@gd-constructs/construct-hub'
 
 FilterType.radio()
 ```
 
 
 
-### NpmJs <a name="NpmJs" id="construct-hub.sources.NpmJs"></a>
+### NpmJs <a name="NpmJs" id="@gd-constructs/construct-hub.sources.NpmJs"></a>
 
-- *Implements:* <a href="#construct-hub.IPackageSource">IPackageSource</a>
+- *Implements:* <a href="#@gd-constructs/construct-hub.IPackageSource">IPackageSource</a>
 
 A package source that gets package data from the npmjs.com package registry.
 
-#### Initializers <a name="Initializers" id="construct-hub.sources.NpmJs.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.sources.NpmJs.Initializer"></a>
 
 ```typescript
-import { sources } from 'construct-hub'
+import { sources } from '@gd-constructs/construct-hub'
 
 new sources.NpmJs(props?: NpmJsProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.sources.NpmJs.Initializer.parameter.props">props</a></code> | <code>construct-hub.sources.NpmJsProps</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.Initializer.parameter.props">props</a></code> | <code>@gd-constructs/construct-hub.sources.NpmJsProps</code> | *No description.* |
 
 ---
 
-##### `props`<sup>Optional</sup> <a name="props" id="construct-hub.sources.NpmJs.Initializer.parameter.props"></a>
+##### `props`<sup>Optional</sup> <a name="props" id="@gd-constructs/construct-hub.sources.NpmJs.Initializer.parameter.props"></a>
 
-- *Type:* construct-hub.sources.NpmJsProps
+- *Type:* @gd-constructs/construct-hub.sources.NpmJsProps
 
 ---
 
@@ -2654,20 +2654,20 @@ new sources.NpmJs(props?: NpmJsProps)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.sources.NpmJs.bind">bind</a></code> | Binds the package source to a scope and target queue. |
-| <code><a href="#construct-hub.sources.NpmJs.metricBatchProcessingTime">metricBatchProcessingTime</a></code> | The average time it took to process a changes batch. |
-| <code><a href="#construct-hub.sources.NpmJs.metricChangeCount">metricChangeCount</a></code> | The total count of changes that were processed. |
-| <code><a href="#construct-hub.sources.NpmJs.metricLastSeq">metricLastSeq</a></code> | The last sequence number that was processed. |
-| <code><a href="#construct-hub.sources.NpmJs.metricNpmJsChangeAge">metricNpmJsChangeAge</a></code> | *No description.* |
-| <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionAge">metricPackageVersionAge</a></code> | The age of the oldest package version that was processed. |
-| <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionCount">metricPackageVersionCount</a></code> | The total count of package versions that were inspected. |
-| <code><a href="#construct-hub.sources.NpmJs.metricRelevantPackageVersions">metricRelevantPackageVersions</a></code> | The total count of package versions that were deemed relevant. |
-| <code><a href="#construct-hub.sources.NpmJs.metricRemainingTime">metricRemainingTime</a></code> | The amount of time that was remaining when the lambda returned in order to avoid hitting a timeout. |
-| <code><a href="#construct-hub.sources.NpmJs.metricUnprocessableEntity">metricUnprocessableEntity</a></code> | The amount of changes that were not processed due to having an invalid format. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.bind">bind</a></code> | Binds the package source to a scope and target queue. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricBatchProcessingTime">metricBatchProcessingTime</a></code> | The average time it took to process a changes batch. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricChangeCount">metricChangeCount</a></code> | The total count of changes that were processed. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricLastSeq">metricLastSeq</a></code> | The last sequence number that was processed. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricNpmJsChangeAge">metricNpmJsChangeAge</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricPackageVersionAge">metricPackageVersionAge</a></code> | The age of the oldest package version that was processed. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricPackageVersionCount">metricPackageVersionCount</a></code> | The total count of package versions that were inspected. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricRelevantPackageVersions">metricRelevantPackageVersions</a></code> | The total count of package versions that were deemed relevant. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricRemainingTime">metricRemainingTime</a></code> | The amount of time that was remaining when the lambda returned in order to avoid hitting a timeout. |
+| <code><a href="#@gd-constructs/construct-hub.sources.NpmJs.metricUnprocessableEntity">metricUnprocessableEntity</a></code> | The amount of changes that were not processed due to having an invalid format. |
 
 ---
 
-##### `bind` <a name="bind" id="construct-hub.sources.NpmJs.bind"></a>
+##### `bind` <a name="bind" id="@gd-constructs/construct-hub.sources.NpmJs.bind"></a>
 
 ```typescript
 public bind(scope: Construct, __1: PackageSourceBindOptions): PackageSourceBindResult
@@ -2675,19 +2675,19 @@ public bind(scope: Construct, __1: PackageSourceBindOptions): PackageSourceBindR
 
 Binds the package source to a scope and target queue.
 
-###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.sources.NpmJs.bind.parameter.scope"></a>
+###### `scope`<sup>Required</sup> <a name="scope" id="@gd-constructs/construct-hub.sources.NpmJs.bind.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
 ---
 
-###### `__1`<sup>Required</sup> <a name="__1" id="construct-hub.sources.NpmJs.bind.parameter.__1"></a>
+###### `__1`<sup>Required</sup> <a name="__1" id="@gd-constructs/construct-hub.sources.NpmJs.bind.parameter.__1"></a>
 
-- *Type:* <a href="#construct-hub.PackageSourceBindOptions">PackageSourceBindOptions</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.PackageSourceBindOptions">PackageSourceBindOptions</a>
 
 ---
 
-##### `metricBatchProcessingTime` <a name="metricBatchProcessingTime" id="construct-hub.sources.NpmJs.metricBatchProcessingTime"></a>
+##### `metricBatchProcessingTime` <a name="metricBatchProcessingTime" id="@gd-constructs/construct-hub.sources.NpmJs.metricBatchProcessingTime"></a>
 
 ```typescript
 public metricBatchProcessingTime(opts?: MetricOptions): Metric
@@ -2695,13 +2695,13 @@ public metricBatchProcessingTime(opts?: MetricOptions): Metric
 
 The average time it took to process a changes batch.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricBatchProcessingTime.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricBatchProcessingTime.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricChangeCount` <a name="metricChangeCount" id="construct-hub.sources.NpmJs.metricChangeCount"></a>
+##### `metricChangeCount` <a name="metricChangeCount" id="@gd-constructs/construct-hub.sources.NpmJs.metricChangeCount"></a>
 
 ```typescript
 public metricChangeCount(opts?: MetricOptions): Metric
@@ -2709,13 +2709,13 @@ public metricChangeCount(opts?: MetricOptions): Metric
 
 The total count of changes that were processed.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricChangeCount.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricChangeCount.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricLastSeq` <a name="metricLastSeq" id="construct-hub.sources.NpmJs.metricLastSeq"></a>
+##### `metricLastSeq` <a name="metricLastSeq" id="@gd-constructs/construct-hub.sources.NpmJs.metricLastSeq"></a>
 
 ```typescript
 public metricLastSeq(opts?: MetricOptions): Metric
@@ -2726,25 +2726,25 @@ The last sequence number that was processed.
 This metric can be used to
 discover when a sequence reset has happened in the CouchDB instance.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLastSeq.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricLastSeq.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricNpmJsChangeAge` <a name="metricNpmJsChangeAge" id="construct-hub.sources.NpmJs.metricNpmJsChangeAge"></a>
+##### `metricNpmJsChangeAge` <a name="metricNpmJsChangeAge" id="@gd-constructs/construct-hub.sources.NpmJs.metricNpmJsChangeAge"></a>
 
 ```typescript
 public metricNpmJsChangeAge(opts?: MetricOptions): Metric
 ```
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricNpmJsChangeAge.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricNpmJsChangeAge.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricPackageVersionAge` <a name="metricPackageVersionAge" id="construct-hub.sources.NpmJs.metricPackageVersionAge"></a>
+##### `metricPackageVersionAge` <a name="metricPackageVersionAge" id="@gd-constructs/construct-hub.sources.NpmJs.metricPackageVersionAge"></a>
 
 ```typescript
 public metricPackageVersionAge(opts?: MetricOptions): Metric
@@ -2752,13 +2752,13 @@ public metricPackageVersionAge(opts?: MetricOptions): Metric
 
 The age of the oldest package version that was processed.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricPackageVersionAge.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricPackageVersionAge.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricPackageVersionCount` <a name="metricPackageVersionCount" id="construct-hub.sources.NpmJs.metricPackageVersionCount"></a>
+##### `metricPackageVersionCount` <a name="metricPackageVersionCount" id="@gd-constructs/construct-hub.sources.NpmJs.metricPackageVersionCount"></a>
 
 ```typescript
 public metricPackageVersionCount(opts?: MetricOptions): Metric
@@ -2766,13 +2766,13 @@ public metricPackageVersionCount(opts?: MetricOptions): Metric
 
 The total count of package versions that were inspected.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricPackageVersionCount.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricPackageVersionCount.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricRelevantPackageVersions` <a name="metricRelevantPackageVersions" id="construct-hub.sources.NpmJs.metricRelevantPackageVersions"></a>
+##### `metricRelevantPackageVersions` <a name="metricRelevantPackageVersions" id="@gd-constructs/construct-hub.sources.NpmJs.metricRelevantPackageVersions"></a>
 
 ```typescript
 public metricRelevantPackageVersions(opts?: MetricOptions): Metric
@@ -2780,13 +2780,13 @@ public metricRelevantPackageVersions(opts?: MetricOptions): Metric
 
 The total count of package versions that were deemed relevant.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricRelevantPackageVersions.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricRelevantPackageVersions.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricRemainingTime` <a name="metricRemainingTime" id="construct-hub.sources.NpmJs.metricRemainingTime"></a>
+##### `metricRemainingTime` <a name="metricRemainingTime" id="@gd-constructs/construct-hub.sources.NpmJs.metricRemainingTime"></a>
 
 ```typescript
 public metricRemainingTime(opts?: MetricOptions): Metric
@@ -2794,13 +2794,13 @@ public metricRemainingTime(opts?: MetricOptions): Metric
 
 The amount of time that was remaining when the lambda returned in order to avoid hitting a timeout.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricRemainingTime.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricRemainingTime.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
-##### `metricUnprocessableEntity` <a name="metricUnprocessableEntity" id="construct-hub.sources.NpmJs.metricUnprocessableEntity"></a>
+##### `metricUnprocessableEntity` <a name="metricUnprocessableEntity" id="@gd-constructs/construct-hub.sources.NpmJs.metricUnprocessableEntity"></a>
 
 ```typescript
 public metricUnprocessableEntity(opts?: MetricOptions): Metric
@@ -2808,7 +2808,7 @@ public metricUnprocessableEntity(opts?: MetricOptions): Metric
 
 The amount of changes that were not processed due to having an invalid format.
 
-###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricUnprocessableEntity.parameter.opts"></a>
+###### `opts`<sup>Optional</sup> <a name="opts" id="@gd-constructs/construct-hub.sources.NpmJs.metricUnprocessableEntity.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
@@ -2817,34 +2817,34 @@ The amount of changes that were not processed due to having an invalid format.
 
 
 
-### PackageTagGroup <a name="PackageTagGroup" id="construct-hub.PackageTagGroup"></a>
+### PackageTagGroup <a name="PackageTagGroup" id="@gd-constructs/construct-hub.PackageTagGroup"></a>
 
 Defines a custom package tag group.
 
-#### Initializers <a name="Initializers" id="construct-hub.PackageTagGroup.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.PackageTagGroup.Initializer"></a>
 
 ```typescript
-import { PackageTagGroup } from 'construct-hub'
+import { PackageTagGroup } from '@gd-constructs/construct-hub'
 
 new PackageTagGroup(id: string, props?: PackageTagGroupProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageTagGroup.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#construct-hub.PackageTagGroup.Initializer.parameter.props">props</a></code> | <code><a href="#construct-hub.PackageTagGroupProps">PackageTagGroupProps</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroup.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroup.Initializer.parameter.props">props</a></code> | <code><a href="#@gd-constructs/construct-hub.PackageTagGroupProps">PackageTagGroupProps</a></code> | *No description.* |
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="construct-hub.PackageTagGroup.Initializer.parameter.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.PackageTagGroup.Initializer.parameter.id"></a>
 
 - *Type:* string
 
 ---
 
-##### `props`<sup>Optional</sup> <a name="props" id="construct-hub.PackageTagGroup.Initializer.parameter.props"></a>
+##### `props`<sup>Optional</sup> <a name="props" id="@gd-constructs/construct-hub.PackageTagGroup.Initializer.parameter.props"></a>
 
-- *Type:* <a href="#construct-hub.PackageTagGroupProps">PackageTagGroupProps</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.PackageTagGroupProps">PackageTagGroupProps</a>
 
 ---
 
@@ -2852,11 +2852,11 @@ new PackageTagGroup(id: string, props?: PackageTagGroupProps)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.PackageTagGroup.bind">bind</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroup.bind">bind</a></code> | *No description.* |
 
 ---
 
-##### `bind` <a name="bind" id="construct-hub.PackageTagGroup.bind"></a>
+##### `bind` <a name="bind" id="@gd-constructs/construct-hub.PackageTagGroup.bind"></a>
 
 ```typescript
 public bind(): PackageTagGroupConfig
@@ -2867,14 +2867,14 @@ public bind(): PackageTagGroupConfig
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageTagGroup.property.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#construct-hub.PackageTagGroup.property.filterType">filterType</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#construct-hub.PackageTagGroup.property.label">label</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#construct-hub.PackageTagGroup.property.tooltip">tooltip</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroup.property.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroup.property.filterType">filterType</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroup.property.label">label</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PackageTagGroup.property.tooltip">tooltip</a></code> | <code>string</code> | *No description.* |
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="construct-hub.PackageTagGroup.property.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.PackageTagGroup.property.id"></a>
 
 ```typescript
 public readonly id: string;
@@ -2884,7 +2884,7 @@ public readonly id: string;
 
 ---
 
-##### `filterType`<sup>Optional</sup> <a name="filterType" id="construct-hub.PackageTagGroup.property.filterType"></a>
+##### `filterType`<sup>Optional</sup> <a name="filterType" id="@gd-constructs/construct-hub.PackageTagGroup.property.filterType"></a>
 
 ```typescript
 public readonly filterType: string;
@@ -2894,7 +2894,7 @@ public readonly filterType: string;
 
 ---
 
-##### `label`<sup>Optional</sup> <a name="label" id="construct-hub.PackageTagGroup.property.label"></a>
+##### `label`<sup>Optional</sup> <a name="label" id="@gd-constructs/construct-hub.PackageTagGroup.property.label"></a>
 
 ```typescript
 public readonly label: string;
@@ -2904,7 +2904,7 @@ public readonly label: string;
 
 ---
 
-##### `tooltip`<sup>Optional</sup> <a name="tooltip" id="construct-hub.PackageTagGroup.property.tooltip"></a>
+##### `tooltip`<sup>Optional</sup> <a name="tooltip" id="@gd-constructs/construct-hub.PackageTagGroup.property.tooltip"></a>
 
 ```typescript
 public readonly tooltip: string;
@@ -2915,27 +2915,27 @@ public readonly tooltip: string;
 ---
 
 
-### PreloadFile <a name="PreloadFile" id="construct-hub.PreloadFile"></a>
+### PreloadFile <a name="PreloadFile" id="@gd-constructs/construct-hub.PreloadFile"></a>
 
 Represents a javascript file to load before the webapp.
 
 This can allow operators to add their own client monitors or analytics if they wish
 
-#### Initializers <a name="Initializers" id="construct-hub.PreloadFile.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.PreloadFile.Initializer"></a>
 
 ```typescript
-import { PreloadFile } from 'construct-hub'
+import { PreloadFile } from '@gd-constructs/construct-hub'
 
 new PreloadFile(data: string)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PreloadFile.Initializer.parameter.data">data</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PreloadFile.Initializer.parameter.data">data</a></code> | <code>string</code> | *No description.* |
 
 ---
 
-##### `data`<sup>Required</sup> <a name="data" id="construct-hub.PreloadFile.Initializer.parameter.data"></a>
+##### `data`<sup>Required</sup> <a name="data" id="@gd-constructs/construct-hub.PreloadFile.Initializer.parameter.data"></a>
 
 - *Type:* string
 
@@ -2945,11 +2945,11 @@ new PreloadFile(data: string)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.PreloadFile.bind">bind</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.PreloadFile.bind">bind</a></code> | *No description.* |
 
 ---
 
-##### `bind` <a name="bind" id="construct-hub.PreloadFile.bind"></a>
+##### `bind` <a name="bind" id="@gd-constructs/construct-hub.PreloadFile.bind"></a>
 
 ```typescript
 public bind(): string
@@ -2959,38 +2959,38 @@ public bind(): string
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.PreloadFile.fromCode">fromCode</a></code> | Creates a PreloadFile instance directly from source code. |
-| <code><a href="#construct-hub.PreloadFile.fromFile">fromFile</a></code> | Creates a PreloadFile instance from a filepath to load. |
+| <code><a href="#@gd-constructs/construct-hub.PreloadFile.fromCode">fromCode</a></code> | Creates a PreloadFile instance directly from source code. |
+| <code><a href="#@gd-constructs/construct-hub.PreloadFile.fromFile">fromFile</a></code> | Creates a PreloadFile instance from a filepath to load. |
 
 ---
 
-##### `fromCode` <a name="fromCode" id="construct-hub.PreloadFile.fromCode"></a>
+##### `fromCode` <a name="fromCode" id="@gd-constructs/construct-hub.PreloadFile.fromCode"></a>
 
 ```typescript
-import { PreloadFile } from 'construct-hub'
+import { PreloadFile } from '@gd-constructs/construct-hub'
 
 PreloadFile.fromCode(code: string)
 ```
 
 Creates a PreloadFile instance directly from source code.
 
-###### `code`<sup>Required</sup> <a name="code" id="construct-hub.PreloadFile.fromCode.parameter.code"></a>
+###### `code`<sup>Required</sup> <a name="code" id="@gd-constructs/construct-hub.PreloadFile.fromCode.parameter.code"></a>
 
 - *Type:* string
 
 ---
 
-##### `fromFile` <a name="fromFile" id="construct-hub.PreloadFile.fromFile"></a>
+##### `fromFile` <a name="fromFile" id="@gd-constructs/construct-hub.PreloadFile.fromFile"></a>
 
 ```typescript
-import { PreloadFile } from 'construct-hub'
+import { PreloadFile } from '@gd-constructs/construct-hub'
 
 PreloadFile.fromFile(path: string)
 ```
 
 Creates a PreloadFile instance from a filepath to load.
 
-###### `path`<sup>Required</sup> <a name="path" id="construct-hub.PreloadFile.fromFile.parameter.path"></a>
+###### `path`<sup>Required</sup> <a name="path" id="@gd-constructs/construct-hub.PreloadFile.fromFile.parameter.path"></a>
 
 - *Type:* string
 
@@ -2998,7 +2998,7 @@ Creates a PreloadFile instance from a filepath to load.
 
 
 
-### SpdxLicense <a name="SpdxLicense" id="construct-hub.SpdxLicense"></a>
+### SpdxLicense <a name="SpdxLicense" id="@gd-constructs/construct-hub.SpdxLicense"></a>
 
 Valid SPDX License identifiers.
 
@@ -3007,91 +3007,91 @@ Valid SPDX License identifiers.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.SpdxLicense.all">all</a></code> | All valid SPDX Licenses. |
-| <code><a href="#construct-hub.SpdxLicense.apache">apache</a></code> | The Apache family of licenses. |
-| <code><a href="#construct-hub.SpdxLicense.bsd">bsd</a></code> | The BSD family of licenses. |
-| <code><a href="#construct-hub.SpdxLicense.cddl">cddl</a></code> | The CDDL family of licenses. |
-| <code><a href="#construct-hub.SpdxLicense.epl">epl</a></code> | The EPL family of licenses. |
-| <code><a href="#construct-hub.SpdxLicense.mit">mit</a></code> | The MIT family of licenses. |
-| <code><a href="#construct-hub.SpdxLicense.mpl">mpl</a></code> | The MPL family of licenses. |
-| <code><a href="#construct-hub.SpdxLicense.osiApproved">osiApproved</a></code> | All OSI-Approved SPDX Licenses. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.all">all</a></code> | All valid SPDX Licenses. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.apache">apache</a></code> | The Apache family of licenses. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.bsd">bsd</a></code> | The BSD family of licenses. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.cddl">cddl</a></code> | The CDDL family of licenses. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.epl">epl</a></code> | The EPL family of licenses. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.mit">mit</a></code> | The MIT family of licenses. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.mpl">mpl</a></code> | The MPL family of licenses. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.osiApproved">osiApproved</a></code> | All OSI-Approved SPDX Licenses. |
 
 ---
 
-##### `all` <a name="all" id="construct-hub.SpdxLicense.all"></a>
+##### `all` <a name="all" id="@gd-constructs/construct-hub.SpdxLicense.all"></a>
 
 ```typescript
-import { SpdxLicense } from 'construct-hub'
+import { SpdxLicense } from '@gd-constructs/construct-hub'
 
 SpdxLicense.all()
 ```
 
 All valid SPDX Licenses.
 
-##### `apache` <a name="apache" id="construct-hub.SpdxLicense.apache"></a>
+##### `apache` <a name="apache" id="@gd-constructs/construct-hub.SpdxLicense.apache"></a>
 
 ```typescript
-import { SpdxLicense } from 'construct-hub'
+import { SpdxLicense } from '@gd-constructs/construct-hub'
 
 SpdxLicense.apache()
 ```
 
 The Apache family of licenses.
 
-##### `bsd` <a name="bsd" id="construct-hub.SpdxLicense.bsd"></a>
+##### `bsd` <a name="bsd" id="@gd-constructs/construct-hub.SpdxLicense.bsd"></a>
 
 ```typescript
-import { SpdxLicense } from 'construct-hub'
+import { SpdxLicense } from '@gd-constructs/construct-hub'
 
 SpdxLicense.bsd()
 ```
 
 The BSD family of licenses.
 
-##### `cddl` <a name="cddl" id="construct-hub.SpdxLicense.cddl"></a>
+##### `cddl` <a name="cddl" id="@gd-constructs/construct-hub.SpdxLicense.cddl"></a>
 
 ```typescript
-import { SpdxLicense } from 'construct-hub'
+import { SpdxLicense } from '@gd-constructs/construct-hub'
 
 SpdxLicense.cddl()
 ```
 
 The CDDL family of licenses.
 
-##### `epl` <a name="epl" id="construct-hub.SpdxLicense.epl"></a>
+##### `epl` <a name="epl" id="@gd-constructs/construct-hub.SpdxLicense.epl"></a>
 
 ```typescript
-import { SpdxLicense } from 'construct-hub'
+import { SpdxLicense } from '@gd-constructs/construct-hub'
 
 SpdxLicense.epl()
 ```
 
 The EPL family of licenses.
 
-##### `mit` <a name="mit" id="construct-hub.SpdxLicense.mit"></a>
+##### `mit` <a name="mit" id="@gd-constructs/construct-hub.SpdxLicense.mit"></a>
 
 ```typescript
-import { SpdxLicense } from 'construct-hub'
+import { SpdxLicense } from '@gd-constructs/construct-hub'
 
 SpdxLicense.mit()
 ```
 
 The MIT family of licenses.
 
-##### `mpl` <a name="mpl" id="construct-hub.SpdxLicense.mpl"></a>
+##### `mpl` <a name="mpl" id="@gd-constructs/construct-hub.SpdxLicense.mpl"></a>
 
 ```typescript
-import { SpdxLicense } from 'construct-hub'
+import { SpdxLicense } from '@gd-constructs/construct-hub'
 
 SpdxLicense.mpl()
 ```
 
 The MPL family of licenses.
 
-##### `osiApproved` <a name="osiApproved" id="construct-hub.SpdxLicense.osiApproved"></a>
+##### `osiApproved` <a name="osiApproved" id="@gd-constructs/construct-hub.SpdxLicense.osiApproved"></a>
 
 ```typescript
-import { SpdxLicense } from 'construct-hub'
+import { SpdxLicense } from '@gd-constructs/construct-hub'
 
 SpdxLicense.osiApproved()
 ```
@@ -3102,11 +3102,11 @@ All OSI-Approved SPDX Licenses.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.SpdxLicense.property.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.id">id</a></code> | <code>string</code> | *No description.* |
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="construct-hub.SpdxLicense.property.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.SpdxLicense.property.id"></a>
 
 ```typescript
 public readonly id: string;
@@ -3120,654 +3120,654 @@ public readonly id: string;
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.SpdxLicense.property.AAL">AAL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Attribution Assurance License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ABSTYLES">ABSTYLES</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Abstyles License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ADACORE_DOC">ADACORE_DOC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | AdaCore Doc License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ADOBE_2006">ADOBE_2006</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Systems Incorporated Source Code License Agreement. |
-| <code><a href="#construct-hub.SpdxLicense.property.ADOBE_DISPLAY_POSTSCRIPT">ADOBE_DISPLAY_POSTSCRIPT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Display PostScript License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ADOBE_GLYPH">ADOBE_GLYPH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Glyph List License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ADOBE_UTOPIA">ADOBE_UTOPIA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Utopia Font License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ADSL">ADSL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Amazon Digital Services License. |
-| <code><a href="#construct-hub.SpdxLicense.property.AFL_1_1">AFL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.AFL_1_2">AFL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.AFL_2_0">AFL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.AFL_2_1">AFL_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v2.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.AFL_3_0">AFL_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v3.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.AFMPARSE">AFMPARSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Afmparse License. |
-| <code><a href="#construct-hub.SpdxLicense.property.AGPL_1_0">AGPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Affero General Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.AGPL_1_0_ONLY">AGPL_1_0_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Affero General Public License v1.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.AGPL_1_0_OR_LATER">AGPL_1_0_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Affero General Public License v1.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.AGPL_3_0">AGPL_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Affero General Public License v3.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.AGPL_3_0_ONLY">AGPL_3_0_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Affero General Public License v3.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.AGPL_3_0_OR_LATER">AGPL_3_0_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Affero General Public License v3.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.ALADDIN">ALADDIN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Aladdin Free Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.AMDPLPA">AMDPLPA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | AMD's plpa_map.c License. |
-| <code><a href="#construct-hub.SpdxLicense.property.AML">AML</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple MIT License. |
-| <code><a href="#construct-hub.SpdxLicense.property.AML_GLSLANG">AML_GLSLANG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | AML glslang variant License. |
-| <code><a href="#construct-hub.SpdxLicense.property.AMPAS">AMPAS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Academy of Motion Picture Arts and Sciences BSD. |
-| <code><a href="#construct-hub.SpdxLicense.property.ANTLR_PD">ANTLR_PD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ANTLR Software Rights Notice. |
-| <code><a href="#construct-hub.SpdxLicense.property.ANTLR_PD_FALLBACK">ANTLR_PD_FALLBACK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ANTLR Software Rights Notice with license fallback. |
-| <code><a href="#construct-hub.SpdxLicense.property.APACHE_1_0">APACHE_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.APACHE_1_1">APACHE_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.APACHE_2_0">APACHE_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.APAFML">APAFML</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Postscript AFM License. |
-| <code><a href="#construct-hub.SpdxLicense.property.APL_1_0">APL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Adaptive Public License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.APP_S2P">APP_S2P</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | App::s2p License. |
-| <code><a href="#construct-hub.SpdxLicense.property.APSL_1_0">APSL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.APSL_1_1">APSL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.APSL_1_2">APSL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.APSL_2_0">APSL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ARPHIC_1999">ARPHIC_1999</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Arphic Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ARTISTIC_1_0">ARTISTIC_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ARTISTIC_1_0_CL8">ARTISTIC_1_0_CL8</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0 w/clause 8. |
-| <code><a href="#construct-hub.SpdxLicense.property.ARTISTIC_1_0_PERL">ARTISTIC_1_0_PERL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0 (Perl). |
-| <code><a href="#construct-hub.SpdxLicense.property.ARTISTIC_2_0">ARTISTIC_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ASWF_DIGITAL_ASSETS_1_0">ASWF_DIGITAL_ASSETS_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ASWF Digital Assets License version 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ASWF_DIGITAL_ASSETS_1_1">ASWF_DIGITAL_ASSETS_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ASWF Digital Assets License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.BAEKMUK">BAEKMUK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Baekmuk License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BAHYPH">BAHYPH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Bahyph License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BARR">BARR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Barr License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BCRYPT_SOLAR_DESIGNER">BCRYPT_SOLAR_DESIGNER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | bcrypt Solar Designer License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BEERWARE">BEERWARE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Beerware License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BITSTREAM_CHARTER">BITSTREAM_CHARTER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Bitstream Charter Font License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BITSTREAM_VERA">BITSTREAM_VERA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Bitstream Vera Font License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BITTORRENT_1_0">BITTORRENT_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BitTorrent Open Source License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.BITTORRENT_1_1">BITTORRENT_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BitTorrent Open Source License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.BLESSING">BLESSING</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SQLite Blessing. |
-| <code><a href="#construct-hub.SpdxLicense.property.BLUEOAK_1_0_0">BLUEOAK_1_0_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Blue Oak Model License 1.0.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.BOEHM_GC">BOEHM_GC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Boehm-Demers-Weiser GC License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BORCEUX">BORCEUX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Borceux license. |
-| <code><a href="#construct-hub.SpdxLicense.property.BRIAN_GLADMAN_2_CLAUSE">BRIAN_GLADMAN_2_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Brian Gladman 2-Clause License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BRIAN_GLADMAN_3_CLAUSE">BRIAN_GLADMAN_3_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Brian Gladman 3-Clause License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_1_CLAUSE">BSD_1_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 1-Clause License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE">BSD_2_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause "Simplified" License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_DARWIN">BSD_2_CLAUSE_DARWIN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause - Ian Darwin variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_FREEBSD">BSD_2_CLAUSE_FREEBSD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause FreeBSD License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_NETBSD">BSD_2_CLAUSE_NETBSD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause NetBSD License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_PATENT">BSD_2_CLAUSE_PATENT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD-2-Clause Plus Patent License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_VIEWS">BSD_2_CLAUSE_VIEWS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause with views sentence. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE">BSD_3_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause "New" or "Revised" License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_ACPICA">BSD_3_CLAUSE_ACPICA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause acpica variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_ATTRIBUTION">BSD_3_CLAUSE_ATTRIBUTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD with attribution. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_CLEAR">BSD_3_CLAUSE_CLEAR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Clear License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_FLEX">BSD_3_CLAUSE_FLEX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Flex variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_HP">BSD_3_CLAUSE_HP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Hewlett-Packard BSD variant license. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_LBNL">BSD_3_CLAUSE_LBNL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Lawrence Berkeley National Labs BSD variant license. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_MODIFICATION">BSD_3_CLAUSE_MODIFICATION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Modification. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_MILITARY_LICENSE">BSD_3_CLAUSE_NO_MILITARY_LICENSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause No Military License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE">BSD_3_CLAUSE_NO_NUCLEAR_LICENSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause No Nuclear License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014">BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause No Nuclear License 2014. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY">BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause No Nuclear Warranty. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_OPEN_MPI">BSD_3_CLAUSE_OPEN_MPI</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Open MPI variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_3_CLAUSE_SUN">BSD_3_CLAUSE_SUN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Sun Microsystems. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_4_3RENO">BSD_4_3RENO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 4.3 RENO License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_4_3TAHOE">BSD_4_3TAHOE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 4.3 TAHOE License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_4_CLAUSE">BSD_4_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 4-Clause "Original" or "Old" License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_4_CLAUSE_SHORTENED">BSD_4_CLAUSE_SHORTENED</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 4 Clause Shortened. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_4_CLAUSE_UC">BSD_4_CLAUSE_UC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD-4-Clause (University of California-Specific). |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_ADVERTISING_ACKNOWLEDGEMENT">BSD_ADVERTISING_ACKNOWLEDGEMENT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Advertising Acknowledgement License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_ATTRIBUTION_HPND_DISCLAIMER">BSD_ATTRIBUTION_HPND_DISCLAIMER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD with Attribution and HPND disclaimer. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_INFERNO_NETTVERK">BSD_INFERNO_NETTVERK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD-Inferno-Nettverk. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_PROTECTION">BSD_PROTECTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Protection License. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_SOURCE_BEGINNING_FILE">BSD_SOURCE_BEGINNING_FILE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Source Code Attribution - beginning of file variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_SOURCE_CODE">BSD_SOURCE_CODE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Source Code Attribution. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_SYSTEMICS">BSD_SYSTEMICS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Systemics BSD variant license. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSD_SYSTEMICS_W3WORKS">BSD_SYSTEMICS_W3WORKS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Systemics W3Works BSD variant license. |
-| <code><a href="#construct-hub.SpdxLicense.property.BSL_1_0">BSL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Boost Software License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.BUSL_1_1">BUSL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Business Source License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.BZIP2_1_0_5">BZIP2_1_0_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | bzip2 and libbzip2 License v1.0.5. |
-| <code><a href="#construct-hub.SpdxLicense.property.BZIP2_1_0_6">BZIP2_1_0_6</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | bzip2 and libbzip2 License v1.0.6. |
-| <code><a href="#construct-hub.SpdxLicense.property.C_UDA_1_0">C_UDA_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Computational Use of Data Agreement v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CAL_1_0">CAL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Cryptographic Autonomy License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CAL_1_0_COMBINED_WORK_EXCEPTION">CAL_1_0_COMBINED_WORK_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Cryptographic Autonomy License 1.0 (Combined Work Exception). |
-| <code><a href="#construct-hub.SpdxLicense.property.CALDERA">CALDERA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Caldera License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CALDERA_NO_PREAMBLE">CALDERA_NO_PREAMBLE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Caldera License (without preamble). |
-| <code><a href="#construct-hub.SpdxLicense.property.CATOSL_1_1">CATOSL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Computer Associates Trusted Open Source License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_1_0">CC_BY_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 1.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_2_0">CC_BY_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 2.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_2_5">CC_BY_2_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 2.5 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_2_5_AU">CC_BY_2_5_AU</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 2.5 Australia. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_3_0">CC_BY_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Unported. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_3_0_AT">CC_BY_3_0_AT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Austria. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_3_0_AU">CC_BY_3_0_AU</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Australia. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_3_0_DE">CC_BY_3_0_DE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Germany. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_3_0_IGO">CC_BY_3_0_IGO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 IGO. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_3_0_NL">CC_BY_3_0_NL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Netherlands. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_3_0_US">CC_BY_3_0_US</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 United States. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_4_0">CC_BY_4_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 4.0 International. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_1_0">CC_BY_NC_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 1.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_2_0">CC_BY_NC_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 2.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_2_5">CC_BY_NC_2_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 2.5 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_3_0">CC_BY_NC_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 3.0 Unported. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_3_0_DE">CC_BY_NC_3_0_DE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 3.0 Germany. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_4_0">CC_BY_NC_4_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 4.0 International. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_ND_1_0">CC_BY_NC_ND_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 1.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_ND_2_0">CC_BY_NC_ND_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 2.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_ND_2_5">CC_BY_NC_ND_2_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 2.5 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0">CC_BY_NC_ND_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 3.0 Unported. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0_DE">CC_BY_NC_ND_3_0_DE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 3.0 Germany. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0_IGO">CC_BY_NC_ND_3_0_IGO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 3.0 IGO. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_ND_4_0">CC_BY_NC_ND_4_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 4.0 International. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_1_0">CC_BY_NC_SA_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 1.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0">CC_BY_NC_SA_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 2.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_DE">CC_BY_NC_SA_2_0_DE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 2.0 Germany. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_FR">CC_BY_NC_SA_2_0_FR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution-NonCommercial-ShareAlike 2.0 France. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_UK">CC_BY_NC_SA_2_0_UK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 2.0 England and Wales. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_5">CC_BY_NC_SA_2_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 2.5 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0">CC_BY_NC_SA_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 3.0 Unported. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0_DE">CC_BY_NC_SA_3_0_DE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 3.0 Germany. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0_IGO">CC_BY_NC_SA_3_0_IGO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 3.0 IGO. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_NC_SA_4_0">CC_BY_NC_SA_4_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 4.0 International. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_ND_1_0">CC_BY_ND_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 1.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_ND_2_0">CC_BY_ND_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 2.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_ND_2_5">CC_BY_ND_2_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 2.5 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_ND_3_0">CC_BY_ND_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 3.0 Unported. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_ND_3_0_DE">CC_BY_ND_3_0_DE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 3.0 Germany. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_ND_4_0">CC_BY_ND_4_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 4.0 International. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_1_0">CC_BY_SA_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 1.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_2_0">CC_BY_SA_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 2.0 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_2_0_UK">CC_BY_SA_2_0_UK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 2.0 England and Wales. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_2_1_JP">CC_BY_SA_2_1_JP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 2.1 Japan. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_2_5">CC_BY_SA_2_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 2.5 Generic. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_3_0">CC_BY_SA_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 3.0 Unported. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_3_0_AT">CC_BY_SA_3_0_AT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 3.0 Austria. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_3_0_DE">CC_BY_SA_3_0_DE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 3.0 Germany. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_3_0_IGO">CC_BY_SA_3_0_IGO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution-ShareAlike 3.0 IGO. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_4_0">CC_BY_SA_4_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 4.0 International. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC_PDDC">CC_PDDC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Public Domain Dedication and Certification. |
-| <code><a href="#construct-hub.SpdxLicense.property.CC0_1_0">CC0_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Zero v1.0 Universal. |
-| <code><a href="#construct-hub.SpdxLicense.property.CDDL_1_0">CDDL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Development and Distribution License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CDDL_1_1">CDDL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Development and Distribution License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.CDL_1_0">CDL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Documentation License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CDLA_PERMISSIVE_1_0">CDLA_PERMISSIVE_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Community Data License Agreement Permissive 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CDLA_PERMISSIVE_2_0">CDLA_PERMISSIVE_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Community Data License Agreement Permissive 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CDLA_SHARING_1_0">CDLA_SHARING_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Community Data License Agreement Sharing 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CECILL_1_0">CECILL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL Free Software License Agreement v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CECILL_1_1">CECILL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL Free Software License Agreement v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.CECILL_2_0">CECILL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL Free Software License Agreement v2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CECILL_2_1">CECILL_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL Free Software License Agreement v2.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.CECILL_B">CECILL_B</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL-B Free Software License Agreement. |
-| <code><a href="#construct-hub.SpdxLicense.property.CECILL_C">CECILL_C</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL-C Free Software License Agreement. |
-| <code><a href="#construct-hub.SpdxLicense.property.CERN_OHL_1_1">CERN_OHL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.CERN_OHL_1_2">CERN_OHL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence v1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.CERN_OHL_P_2_0">CERN_OHL_P_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence Version 2 - Permissive. |
-| <code><a href="#construct-hub.SpdxLicense.property.CERN_OHL_S_2_0">CERN_OHL_S_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence Version 2 - Strongly Reciprocal. |
-| <code><a href="#construct-hub.SpdxLicense.property.CERN_OHL_W_2_0">CERN_OHL_W_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence Version 2 - Weakly Reciprocal. |
-| <code><a href="#construct-hub.SpdxLicense.property.CFITSIO">CFITSIO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CFITSIO License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CHECK_CVS">CHECK_CVS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | check-cvs License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CHECKMK">CHECKMK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Checkmk License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CL_ARTISTIC">CL_ARTISTIC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Clarified Artistic License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CLIPS">CLIPS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Clips License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CMU_MACH">CMU_MACH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CMU Mach License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CMU_MACH_NODOC">CMU_MACH_NODOC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CMU    Mach - no notices-in-documentation variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.CNRI_JYTHON">CNRI_JYTHON</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CNRI Jython License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CNRI_PYTHON">CNRI_PYTHON</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CNRI Python License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CNRI_PYTHON_GPL_COMPATIBLE">CNRI_PYTHON_GPL_COMPATIBLE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CNRI Python Open Source GPL Compatible License Agreement. |
-| <code><a href="#construct-hub.SpdxLicense.property.COIL_1_0">COIL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Copyfree Open Innovation License. |
-| <code><a href="#construct-hub.SpdxLicense.property.COMMUNITY_SPEC_1_0">COMMUNITY_SPEC_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Community Specification License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CONDOR_1_1">CONDOR_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Condor Public License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.COPYLEFT_NEXT_0_3_0">COPYLEFT_NEXT_0_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | copyleft-next 0.3.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.COPYLEFT_NEXT_0_3_1">COPYLEFT_NEXT_0_3_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | copyleft-next 0.3.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.CORNELL_LOSSLESS_JPEG">CORNELL_LOSSLESS_JPEG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Cornell Lossless JPEG License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CPAL_1_0">CPAL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Public Attribution License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CPL_1_0">CPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Public License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CPOL_1_02">CPOL_1_02</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Code Project Open License 1.02. |
-| <code><a href="#construct-hub.SpdxLicense.property.CRONYX">CRONYX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Cronyx License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CROSSWORD">CROSSWORD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Crossword License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CRYSTAL_STACKER">CRYSTAL_STACKER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CrystalStacker License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CUA_OPL_1_0">CUA_OPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CUA Office Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.CUBE">CUBE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Cube License. |
-| <code><a href="#construct-hub.SpdxLicense.property.CURL">CURL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | curl License. |
-| <code><a href="#construct-hub.SpdxLicense.property.D_FSL_1_0">D_FSL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Deutsche Freie Software Lizenz. |
-| <code><a href="#construct-hub.SpdxLicense.property.DEC_3_CLAUSE">DEC_3_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | DEC 3-Clause License. |
-| <code><a href="#construct-hub.SpdxLicense.property.DIFFMARK">DIFFMARK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | diffmark license. |
-| <code><a href="#construct-hub.SpdxLicense.property.DL_DE_BY_2_0">DL_DE_BY_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Data licence Germany – attribution – version 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.DL_DE_ZERO_2_0">DL_DE_ZERO_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Data licence Germany – zero – version 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.DOC">DOC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | DOC License. |
-| <code><a href="#construct-hub.SpdxLicense.property.DOTSEQN">DOTSEQN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Dotseqn License. |
-| <code><a href="#construct-hub.SpdxLicense.property.DRL_1_0">DRL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Detection Rule License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.DRL_1_1">DRL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Detection Rule License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.DSDP">DSDP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | DSDP License. |
-| <code><a href="#construct-hub.SpdxLicense.property.DTOA">DTOA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | David M. |
-| <code><a href="#construct-hub.SpdxLicense.property.DVIPDFM">DVIPDFM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | dvipdfm License. |
-| <code><a href="#construct-hub.SpdxLicense.property.E_GENIX">E_GENIX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | eGenix.com Public License 1.1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ECL_1_0">ECL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Educational Community License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ECL_2_0">ECL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Educational Community License v2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ECOS_2_0">ECOS_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | eCos license version 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.EFL_1_0">EFL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Eiffel Forum License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.EFL_2_0">EFL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Eiffel Forum License v2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ELASTIC_2_0">ELASTIC_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Elastic License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ENTESSA">ENTESSA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Entessa Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.EPICS">EPICS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | EPICS Open License. |
-| <code><a href="#construct-hub.SpdxLicense.property.EPL_1_0">EPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Eclipse Public License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.EPL_2_0">EPL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Eclipse Public License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ERLPL_1_1">ERLPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Erlang Public License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.ETALAB_2_0">ETALAB_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Etalab Open License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.EUDATAGRID">EUDATAGRID</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | EU DataGrid Software License. |
-| <code><a href="#construct-hub.SpdxLicense.property.EUPL_1_0">EUPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | European Union Public License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.EUPL_1_1">EUPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | European Union Public License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.EUPL_1_2">EUPL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | European Union Public License 1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.EUROSYM">EUROSYM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Eurosym License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FAIR">FAIR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Fair License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FBM">FBM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Fuzzy Bitmap License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FDK_AAC">FDK_AAC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Fraunhofer FDK AAC Codec Library. |
-| <code><a href="#construct-hub.SpdxLicense.property.FERGUSON_TWOFISH">FERGUSON_TWOFISH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Ferguson Twofish License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FRAMEWORX_1_0">FRAMEWORX_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Frameworx Open License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.FREE_IMAGE">FREE_IMAGE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | FreeImage Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.FREEBSD_DOC">FREEBSD_DOC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | FreeBSD Documentation License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FSFAP">FSFAP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF All Permissive License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FSFAP_NO_WARRANTY_DISCLAIMER">FSFAP_NO_WARRANTY_DISCLAIMER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF All Permissive License (without Warranty). |
-| <code><a href="#construct-hub.SpdxLicense.property.FSFUL">FSFUL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF Unlimited License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FSFULLR">FSFULLR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF Unlimited License (with License Retention). |
-| <code><a href="#construct-hub.SpdxLicense.property.FSFULLRWD">FSFULLRWD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF Unlimited License (With License Retention and Warranty Disclaimer). |
-| <code><a href="#construct-hub.SpdxLicense.property.FTL">FTL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Freetype Project License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FURUSETH">FURUSETH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Furuseth License. |
-| <code><a href="#construct-hub.SpdxLicense.property.FWLW">FWLW</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | fwlw License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GCR_DOCS">GCR_DOCS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Gnome GCR Documentation License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GD">GD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GD License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1">GFDL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_ONLY">GFDL_1_1_INVARIANTS_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 only - invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_OR_LATER">GFDL_1_1_INVARIANTS_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 or later - invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1_NO_INVARIANTS_ONLY">GFDL_1_1_NO_INVARIANTS_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 only - no invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1_NO_INVARIANTS_OR_LATER">GFDL_1_1_NO_INVARIANTS_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 or later - no invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1_ONLY">GFDL_1_1_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1_OR_LATER">GFDL_1_1_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_2">GFDL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_2_INVARIANTS_ONLY">GFDL_1_2_INVARIANTS_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 only - invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_2_INVARIANTS_OR_LATER">GFDL_1_2_INVARIANTS_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 or later - invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_2_NO_INVARIANTS_ONLY">GFDL_1_2_NO_INVARIANTS_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 only - no invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_2_NO_INVARIANTS_OR_LATER">GFDL_1_2_NO_INVARIANTS_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 or later - no invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_2_ONLY">GFDL_1_2_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_2_OR_LATER">GFDL_1_2_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_3">GFDL_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_3_INVARIANTS_ONLY">GFDL_1_3_INVARIANTS_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 only - invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_3_INVARIANTS_OR_LATER">GFDL_1_3_INVARIANTS_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 or later - invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_3_NO_INVARIANTS_ONLY">GFDL_1_3_NO_INVARIANTS_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 only - no invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_3_NO_INVARIANTS_OR_LATER">GFDL_1_3_NO_INVARIANTS_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 or later - no invariants. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_3_ONLY">GFDL_1_3_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_3_OR_LATER">GFDL_1_3_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GIFTWARE">GIFTWARE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Giftware License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GL2_P_S">GL2_P_S</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GL2PS License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GLIDE">GLIDE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | 3dfx Glide License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GLULXE">GLULXE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Glulxe License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GLWTPL">GLWTPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Good Luck With That Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GNUPLOT">GNUPLOT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | gnuplot License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_1_0">GPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v1.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_1_0_ONLY">GPL_1_0_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v1.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_1_0_OR_LATER">GPL_1_0_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v1.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_1_0_PLUS">GPL_1_0_PLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v1.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0">GPL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0_ONLY">GPL_2_0_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0_OR_LATER">GPL_2_0_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0_PLUS">GPL_2_0_PLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0_WITH_AUTOCONF_EXCEPTION">GPL_2_0_WITH_AUTOCONF_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/Autoconf exception. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0_WITH_BISON_EXCEPTION">GPL_2_0_WITH_BISON_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/Bison exception. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0_WITH_CLASSPATH_EXCEPTION">GPL_2_0_WITH_CLASSPATH_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/Classpath exception. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0_WITH_FONT_EXCEPTION">GPL_2_0_WITH_FONT_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/Font exception. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_2_0_WITH_GCC_EXCEPTION">GPL_2_0_WITH_GCC_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/GCC Runtime Library exception. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_3_0">GPL_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_3_0_ONLY">GPL_3_0_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_3_0_OR_LATER">GPL_3_0_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_3_0_PLUS">GPL_3_0_PLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_3_0_WITH_AUTOCONF_EXCEPTION">GPL_3_0_WITH_AUTOCONF_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 w/Autoconf exception. |
-| <code><a href="#construct-hub.SpdxLicense.property.GPL_3_0_WITH_GCC_EXCEPTION">GPL_3_0_WITH_GCC_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 w/GCC Runtime Library exception. |
-| <code><a href="#construct-hub.SpdxLicense.property.GRAPHICS_GEMS">GRAPHICS_GEMS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Graphics Gems License. |
-| <code><a href="#construct-hub.SpdxLicense.property.GSOAP_1_3B">GSOAP_1_3B</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | gSOAP Public License v1.3b. |
-| <code><a href="#construct-hub.SpdxLicense.property.GTKBOOK">GTKBOOK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | gtkbook License. |
-| <code><a href="#construct-hub.SpdxLicense.property.HASKELL_REPORT">HASKELL_REPORT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Haskell Language Report License. |
-| <code><a href="#construct-hub.SpdxLicense.property.HDPARM">HDPARM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | hdparm License. |
-| <code><a href="#construct-hub.SpdxLicense.property.HIPPOCRATIC_2_1">HIPPOCRATIC_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Hippocratic License 2.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.HP_1986">HP_1986</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Hewlett-Packard 1986 License. |
-| <code><a href="#construct-hub.SpdxLicense.property.HP_1989">HP_1989</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Hewlett-Packard 1989 License. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND">HPND</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_DEC">HPND_DEC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - DEC variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_DOC">HPND_DOC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - documentation variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_DOC_SELL">HPND_DOC_SELL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - documentation sell variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_EXPORT_US">HPND_EXPORT_US</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND with US Government export control warning. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_EXPORT_US_MODIFY">HPND_EXPORT_US_MODIFY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND with US Government export control warning and modification rqmt. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_FENNEBERG_LIVINGSTON">HPND_FENNEBERG_LIVINGSTON</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Fenneberg-Livingston variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_INRIA_IMAG">HPND_INRIA_IMAG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer    - INRIA-IMAG variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_KEVLIN_HENNEY">HPND_KEVLIN_HENNEY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Kevlin Henney variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_MARKUS_KUHN">HPND_MARKUS_KUHN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Markus Kuhn variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_MIT_DISCLAIMER">HPND_MIT_DISCLAIMER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer with MIT disclaimer. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_PBMPLUS">HPND_PBMPLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Pbmplus variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_MIT_DISCLAIMER_XSERVER">HPND_SELL_MIT_DISCLAIMER_XSERVER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell xserver variant with MIT disclaimer. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_REGEXPR">HPND_SELL_REGEXPR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell regexpr variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_VARIANT">HPND_SELL_VARIANT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_VARIANT_MIT_DISCLAIMER">HPND_SELL_VARIANT_MIT_DISCLAIMER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND sell variant with MIT disclaimer. |
-| <code><a href="#construct-hub.SpdxLicense.property.HPND_UC">HPND_UC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - University of California variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.HTMLTIDY">HTMLTIDY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HTML Tidy License. |
-| <code><a href="#construct-hub.SpdxLicense.property.I_MATIX">I_MATIX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | iMatix Standard Function Library Agreement. |
-| <code><a href="#construct-hub.SpdxLicense.property.IBM_PIBS">IBM_PIBS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | IBM PowerPC Initialization and Boot Software. |
-| <code><a href="#construct-hub.SpdxLicense.property.ICU">ICU</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ICU License. |
-| <code><a href="#construct-hub.SpdxLicense.property.IEC_CODE_COMPONENTS_EULA">IEC_CODE_COMPONENTS_EULA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | IEC    Code Components End-user licence agreement. |
-| <code><a href="#construct-hub.SpdxLicense.property.IJG">IJG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Independent JPEG Group License. |
-| <code><a href="#construct-hub.SpdxLicense.property.IJG_SHORT">IJG_SHORT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Independent JPEG Group License - short. |
-| <code><a href="#construct-hub.SpdxLicense.property.IMAGE_MAGICK">IMAGE_MAGICK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ImageMagick License. |
-| <code><a href="#construct-hub.SpdxLicense.property.IMLIB2">IMLIB2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Imlib2 License. |
-| <code><a href="#construct-hub.SpdxLicense.property.INFO_ZIP">INFO_ZIP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Info-ZIP License. |
-| <code><a href="#construct-hub.SpdxLicense.property.INNER_NET_2_0">INNER_NET_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Inner Net License v2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.INTEL">INTEL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Intel Open Source License. |
-| <code><a href="#construct-hub.SpdxLicense.property.INTEL_ACPI">INTEL_ACPI</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Intel ACPI Software License Agreement. |
-| <code><a href="#construct-hub.SpdxLicense.property.INTERBASE_1_0">INTERBASE_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Interbase Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.IPA">IPA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | IPA Font License. |
-| <code><a href="#construct-hub.SpdxLicense.property.IPL_1_0">IPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | IBM Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ISC">ISC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ISC License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ISC_VEILLARD">ISC_VEILLARD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ISC Veillard variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.JAM">JAM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Jam License. |
-| <code><a href="#construct-hub.SpdxLicense.property.JASPER_2_0">JASPER_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | JasPer License. |
-| <code><a href="#construct-hub.SpdxLicense.property.JPL_IMAGE">JPL_IMAGE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | JPL Image Use Policy. |
-| <code><a href="#construct-hub.SpdxLicense.property.JPNIC">JPNIC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Japan Network Information Center License. |
-| <code><a href="#construct-hub.SpdxLicense.property.JSON">JSON</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | JSON License. |
-| <code><a href="#construct-hub.SpdxLicense.property.KASTRUP">KASTRUP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Kastrup License. |
-| <code><a href="#construct-hub.SpdxLicense.property.KAZLIB">KAZLIB</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Kazlib License. |
-| <code><a href="#construct-hub.SpdxLicense.property.KNUTH_CTAN">KNUTH_CTAN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Knuth CTAN License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LAL_1_2">LAL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Art Libre 1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.LAL_1_3">LAL_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Art Libre 1.3. |
-| <code><a href="#construct-hub.SpdxLicense.property.LATEX2_E">LATEX2_E</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Latex2e License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LATEX2E_TRANSLATED_NOTICE">LATEX2E_TRANSLATED_NOTICE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Latex2e with translated notice permission. |
-| <code><a href="#construct-hub.SpdxLicense.property.LEPTONICA">LEPTONICA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Leptonica License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_2_0">LGPL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Library General Public License v2 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_2_0_ONLY">LGPL_2_0_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Library General Public License v2 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_2_0_OR_LATER">LGPL_2_0_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Library General Public License v2 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_2_0_PLUS">LGPL_2_0_PLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Library General Public License v2 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_2_1">LGPL_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v2.1 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_2_1_ONLY">LGPL_2_1_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v2.1 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_2_1_OR_LATER">LGPL_2_1_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v2.1 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_2_1_PLUS">LGPL_2_1_PLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v2.1 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_3_0">LGPL_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v3.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_3_0_ONLY">LGPL_3_0_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v3.0 only. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_3_0_OR_LATER">LGPL_3_0_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v3.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPL_3_0_PLUS">LGPL_3_0_PLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v3.0 or later. |
-| <code><a href="#construct-hub.SpdxLicense.property.LGPLLR">LGPLLR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Lesser General Public License For Linguistic Resources. |
-| <code><a href="#construct-hub.SpdxLicense.property.LIBPNG">LIBPNG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | libpng License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LIBPNG_2_0">LIBPNG_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PNG Reference Library version 2. |
-| <code><a href="#construct-hub.SpdxLicense.property.LIBSELINUX_1_0">LIBSELINUX_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | libselinux public domain notice. |
-| <code><a href="#construct-hub.SpdxLicense.property.LIBTIFF">LIBTIFF</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | libtiff License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LIBUTIL_DAVID_NUGENT">LIBUTIL_DAVID_NUGENT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | libutil David Nugent License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LILIQ_P_1_1">LILIQ_P_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Libre du Québec – Permissive version 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.LILIQ_R_1_1">LILIQ_R_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Libre du Québec – Réciprocité version 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.LILIQ_RPLUS_1_1">LILIQ_RPLUS_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Libre du Québec – Réciprocité forte version 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_1_PARA">LINUX_MAN_PAGES_1_PARA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux man-pages - 1 paragraph. |
-| <code><a href="#construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT">LINUX_MAN_PAGES_COPYLEFT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux man-pages Copyleft. |
-| <code><a href="#construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT_2_PARA">LINUX_MAN_PAGES_COPYLEFT_2_PARA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux man-pages Copyleft - 2 paragraphs. |
-| <code><a href="#construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT_VAR">LINUX_MAN_PAGES_COPYLEFT_VAR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux man-pages Copyleft Variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.LINUX_OPENIB">LINUX_OPENIB</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux Kernel Variant of OpenIB.org license. |
-| <code><a href="#construct-hub.SpdxLicense.property.LOOP">LOOP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Lisp LOOP License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LPD_DOCUMENT">LPD_DOCUMENT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | LPD Documentation License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LPL_1_0">LPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Lucent Public License Version 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.LPL_1_02">LPL_1_02</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Lucent Public License v1.02. |
-| <code><a href="#construct-hub.SpdxLicense.property.LPPL_1_0">LPPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.LPPL_1_1">LPPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.LPPL_1_2">LPPL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.LPPL_1_3A">LPPL_1_3A</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.3a. |
-| <code><a href="#construct-hub.SpdxLicense.property.LPPL_1_3C">LPPL_1_3C</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.3c. |
-| <code><a href="#construct-hub.SpdxLicense.property.LSOF">LSOF</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | lsof License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LUCIDA_BITMAP_FONTS">LUCIDA_BITMAP_FONTS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Lucida Bitmap Fonts License. |
-| <code><a href="#construct-hub.SpdxLicense.property.LZMA_SDK_9_11_TO_9_20">LZMA_SDK_9_11_TO_9_20</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | LZMA SDK License (versions 9.11 to 9.20). |
-| <code><a href="#construct-hub.SpdxLicense.property.LZMA_SDK_9_22">LZMA_SDK_9_22</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | LZMA SDK License (versions 9.22 and beyond). |
-| <code><a href="#construct-hub.SpdxLicense.property.MACKERRAS_3_CLAUSE">MACKERRAS_3_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mackerras 3-Clause License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT">MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mackerras 3-Clause - acknowledgment variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.MAGAZ">MAGAZ</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | magaz License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MAILPRIO">MAILPRIO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | mailprio License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MAKE_INDEX">MAKE_INDEX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MakeIndex License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MARTIN_BIRGMEIER">MARTIN_BIRGMEIER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Martin Birgmeier License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MCPHEE_SLIDESHOW">MCPHEE_SLIDESHOW</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | McPhee Slideshow License. |
-| <code><a href="#construct-hub.SpdxLicense.property.METAMAIL">METAMAIL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | metamail License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MINPACK">MINPACK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Minpack License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIR_O_S">MIR_O_S</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | The MirOS Licence. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT">MIT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_0">MIT_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT No Attribution. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_ADVERTISING">MIT_ADVERTISING</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Enlightenment License (e16). |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_CMU">MIT_CMU</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CMU License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_ENNA">MIT_ENNA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | enna License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_FEH">MIT_FEH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | feh License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_FESTIVAL">MIT_FESTIVAL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Festival Variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_MODERN_VARIANT">MIT_MODERN_VARIANT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT License Modern Variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_OPEN_GROUP">MIT_OPEN_GROUP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Open Group variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_TESTREGEX">MIT_TESTREGEX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT testregex Variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.MIT_WU">MIT_WU</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Tom Wu Variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.MITNFA">MITNFA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT +no-false-attribs license. |
-| <code><a href="#construct-hub.SpdxLicense.property.MMIXWARE">MMIXWARE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MMIXware License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MOTOSOTO">MOTOSOTO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Motosoto License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MPEG_SSG">MPEG_SSG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MPEG Software Simulation. |
-| <code><a href="#construct-hub.SpdxLicense.property.MPI_PERMISSIVE">MPI_PERMISSIVE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | mpi Permissive License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MPICH2">MPICH2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | mpich2 License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MPL_1_0">MPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.MPL_1_1">MPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.MPL_2_0">MPL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.MPL_2_0_NO_COPYLEFT_EXCEPTION">MPL_2_0_NO_COPYLEFT_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 2.0 (no copyleft exception). |
-| <code><a href="#construct-hub.SpdxLicense.property.MPLUS">MPLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | mplus Font License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MS_LPL">MS_LPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Microsoft Limited Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MS_PL">MS_PL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Microsoft Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MS_RL">MS_RL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Microsoft Reciprocal License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MTLL">MTLL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Matrix Template Library License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MULANPSL_1_0">MULANPSL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mulan Permissive Software License, Version 1. |
-| <code><a href="#construct-hub.SpdxLicense.property.MULANPSL_2_0">MULANPSL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mulan Permissive Software License, Version 2. |
-| <code><a href="#construct-hub.SpdxLicense.property.MULTICS">MULTICS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Multics License. |
-| <code><a href="#construct-hub.SpdxLicense.property.MUP">MUP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mup License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NAIST_2003">NAIST_2003</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Nara Institute of Science and Technology License (2003). |
-| <code><a href="#construct-hub.SpdxLicense.property.NASA_1_3">NASA_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NASA Open Source Agreement 1.3. |
-| <code><a href="#construct-hub.SpdxLicense.property.NAUMEN">NAUMEN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Naumen Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NBPL_1_0">NBPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Net Boolean Public License v1. |
-| <code><a href="#construct-hub.SpdxLicense.property.NCGL_UK_2_0">NCGL_UK_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Non-Commercial Government Licence. |
-| <code><a href="#construct-hub.SpdxLicense.property.NCSA">NCSA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | University of Illinois/NCSA Open Source License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NET_CD_F">NET_CD_F</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NetCDF license. |
-| <code><a href="#construct-hub.SpdxLicense.property.NET_SNMP">NET_SNMP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Net-SNMP License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NEWSLETR">NEWSLETR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Newsletr License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NGPL">NGPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Nethack General Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NICTA_1_0">NICTA_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NICTA Public Software License, Version 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.NIST_PD">NIST_PD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NIST Public Domain Notice. |
-| <code><a href="#construct-hub.SpdxLicense.property.NIST_PD_FALLBACK">NIST_PD_FALLBACK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NIST Public Domain Notice with license fallback. |
-| <code><a href="#construct-hub.SpdxLicense.property.NIST_SOFTWARE">NIST_SOFTWARE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NIST Software License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NLOD_1_0">NLOD_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Norwegian Licence for Open Government Data (NLOD) 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.NLOD_2_0">NLOD_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Norwegian Licence for Open Government Data (NLOD) 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.NLPL">NLPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | No Limit Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NOKIA">NOKIA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Nokia Open Source License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NOSL">NOSL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Netizen Open Source License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NOWEB">NOWEB</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Noweb License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NPL_1_0">NPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Netscape Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.NPL_1_1">NPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Netscape Public License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.NPOSL_3_0">NPOSL_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Non-Profit Open Software License 3.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.NRL">NRL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NRL License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NTP">NTP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NTP License. |
-| <code><a href="#construct-hub.SpdxLicense.property.NTP_0">NTP_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NTP No Attribution. |
-| <code><a href="#construct-hub.SpdxLicense.property.NUNIT">NUNIT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Nunit License. |
-| <code><a href="#construct-hub.SpdxLicense.property.O_UDA_1_0">O_UDA_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Use of Data Agreement v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OCCT_PL">OCCT_PL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open CASCADE Technology Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.OCLC_2_0">OCLC_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OCLC Research Public License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ODBL_1_0">ODBL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Data Commons Open Database License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ODC_BY_1_0">ODC_BY_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Data Commons Attribution License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OFFIS">OFFIS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OFFIS License. |
-| <code><a href="#construct-hub.SpdxLicense.property.OFL_1_0">OFL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OFL_1_0_NO_RFN">OFL_1_0_NO_RFN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.0 with no Reserved Font Name. |
-| <code><a href="#construct-hub.SpdxLicense.property.OFL_1_0_RFN">OFL_1_0_RFN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.0 with Reserved Font Name. |
-| <code><a href="#construct-hub.SpdxLicense.property.OFL_1_1">OFL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.OFL_1_1_NO_RFN">OFL_1_1_NO_RFN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.1 with no Reserved Font Name. |
-| <code><a href="#construct-hub.SpdxLicense.property.OFL_1_1_RFN">OFL_1_1_RFN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.1 with Reserved Font Name. |
-| <code><a href="#construct-hub.SpdxLicense.property.OGC_1_0">OGC_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OGC Software License, Version 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OGDL_TAIWAN_1_0">OGDL_TAIWAN_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Taiwan Open Government Data License, version 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OGL_CANADA_2_0">OGL_CANADA_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Government Licence - Canada. |
-| <code><a href="#construct-hub.SpdxLicense.property.OGL_UK_1_0">OGL_UK_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Government Licence v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OGL_UK_2_0">OGL_UK_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Government Licence v2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OGL_UK_3_0">OGL_UK_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Government Licence v3.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OGTSL">OGTSL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Group Test Suite License. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_1_1">OLDAP_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_1_2">OLDAP_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_1_3">OLDAP_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v1.3. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_1_4">OLDAP_1_4</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v1.4. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_0">OLDAP_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.0 (or possibly 2.0A and 2.0B). |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_0_1">OLDAP_2_0_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.0.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_1">OLDAP_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_2">OLDAP_2_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_2_1">OLDAP_2_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.2.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_2_2">OLDAP_2_2_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License 2.2.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_3">OLDAP_2_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.3. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_4">OLDAP_2_4</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.4. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_5">OLDAP_2_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.5. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_6">OLDAP_2_6</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.6. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_7">OLDAP_2_7</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.7. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLDAP_2_8">OLDAP_2_8</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.8. |
-| <code><a href="#construct-hub.SpdxLicense.property.OLFL_1_3">OLFL_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Logistics Foundation License Version 1.3. |
-| <code><a href="#construct-hub.SpdxLicense.property.OML">OML</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Market License. |
-| <code><a href="#construct-hub.SpdxLicense.property.OPEN_SS_L">OPEN_SS_L</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OpenSSL License. |
-| <code><a href="#construct-hub.SpdxLicense.property.OPEN_VISION">OPEN_VISION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OpenVision License. |
-| <code><a href="#construct-hub.SpdxLicense.property.OPENPBS_2_3">OPENPBS_2_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OpenPBS v2.3 Software License. |
-| <code><a href="#construct-hub.SpdxLicense.property.OPENSSL_STANDALONE">OPENSSL_STANDALONE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OpenSSL License - standalone. |
-| <code><a href="#construct-hub.SpdxLicense.property.OPL_1_0">OPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OPL_UK_3_0">OPL_UK_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | United    Kingdom Open Parliament Licence v3.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OPUBL_1_0">OPUBL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Publication License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OSET_PL_2_1">OSET_PL_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OSET Public License version 2.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.OSL_1_0">OSL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OSL_1_1">OSL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.OSL_2_0">OSL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.OSL_2_1">OSL_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 2.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.OSL_3_0">OSL_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 3.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.PADL">PADL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PADL License. |
-| <code><a href="#construct-hub.SpdxLicense.property.PARITY_6_0_0">PARITY_6_0_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | The Parity Public License 6.0.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.PARITY_7_0_0">PARITY_7_0_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | The Parity Public License 7.0.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.PDDL_1_0">PDDL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Data Commons Public Domain Dedication & License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.PHP_3_0">PHP_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PHP License v3.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.PHP_3_01">PHP_3_01</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PHP License v3.01. |
-| <code><a href="#construct-hub.SpdxLicense.property.PIXAR">PIXAR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Pixar License. |
-| <code><a href="#construct-hub.SpdxLicense.property.PLEXUS">PLEXUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Plexus Classworlds License. |
-| <code><a href="#construct-hub.SpdxLicense.property.PNMSTITCH">PNMSTITCH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | pnmstitch License. |
-| <code><a href="#construct-hub.SpdxLicense.property.POLYFORM_NONCOMMERCIAL_1_0_0">POLYFORM_NONCOMMERCIAL_1_0_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PolyForm Noncommercial License 1.0.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.POLYFORM_SMALL_BUSINESS_1_0_0">POLYFORM_SMALL_BUSINESS_1_0_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PolyForm Small Business License 1.0.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.POSTGRE_SQ_L">POSTGRE_SQ_L</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PostgreSQL License. |
-| <code><a href="#construct-hub.SpdxLicense.property.PSF_2_0">PSF_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Python Software Foundation License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.PSFRAG">PSFRAG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | psfrag License. |
-| <code><a href="#construct-hub.SpdxLicense.property.PSUTILS">PSUTILS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | psutils License. |
-| <code><a href="#construct-hub.SpdxLicense.property.PYTHON_2_0">PYTHON_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Python License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.PYTHON_2_0_1">PYTHON_2_0_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Python License 2.0.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.PYTHON_LDAP">PYTHON_LDAP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Python ldap License. |
-| <code><a href="#construct-hub.SpdxLicense.property.QHULL">QHULL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Qhull License. |
-| <code><a href="#construct-hub.SpdxLicense.property.QPL_1_0">QPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Q Public License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.QPL_1_0_INRIA_2004">QPL_1_0_INRIA_2004</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Q Public License 1.0 - INRIA 2004 variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.RADVD">RADVD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | radvd License. |
-| <code><a href="#construct-hub.SpdxLicense.property.RDISC">RDISC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Rdisc License. |
-| <code><a href="#construct-hub.SpdxLicense.property.RHECOS_1_1">RHECOS_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Red Hat eCos Public License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.RPL_1_1">RPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Reciprocal Public License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.RPL_1_5">RPL_1_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Reciprocal Public License 1.5. |
-| <code><a href="#construct-hub.SpdxLicense.property.RPSL_1_0">RPSL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | RealNetworks Public Source License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.RSA_MD">RSA_MD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | RSA Message-Digest License. |
-| <code><a href="#construct-hub.SpdxLicense.property.RSCPL">RSCPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Ricoh Source Code Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.RUBY">RUBY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Ruby License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SAX_PD">SAX_PD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sax Public Domain Notice. |
-| <code><a href="#construct-hub.SpdxLicense.property.SAX_PD_2_0">SAX_PD_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sax Public Domain Notice 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.SAXPATH">SAXPATH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Saxpath License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SCEA">SCEA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SCEA Shared Source License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SCHEME_REPORT">SCHEME_REPORT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Scheme Language Report License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SENDMAIL">SENDMAIL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sendmail License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SENDMAIL_8_23">SENDMAIL_8_23</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sendmail License 8.23. |
-| <code><a href="#construct-hub.SpdxLicense.property.SGI_B_1_0">SGI_B_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.SGI_B_1_1">SGI_B_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.SGI_B_2_0">SGI_B_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.SGI_OPENGL">SGI_OPENGL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI OpenGL License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SGP4">SGP4</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SGP4 Permission Notice. |
-| <code><a href="#construct-hub.SpdxLicense.property.SHL_0_5">SHL_0_5</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Solderpad Hardware License v0.5. |
-| <code><a href="#construct-hub.SpdxLicense.property.SHL_0_51">SHL_0_51</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Solderpad Hardware License, Version 0.51. |
-| <code><a href="#construct-hub.SpdxLicense.property.SIMPL_2_0">SIMPL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Simple Public License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.SISSL">SISSL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun Industry Standards Source License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.SISSL_1_2">SISSL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun Industry Standards Source License v1.2. |
-| <code><a href="#construct-hub.SpdxLicense.property.SL">SL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SL License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SLEEPYCAT">SLEEPYCAT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sleepycat License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SMLNJ">SMLNJ</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Standard ML of New Jersey License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SMPPL">SMPPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Secure Messaging Protocol Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SNIA">SNIA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SNIA Public License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.SNPRINTF">SNPRINTF</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | snprintf License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SOFT_SURFER">SOFT_SURFER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | softSurfer License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SOUNDEX">SOUNDEX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Soundex License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SPENCER_86">SPENCER_86</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Spencer License 86. |
-| <code><a href="#construct-hub.SpdxLicense.property.SPENCER_94">SPENCER_94</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Spencer License 94. |
-| <code><a href="#construct-hub.SpdxLicense.property.SPENCER_99">SPENCER_99</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Spencer License 99. |
-| <code><a href="#construct-hub.SpdxLicense.property.SPL_1_0">SPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun Public License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.SSH_KEYSCAN">SSH_KEYSCAN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ssh-keyscan License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SSH_OPENSSH">SSH_OPENSSH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SSH OpenSSH license. |
-| <code><a href="#construct-hub.SpdxLicense.property.SSH_SHORT">SSH_SHORT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SSH short notice. |
-| <code><a href="#construct-hub.SpdxLicense.property.SSLEAY_STANDALONE">SSLEAY_STANDALONE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SSLeay License - standalone. |
-| <code><a href="#construct-hub.SpdxLicense.property.SSPL_1_0">SSPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Server Side Public License, v 1. |
-| <code><a href="#construct-hub.SpdxLicense.property.STANDARDML_NJ">STANDARDML_NJ</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Standard ML of New Jersey License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SUGARCRM_1_1_3">SUGARCRM_1_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SugarCRM Public License v1.1.3. |
-| <code><a href="#construct-hub.SpdxLicense.property.SUN_PPP">SUN_PPP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun PPP License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SUN_PRO">SUN_PRO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SunPro License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SWL">SWL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Scheme Widget Library (SWL) Software License Agreement. |
-| <code><a href="#construct-hub.SpdxLicense.property.SWRULE">SWRULE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | swrule License. |
-| <code><a href="#construct-hub.SpdxLicense.property.SYMLINKS">SYMLINKS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Symlinks License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TAPR_OHL_1_0">TAPR_OHL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TAPR Open Hardware License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.TCL">TCL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TCL/TK License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TCP_WRAPPERS">TCP_WRAPPERS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TCP Wrappers License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TERM_READ_KEY">TERM_READ_KEY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TermReadKey License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TGPPL_1_0">TGPPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Transitive Grace Period Public Licence 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.TMATE">TMATE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TMate Open Source License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TORQUE_1_1">TORQUE_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TORQUE v2.5+ Software License v1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.TOSL">TOSL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Trusster Open Source License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TPDL">TPDL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Time::ParseDate License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TPL_1_0">TPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | THOR Public License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.TTWL">TTWL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Text-Tabs+Wrap License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TTYP0">TTYP0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TTYP0 License. |
-| <code><a href="#construct-hub.SpdxLicense.property.TU_BERLIN_1_0">TU_BERLIN_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Technische Universitaet Berlin License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.TU_BERLIN_2_0">TU_BERLIN_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Technische Universitaet Berlin License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.UCAR">UCAR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | UCAR License. |
-| <code><a href="#construct-hub.SpdxLicense.property.UCL_1_0">UCL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Upstream Compatibility License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ULEM">ULEM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ulem License. |
-| <code><a href="#construct-hub.SpdxLicense.property.UMICH_MERIT">UMICH_MERIT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Michigan/Merit Networks License. |
-| <code><a href="#construct-hub.SpdxLicense.property.UNICODE_3_0">UNICODE_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Unicode License v3. |
-| <code><a href="#construct-hub.SpdxLicense.property.UNICODE_DFS_2015">UNICODE_DFS_2015</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Unicode License Agreement - Data Files and Software (2015). |
-| <code><a href="#construct-hub.SpdxLicense.property.UNICODE_DFS_2016">UNICODE_DFS_2016</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Unicode License Agreement - Data Files and Software (2016). |
-| <code><a href="#construct-hub.SpdxLicense.property.UNICODE_TOU">UNICODE_TOU</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Unicode Terms of Use. |
-| <code><a href="#construct-hub.SpdxLicense.property.UNIX_CRYPT">UNIX_CRYPT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | UnixCrypt License. |
-| <code><a href="#construct-hub.SpdxLicense.property.UNLICENSE">UNLICENSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | The Unlicense. |
-| <code><a href="#construct-hub.SpdxLicense.property.UNLICENSED">UNLICENSED</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Packages that have not been licensed. |
-| <code><a href="#construct-hub.SpdxLicense.property.UPL_1_0">UPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Universal Permissive License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.URT_RLE">URT_RLE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Utah Raster Toolkit Run Length Encoded License. |
-| <code><a href="#construct-hub.SpdxLicense.property.VIM">VIM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Vim License. |
-| <code><a href="#construct-hub.SpdxLicense.property.VOSTROM">VOSTROM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | VOSTROM Public License for Open Source. |
-| <code><a href="#construct-hub.SpdxLicense.property.VSL_1_0">VSL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Vovida Software License v1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.W3_C">W3_C</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | W3C Software Notice and License (2002-12-31). |
-| <code><a href="#construct-hub.SpdxLicense.property.W3_M">W3_M</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | w3m License. |
-| <code><a href="#construct-hub.SpdxLicense.property.W3C_19980720">W3C_19980720</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | W3C Software Notice and License (1998-07-20). |
-| <code><a href="#construct-hub.SpdxLicense.property.W3C_20150513">W3C_20150513</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | W3C Software Notice and Document License (2015-05-13). |
-| <code><a href="#construct-hub.SpdxLicense.property.WATCOM_1_0">WATCOM_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sybase Open Watcom Public License 1.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.WIDGET_WORKSHOP">WIDGET_WORKSHOP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Widget Workshop License. |
-| <code><a href="#construct-hub.SpdxLicense.property.WSUIPA">WSUIPA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Wsuipa License. |
-| <code><a href="#construct-hub.SpdxLicense.property.WTFPL">WTFPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Do What The F*ck You Want To Public License. |
-| <code><a href="#construct-hub.SpdxLicense.property.WX_WINDOWS">WX_WINDOWS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | wxWindows Library License. |
-| <code><a href="#construct-hub.SpdxLicense.property.X11">X11</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | X11 License. |
-| <code><a href="#construct-hub.SpdxLicense.property.X11_DISTRIBUTE_MODIFICATIONS_VARIANT">X11_DISTRIBUTE_MODIFICATIONS_VARIANT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | X11 License Distribution Modification Variant. |
-| <code><a href="#construct-hub.SpdxLicense.property.XDEBUG_1_03">XDEBUG_1_03</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Xdebug License v 1.03. |
-| <code><a href="#construct-hub.SpdxLicense.property.XEROX">XEROX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Xerox License. |
-| <code><a href="#construct-hub.SpdxLicense.property.XFIG">XFIG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Xfig License. |
-| <code><a href="#construct-hub.SpdxLicense.property.XFREE86_1_1">XFREE86_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | XFree86 License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.XINETD">XINETD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | xinetd License. |
-| <code><a href="#construct-hub.SpdxLicense.property.XKEYBOARD_CONFIG_ZINOVIEV">XKEYBOARD_CONFIG_ZINOVIEV</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | xkeyboard-config Zinoviev License. |
-| <code><a href="#construct-hub.SpdxLicense.property.XLOCK">XLOCK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | xlock License. |
-| <code><a href="#construct-hub.SpdxLicense.property.XNET">XNET</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | X.Net License. |
-| <code><a href="#construct-hub.SpdxLicense.property.XPP">XPP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | XPP License. |
-| <code><a href="#construct-hub.SpdxLicense.property.XSKAT">XSKAT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | XSkat License. |
-| <code><a href="#construct-hub.SpdxLicense.property.YPL_1_0">YPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Yahoo! |
-| <code><a href="#construct-hub.SpdxLicense.property.YPL_1_1">YPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Yahoo! |
-| <code><a href="#construct-hub.SpdxLicense.property.ZED">ZED</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zed License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZEEFF">ZEEFF</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zeeff License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZEND_2_0">ZEND_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zend License v2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZERO_BSD">ZERO_BSD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Zero Clause License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZIMBRA_1_3">ZIMBRA_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zimbra Public License v1.3. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZIMBRA_1_4">ZIMBRA_1_4</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zimbra Public License v1.4. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZLIB">ZLIB</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | zlib License. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZLIB_ACKNOWLEDGEMENT">ZLIB_ACKNOWLEDGEMENT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | zlib/libpng License with Acknowledgement. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZPL_1_1">ZPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zope Public License 1.1. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZPL_2_0">ZPL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zope Public License 2.0. |
-| <code><a href="#construct-hub.SpdxLicense.property.ZPL_2_1">ZPL_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zope Public License 2.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AAL">AAL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Attribution Assurance License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ABSTYLES">ABSTYLES</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Abstyles License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ADACORE_DOC">ADACORE_DOC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | AdaCore Doc License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ADOBE_2006">ADOBE_2006</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Systems Incorporated Source Code License Agreement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ADOBE_DISPLAY_POSTSCRIPT">ADOBE_DISPLAY_POSTSCRIPT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Display PostScript License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ADOBE_GLYPH">ADOBE_GLYPH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Glyph List License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ADOBE_UTOPIA">ADOBE_UTOPIA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Utopia Font License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ADSL">ADSL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Amazon Digital Services License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AFL_1_1">AFL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AFL_1_2">AFL_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AFL_2_0">AFL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AFL_2_1">AFL_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v2.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AFL_3_0">AFL_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Academic Free License v3.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AFMPARSE">AFMPARSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Afmparse License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AGPL_1_0">AGPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Affero General Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AGPL_1_0_ONLY">AGPL_1_0_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Affero General Public License v1.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AGPL_1_0_OR_LATER">AGPL_1_0_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Affero General Public License v1.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AGPL_3_0">AGPL_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Affero General Public License v3.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AGPL_3_0_ONLY">AGPL_3_0_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Affero General Public License v3.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AGPL_3_0_OR_LATER">AGPL_3_0_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Affero General Public License v3.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ALADDIN">ALADDIN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Aladdin Free Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AMDPLPA">AMDPLPA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | AMD's plpa_map.c License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AML">AML</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple MIT License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AML_GLSLANG">AML_GLSLANG</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | AML glslang variant License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.AMPAS">AMPAS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Academy of Motion Picture Arts and Sciences BSD. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ANTLR_PD">ANTLR_PD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ANTLR Software Rights Notice. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ANTLR_PD_FALLBACK">ANTLR_PD_FALLBACK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ANTLR Software Rights Notice with license fallback. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APACHE_1_0">APACHE_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APACHE_1_1">APACHE_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APACHE_2_0">APACHE_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APAFML">APAFML</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Adobe Postscript AFM License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APL_1_0">APL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Adaptive Public License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APP_S2P">APP_S2P</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | App::s2p License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APSL_1_0">APSL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APSL_1_1">APSL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APSL_1_2">APSL_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.APSL_2_0">APSL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ARPHIC_1999">ARPHIC_1999</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Arphic Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ARTISTIC_1_0">ARTISTIC_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ARTISTIC_1_0_CL8">ARTISTIC_1_0_CL8</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0 w/clause 8. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ARTISTIC_1_0_PERL">ARTISTIC_1_0_PERL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0 (Perl). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ARTISTIC_2_0">ARTISTIC_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ASWF_DIGITAL_ASSETS_1_0">ASWF_DIGITAL_ASSETS_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ASWF Digital Assets License version 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ASWF_DIGITAL_ASSETS_1_1">ASWF_DIGITAL_ASSETS_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ASWF Digital Assets License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BAEKMUK">BAEKMUK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Baekmuk License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BAHYPH">BAHYPH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Bahyph License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BARR">BARR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Barr License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BCRYPT_SOLAR_DESIGNER">BCRYPT_SOLAR_DESIGNER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | bcrypt Solar Designer License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BEERWARE">BEERWARE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Beerware License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BITSTREAM_CHARTER">BITSTREAM_CHARTER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Bitstream Charter Font License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BITSTREAM_VERA">BITSTREAM_VERA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Bitstream Vera Font License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BITTORRENT_1_0">BITTORRENT_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BitTorrent Open Source License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BITTORRENT_1_1">BITTORRENT_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BitTorrent Open Source License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BLESSING">BLESSING</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SQLite Blessing. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BLUEOAK_1_0_0">BLUEOAK_1_0_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Blue Oak Model License 1.0.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BOEHM_GC">BOEHM_GC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Boehm-Demers-Weiser GC License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BORCEUX">BORCEUX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Borceux license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BRIAN_GLADMAN_2_CLAUSE">BRIAN_GLADMAN_2_CLAUSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Brian Gladman 2-Clause License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BRIAN_GLADMAN_3_CLAUSE">BRIAN_GLADMAN_3_CLAUSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Brian Gladman 3-Clause License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_1_CLAUSE">BSD_1_CLAUSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 1-Clause License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE">BSD_2_CLAUSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause "Simplified" License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_DARWIN">BSD_2_CLAUSE_DARWIN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause - Ian Darwin variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_FREEBSD">BSD_2_CLAUSE_FREEBSD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause FreeBSD License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_NETBSD">BSD_2_CLAUSE_NETBSD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause NetBSD License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_PATENT">BSD_2_CLAUSE_PATENT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD-2-Clause Plus Patent License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_VIEWS">BSD_2_CLAUSE_VIEWS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause with views sentence. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE">BSD_3_CLAUSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause "New" or "Revised" License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_ACPICA">BSD_3_CLAUSE_ACPICA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause acpica variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_ATTRIBUTION">BSD_3_CLAUSE_ATTRIBUTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD with attribution. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_CLEAR">BSD_3_CLAUSE_CLEAR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Clear License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_FLEX">BSD_3_CLAUSE_FLEX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Flex variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_HP">BSD_3_CLAUSE_HP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Hewlett-Packard BSD variant license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_LBNL">BSD_3_CLAUSE_LBNL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Lawrence Berkeley National Labs BSD variant license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_MODIFICATION">BSD_3_CLAUSE_MODIFICATION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Modification. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_MILITARY_LICENSE">BSD_3_CLAUSE_NO_MILITARY_LICENSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause No Military License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE">BSD_3_CLAUSE_NO_NUCLEAR_LICENSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause No Nuclear License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014">BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause No Nuclear License 2014. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY">BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause No Nuclear Warranty. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_OPEN_MPI">BSD_3_CLAUSE_OPEN_MPI</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Open MPI variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_SUN">BSD_3_CLAUSE_SUN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 3-Clause Sun Microsystems. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_3RENO">BSD_4_3RENO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 4.3 RENO License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_3TAHOE">BSD_4_3TAHOE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 4.3 TAHOE License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_CLAUSE">BSD_4_CLAUSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 4-Clause "Original" or "Old" License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_CLAUSE_SHORTENED">BSD_4_CLAUSE_SHORTENED</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 4 Clause Shortened. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_CLAUSE_UC">BSD_4_CLAUSE_UC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD-4-Clause (University of California-Specific). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_ADVERTISING_ACKNOWLEDGEMENT">BSD_ADVERTISING_ACKNOWLEDGEMENT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Advertising Acknowledgement License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_ATTRIBUTION_HPND_DISCLAIMER">BSD_ATTRIBUTION_HPND_DISCLAIMER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD with Attribution and HPND disclaimer. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_INFERNO_NETTVERK">BSD_INFERNO_NETTVERK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD-Inferno-Nettverk. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_PROTECTION">BSD_PROTECTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Protection License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_SOURCE_BEGINNING_FILE">BSD_SOURCE_BEGINNING_FILE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Source Code Attribution - beginning of file variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_SOURCE_CODE">BSD_SOURCE_CODE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Source Code Attribution. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_SYSTEMICS">BSD_SYSTEMICS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Systemics BSD variant license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSD_SYSTEMICS_W3WORKS">BSD_SYSTEMICS_W3WORKS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Systemics W3Works BSD variant license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BSL_1_0">BSL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Boost Software License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BUSL_1_1">BUSL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Business Source License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BZIP2_1_0_5">BZIP2_1_0_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | bzip2 and libbzip2 License v1.0.5. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.BZIP2_1_0_6">BZIP2_1_0_6</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | bzip2 and libbzip2 License v1.0.6. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.C_UDA_1_0">C_UDA_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Computational Use of Data Agreement v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CAL_1_0">CAL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Cryptographic Autonomy License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CAL_1_0_COMBINED_WORK_EXCEPTION">CAL_1_0_COMBINED_WORK_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Cryptographic Autonomy License 1.0 (Combined Work Exception). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CALDERA">CALDERA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Caldera License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CALDERA_NO_PREAMBLE">CALDERA_NO_PREAMBLE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Caldera License (without preamble). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CATOSL_1_1">CATOSL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Computer Associates Trusted Open Source License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_1_0">CC_BY_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 1.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_2_0">CC_BY_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 2.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_2_5">CC_BY_2_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 2.5 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_2_5_AU">CC_BY_2_5_AU</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 2.5 Australia. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0">CC_BY_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Unported. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_AT">CC_BY_3_0_AT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Austria. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_AU">CC_BY_3_0_AU</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Australia. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_DE">CC_BY_3_0_DE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Germany. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_IGO">CC_BY_3_0_IGO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 IGO. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_NL">CC_BY_3_0_NL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 Netherlands. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_US">CC_BY_3_0_US</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 3.0 United States. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_4_0">CC_BY_4_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 4.0 International. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_1_0">CC_BY_NC_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 1.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_2_0">CC_BY_NC_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 2.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_2_5">CC_BY_NC_2_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 2.5 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_3_0">CC_BY_NC_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 3.0 Unported. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_3_0_DE">CC_BY_NC_3_0_DE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 3.0 Germany. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_4_0">CC_BY_NC_4_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial 4.0 International. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_1_0">CC_BY_NC_ND_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 1.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_2_0">CC_BY_NC_ND_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 2.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_2_5">CC_BY_NC_ND_2_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 2.5 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0">CC_BY_NC_ND_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 3.0 Unported. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0_DE">CC_BY_NC_ND_3_0_DE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 3.0 Germany. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0_IGO">CC_BY_NC_ND_3_0_IGO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 3.0 IGO. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_4_0">CC_BY_NC_ND_4_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial No Derivatives 4.0 International. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_1_0">CC_BY_NC_SA_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 1.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0">CC_BY_NC_SA_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 2.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_DE">CC_BY_NC_SA_2_0_DE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 2.0 Germany. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_FR">CC_BY_NC_SA_2_0_FR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution-NonCommercial-ShareAlike 2.0 France. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_UK">CC_BY_NC_SA_2_0_UK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 2.0 England and Wales. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_5">CC_BY_NC_SA_2_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 2.5 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0">CC_BY_NC_SA_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 3.0 Unported. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0_DE">CC_BY_NC_SA_3_0_DE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 3.0 Germany. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0_IGO">CC_BY_NC_SA_3_0_IGO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 3.0 IGO. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_4_0">CC_BY_NC_SA_4_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Non Commercial Share Alike 4.0 International. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_1_0">CC_BY_ND_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 1.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_2_0">CC_BY_ND_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 2.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_2_5">CC_BY_ND_2_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 2.5 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_3_0">CC_BY_ND_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 3.0 Unported. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_3_0_DE">CC_BY_ND_3_0_DE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 3.0 Germany. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_4_0">CC_BY_ND_4_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution No Derivatives 4.0 International. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_1_0">CC_BY_SA_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 1.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_2_0">CC_BY_SA_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 2.0 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_2_0_UK">CC_BY_SA_2_0_UK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 2.0 England and Wales. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_2_1_JP">CC_BY_SA_2_1_JP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 2.1 Japan. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_2_5">CC_BY_SA_2_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 2.5 Generic. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_3_0">CC_BY_SA_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 3.0 Unported. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_3_0_AT">CC_BY_SA_3_0_AT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 3.0 Austria. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_3_0_DE">CC_BY_SA_3_0_DE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 3.0 Germany. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_3_0_IGO">CC_BY_SA_3_0_IGO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution-ShareAlike 3.0 IGO. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_4_0">CC_BY_SA_4_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 4.0 International. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC_PDDC">CC_PDDC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Public Domain Dedication and Certification. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CC0_1_0">CC0_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Zero v1.0 Universal. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CDDL_1_0">CDDL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Development and Distribution License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CDDL_1_1">CDDL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Development and Distribution License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CDL_1_0">CDL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Documentation License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CDLA_PERMISSIVE_1_0">CDLA_PERMISSIVE_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Community Data License Agreement Permissive 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CDLA_PERMISSIVE_2_0">CDLA_PERMISSIVE_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Community Data License Agreement Permissive 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CDLA_SHARING_1_0">CDLA_SHARING_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Community Data License Agreement Sharing 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CECILL_1_0">CECILL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL Free Software License Agreement v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CECILL_1_1">CECILL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL Free Software License Agreement v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CECILL_2_0">CECILL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL Free Software License Agreement v2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CECILL_2_1">CECILL_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL Free Software License Agreement v2.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CECILL_B">CECILL_B</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL-B Free Software License Agreement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CECILL_C">CECILL_C</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CeCILL-C Free Software License Agreement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_1_1">CERN_OHL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_1_2">CERN_OHL_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence v1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_P_2_0">CERN_OHL_P_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence Version 2 - Permissive. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_S_2_0">CERN_OHL_S_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence Version 2 - Strongly Reciprocal. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_W_2_0">CERN_OHL_W_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CERN Open Hardware Licence Version 2 - Weakly Reciprocal. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CFITSIO">CFITSIO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CFITSIO License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CHECK_CVS">CHECK_CVS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | check-cvs License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CHECKMK">CHECKMK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Checkmk License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CL_ARTISTIC">CL_ARTISTIC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Clarified Artistic License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CLIPS">CLIPS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Clips License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CMU_MACH">CMU_MACH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CMU Mach License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CMU_MACH_NODOC">CMU_MACH_NODOC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CMU    Mach - no notices-in-documentation variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CNRI_JYTHON">CNRI_JYTHON</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CNRI Jython License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CNRI_PYTHON">CNRI_PYTHON</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CNRI Python License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CNRI_PYTHON_GPL_COMPATIBLE">CNRI_PYTHON_GPL_COMPATIBLE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CNRI Python Open Source GPL Compatible License Agreement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.COIL_1_0">COIL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Copyfree Open Innovation License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.COMMUNITY_SPEC_1_0">COMMUNITY_SPEC_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Community Specification License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CONDOR_1_1">CONDOR_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Condor Public License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.COPYLEFT_NEXT_0_3_0">COPYLEFT_NEXT_0_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | copyleft-next 0.3.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.COPYLEFT_NEXT_0_3_1">COPYLEFT_NEXT_0_3_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | copyleft-next 0.3.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CORNELL_LOSSLESS_JPEG">CORNELL_LOSSLESS_JPEG</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Cornell Lossless JPEG License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CPAL_1_0">CPAL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Public Attribution License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CPL_1_0">CPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Public License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CPOL_1_02">CPOL_1_02</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Code Project Open License 1.02. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CRONYX">CRONYX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Cronyx License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CROSSWORD">CROSSWORD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Crossword License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CRYSTAL_STACKER">CRYSTAL_STACKER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CrystalStacker License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CUA_OPL_1_0">CUA_OPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CUA Office Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CUBE">CUBE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Cube License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.CURL">CURL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | curl License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.D_FSL_1_0">D_FSL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Deutsche Freie Software Lizenz. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DEC_3_CLAUSE">DEC_3_CLAUSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | DEC 3-Clause License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DIFFMARK">DIFFMARK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | diffmark license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DL_DE_BY_2_0">DL_DE_BY_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Data licence Germany – attribution – version 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DL_DE_ZERO_2_0">DL_DE_ZERO_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Data licence Germany – zero – version 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DOC">DOC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | DOC License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DOTSEQN">DOTSEQN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Dotseqn License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DRL_1_0">DRL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Detection Rule License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DRL_1_1">DRL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Detection Rule License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DSDP">DSDP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | DSDP License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DTOA">DTOA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | David M. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.DVIPDFM">DVIPDFM</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | dvipdfm License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.E_GENIX">E_GENIX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | eGenix.com Public License 1.1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ECL_1_0">ECL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Educational Community License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ECL_2_0">ECL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Educational Community License v2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ECOS_2_0">ECOS_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | eCos license version 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EFL_1_0">EFL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Eiffel Forum License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EFL_2_0">EFL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Eiffel Forum License v2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ELASTIC_2_0">ELASTIC_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Elastic License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ENTESSA">ENTESSA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Entessa Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EPICS">EPICS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | EPICS Open License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EPL_1_0">EPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Eclipse Public License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EPL_2_0">EPL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Eclipse Public License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ERLPL_1_1">ERLPL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Erlang Public License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ETALAB_2_0">ETALAB_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Etalab Open License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EUDATAGRID">EUDATAGRID</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | EU DataGrid Software License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EUPL_1_0">EUPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | European Union Public License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EUPL_1_1">EUPL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | European Union Public License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EUPL_1_2">EUPL_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | European Union Public License 1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.EUROSYM">EUROSYM</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Eurosym License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FAIR">FAIR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Fair License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FBM">FBM</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Fuzzy Bitmap License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FDK_AAC">FDK_AAC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Fraunhofer FDK AAC Codec Library. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FERGUSON_TWOFISH">FERGUSON_TWOFISH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Ferguson Twofish License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FRAMEWORX_1_0">FRAMEWORX_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Frameworx Open License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FREE_IMAGE">FREE_IMAGE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | FreeImage Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FREEBSD_DOC">FREEBSD_DOC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | FreeBSD Documentation License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FSFAP">FSFAP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF All Permissive License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FSFAP_NO_WARRANTY_DISCLAIMER">FSFAP_NO_WARRANTY_DISCLAIMER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF All Permissive License (without Warranty). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FSFUL">FSFUL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF Unlimited License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FSFULLR">FSFULLR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF Unlimited License (with License Retention). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FSFULLRWD">FSFULLRWD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | FSF Unlimited License (With License Retention and Warranty Disclaimer). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FTL">FTL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Freetype Project License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FURUSETH">FURUSETH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Furuseth License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.FWLW">FWLW</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | fwlw License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GCR_DOCS">GCR_DOCS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Gnome GCR Documentation License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GD">GD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GD License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1">GFDL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_ONLY">GFDL_1_1_INVARIANTS_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 only - invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_OR_LATER">GFDL_1_1_INVARIANTS_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 or later - invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_NO_INVARIANTS_ONLY">GFDL_1_1_NO_INVARIANTS_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 only - no invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_NO_INVARIANTS_OR_LATER">GFDL_1_1_NO_INVARIANTS_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 or later - no invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_ONLY">GFDL_1_1_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_OR_LATER">GFDL_1_1_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2">GFDL_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_INVARIANTS_ONLY">GFDL_1_2_INVARIANTS_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 only - invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_INVARIANTS_OR_LATER">GFDL_1_2_INVARIANTS_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 or later - invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_NO_INVARIANTS_ONLY">GFDL_1_2_NO_INVARIANTS_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 only - no invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_NO_INVARIANTS_OR_LATER">GFDL_1_2_NO_INVARIANTS_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 or later - no invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_ONLY">GFDL_1_2_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_OR_LATER">GFDL_1_2_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.2 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3">GFDL_1_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_INVARIANTS_ONLY">GFDL_1_3_INVARIANTS_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 only - invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_INVARIANTS_OR_LATER">GFDL_1_3_INVARIANTS_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 or later - invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_NO_INVARIANTS_ONLY">GFDL_1_3_NO_INVARIANTS_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 only - no invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_NO_INVARIANTS_OR_LATER">GFDL_1_3_NO_INVARIANTS_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 or later - no invariants. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_ONLY">GFDL_1_3_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_OR_LATER">GFDL_1_3_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.3 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GIFTWARE">GIFTWARE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Giftware License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GL2_P_S">GL2_P_S</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GL2PS License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GLIDE">GLIDE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | 3dfx Glide License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GLULXE">GLULXE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Glulxe License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GLWTPL">GLWTPL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Good Luck With That Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GNUPLOT">GNUPLOT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | gnuplot License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_1_0">GPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v1.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_1_0_ONLY">GPL_1_0_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v1.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_1_0_OR_LATER">GPL_1_0_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v1.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_1_0_PLUS">GPL_1_0_PLUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v1.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0">GPL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_ONLY">GPL_2_0_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_OR_LATER">GPL_2_0_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_PLUS">GPL_2_0_PLUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_AUTOCONF_EXCEPTION">GPL_2_0_WITH_AUTOCONF_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/Autoconf exception. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_BISON_EXCEPTION">GPL_2_0_WITH_BISON_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/Bison exception. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_CLASSPATH_EXCEPTION">GPL_2_0_WITH_CLASSPATH_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/Classpath exception. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_FONT_EXCEPTION">GPL_2_0_WITH_FONT_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/Font exception. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_GCC_EXCEPTION">GPL_2_0_WITH_GCC_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v2.0 w/GCC Runtime Library exception. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0">GPL_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_ONLY">GPL_3_0_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_OR_LATER">GPL_3_0_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_PLUS">GPL_3_0_PLUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_WITH_AUTOCONF_EXCEPTION">GPL_3_0_WITH_AUTOCONF_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 w/Autoconf exception. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_WITH_GCC_EXCEPTION">GPL_3_0_WITH_GCC_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU General Public License v3.0 w/GCC Runtime Library exception. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GRAPHICS_GEMS">GRAPHICS_GEMS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Graphics Gems License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GSOAP_1_3B">GSOAP_1_3B</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | gSOAP Public License v1.3b. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.GTKBOOK">GTKBOOK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | gtkbook License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HASKELL_REPORT">HASKELL_REPORT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Haskell Language Report License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HDPARM">HDPARM</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | hdparm License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HIPPOCRATIC_2_1">HIPPOCRATIC_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Hippocratic License 2.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HP_1986">HP_1986</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Hewlett-Packard 1986 License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HP_1989">HP_1989</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Hewlett-Packard 1989 License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND">HPND</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_DEC">HPND_DEC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - DEC variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_DOC">HPND_DOC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - documentation variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_DOC_SELL">HPND_DOC_SELL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - documentation sell variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_EXPORT_US">HPND_EXPORT_US</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND with US Government export control warning. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_EXPORT_US_MODIFY">HPND_EXPORT_US_MODIFY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND with US Government export control warning and modification rqmt. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_FENNEBERG_LIVINGSTON">HPND_FENNEBERG_LIVINGSTON</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Fenneberg-Livingston variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_INRIA_IMAG">HPND_INRIA_IMAG</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer    - INRIA-IMAG variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_KEVLIN_HENNEY">HPND_KEVLIN_HENNEY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Kevlin Henney variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_MARKUS_KUHN">HPND_MARKUS_KUHN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Markus Kuhn variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_MIT_DISCLAIMER">HPND_MIT_DISCLAIMER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer with MIT disclaimer. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_PBMPLUS">HPND_PBMPLUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Pbmplus variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_SELL_MIT_DISCLAIMER_XSERVER">HPND_SELL_MIT_DISCLAIMER_XSERVER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell xserver variant with MIT disclaimer. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_SELL_REGEXPR">HPND_SELL_REGEXPR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell regexpr variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_SELL_VARIANT">HPND_SELL_VARIANT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_SELL_VARIANT_MIT_DISCLAIMER">HPND_SELL_VARIANT_MIT_DISCLAIMER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND sell variant with MIT disclaimer. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HPND_UC">HPND_UC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - University of California variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.HTMLTIDY">HTMLTIDY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | HTML Tidy License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.I_MATIX">I_MATIX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | iMatix Standard Function Library Agreement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.IBM_PIBS">IBM_PIBS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | IBM PowerPC Initialization and Boot Software. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ICU">ICU</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ICU License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.IEC_CODE_COMPONENTS_EULA">IEC_CODE_COMPONENTS_EULA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | IEC    Code Components End-user licence agreement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.IJG">IJG</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Independent JPEG Group License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.IJG_SHORT">IJG_SHORT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Independent JPEG Group License - short. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.IMAGE_MAGICK">IMAGE_MAGICK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ImageMagick License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.IMLIB2">IMLIB2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Imlib2 License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.INFO_ZIP">INFO_ZIP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Info-ZIP License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.INNER_NET_2_0">INNER_NET_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Inner Net License v2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.INTEL">INTEL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Intel Open Source License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.INTEL_ACPI">INTEL_ACPI</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Intel ACPI Software License Agreement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.INTERBASE_1_0">INTERBASE_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Interbase Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.IPA">IPA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | IPA Font License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.IPL_1_0">IPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | IBM Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ISC">ISC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ISC License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ISC_VEILLARD">ISC_VEILLARD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ISC Veillard variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.JAM">JAM</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Jam License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.JASPER_2_0">JASPER_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | JasPer License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.JPL_IMAGE">JPL_IMAGE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | JPL Image Use Policy. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.JPNIC">JPNIC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Japan Network Information Center License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.JSON">JSON</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | JSON License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.KASTRUP">KASTRUP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Kastrup License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.KAZLIB">KAZLIB</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Kazlib License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.KNUTH_CTAN">KNUTH_CTAN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Knuth CTAN License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LAL_1_2">LAL_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Art Libre 1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LAL_1_3">LAL_1_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Art Libre 1.3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LATEX2_E">LATEX2_E</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Latex2e License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LATEX2E_TRANSLATED_NOTICE">LATEX2E_TRANSLATED_NOTICE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Latex2e with translated notice permission. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LEPTONICA">LEPTONICA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Leptonica License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_0">LGPL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Library General Public License v2 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_0_ONLY">LGPL_2_0_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Library General Public License v2 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_0_OR_LATER">LGPL_2_0_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Library General Public License v2 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_0_PLUS">LGPL_2_0_PLUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Library General Public License v2 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_1">LGPL_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v2.1 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_1_ONLY">LGPL_2_1_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v2.1 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_1_OR_LATER">LGPL_2_1_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v2.1 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_1_PLUS">LGPL_2_1_PLUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v2.1 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_3_0">LGPL_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v3.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_3_0_ONLY">LGPL_3_0_ONLY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v3.0 only. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_3_0_OR_LATER">LGPL_3_0_OR_LATER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v3.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPL_3_0_PLUS">LGPL_3_0_PLUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Lesser General Public License v3.0 or later. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LGPLLR">LGPLLR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Lesser General Public License For Linguistic Resources. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LIBPNG">LIBPNG</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | libpng License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LIBPNG_2_0">LIBPNG_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | PNG Reference Library version 2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LIBSELINUX_1_0">LIBSELINUX_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | libselinux public domain notice. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LIBTIFF">LIBTIFF</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | libtiff License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LIBUTIL_DAVID_NUGENT">LIBUTIL_DAVID_NUGENT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | libutil David Nugent License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LILIQ_P_1_1">LILIQ_P_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Libre du Québec – Permissive version 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LILIQ_R_1_1">LILIQ_R_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Libre du Québec – Réciprocité version 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LILIQ_RPLUS_1_1">LILIQ_RPLUS_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Libre du Québec – Réciprocité forte version 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_1_PARA">LINUX_MAN_PAGES_1_PARA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux man-pages - 1 paragraph. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT">LINUX_MAN_PAGES_COPYLEFT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux man-pages Copyleft. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT_2_PARA">LINUX_MAN_PAGES_COPYLEFT_2_PARA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux man-pages Copyleft - 2 paragraphs. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT_VAR">LINUX_MAN_PAGES_COPYLEFT_VAR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux man-pages Copyleft Variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LINUX_OPENIB">LINUX_OPENIB</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Linux Kernel Variant of OpenIB.org license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LOOP">LOOP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Lisp LOOP License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LPD_DOCUMENT">LPD_DOCUMENT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | LPD Documentation License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LPL_1_0">LPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Lucent Public License Version 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LPL_1_02">LPL_1_02</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Lucent Public License v1.02. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_0">LPPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_1">LPPL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_2">LPPL_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_3A">LPPL_1_3A</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.3a. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_3C">LPPL_1_3C</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | LaTeX Project Public License v1.3c. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LSOF">LSOF</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | lsof License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LUCIDA_BITMAP_FONTS">LUCIDA_BITMAP_FONTS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Lucida Bitmap Fonts License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LZMA_SDK_9_11_TO_9_20">LZMA_SDK_9_11_TO_9_20</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | LZMA SDK License (versions 9.11 to 9.20). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.LZMA_SDK_9_22">LZMA_SDK_9_22</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | LZMA SDK License (versions 9.22 and beyond). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MACKERRAS_3_CLAUSE">MACKERRAS_3_CLAUSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mackerras 3-Clause License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT">MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mackerras 3-Clause - acknowledgment variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MAGAZ">MAGAZ</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | magaz License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MAILPRIO">MAILPRIO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | mailprio License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MAKE_INDEX">MAKE_INDEX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MakeIndex License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MARTIN_BIRGMEIER">MARTIN_BIRGMEIER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Martin Birgmeier License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MCPHEE_SLIDESHOW">MCPHEE_SLIDESHOW</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | McPhee Slideshow License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.METAMAIL">METAMAIL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | metamail License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MINPACK">MINPACK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Minpack License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIR_O_S">MIR_O_S</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | The MirOS Licence. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT">MIT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_0">MIT_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT No Attribution. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_ADVERTISING">MIT_ADVERTISING</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Enlightenment License (e16). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_CMU">MIT_CMU</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | CMU License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_ENNA">MIT_ENNA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | enna License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_FEH">MIT_FEH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | feh License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_FESTIVAL">MIT_FESTIVAL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Festival Variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_MODERN_VARIANT">MIT_MODERN_VARIANT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT License Modern Variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_OPEN_GROUP">MIT_OPEN_GROUP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Open Group variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_TESTREGEX">MIT_TESTREGEX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT testregex Variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MIT_WU">MIT_WU</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Tom Wu Variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MITNFA">MITNFA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT +no-false-attribs license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MMIXWARE">MMIXWARE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MMIXware License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MOTOSOTO">MOTOSOTO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Motosoto License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MPEG_SSG">MPEG_SSG</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | MPEG Software Simulation. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MPI_PERMISSIVE">MPI_PERMISSIVE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | mpi Permissive License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MPICH2">MPICH2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | mpich2 License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MPL_1_0">MPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MPL_1_1">MPL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MPL_2_0">MPL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MPL_2_0_NO_COPYLEFT_EXCEPTION">MPL_2_0_NO_COPYLEFT_EXCEPTION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 2.0 (no copyleft exception). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MPLUS">MPLUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | mplus Font License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MS_LPL">MS_LPL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Microsoft Limited Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MS_PL">MS_PL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Microsoft Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MS_RL">MS_RL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Microsoft Reciprocal License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MTLL">MTLL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Matrix Template Library License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MULANPSL_1_0">MULANPSL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mulan Permissive Software License, Version 1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MULANPSL_2_0">MULANPSL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mulan Permissive Software License, Version 2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MULTICS">MULTICS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Multics License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.MUP">MUP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Mup License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NAIST_2003">NAIST_2003</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Nara Institute of Science and Technology License (2003). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NASA_1_3">NASA_1_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NASA Open Source Agreement 1.3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NAUMEN">NAUMEN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Naumen Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NBPL_1_0">NBPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Net Boolean Public License v1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NCGL_UK_2_0">NCGL_UK_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Non-Commercial Government Licence. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NCSA">NCSA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | University of Illinois/NCSA Open Source License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NET_CD_F">NET_CD_F</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NetCDF license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NET_SNMP">NET_SNMP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Net-SNMP License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NEWSLETR">NEWSLETR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Newsletr License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NGPL">NGPL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Nethack General Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NICTA_1_0">NICTA_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NICTA Public Software License, Version 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NIST_PD">NIST_PD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NIST Public Domain Notice. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NIST_PD_FALLBACK">NIST_PD_FALLBACK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NIST Public Domain Notice with license fallback. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NIST_SOFTWARE">NIST_SOFTWARE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NIST Software License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NLOD_1_0">NLOD_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Norwegian Licence for Open Government Data (NLOD) 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NLOD_2_0">NLOD_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Norwegian Licence for Open Government Data (NLOD) 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NLPL">NLPL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | No Limit Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NOKIA">NOKIA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Nokia Open Source License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NOSL">NOSL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Netizen Open Source License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NOWEB">NOWEB</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Noweb License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NPL_1_0">NPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Netscape Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NPL_1_1">NPL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Netscape Public License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NPOSL_3_0">NPOSL_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Non-Profit Open Software License 3.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NRL">NRL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NRL License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NTP">NTP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NTP License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NTP_0">NTP_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | NTP No Attribution. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.NUNIT">NUNIT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Nunit License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.O_UDA_1_0">O_UDA_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Use of Data Agreement v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OCCT_PL">OCCT_PL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open CASCADE Technology Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OCLC_2_0">OCLC_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | OCLC Research Public License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ODBL_1_0">ODBL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Data Commons Open Database License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ODC_BY_1_0">ODC_BY_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Data Commons Attribution License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OFFIS">OFFIS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | OFFIS License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_0">OFL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_0_NO_RFN">OFL_1_0_NO_RFN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.0 with no Reserved Font Name. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_0_RFN">OFL_1_0_RFN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.0 with Reserved Font Name. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_1">OFL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_1_NO_RFN">OFL_1_1_NO_RFN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.1 with no Reserved Font Name. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_1_RFN">OFL_1_1_RFN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SIL Open Font License 1.1 with Reserved Font Name. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OGC_1_0">OGC_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | OGC Software License, Version 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OGDL_TAIWAN_1_0">OGDL_TAIWAN_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Taiwan Open Government Data License, version 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OGL_CANADA_2_0">OGL_CANADA_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Government Licence - Canada. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OGL_UK_1_0">OGL_UK_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Government Licence v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OGL_UK_2_0">OGL_UK_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Government Licence v2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OGL_UK_3_0">OGL_UK_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Government Licence v3.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OGTSL">OGTSL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Group Test Suite License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_1_1">OLDAP_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_1_2">OLDAP_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_1_3">OLDAP_1_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v1.3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_1_4">OLDAP_1_4</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v1.4. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_0">OLDAP_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.0 (or possibly 2.0A and 2.0B). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_0_1">OLDAP_2_0_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.0.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_1">OLDAP_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_2">OLDAP_2_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_2_1">OLDAP_2_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.2.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_2_2">OLDAP_2_2_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License 2.2.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_3">OLDAP_2_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_4">OLDAP_2_4</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.4. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_5">OLDAP_2_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.5. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_6">OLDAP_2_6</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.6. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_7">OLDAP_2_7</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.7. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_8">OLDAP_2_8</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open LDAP Public License v2.8. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OLFL_1_3">OLFL_1_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Logistics Foundation License Version 1.3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OML">OML</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Market License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OPEN_SS_L">OPEN_SS_L</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | OpenSSL License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OPEN_VISION">OPEN_VISION</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | OpenVision License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OPENPBS_2_3">OPENPBS_2_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | OpenPBS v2.3 Software License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OPENSSL_STANDALONE">OPENSSL_STANDALONE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | OpenSSL License - standalone. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OPL_1_0">OPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OPL_UK_3_0">OPL_UK_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | United    Kingdom Open Parliament Licence v3.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OPUBL_1_0">OPUBL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Publication License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OSET_PL_2_1">OSET_PL_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | OSET Public License version 2.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OSL_1_0">OSL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OSL_1_1">OSL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OSL_2_0">OSL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OSL_2_1">OSL_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 2.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.OSL_3_0">OSL_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Software License 3.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PADL">PADL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | PADL License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PARITY_6_0_0">PARITY_6_0_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | The Parity Public License 6.0.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PARITY_7_0_0">PARITY_7_0_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | The Parity Public License 7.0.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PDDL_1_0">PDDL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Data Commons Public Domain Dedication & License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PHP_3_0">PHP_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | PHP License v3.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PHP_3_01">PHP_3_01</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | PHP License v3.01. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PIXAR">PIXAR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Pixar License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PLEXUS">PLEXUS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Plexus Classworlds License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PNMSTITCH">PNMSTITCH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | pnmstitch License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.POLYFORM_NONCOMMERCIAL_1_0_0">POLYFORM_NONCOMMERCIAL_1_0_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | PolyForm Noncommercial License 1.0.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.POLYFORM_SMALL_BUSINESS_1_0_0">POLYFORM_SMALL_BUSINESS_1_0_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | PolyForm Small Business License 1.0.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.POSTGRE_SQ_L">POSTGRE_SQ_L</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | PostgreSQL License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PSF_2_0">PSF_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Python Software Foundation License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PSFRAG">PSFRAG</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | psfrag License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PSUTILS">PSUTILS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | psutils License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PYTHON_2_0">PYTHON_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Python License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PYTHON_2_0_1">PYTHON_2_0_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Python License 2.0.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.PYTHON_LDAP">PYTHON_LDAP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Python ldap License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.QHULL">QHULL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Qhull License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.QPL_1_0">QPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Q Public License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.QPL_1_0_INRIA_2004">QPL_1_0_INRIA_2004</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Q Public License 1.0 - INRIA 2004 variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RADVD">RADVD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | radvd License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RDISC">RDISC</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Rdisc License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RHECOS_1_1">RHECOS_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Red Hat eCos Public License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RPL_1_1">RPL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Reciprocal Public License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RPL_1_5">RPL_1_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Reciprocal Public License 1.5. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RPSL_1_0">RPSL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | RealNetworks Public Source License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RSA_MD">RSA_MD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | RSA Message-Digest License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RSCPL">RSCPL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Ricoh Source Code Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.RUBY">RUBY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Ruby License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SAX_PD">SAX_PD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sax Public Domain Notice. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SAX_PD_2_0">SAX_PD_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sax Public Domain Notice 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SAXPATH">SAXPATH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Saxpath License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SCEA">SCEA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SCEA Shared Source License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SCHEME_REPORT">SCHEME_REPORT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Scheme Language Report License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SENDMAIL">SENDMAIL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sendmail License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SENDMAIL_8_23">SENDMAIL_8_23</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sendmail License 8.23. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SGI_B_1_0">SGI_B_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SGI_B_1_1">SGI_B_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SGI_B_2_0">SGI_B_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SGI_OPENGL">SGI_OPENGL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI OpenGL License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SGP4">SGP4</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SGP4 Permission Notice. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SHL_0_5">SHL_0_5</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Solderpad Hardware License v0.5. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SHL_0_51">SHL_0_51</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Solderpad Hardware License, Version 0.51. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SIMPL_2_0">SIMPL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Simple Public License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SISSL">SISSL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun Industry Standards Source License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SISSL_1_2">SISSL_1_2</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun Industry Standards Source License v1.2. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SL">SL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SL License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SLEEPYCAT">SLEEPYCAT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sleepycat License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SMLNJ">SMLNJ</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Standard ML of New Jersey License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SMPPL">SMPPL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Secure Messaging Protocol Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SNIA">SNIA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SNIA Public License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SNPRINTF">SNPRINTF</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | snprintf License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SOFT_SURFER">SOFT_SURFER</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | softSurfer License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SOUNDEX">SOUNDEX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Soundex License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SPENCER_86">SPENCER_86</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Spencer License 86. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SPENCER_94">SPENCER_94</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Spencer License 94. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SPENCER_99">SPENCER_99</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Spencer License 99. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SPL_1_0">SPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun Public License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SSH_KEYSCAN">SSH_KEYSCAN</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ssh-keyscan License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SSH_OPENSSH">SSH_OPENSSH</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SSH OpenSSH license. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SSH_SHORT">SSH_SHORT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SSH short notice. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SSLEAY_STANDALONE">SSLEAY_STANDALONE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SSLeay License - standalone. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SSPL_1_0">SSPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Server Side Public License, v 1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.STANDARDML_NJ">STANDARDML_NJ</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Standard ML of New Jersey License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SUGARCRM_1_1_3">SUGARCRM_1_1_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SugarCRM Public License v1.1.3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SUN_PPP">SUN_PPP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun PPP License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SUN_PRO">SUN_PRO</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | SunPro License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SWL">SWL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Scheme Widget Library (SWL) Software License Agreement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SWRULE">SWRULE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | swrule License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.SYMLINKS">SYMLINKS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Symlinks License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TAPR_OHL_1_0">TAPR_OHL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | TAPR Open Hardware License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TCL">TCL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | TCL/TK License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TCP_WRAPPERS">TCP_WRAPPERS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | TCP Wrappers License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TERM_READ_KEY">TERM_READ_KEY</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | TermReadKey License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TGPPL_1_0">TGPPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Transitive Grace Period Public Licence 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TMATE">TMATE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | TMate Open Source License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TORQUE_1_1">TORQUE_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | TORQUE v2.5+ Software License v1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TOSL">TOSL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Trusster Open Source License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TPDL">TPDL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Time::ParseDate License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TPL_1_0">TPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | THOR Public License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TTWL">TTWL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Text-Tabs+Wrap License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TTYP0">TTYP0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | TTYP0 License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TU_BERLIN_1_0">TU_BERLIN_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Technische Universitaet Berlin License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.TU_BERLIN_2_0">TU_BERLIN_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Technische Universitaet Berlin License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UCAR">UCAR</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | UCAR License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UCL_1_0">UCL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Upstream Compatibility License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ULEM">ULEM</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | ulem License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UMICH_MERIT">UMICH_MERIT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Michigan/Merit Networks License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UNICODE_3_0">UNICODE_3_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Unicode License v3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UNICODE_DFS_2015">UNICODE_DFS_2015</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Unicode License Agreement - Data Files and Software (2015). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UNICODE_DFS_2016">UNICODE_DFS_2016</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Unicode License Agreement - Data Files and Software (2016). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UNICODE_TOU">UNICODE_TOU</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Unicode Terms of Use. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UNIX_CRYPT">UNIX_CRYPT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | UnixCrypt License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UNLICENSE">UNLICENSE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | The Unlicense. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UNLICENSED">UNLICENSED</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Packages that have not been licensed. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.UPL_1_0">UPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Universal Permissive License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.URT_RLE">URT_RLE</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Utah Raster Toolkit Run Length Encoded License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.VIM">VIM</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Vim License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.VOSTROM">VOSTROM</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | VOSTROM Public License for Open Source. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.VSL_1_0">VSL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Vovida Software License v1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.W3_C">W3_C</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | W3C Software Notice and License (2002-12-31). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.W3_M">W3_M</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | w3m License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.W3C_19980720">W3C_19980720</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | W3C Software Notice and License (1998-07-20). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.W3C_20150513">W3C_20150513</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | W3C Software Notice and Document License (2015-05-13). |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.WATCOM_1_0">WATCOM_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Sybase Open Watcom Public License 1.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.WIDGET_WORKSHOP">WIDGET_WORKSHOP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Widget Workshop License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.WSUIPA">WSUIPA</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Wsuipa License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.WTFPL">WTFPL</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Do What The F*ck You Want To Public License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.WX_WINDOWS">WX_WINDOWS</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | wxWindows Library License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.X11">X11</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | X11 License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.X11_DISTRIBUTE_MODIFICATIONS_VARIANT">X11_DISTRIBUTE_MODIFICATIONS_VARIANT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | X11 License Distribution Modification Variant. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XDEBUG_1_03">XDEBUG_1_03</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Xdebug License v 1.03. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XEROX">XEROX</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Xerox License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XFIG">XFIG</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Xfig License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XFREE86_1_1">XFREE86_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | XFree86 License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XINETD">XINETD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | xinetd License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XKEYBOARD_CONFIG_ZINOVIEV">XKEYBOARD_CONFIG_ZINOVIEV</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | xkeyboard-config Zinoviev License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XLOCK">XLOCK</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | xlock License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XNET">XNET</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | X.Net License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XPP">XPP</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | XPP License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.XSKAT">XSKAT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | XSkat License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.YPL_1_0">YPL_1_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Yahoo! |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.YPL_1_1">YPL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Yahoo! |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZED">ZED</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Zed License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZEEFF">ZEEFF</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Zeeff License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZEND_2_0">ZEND_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Zend License v2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZERO_BSD">ZERO_BSD</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD Zero Clause License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZIMBRA_1_3">ZIMBRA_1_3</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Zimbra Public License v1.3. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZIMBRA_1_4">ZIMBRA_1_4</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Zimbra Public License v1.4. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZLIB">ZLIB</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | zlib License. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZLIB_ACKNOWLEDGEMENT">ZLIB_ACKNOWLEDGEMENT</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | zlib/libpng License with Acknowledgement. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZPL_1_1">ZPL_1_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Zope Public License 1.1. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZPL_2_0">ZPL_2_0</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Zope Public License 2.0. |
+| <code><a href="#@gd-constructs/construct-hub.SpdxLicense.property.ZPL_2_1">ZPL_2_1</a></code> | <code><a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a></code> | Zope Public License 2.1. |
 
 ---
 
-##### `AAL`<sup>Required</sup> <a name="AAL" id="construct-hub.SpdxLicense.property.AAL"></a>
+##### `AAL`<sup>Required</sup> <a name="AAL" id="@gd-constructs/construct-hub.SpdxLicense.property.AAL"></a>
 
 ```typescript
 public readonly AAL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Attribution Assurance License.
 
@@ -3775,13 +3775,13 @@ Attribution Assurance License.
 
 ---
 
-##### `ABSTYLES`<sup>Required</sup> <a name="ABSTYLES" id="construct-hub.SpdxLicense.property.ABSTYLES"></a>
+##### `ABSTYLES`<sup>Required</sup> <a name="ABSTYLES" id="@gd-constructs/construct-hub.SpdxLicense.property.ABSTYLES"></a>
 
 ```typescript
 public readonly ABSTYLES: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Abstyles License.
 
@@ -3789,13 +3789,13 @@ Abstyles License.
 
 ---
 
-##### `ADACORE_DOC`<sup>Required</sup> <a name="ADACORE_DOC" id="construct-hub.SpdxLicense.property.ADACORE_DOC"></a>
+##### `ADACORE_DOC`<sup>Required</sup> <a name="ADACORE_DOC" id="@gd-constructs/construct-hub.SpdxLicense.property.ADACORE_DOC"></a>
 
 ```typescript
 public readonly ADACORE_DOC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 AdaCore Doc License.
 
@@ -3803,13 +3803,13 @@ AdaCore Doc License.
 
 ---
 
-##### `ADOBE_2006`<sup>Required</sup> <a name="ADOBE_2006" id="construct-hub.SpdxLicense.property.ADOBE_2006"></a>
+##### `ADOBE_2006`<sup>Required</sup> <a name="ADOBE_2006" id="@gd-constructs/construct-hub.SpdxLicense.property.ADOBE_2006"></a>
 
 ```typescript
 public readonly ADOBE_2006: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Adobe Systems Incorporated Source Code License Agreement.
 
@@ -3817,13 +3817,13 @@ Adobe Systems Incorporated Source Code License Agreement.
 
 ---
 
-##### `ADOBE_DISPLAY_POSTSCRIPT`<sup>Required</sup> <a name="ADOBE_DISPLAY_POSTSCRIPT" id="construct-hub.SpdxLicense.property.ADOBE_DISPLAY_POSTSCRIPT"></a>
+##### `ADOBE_DISPLAY_POSTSCRIPT`<sup>Required</sup> <a name="ADOBE_DISPLAY_POSTSCRIPT" id="@gd-constructs/construct-hub.SpdxLicense.property.ADOBE_DISPLAY_POSTSCRIPT"></a>
 
 ```typescript
 public readonly ADOBE_DISPLAY_POSTSCRIPT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Adobe Display PostScript License.
 
@@ -3831,13 +3831,13 @@ Adobe Display PostScript License.
 
 ---
 
-##### `ADOBE_GLYPH`<sup>Required</sup> <a name="ADOBE_GLYPH" id="construct-hub.SpdxLicense.property.ADOBE_GLYPH"></a>
+##### `ADOBE_GLYPH`<sup>Required</sup> <a name="ADOBE_GLYPH" id="@gd-constructs/construct-hub.SpdxLicense.property.ADOBE_GLYPH"></a>
 
 ```typescript
 public readonly ADOBE_GLYPH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Adobe Glyph List License.
 
@@ -3845,13 +3845,13 @@ Adobe Glyph List License.
 
 ---
 
-##### `ADOBE_UTOPIA`<sup>Required</sup> <a name="ADOBE_UTOPIA" id="construct-hub.SpdxLicense.property.ADOBE_UTOPIA"></a>
+##### `ADOBE_UTOPIA`<sup>Required</sup> <a name="ADOBE_UTOPIA" id="@gd-constructs/construct-hub.SpdxLicense.property.ADOBE_UTOPIA"></a>
 
 ```typescript
 public readonly ADOBE_UTOPIA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Adobe Utopia Font License.
 
@@ -3859,13 +3859,13 @@ Adobe Utopia Font License.
 
 ---
 
-##### `ADSL`<sup>Required</sup> <a name="ADSL" id="construct-hub.SpdxLicense.property.ADSL"></a>
+##### `ADSL`<sup>Required</sup> <a name="ADSL" id="@gd-constructs/construct-hub.SpdxLicense.property.ADSL"></a>
 
 ```typescript
 public readonly ADSL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Amazon Digital Services License.
 
@@ -3873,13 +3873,13 @@ Amazon Digital Services License.
 
 ---
 
-##### `AFL_1_1`<sup>Required</sup> <a name="AFL_1_1" id="construct-hub.SpdxLicense.property.AFL_1_1"></a>
+##### `AFL_1_1`<sup>Required</sup> <a name="AFL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.AFL_1_1"></a>
 
 ```typescript
 public readonly AFL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Academic Free License v1.1.
 
@@ -3887,13 +3887,13 @@ Academic Free License v1.1.
 
 ---
 
-##### `AFL_1_2`<sup>Required</sup> <a name="AFL_1_2" id="construct-hub.SpdxLicense.property.AFL_1_2"></a>
+##### `AFL_1_2`<sup>Required</sup> <a name="AFL_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.AFL_1_2"></a>
 
 ```typescript
 public readonly AFL_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Academic Free License v1.2.
 
@@ -3901,13 +3901,13 @@ Academic Free License v1.2.
 
 ---
 
-##### `AFL_2_0`<sup>Required</sup> <a name="AFL_2_0" id="construct-hub.SpdxLicense.property.AFL_2_0"></a>
+##### `AFL_2_0`<sup>Required</sup> <a name="AFL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.AFL_2_0"></a>
 
 ```typescript
 public readonly AFL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Academic Free License v2.0.
 
@@ -3915,13 +3915,13 @@ Academic Free License v2.0.
 
 ---
 
-##### `AFL_2_1`<sup>Required</sup> <a name="AFL_2_1" id="construct-hub.SpdxLicense.property.AFL_2_1"></a>
+##### `AFL_2_1`<sup>Required</sup> <a name="AFL_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.AFL_2_1"></a>
 
 ```typescript
 public readonly AFL_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Academic Free License v2.1.
 
@@ -3929,13 +3929,13 @@ Academic Free License v2.1.
 
 ---
 
-##### `AFL_3_0`<sup>Required</sup> <a name="AFL_3_0" id="construct-hub.SpdxLicense.property.AFL_3_0"></a>
+##### `AFL_3_0`<sup>Required</sup> <a name="AFL_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.AFL_3_0"></a>
 
 ```typescript
 public readonly AFL_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Academic Free License v3.0.
 
@@ -3943,13 +3943,13 @@ Academic Free License v3.0.
 
 ---
 
-##### `AFMPARSE`<sup>Required</sup> <a name="AFMPARSE" id="construct-hub.SpdxLicense.property.AFMPARSE"></a>
+##### `AFMPARSE`<sup>Required</sup> <a name="AFMPARSE" id="@gd-constructs/construct-hub.SpdxLicense.property.AFMPARSE"></a>
 
 ```typescript
 public readonly AFMPARSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Afmparse License.
 
@@ -3957,13 +3957,13 @@ Afmparse License.
 
 ---
 
-##### `AGPL_1_0`<sup>Required</sup> <a name="AGPL_1_0" id="construct-hub.SpdxLicense.property.AGPL_1_0"></a>
+##### `AGPL_1_0`<sup>Required</sup> <a name="AGPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.AGPL_1_0"></a>
 
 ```typescript
 public readonly AGPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Affero General Public License v1.0.
 
@@ -3971,13 +3971,13 @@ Affero General Public License v1.0.
 
 ---
 
-##### `AGPL_1_0_ONLY`<sup>Required</sup> <a name="AGPL_1_0_ONLY" id="construct-hub.SpdxLicense.property.AGPL_1_0_ONLY"></a>
+##### `AGPL_1_0_ONLY`<sup>Required</sup> <a name="AGPL_1_0_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.AGPL_1_0_ONLY"></a>
 
 ```typescript
 public readonly AGPL_1_0_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Affero General Public License v1.0 only.
 
@@ -3985,13 +3985,13 @@ Affero General Public License v1.0 only.
 
 ---
 
-##### `AGPL_1_0_OR_LATER`<sup>Required</sup> <a name="AGPL_1_0_OR_LATER" id="construct-hub.SpdxLicense.property.AGPL_1_0_OR_LATER"></a>
+##### `AGPL_1_0_OR_LATER`<sup>Required</sup> <a name="AGPL_1_0_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.AGPL_1_0_OR_LATER"></a>
 
 ```typescript
 public readonly AGPL_1_0_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Affero General Public License v1.0 or later.
 
@@ -3999,13 +3999,13 @@ Affero General Public License v1.0 or later.
 
 ---
 
-##### `AGPL_3_0`<sup>Required</sup> <a name="AGPL_3_0" id="construct-hub.SpdxLicense.property.AGPL_3_0"></a>
+##### `AGPL_3_0`<sup>Required</sup> <a name="AGPL_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.AGPL_3_0"></a>
 
 ```typescript
 public readonly AGPL_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Affero General Public License v3.0.
 
@@ -4013,13 +4013,13 @@ GNU Affero General Public License v3.0.
 
 ---
 
-##### `AGPL_3_0_ONLY`<sup>Required</sup> <a name="AGPL_3_0_ONLY" id="construct-hub.SpdxLicense.property.AGPL_3_0_ONLY"></a>
+##### `AGPL_3_0_ONLY`<sup>Required</sup> <a name="AGPL_3_0_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.AGPL_3_0_ONLY"></a>
 
 ```typescript
 public readonly AGPL_3_0_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Affero General Public License v3.0 only.
 
@@ -4027,13 +4027,13 @@ GNU Affero General Public License v3.0 only.
 
 ---
 
-##### `AGPL_3_0_OR_LATER`<sup>Required</sup> <a name="AGPL_3_0_OR_LATER" id="construct-hub.SpdxLicense.property.AGPL_3_0_OR_LATER"></a>
+##### `AGPL_3_0_OR_LATER`<sup>Required</sup> <a name="AGPL_3_0_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.AGPL_3_0_OR_LATER"></a>
 
 ```typescript
 public readonly AGPL_3_0_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Affero General Public License v3.0 or later.
 
@@ -4041,13 +4041,13 @@ GNU Affero General Public License v3.0 or later.
 
 ---
 
-##### `ALADDIN`<sup>Required</sup> <a name="ALADDIN" id="construct-hub.SpdxLicense.property.ALADDIN"></a>
+##### `ALADDIN`<sup>Required</sup> <a name="ALADDIN" id="@gd-constructs/construct-hub.SpdxLicense.property.ALADDIN"></a>
 
 ```typescript
 public readonly ALADDIN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Aladdin Free Public License.
 
@@ -4055,13 +4055,13 @@ Aladdin Free Public License.
 
 ---
 
-##### `AMDPLPA`<sup>Required</sup> <a name="AMDPLPA" id="construct-hub.SpdxLicense.property.AMDPLPA"></a>
+##### `AMDPLPA`<sup>Required</sup> <a name="AMDPLPA" id="@gd-constructs/construct-hub.SpdxLicense.property.AMDPLPA"></a>
 
 ```typescript
 public readonly AMDPLPA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 AMD's plpa_map.c License.
 
@@ -4069,13 +4069,13 @@ AMD's plpa_map.c License.
 
 ---
 
-##### `AML`<sup>Required</sup> <a name="AML" id="construct-hub.SpdxLicense.property.AML"></a>
+##### `AML`<sup>Required</sup> <a name="AML" id="@gd-constructs/construct-hub.SpdxLicense.property.AML"></a>
 
 ```typescript
 public readonly AML: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Apple MIT License.
 
@@ -4083,13 +4083,13 @@ Apple MIT License.
 
 ---
 
-##### `AML_GLSLANG`<sup>Required</sup> <a name="AML_GLSLANG" id="construct-hub.SpdxLicense.property.AML_GLSLANG"></a>
+##### `AML_GLSLANG`<sup>Required</sup> <a name="AML_GLSLANG" id="@gd-constructs/construct-hub.SpdxLicense.property.AML_GLSLANG"></a>
 
 ```typescript
 public readonly AML_GLSLANG: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 AML glslang variant License.
 
@@ -4097,13 +4097,13 @@ AML glslang variant License.
 
 ---
 
-##### `AMPAS`<sup>Required</sup> <a name="AMPAS" id="construct-hub.SpdxLicense.property.AMPAS"></a>
+##### `AMPAS`<sup>Required</sup> <a name="AMPAS" id="@gd-constructs/construct-hub.SpdxLicense.property.AMPAS"></a>
 
 ```typescript
 public readonly AMPAS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Academy of Motion Picture Arts and Sciences BSD.
 
@@ -4111,13 +4111,13 @@ Academy of Motion Picture Arts and Sciences BSD.
 
 ---
 
-##### `ANTLR_PD`<sup>Required</sup> <a name="ANTLR_PD" id="construct-hub.SpdxLicense.property.ANTLR_PD"></a>
+##### `ANTLR_PD`<sup>Required</sup> <a name="ANTLR_PD" id="@gd-constructs/construct-hub.SpdxLicense.property.ANTLR_PD"></a>
 
 ```typescript
 public readonly ANTLR_PD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ANTLR Software Rights Notice.
 
@@ -4125,13 +4125,13 @@ ANTLR Software Rights Notice.
 
 ---
 
-##### `ANTLR_PD_FALLBACK`<sup>Required</sup> <a name="ANTLR_PD_FALLBACK" id="construct-hub.SpdxLicense.property.ANTLR_PD_FALLBACK"></a>
+##### `ANTLR_PD_FALLBACK`<sup>Required</sup> <a name="ANTLR_PD_FALLBACK" id="@gd-constructs/construct-hub.SpdxLicense.property.ANTLR_PD_FALLBACK"></a>
 
 ```typescript
 public readonly ANTLR_PD_FALLBACK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ANTLR Software Rights Notice with license fallback.
 
@@ -4139,13 +4139,13 @@ ANTLR Software Rights Notice with license fallback.
 
 ---
 
-##### `APACHE_1_0`<sup>Required</sup> <a name="APACHE_1_0" id="construct-hub.SpdxLicense.property.APACHE_1_0"></a>
+##### `APACHE_1_0`<sup>Required</sup> <a name="APACHE_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.APACHE_1_0"></a>
 
 ```typescript
 public readonly APACHE_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Apache License 1.0.
 
@@ -4153,13 +4153,13 @@ Apache License 1.0.
 
 ---
 
-##### `APACHE_1_1`<sup>Required</sup> <a name="APACHE_1_1" id="construct-hub.SpdxLicense.property.APACHE_1_1"></a>
+##### `APACHE_1_1`<sup>Required</sup> <a name="APACHE_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.APACHE_1_1"></a>
 
 ```typescript
 public readonly APACHE_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Apache License 1.1.
 
@@ -4167,13 +4167,13 @@ Apache License 1.1.
 
 ---
 
-##### `APACHE_2_0`<sup>Required</sup> <a name="APACHE_2_0" id="construct-hub.SpdxLicense.property.APACHE_2_0"></a>
+##### `APACHE_2_0`<sup>Required</sup> <a name="APACHE_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.APACHE_2_0"></a>
 
 ```typescript
 public readonly APACHE_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Apache License 2.0.
 
@@ -4181,13 +4181,13 @@ Apache License 2.0.
 
 ---
 
-##### `APAFML`<sup>Required</sup> <a name="APAFML" id="construct-hub.SpdxLicense.property.APAFML"></a>
+##### `APAFML`<sup>Required</sup> <a name="APAFML" id="@gd-constructs/construct-hub.SpdxLicense.property.APAFML"></a>
 
 ```typescript
 public readonly APAFML: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Adobe Postscript AFM License.
 
@@ -4195,13 +4195,13 @@ Adobe Postscript AFM License.
 
 ---
 
-##### `APL_1_0`<sup>Required</sup> <a name="APL_1_0" id="construct-hub.SpdxLicense.property.APL_1_0"></a>
+##### `APL_1_0`<sup>Required</sup> <a name="APL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.APL_1_0"></a>
 
 ```typescript
 public readonly APL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Adaptive Public License 1.0.
 
@@ -4209,13 +4209,13 @@ Adaptive Public License 1.0.
 
 ---
 
-##### `APP_S2P`<sup>Required</sup> <a name="APP_S2P" id="construct-hub.SpdxLicense.property.APP_S2P"></a>
+##### `APP_S2P`<sup>Required</sup> <a name="APP_S2P" id="@gd-constructs/construct-hub.SpdxLicense.property.APP_S2P"></a>
 
 ```typescript
 public readonly APP_S2P: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 App::s2p License.
 
@@ -4223,13 +4223,13 @@ App::s2p License.
 
 ---
 
-##### `APSL_1_0`<sup>Required</sup> <a name="APSL_1_0" id="construct-hub.SpdxLicense.property.APSL_1_0"></a>
+##### `APSL_1_0`<sup>Required</sup> <a name="APSL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.APSL_1_0"></a>
 
 ```typescript
 public readonly APSL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Apple Public Source License 1.0.
 
@@ -4237,13 +4237,13 @@ Apple Public Source License 1.0.
 
 ---
 
-##### `APSL_1_1`<sup>Required</sup> <a name="APSL_1_1" id="construct-hub.SpdxLicense.property.APSL_1_1"></a>
+##### `APSL_1_1`<sup>Required</sup> <a name="APSL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.APSL_1_1"></a>
 
 ```typescript
 public readonly APSL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Apple Public Source License 1.1.
 
@@ -4251,13 +4251,13 @@ Apple Public Source License 1.1.
 
 ---
 
-##### `APSL_1_2`<sup>Required</sup> <a name="APSL_1_2" id="construct-hub.SpdxLicense.property.APSL_1_2"></a>
+##### `APSL_1_2`<sup>Required</sup> <a name="APSL_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.APSL_1_2"></a>
 
 ```typescript
 public readonly APSL_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Apple Public Source License 1.2.
 
@@ -4265,13 +4265,13 @@ Apple Public Source License 1.2.
 
 ---
 
-##### `APSL_2_0`<sup>Required</sup> <a name="APSL_2_0" id="construct-hub.SpdxLicense.property.APSL_2_0"></a>
+##### `APSL_2_0`<sup>Required</sup> <a name="APSL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.APSL_2_0"></a>
 
 ```typescript
 public readonly APSL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Apple Public Source License 2.0.
 
@@ -4279,13 +4279,13 @@ Apple Public Source License 2.0.
 
 ---
 
-##### `ARPHIC_1999`<sup>Required</sup> <a name="ARPHIC_1999" id="construct-hub.SpdxLicense.property.ARPHIC_1999"></a>
+##### `ARPHIC_1999`<sup>Required</sup> <a name="ARPHIC_1999" id="@gd-constructs/construct-hub.SpdxLicense.property.ARPHIC_1999"></a>
 
 ```typescript
 public readonly ARPHIC_1999: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Arphic Public License.
 
@@ -4293,13 +4293,13 @@ Arphic Public License.
 
 ---
 
-##### `ARTISTIC_1_0`<sup>Required</sup> <a name="ARTISTIC_1_0" id="construct-hub.SpdxLicense.property.ARTISTIC_1_0"></a>
+##### `ARTISTIC_1_0`<sup>Required</sup> <a name="ARTISTIC_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ARTISTIC_1_0"></a>
 
 ```typescript
 public readonly ARTISTIC_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Artistic License 1.0.
 
@@ -4307,13 +4307,13 @@ Artistic License 1.0.
 
 ---
 
-##### `ARTISTIC_1_0_CL8`<sup>Required</sup> <a name="ARTISTIC_1_0_CL8" id="construct-hub.SpdxLicense.property.ARTISTIC_1_0_CL8"></a>
+##### `ARTISTIC_1_0_CL8`<sup>Required</sup> <a name="ARTISTIC_1_0_CL8" id="@gd-constructs/construct-hub.SpdxLicense.property.ARTISTIC_1_0_CL8"></a>
 
 ```typescript
 public readonly ARTISTIC_1_0_CL8: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Artistic License 1.0 w/clause 8.
 
@@ -4321,13 +4321,13 @@ Artistic License 1.0 w/clause 8.
 
 ---
 
-##### `ARTISTIC_1_0_PERL`<sup>Required</sup> <a name="ARTISTIC_1_0_PERL" id="construct-hub.SpdxLicense.property.ARTISTIC_1_0_PERL"></a>
+##### `ARTISTIC_1_0_PERL`<sup>Required</sup> <a name="ARTISTIC_1_0_PERL" id="@gd-constructs/construct-hub.SpdxLicense.property.ARTISTIC_1_0_PERL"></a>
 
 ```typescript
 public readonly ARTISTIC_1_0_PERL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Artistic License 1.0 (Perl).
 
@@ -4335,13 +4335,13 @@ Artistic License 1.0 (Perl).
 
 ---
 
-##### `ARTISTIC_2_0`<sup>Required</sup> <a name="ARTISTIC_2_0" id="construct-hub.SpdxLicense.property.ARTISTIC_2_0"></a>
+##### `ARTISTIC_2_0`<sup>Required</sup> <a name="ARTISTIC_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ARTISTIC_2_0"></a>
 
 ```typescript
 public readonly ARTISTIC_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Artistic License 2.0.
 
@@ -4349,13 +4349,13 @@ Artistic License 2.0.
 
 ---
 
-##### `ASWF_DIGITAL_ASSETS_1_0`<sup>Required</sup> <a name="ASWF_DIGITAL_ASSETS_1_0" id="construct-hub.SpdxLicense.property.ASWF_DIGITAL_ASSETS_1_0"></a>
+##### `ASWF_DIGITAL_ASSETS_1_0`<sup>Required</sup> <a name="ASWF_DIGITAL_ASSETS_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ASWF_DIGITAL_ASSETS_1_0"></a>
 
 ```typescript
 public readonly ASWF_DIGITAL_ASSETS_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ASWF Digital Assets License version 1.0.
 
@@ -4363,13 +4363,13 @@ ASWF Digital Assets License version 1.0.
 
 ---
 
-##### `ASWF_DIGITAL_ASSETS_1_1`<sup>Required</sup> <a name="ASWF_DIGITAL_ASSETS_1_1" id="construct-hub.SpdxLicense.property.ASWF_DIGITAL_ASSETS_1_1"></a>
+##### `ASWF_DIGITAL_ASSETS_1_1`<sup>Required</sup> <a name="ASWF_DIGITAL_ASSETS_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.ASWF_DIGITAL_ASSETS_1_1"></a>
 
 ```typescript
 public readonly ASWF_DIGITAL_ASSETS_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ASWF Digital Assets License 1.1.
 
@@ -4377,13 +4377,13 @@ ASWF Digital Assets License 1.1.
 
 ---
 
-##### `BAEKMUK`<sup>Required</sup> <a name="BAEKMUK" id="construct-hub.SpdxLicense.property.BAEKMUK"></a>
+##### `BAEKMUK`<sup>Required</sup> <a name="BAEKMUK" id="@gd-constructs/construct-hub.SpdxLicense.property.BAEKMUK"></a>
 
 ```typescript
 public readonly BAEKMUK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Baekmuk License.
 
@@ -4391,13 +4391,13 @@ Baekmuk License.
 
 ---
 
-##### `BAHYPH`<sup>Required</sup> <a name="BAHYPH" id="construct-hub.SpdxLicense.property.BAHYPH"></a>
+##### `BAHYPH`<sup>Required</sup> <a name="BAHYPH" id="@gd-constructs/construct-hub.SpdxLicense.property.BAHYPH"></a>
 
 ```typescript
 public readonly BAHYPH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Bahyph License.
 
@@ -4405,13 +4405,13 @@ Bahyph License.
 
 ---
 
-##### `BARR`<sup>Required</sup> <a name="BARR" id="construct-hub.SpdxLicense.property.BARR"></a>
+##### `BARR`<sup>Required</sup> <a name="BARR" id="@gd-constructs/construct-hub.SpdxLicense.property.BARR"></a>
 
 ```typescript
 public readonly BARR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Barr License.
 
@@ -4419,13 +4419,13 @@ Barr License.
 
 ---
 
-##### `BCRYPT_SOLAR_DESIGNER`<sup>Required</sup> <a name="BCRYPT_SOLAR_DESIGNER" id="construct-hub.SpdxLicense.property.BCRYPT_SOLAR_DESIGNER"></a>
+##### `BCRYPT_SOLAR_DESIGNER`<sup>Required</sup> <a name="BCRYPT_SOLAR_DESIGNER" id="@gd-constructs/construct-hub.SpdxLicense.property.BCRYPT_SOLAR_DESIGNER"></a>
 
 ```typescript
 public readonly BCRYPT_SOLAR_DESIGNER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 bcrypt Solar Designer License.
 
@@ -4433,13 +4433,13 @@ bcrypt Solar Designer License.
 
 ---
 
-##### `BEERWARE`<sup>Required</sup> <a name="BEERWARE" id="construct-hub.SpdxLicense.property.BEERWARE"></a>
+##### `BEERWARE`<sup>Required</sup> <a name="BEERWARE" id="@gd-constructs/construct-hub.SpdxLicense.property.BEERWARE"></a>
 
 ```typescript
 public readonly BEERWARE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Beerware License.
 
@@ -4447,13 +4447,13 @@ Beerware License.
 
 ---
 
-##### `BITSTREAM_CHARTER`<sup>Required</sup> <a name="BITSTREAM_CHARTER" id="construct-hub.SpdxLicense.property.BITSTREAM_CHARTER"></a>
+##### `BITSTREAM_CHARTER`<sup>Required</sup> <a name="BITSTREAM_CHARTER" id="@gd-constructs/construct-hub.SpdxLicense.property.BITSTREAM_CHARTER"></a>
 
 ```typescript
 public readonly BITSTREAM_CHARTER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Bitstream Charter Font License.
 
@@ -4461,13 +4461,13 @@ Bitstream Charter Font License.
 
 ---
 
-##### `BITSTREAM_VERA`<sup>Required</sup> <a name="BITSTREAM_VERA" id="construct-hub.SpdxLicense.property.BITSTREAM_VERA"></a>
+##### `BITSTREAM_VERA`<sup>Required</sup> <a name="BITSTREAM_VERA" id="@gd-constructs/construct-hub.SpdxLicense.property.BITSTREAM_VERA"></a>
 
 ```typescript
 public readonly BITSTREAM_VERA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Bitstream Vera Font License.
 
@@ -4475,13 +4475,13 @@ Bitstream Vera Font License.
 
 ---
 
-##### `BITTORRENT_1_0`<sup>Required</sup> <a name="BITTORRENT_1_0" id="construct-hub.SpdxLicense.property.BITTORRENT_1_0"></a>
+##### `BITTORRENT_1_0`<sup>Required</sup> <a name="BITTORRENT_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.BITTORRENT_1_0"></a>
 
 ```typescript
 public readonly BITTORRENT_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BitTorrent Open Source License v1.0.
 
@@ -4489,13 +4489,13 @@ BitTorrent Open Source License v1.0.
 
 ---
 
-##### `BITTORRENT_1_1`<sup>Required</sup> <a name="BITTORRENT_1_1" id="construct-hub.SpdxLicense.property.BITTORRENT_1_1"></a>
+##### `BITTORRENT_1_1`<sup>Required</sup> <a name="BITTORRENT_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.BITTORRENT_1_1"></a>
 
 ```typescript
 public readonly BITTORRENT_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BitTorrent Open Source License v1.1.
 
@@ -4503,13 +4503,13 @@ BitTorrent Open Source License v1.1.
 
 ---
 
-##### `BLESSING`<sup>Required</sup> <a name="BLESSING" id="construct-hub.SpdxLicense.property.BLESSING"></a>
+##### `BLESSING`<sup>Required</sup> <a name="BLESSING" id="@gd-constructs/construct-hub.SpdxLicense.property.BLESSING"></a>
 
 ```typescript
 public readonly BLESSING: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SQLite Blessing.
 
@@ -4517,13 +4517,13 @@ SQLite Blessing.
 
 ---
 
-##### `BLUEOAK_1_0_0`<sup>Required</sup> <a name="BLUEOAK_1_0_0" id="construct-hub.SpdxLicense.property.BLUEOAK_1_0_0"></a>
+##### `BLUEOAK_1_0_0`<sup>Required</sup> <a name="BLUEOAK_1_0_0" id="@gd-constructs/construct-hub.SpdxLicense.property.BLUEOAK_1_0_0"></a>
 
 ```typescript
 public readonly BLUEOAK_1_0_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Blue Oak Model License 1.0.0.
 
@@ -4531,13 +4531,13 @@ Blue Oak Model License 1.0.0.
 
 ---
 
-##### `BOEHM_GC`<sup>Required</sup> <a name="BOEHM_GC" id="construct-hub.SpdxLicense.property.BOEHM_GC"></a>
+##### `BOEHM_GC`<sup>Required</sup> <a name="BOEHM_GC" id="@gd-constructs/construct-hub.SpdxLicense.property.BOEHM_GC"></a>
 
 ```typescript
 public readonly BOEHM_GC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Boehm-Demers-Weiser GC License.
 
@@ -4545,13 +4545,13 @@ Boehm-Demers-Weiser GC License.
 
 ---
 
-##### `BORCEUX`<sup>Required</sup> <a name="BORCEUX" id="construct-hub.SpdxLicense.property.BORCEUX"></a>
+##### `BORCEUX`<sup>Required</sup> <a name="BORCEUX" id="@gd-constructs/construct-hub.SpdxLicense.property.BORCEUX"></a>
 
 ```typescript
 public readonly BORCEUX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Borceux license.
 
@@ -4559,13 +4559,13 @@ Borceux license.
 
 ---
 
-##### `BRIAN_GLADMAN_2_CLAUSE`<sup>Required</sup> <a name="BRIAN_GLADMAN_2_CLAUSE" id="construct-hub.SpdxLicense.property.BRIAN_GLADMAN_2_CLAUSE"></a>
+##### `BRIAN_GLADMAN_2_CLAUSE`<sup>Required</sup> <a name="BRIAN_GLADMAN_2_CLAUSE" id="@gd-constructs/construct-hub.SpdxLicense.property.BRIAN_GLADMAN_2_CLAUSE"></a>
 
 ```typescript
 public readonly BRIAN_GLADMAN_2_CLAUSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Brian Gladman 2-Clause License.
 
@@ -4573,13 +4573,13 @@ Brian Gladman 2-Clause License.
 
 ---
 
-##### `BRIAN_GLADMAN_3_CLAUSE`<sup>Required</sup> <a name="BRIAN_GLADMAN_3_CLAUSE" id="construct-hub.SpdxLicense.property.BRIAN_GLADMAN_3_CLAUSE"></a>
+##### `BRIAN_GLADMAN_3_CLAUSE`<sup>Required</sup> <a name="BRIAN_GLADMAN_3_CLAUSE" id="@gd-constructs/construct-hub.SpdxLicense.property.BRIAN_GLADMAN_3_CLAUSE"></a>
 
 ```typescript
 public readonly BRIAN_GLADMAN_3_CLAUSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Brian Gladman 3-Clause License.
 
@@ -4587,13 +4587,13 @@ Brian Gladman 3-Clause License.
 
 ---
 
-##### `BSD_1_CLAUSE`<sup>Required</sup> <a name="BSD_1_CLAUSE" id="construct-hub.SpdxLicense.property.BSD_1_CLAUSE"></a>
+##### `BSD_1_CLAUSE`<sup>Required</sup> <a name="BSD_1_CLAUSE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_1_CLAUSE"></a>
 
 ```typescript
 public readonly BSD_1_CLAUSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 1-Clause License.
 
@@ -4601,13 +4601,13 @@ BSD 1-Clause License.
 
 ---
 
-##### `BSD_2_CLAUSE`<sup>Required</sup> <a name="BSD_2_CLAUSE" id="construct-hub.SpdxLicense.property.BSD_2_CLAUSE"></a>
+##### `BSD_2_CLAUSE`<sup>Required</sup> <a name="BSD_2_CLAUSE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE"></a>
 
 ```typescript
 public readonly BSD_2_CLAUSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 2-Clause "Simplified" License.
 
@@ -4615,13 +4615,13 @@ BSD 2-Clause "Simplified" License.
 
 ---
 
-##### `BSD_2_CLAUSE_DARWIN`<sup>Required</sup> <a name="BSD_2_CLAUSE_DARWIN" id="construct-hub.SpdxLicense.property.BSD_2_CLAUSE_DARWIN"></a>
+##### `BSD_2_CLAUSE_DARWIN`<sup>Required</sup> <a name="BSD_2_CLAUSE_DARWIN" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_DARWIN"></a>
 
 ```typescript
 public readonly BSD_2_CLAUSE_DARWIN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 2-Clause - Ian Darwin variant.
 
@@ -4629,13 +4629,13 @@ BSD 2-Clause - Ian Darwin variant.
 
 ---
 
-##### `BSD_2_CLAUSE_FREEBSD`<sup>Required</sup> <a name="BSD_2_CLAUSE_FREEBSD" id="construct-hub.SpdxLicense.property.BSD_2_CLAUSE_FREEBSD"></a>
+##### `BSD_2_CLAUSE_FREEBSD`<sup>Required</sup> <a name="BSD_2_CLAUSE_FREEBSD" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_FREEBSD"></a>
 
 ```typescript
 public readonly BSD_2_CLAUSE_FREEBSD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 2-Clause FreeBSD License.
 
@@ -4643,13 +4643,13 @@ BSD 2-Clause FreeBSD License.
 
 ---
 
-##### `BSD_2_CLAUSE_NETBSD`<sup>Required</sup> <a name="BSD_2_CLAUSE_NETBSD" id="construct-hub.SpdxLicense.property.BSD_2_CLAUSE_NETBSD"></a>
+##### `BSD_2_CLAUSE_NETBSD`<sup>Required</sup> <a name="BSD_2_CLAUSE_NETBSD" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_NETBSD"></a>
 
 ```typescript
 public readonly BSD_2_CLAUSE_NETBSD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 2-Clause NetBSD License.
 
@@ -4657,13 +4657,13 @@ BSD 2-Clause NetBSD License.
 
 ---
 
-##### `BSD_2_CLAUSE_PATENT`<sup>Required</sup> <a name="BSD_2_CLAUSE_PATENT" id="construct-hub.SpdxLicense.property.BSD_2_CLAUSE_PATENT"></a>
+##### `BSD_2_CLAUSE_PATENT`<sup>Required</sup> <a name="BSD_2_CLAUSE_PATENT" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_PATENT"></a>
 
 ```typescript
 public readonly BSD_2_CLAUSE_PATENT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD-2-Clause Plus Patent License.
 
@@ -4671,13 +4671,13 @@ BSD-2-Clause Plus Patent License.
 
 ---
 
-##### `BSD_2_CLAUSE_VIEWS`<sup>Required</sup> <a name="BSD_2_CLAUSE_VIEWS" id="construct-hub.SpdxLicense.property.BSD_2_CLAUSE_VIEWS"></a>
+##### `BSD_2_CLAUSE_VIEWS`<sup>Required</sup> <a name="BSD_2_CLAUSE_VIEWS" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_2_CLAUSE_VIEWS"></a>
 
 ```typescript
 public readonly BSD_2_CLAUSE_VIEWS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 2-Clause with views sentence.
 
@@ -4685,13 +4685,13 @@ BSD 2-Clause with views sentence.
 
 ---
 
-##### `BSD_3_CLAUSE`<sup>Required</sup> <a name="BSD_3_CLAUSE" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE"></a>
+##### `BSD_3_CLAUSE`<sup>Required</sup> <a name="BSD_3_CLAUSE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause "New" or "Revised" License.
 
@@ -4699,13 +4699,13 @@ BSD 3-Clause "New" or "Revised" License.
 
 ---
 
-##### `BSD_3_CLAUSE_ACPICA`<sup>Required</sup> <a name="BSD_3_CLAUSE_ACPICA" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_ACPICA"></a>
+##### `BSD_3_CLAUSE_ACPICA`<sup>Required</sup> <a name="BSD_3_CLAUSE_ACPICA" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_ACPICA"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_ACPICA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause acpica variant.
 
@@ -4713,13 +4713,13 @@ BSD 3-Clause acpica variant.
 
 ---
 
-##### `BSD_3_CLAUSE_ATTRIBUTION`<sup>Required</sup> <a name="BSD_3_CLAUSE_ATTRIBUTION" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_ATTRIBUTION"></a>
+##### `BSD_3_CLAUSE_ATTRIBUTION`<sup>Required</sup> <a name="BSD_3_CLAUSE_ATTRIBUTION" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_ATTRIBUTION"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_ATTRIBUTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD with attribution.
 
@@ -4727,13 +4727,13 @@ BSD with attribution.
 
 ---
 
-##### `BSD_3_CLAUSE_CLEAR`<sup>Required</sup> <a name="BSD_3_CLAUSE_CLEAR" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_CLEAR"></a>
+##### `BSD_3_CLAUSE_CLEAR`<sup>Required</sup> <a name="BSD_3_CLAUSE_CLEAR" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_CLEAR"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_CLEAR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause Clear License.
 
@@ -4741,13 +4741,13 @@ BSD 3-Clause Clear License.
 
 ---
 
-##### `BSD_3_CLAUSE_FLEX`<sup>Required</sup> <a name="BSD_3_CLAUSE_FLEX" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_FLEX"></a>
+##### `BSD_3_CLAUSE_FLEX`<sup>Required</sup> <a name="BSD_3_CLAUSE_FLEX" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_FLEX"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_FLEX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause Flex variant.
 
@@ -4755,13 +4755,13 @@ BSD 3-Clause Flex variant.
 
 ---
 
-##### `BSD_3_CLAUSE_HP`<sup>Required</sup> <a name="BSD_3_CLAUSE_HP" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_HP"></a>
+##### `BSD_3_CLAUSE_HP`<sup>Required</sup> <a name="BSD_3_CLAUSE_HP" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_HP"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_HP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Hewlett-Packard BSD variant license.
 
@@ -4769,13 +4769,13 @@ Hewlett-Packard BSD variant license.
 
 ---
 
-##### `BSD_3_CLAUSE_LBNL`<sup>Required</sup> <a name="BSD_3_CLAUSE_LBNL" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_LBNL"></a>
+##### `BSD_3_CLAUSE_LBNL`<sup>Required</sup> <a name="BSD_3_CLAUSE_LBNL" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_LBNL"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_LBNL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Lawrence Berkeley National Labs BSD variant license.
 
@@ -4783,13 +4783,13 @@ Lawrence Berkeley National Labs BSD variant license.
 
 ---
 
-##### `BSD_3_CLAUSE_MODIFICATION`<sup>Required</sup> <a name="BSD_3_CLAUSE_MODIFICATION" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_MODIFICATION"></a>
+##### `BSD_3_CLAUSE_MODIFICATION`<sup>Required</sup> <a name="BSD_3_CLAUSE_MODIFICATION" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_MODIFICATION"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_MODIFICATION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause Modification.
 
@@ -4797,13 +4797,13 @@ BSD 3-Clause Modification.
 
 ---
 
-##### `BSD_3_CLAUSE_NO_MILITARY_LICENSE`<sup>Required</sup> <a name="BSD_3_CLAUSE_NO_MILITARY_LICENSE" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_MILITARY_LICENSE"></a>
+##### `BSD_3_CLAUSE_NO_MILITARY_LICENSE`<sup>Required</sup> <a name="BSD_3_CLAUSE_NO_MILITARY_LICENSE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_MILITARY_LICENSE"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_NO_MILITARY_LICENSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause No Military License.
 
@@ -4811,13 +4811,13 @@ BSD 3-Clause No Military License.
 
 ---
 
-##### `BSD_3_CLAUSE_NO_NUCLEAR_LICENSE`<sup>Required</sup> <a name="BSD_3_CLAUSE_NO_NUCLEAR_LICENSE" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE"></a>
+##### `BSD_3_CLAUSE_NO_NUCLEAR_LICENSE`<sup>Required</sup> <a name="BSD_3_CLAUSE_NO_NUCLEAR_LICENSE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_NO_NUCLEAR_LICENSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause No Nuclear License.
 
@@ -4825,13 +4825,13 @@ BSD 3-Clause No Nuclear License.
 
 ---
 
-##### `BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014`<sup>Required</sup> <a name="BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014"></a>
+##### `BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014`<sup>Required</sup> <a name="BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause No Nuclear License 2014.
 
@@ -4839,13 +4839,13 @@ BSD 3-Clause No Nuclear License 2014.
 
 ---
 
-##### `BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY`<sup>Required</sup> <a name="BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY"></a>
+##### `BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY`<sup>Required</sup> <a name="BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause No Nuclear Warranty.
 
@@ -4853,13 +4853,13 @@ BSD 3-Clause No Nuclear Warranty.
 
 ---
 
-##### `BSD_3_CLAUSE_OPEN_MPI`<sup>Required</sup> <a name="BSD_3_CLAUSE_OPEN_MPI" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_OPEN_MPI"></a>
+##### `BSD_3_CLAUSE_OPEN_MPI`<sup>Required</sup> <a name="BSD_3_CLAUSE_OPEN_MPI" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_OPEN_MPI"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_OPEN_MPI: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause Open MPI variant.
 
@@ -4867,13 +4867,13 @@ BSD 3-Clause Open MPI variant.
 
 ---
 
-##### `BSD_3_CLAUSE_SUN`<sup>Required</sup> <a name="BSD_3_CLAUSE_SUN" id="construct-hub.SpdxLicense.property.BSD_3_CLAUSE_SUN"></a>
+##### `BSD_3_CLAUSE_SUN`<sup>Required</sup> <a name="BSD_3_CLAUSE_SUN" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_3_CLAUSE_SUN"></a>
 
 ```typescript
 public readonly BSD_3_CLAUSE_SUN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 3-Clause Sun Microsystems.
 
@@ -4881,13 +4881,13 @@ BSD 3-Clause Sun Microsystems.
 
 ---
 
-##### `BSD_4_3RENO`<sup>Required</sup> <a name="BSD_4_3RENO" id="construct-hub.SpdxLicense.property.BSD_4_3RENO"></a>
+##### `BSD_4_3RENO`<sup>Required</sup> <a name="BSD_4_3RENO" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_3RENO"></a>
 
 ```typescript
 public readonly BSD_4_3RENO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 4.3 RENO License.
 
@@ -4895,13 +4895,13 @@ BSD 4.3 RENO License.
 
 ---
 
-##### `BSD_4_3TAHOE`<sup>Required</sup> <a name="BSD_4_3TAHOE" id="construct-hub.SpdxLicense.property.BSD_4_3TAHOE"></a>
+##### `BSD_4_3TAHOE`<sup>Required</sup> <a name="BSD_4_3TAHOE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_3TAHOE"></a>
 
 ```typescript
 public readonly BSD_4_3TAHOE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 4.3 TAHOE License.
 
@@ -4909,13 +4909,13 @@ BSD 4.3 TAHOE License.
 
 ---
 
-##### `BSD_4_CLAUSE`<sup>Required</sup> <a name="BSD_4_CLAUSE" id="construct-hub.SpdxLicense.property.BSD_4_CLAUSE"></a>
+##### `BSD_4_CLAUSE`<sup>Required</sup> <a name="BSD_4_CLAUSE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_CLAUSE"></a>
 
 ```typescript
 public readonly BSD_4_CLAUSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 4-Clause "Original" or "Old" License.
 
@@ -4923,13 +4923,13 @@ BSD 4-Clause "Original" or "Old" License.
 
 ---
 
-##### `BSD_4_CLAUSE_SHORTENED`<sup>Required</sup> <a name="BSD_4_CLAUSE_SHORTENED" id="construct-hub.SpdxLicense.property.BSD_4_CLAUSE_SHORTENED"></a>
+##### `BSD_4_CLAUSE_SHORTENED`<sup>Required</sup> <a name="BSD_4_CLAUSE_SHORTENED" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_CLAUSE_SHORTENED"></a>
 
 ```typescript
 public readonly BSD_4_CLAUSE_SHORTENED: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD 4 Clause Shortened.
 
@@ -4937,13 +4937,13 @@ BSD 4 Clause Shortened.
 
 ---
 
-##### `BSD_4_CLAUSE_UC`<sup>Required</sup> <a name="BSD_4_CLAUSE_UC" id="construct-hub.SpdxLicense.property.BSD_4_CLAUSE_UC"></a>
+##### `BSD_4_CLAUSE_UC`<sup>Required</sup> <a name="BSD_4_CLAUSE_UC" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_4_CLAUSE_UC"></a>
 
 ```typescript
 public readonly BSD_4_CLAUSE_UC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD-4-Clause (University of California-Specific).
 
@@ -4951,13 +4951,13 @@ BSD-4-Clause (University of California-Specific).
 
 ---
 
-##### `BSD_ADVERTISING_ACKNOWLEDGEMENT`<sup>Required</sup> <a name="BSD_ADVERTISING_ACKNOWLEDGEMENT" id="construct-hub.SpdxLicense.property.BSD_ADVERTISING_ACKNOWLEDGEMENT"></a>
+##### `BSD_ADVERTISING_ACKNOWLEDGEMENT`<sup>Required</sup> <a name="BSD_ADVERTISING_ACKNOWLEDGEMENT" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_ADVERTISING_ACKNOWLEDGEMENT"></a>
 
 ```typescript
 public readonly BSD_ADVERTISING_ACKNOWLEDGEMENT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD Advertising Acknowledgement License.
 
@@ -4965,13 +4965,13 @@ BSD Advertising Acknowledgement License.
 
 ---
 
-##### `BSD_ATTRIBUTION_HPND_DISCLAIMER`<sup>Required</sup> <a name="BSD_ATTRIBUTION_HPND_DISCLAIMER" id="construct-hub.SpdxLicense.property.BSD_ATTRIBUTION_HPND_DISCLAIMER"></a>
+##### `BSD_ATTRIBUTION_HPND_DISCLAIMER`<sup>Required</sup> <a name="BSD_ATTRIBUTION_HPND_DISCLAIMER" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_ATTRIBUTION_HPND_DISCLAIMER"></a>
 
 ```typescript
 public readonly BSD_ATTRIBUTION_HPND_DISCLAIMER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD with Attribution and HPND disclaimer.
 
@@ -4979,13 +4979,13 @@ BSD with Attribution and HPND disclaimer.
 
 ---
 
-##### `BSD_INFERNO_NETTVERK`<sup>Required</sup> <a name="BSD_INFERNO_NETTVERK" id="construct-hub.SpdxLicense.property.BSD_INFERNO_NETTVERK"></a>
+##### `BSD_INFERNO_NETTVERK`<sup>Required</sup> <a name="BSD_INFERNO_NETTVERK" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_INFERNO_NETTVERK"></a>
 
 ```typescript
 public readonly BSD_INFERNO_NETTVERK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD-Inferno-Nettverk.
 
@@ -4993,13 +4993,13 @@ BSD-Inferno-Nettverk.
 
 ---
 
-##### `BSD_PROTECTION`<sup>Required</sup> <a name="BSD_PROTECTION" id="construct-hub.SpdxLicense.property.BSD_PROTECTION"></a>
+##### `BSD_PROTECTION`<sup>Required</sup> <a name="BSD_PROTECTION" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_PROTECTION"></a>
 
 ```typescript
 public readonly BSD_PROTECTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD Protection License.
 
@@ -5007,13 +5007,13 @@ BSD Protection License.
 
 ---
 
-##### `BSD_SOURCE_BEGINNING_FILE`<sup>Required</sup> <a name="BSD_SOURCE_BEGINNING_FILE" id="construct-hub.SpdxLicense.property.BSD_SOURCE_BEGINNING_FILE"></a>
+##### `BSD_SOURCE_BEGINNING_FILE`<sup>Required</sup> <a name="BSD_SOURCE_BEGINNING_FILE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_SOURCE_BEGINNING_FILE"></a>
 
 ```typescript
 public readonly BSD_SOURCE_BEGINNING_FILE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD Source Code Attribution - beginning of file variant.
 
@@ -5021,13 +5021,13 @@ BSD Source Code Attribution - beginning of file variant.
 
 ---
 
-##### `BSD_SOURCE_CODE`<sup>Required</sup> <a name="BSD_SOURCE_CODE" id="construct-hub.SpdxLicense.property.BSD_SOURCE_CODE"></a>
+##### `BSD_SOURCE_CODE`<sup>Required</sup> <a name="BSD_SOURCE_CODE" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_SOURCE_CODE"></a>
 
 ```typescript
 public readonly BSD_SOURCE_CODE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD Source Code Attribution.
 
@@ -5035,13 +5035,13 @@ BSD Source Code Attribution.
 
 ---
 
-##### `BSD_SYSTEMICS`<sup>Required</sup> <a name="BSD_SYSTEMICS" id="construct-hub.SpdxLicense.property.BSD_SYSTEMICS"></a>
+##### `BSD_SYSTEMICS`<sup>Required</sup> <a name="BSD_SYSTEMICS" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_SYSTEMICS"></a>
 
 ```typescript
 public readonly BSD_SYSTEMICS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Systemics BSD variant license.
 
@@ -5049,13 +5049,13 @@ Systemics BSD variant license.
 
 ---
 
-##### `BSD_SYSTEMICS_W3WORKS`<sup>Required</sup> <a name="BSD_SYSTEMICS_W3WORKS" id="construct-hub.SpdxLicense.property.BSD_SYSTEMICS_W3WORKS"></a>
+##### `BSD_SYSTEMICS_W3WORKS`<sup>Required</sup> <a name="BSD_SYSTEMICS_W3WORKS" id="@gd-constructs/construct-hub.SpdxLicense.property.BSD_SYSTEMICS_W3WORKS"></a>
 
 ```typescript
 public readonly BSD_SYSTEMICS_W3WORKS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Systemics W3Works BSD variant license.
 
@@ -5063,13 +5063,13 @@ Systemics W3Works BSD variant license.
 
 ---
 
-##### `BSL_1_0`<sup>Required</sup> <a name="BSL_1_0" id="construct-hub.SpdxLicense.property.BSL_1_0"></a>
+##### `BSL_1_0`<sup>Required</sup> <a name="BSL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.BSL_1_0"></a>
 
 ```typescript
 public readonly BSL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Boost Software License 1.0.
 
@@ -5077,13 +5077,13 @@ Boost Software License 1.0.
 
 ---
 
-##### `BUSL_1_1`<sup>Required</sup> <a name="BUSL_1_1" id="construct-hub.SpdxLicense.property.BUSL_1_1"></a>
+##### `BUSL_1_1`<sup>Required</sup> <a name="BUSL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.BUSL_1_1"></a>
 
 ```typescript
 public readonly BUSL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Business Source License 1.1.
 
@@ -5091,13 +5091,13 @@ Business Source License 1.1.
 
 ---
 
-##### `BZIP2_1_0_5`<sup>Required</sup> <a name="BZIP2_1_0_5" id="construct-hub.SpdxLicense.property.BZIP2_1_0_5"></a>
+##### `BZIP2_1_0_5`<sup>Required</sup> <a name="BZIP2_1_0_5" id="@gd-constructs/construct-hub.SpdxLicense.property.BZIP2_1_0_5"></a>
 
 ```typescript
 public readonly BZIP2_1_0_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 bzip2 and libbzip2 License v1.0.5.
 
@@ -5105,13 +5105,13 @@ bzip2 and libbzip2 License v1.0.5.
 
 ---
 
-##### `BZIP2_1_0_6`<sup>Required</sup> <a name="BZIP2_1_0_6" id="construct-hub.SpdxLicense.property.BZIP2_1_0_6"></a>
+##### `BZIP2_1_0_6`<sup>Required</sup> <a name="BZIP2_1_0_6" id="@gd-constructs/construct-hub.SpdxLicense.property.BZIP2_1_0_6"></a>
 
 ```typescript
 public readonly BZIP2_1_0_6: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 bzip2 and libbzip2 License v1.0.6.
 
@@ -5119,13 +5119,13 @@ bzip2 and libbzip2 License v1.0.6.
 
 ---
 
-##### `C_UDA_1_0`<sup>Required</sup> <a name="C_UDA_1_0" id="construct-hub.SpdxLicense.property.C_UDA_1_0"></a>
+##### `C_UDA_1_0`<sup>Required</sup> <a name="C_UDA_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.C_UDA_1_0"></a>
 
 ```typescript
 public readonly C_UDA_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Computational Use of Data Agreement v1.0.
 
@@ -5133,13 +5133,13 @@ Computational Use of Data Agreement v1.0.
 
 ---
 
-##### `CAL_1_0`<sup>Required</sup> <a name="CAL_1_0" id="construct-hub.SpdxLicense.property.CAL_1_0"></a>
+##### `CAL_1_0`<sup>Required</sup> <a name="CAL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CAL_1_0"></a>
 
 ```typescript
 public readonly CAL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Cryptographic Autonomy License 1.0.
 
@@ -5147,13 +5147,13 @@ Cryptographic Autonomy License 1.0.
 
 ---
 
-##### `CAL_1_0_COMBINED_WORK_EXCEPTION`<sup>Required</sup> <a name="CAL_1_0_COMBINED_WORK_EXCEPTION" id="construct-hub.SpdxLicense.property.CAL_1_0_COMBINED_WORK_EXCEPTION"></a>
+##### `CAL_1_0_COMBINED_WORK_EXCEPTION`<sup>Required</sup> <a name="CAL_1_0_COMBINED_WORK_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.CAL_1_0_COMBINED_WORK_EXCEPTION"></a>
 
 ```typescript
 public readonly CAL_1_0_COMBINED_WORK_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Cryptographic Autonomy License 1.0 (Combined Work Exception).
 
@@ -5161,13 +5161,13 @@ Cryptographic Autonomy License 1.0 (Combined Work Exception).
 
 ---
 
-##### `CALDERA`<sup>Required</sup> <a name="CALDERA" id="construct-hub.SpdxLicense.property.CALDERA"></a>
+##### `CALDERA`<sup>Required</sup> <a name="CALDERA" id="@gd-constructs/construct-hub.SpdxLicense.property.CALDERA"></a>
 
 ```typescript
 public readonly CALDERA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Caldera License.
 
@@ -5175,13 +5175,13 @@ Caldera License.
 
 ---
 
-##### `CALDERA_NO_PREAMBLE`<sup>Required</sup> <a name="CALDERA_NO_PREAMBLE" id="construct-hub.SpdxLicense.property.CALDERA_NO_PREAMBLE"></a>
+##### `CALDERA_NO_PREAMBLE`<sup>Required</sup> <a name="CALDERA_NO_PREAMBLE" id="@gd-constructs/construct-hub.SpdxLicense.property.CALDERA_NO_PREAMBLE"></a>
 
 ```typescript
 public readonly CALDERA_NO_PREAMBLE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Caldera License (without preamble).
 
@@ -5189,13 +5189,13 @@ Caldera License (without preamble).
 
 ---
 
-##### `CATOSL_1_1`<sup>Required</sup> <a name="CATOSL_1_1" id="construct-hub.SpdxLicense.property.CATOSL_1_1"></a>
+##### `CATOSL_1_1`<sup>Required</sup> <a name="CATOSL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.CATOSL_1_1"></a>
 
 ```typescript
 public readonly CATOSL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Computer Associates Trusted Open Source License 1.1.
 
@@ -5203,13 +5203,13 @@ Computer Associates Trusted Open Source License 1.1.
 
 ---
 
-##### `CC_BY_1_0`<sup>Required</sup> <a name="CC_BY_1_0" id="construct-hub.SpdxLicense.property.CC_BY_1_0"></a>
+##### `CC_BY_1_0`<sup>Required</sup> <a name="CC_BY_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_1_0"></a>
 
 ```typescript
 public readonly CC_BY_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 1.0 Generic.
 
@@ -5217,13 +5217,13 @@ Creative Commons Attribution 1.0 Generic.
 
 ---
 
-##### `CC_BY_2_0`<sup>Required</sup> <a name="CC_BY_2_0" id="construct-hub.SpdxLicense.property.CC_BY_2_0"></a>
+##### `CC_BY_2_0`<sup>Required</sup> <a name="CC_BY_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_2_0"></a>
 
 ```typescript
 public readonly CC_BY_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 2.0 Generic.
 
@@ -5231,13 +5231,13 @@ Creative Commons Attribution 2.0 Generic.
 
 ---
 
-##### `CC_BY_2_5`<sup>Required</sup> <a name="CC_BY_2_5" id="construct-hub.SpdxLicense.property.CC_BY_2_5"></a>
+##### `CC_BY_2_5`<sup>Required</sup> <a name="CC_BY_2_5" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_2_5"></a>
 
 ```typescript
 public readonly CC_BY_2_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 2.5 Generic.
 
@@ -5245,13 +5245,13 @@ Creative Commons Attribution 2.5 Generic.
 
 ---
 
-##### `CC_BY_2_5_AU`<sup>Required</sup> <a name="CC_BY_2_5_AU" id="construct-hub.SpdxLicense.property.CC_BY_2_5_AU"></a>
+##### `CC_BY_2_5_AU`<sup>Required</sup> <a name="CC_BY_2_5_AU" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_2_5_AU"></a>
 
 ```typescript
 public readonly CC_BY_2_5_AU: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 2.5 Australia.
 
@@ -5259,13 +5259,13 @@ Creative Commons Attribution 2.5 Australia.
 
 ---
 
-##### `CC_BY_3_0`<sup>Required</sup> <a name="CC_BY_3_0" id="construct-hub.SpdxLicense.property.CC_BY_3_0"></a>
+##### `CC_BY_3_0`<sup>Required</sup> <a name="CC_BY_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0"></a>
 
 ```typescript
 public readonly CC_BY_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 3.0 Unported.
 
@@ -5273,13 +5273,13 @@ Creative Commons Attribution 3.0 Unported.
 
 ---
 
-##### `CC_BY_3_0_AT`<sup>Required</sup> <a name="CC_BY_3_0_AT" id="construct-hub.SpdxLicense.property.CC_BY_3_0_AT"></a>
+##### `CC_BY_3_0_AT`<sup>Required</sup> <a name="CC_BY_3_0_AT" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_AT"></a>
 
 ```typescript
 public readonly CC_BY_3_0_AT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 3.0 Austria.
 
@@ -5287,13 +5287,13 @@ Creative Commons Attribution 3.0 Austria.
 
 ---
 
-##### `CC_BY_3_0_AU`<sup>Required</sup> <a name="CC_BY_3_0_AU" id="construct-hub.SpdxLicense.property.CC_BY_3_0_AU"></a>
+##### `CC_BY_3_0_AU`<sup>Required</sup> <a name="CC_BY_3_0_AU" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_AU"></a>
 
 ```typescript
 public readonly CC_BY_3_0_AU: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 3.0 Australia.
 
@@ -5301,13 +5301,13 @@ Creative Commons Attribution 3.0 Australia.
 
 ---
 
-##### `CC_BY_3_0_DE`<sup>Required</sup> <a name="CC_BY_3_0_DE" id="construct-hub.SpdxLicense.property.CC_BY_3_0_DE"></a>
+##### `CC_BY_3_0_DE`<sup>Required</sup> <a name="CC_BY_3_0_DE" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_DE"></a>
 
 ```typescript
 public readonly CC_BY_3_0_DE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 3.0 Germany.
 
@@ -5315,13 +5315,13 @@ Creative Commons Attribution 3.0 Germany.
 
 ---
 
-##### `CC_BY_3_0_IGO`<sup>Required</sup> <a name="CC_BY_3_0_IGO" id="construct-hub.SpdxLicense.property.CC_BY_3_0_IGO"></a>
+##### `CC_BY_3_0_IGO`<sup>Required</sup> <a name="CC_BY_3_0_IGO" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_IGO"></a>
 
 ```typescript
 public readonly CC_BY_3_0_IGO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 3.0 IGO.
 
@@ -5329,13 +5329,13 @@ Creative Commons Attribution 3.0 IGO.
 
 ---
 
-##### `CC_BY_3_0_NL`<sup>Required</sup> <a name="CC_BY_3_0_NL" id="construct-hub.SpdxLicense.property.CC_BY_3_0_NL"></a>
+##### `CC_BY_3_0_NL`<sup>Required</sup> <a name="CC_BY_3_0_NL" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_NL"></a>
 
 ```typescript
 public readonly CC_BY_3_0_NL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 3.0 Netherlands.
 
@@ -5343,13 +5343,13 @@ Creative Commons Attribution 3.0 Netherlands.
 
 ---
 
-##### `CC_BY_3_0_US`<sup>Required</sup> <a name="CC_BY_3_0_US" id="construct-hub.SpdxLicense.property.CC_BY_3_0_US"></a>
+##### `CC_BY_3_0_US`<sup>Required</sup> <a name="CC_BY_3_0_US" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_3_0_US"></a>
 
 ```typescript
 public readonly CC_BY_3_0_US: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 3.0 United States.
 
@@ -5357,13 +5357,13 @@ Creative Commons Attribution 3.0 United States.
 
 ---
 
-##### `CC_BY_4_0`<sup>Required</sup> <a name="CC_BY_4_0" id="construct-hub.SpdxLicense.property.CC_BY_4_0"></a>
+##### `CC_BY_4_0`<sup>Required</sup> <a name="CC_BY_4_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_4_0"></a>
 
 ```typescript
 public readonly CC_BY_4_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution 4.0 International.
 
@@ -5371,13 +5371,13 @@ Creative Commons Attribution 4.0 International.
 
 ---
 
-##### `CC_BY_NC_1_0`<sup>Required</sup> <a name="CC_BY_NC_1_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_1_0"></a>
+##### `CC_BY_NC_1_0`<sup>Required</sup> <a name="CC_BY_NC_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_1_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial 1.0 Generic.
 
@@ -5385,13 +5385,13 @@ Creative Commons Attribution Non Commercial 1.0 Generic.
 
 ---
 
-##### `CC_BY_NC_2_0`<sup>Required</sup> <a name="CC_BY_NC_2_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_2_0"></a>
+##### `CC_BY_NC_2_0`<sup>Required</sup> <a name="CC_BY_NC_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_2_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial 2.0 Generic.
 
@@ -5399,13 +5399,13 @@ Creative Commons Attribution Non Commercial 2.0 Generic.
 
 ---
 
-##### `CC_BY_NC_2_5`<sup>Required</sup> <a name="CC_BY_NC_2_5" id="construct-hub.SpdxLicense.property.CC_BY_NC_2_5"></a>
+##### `CC_BY_NC_2_5`<sup>Required</sup> <a name="CC_BY_NC_2_5" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_2_5"></a>
 
 ```typescript
 public readonly CC_BY_NC_2_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial 2.5 Generic.
 
@@ -5413,13 +5413,13 @@ Creative Commons Attribution Non Commercial 2.5 Generic.
 
 ---
 
-##### `CC_BY_NC_3_0`<sup>Required</sup> <a name="CC_BY_NC_3_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_3_0"></a>
+##### `CC_BY_NC_3_0`<sup>Required</sup> <a name="CC_BY_NC_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_3_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial 3.0 Unported.
 
@@ -5427,13 +5427,13 @@ Creative Commons Attribution Non Commercial 3.0 Unported.
 
 ---
 
-##### `CC_BY_NC_3_0_DE`<sup>Required</sup> <a name="CC_BY_NC_3_0_DE" id="construct-hub.SpdxLicense.property.CC_BY_NC_3_0_DE"></a>
+##### `CC_BY_NC_3_0_DE`<sup>Required</sup> <a name="CC_BY_NC_3_0_DE" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_3_0_DE"></a>
 
 ```typescript
 public readonly CC_BY_NC_3_0_DE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial 3.0 Germany.
 
@@ -5441,13 +5441,13 @@ Creative Commons Attribution Non Commercial 3.0 Germany.
 
 ---
 
-##### `CC_BY_NC_4_0`<sup>Required</sup> <a name="CC_BY_NC_4_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_4_0"></a>
+##### `CC_BY_NC_4_0`<sup>Required</sup> <a name="CC_BY_NC_4_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_4_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_4_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial 4.0 International.
 
@@ -5455,13 +5455,13 @@ Creative Commons Attribution Non Commercial 4.0 International.
 
 ---
 
-##### `CC_BY_NC_ND_1_0`<sup>Required</sup> <a name="CC_BY_NC_ND_1_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_ND_1_0"></a>
+##### `CC_BY_NC_ND_1_0`<sup>Required</sup> <a name="CC_BY_NC_ND_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_1_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_ND_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial No Derivatives 1.0 Generic.
 
@@ -5469,13 +5469,13 @@ Creative Commons Attribution Non Commercial No Derivatives 1.0 Generic.
 
 ---
 
-##### `CC_BY_NC_ND_2_0`<sup>Required</sup> <a name="CC_BY_NC_ND_2_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_ND_2_0"></a>
+##### `CC_BY_NC_ND_2_0`<sup>Required</sup> <a name="CC_BY_NC_ND_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_2_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_ND_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial No Derivatives 2.0 Generic.
 
@@ -5483,13 +5483,13 @@ Creative Commons Attribution Non Commercial No Derivatives 2.0 Generic.
 
 ---
 
-##### `CC_BY_NC_ND_2_5`<sup>Required</sup> <a name="CC_BY_NC_ND_2_5" id="construct-hub.SpdxLicense.property.CC_BY_NC_ND_2_5"></a>
+##### `CC_BY_NC_ND_2_5`<sup>Required</sup> <a name="CC_BY_NC_ND_2_5" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_2_5"></a>
 
 ```typescript
 public readonly CC_BY_NC_ND_2_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial No Derivatives 2.5 Generic.
 
@@ -5497,13 +5497,13 @@ Creative Commons Attribution Non Commercial No Derivatives 2.5 Generic.
 
 ---
 
-##### `CC_BY_NC_ND_3_0`<sup>Required</sup> <a name="CC_BY_NC_ND_3_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0"></a>
+##### `CC_BY_NC_ND_3_0`<sup>Required</sup> <a name="CC_BY_NC_ND_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_ND_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial No Derivatives 3.0 Unported.
 
@@ -5511,13 +5511,13 @@ Creative Commons Attribution Non Commercial No Derivatives 3.0 Unported.
 
 ---
 
-##### `CC_BY_NC_ND_3_0_DE`<sup>Required</sup> <a name="CC_BY_NC_ND_3_0_DE" id="construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0_DE"></a>
+##### `CC_BY_NC_ND_3_0_DE`<sup>Required</sup> <a name="CC_BY_NC_ND_3_0_DE" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0_DE"></a>
 
 ```typescript
 public readonly CC_BY_NC_ND_3_0_DE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial No Derivatives 3.0 Germany.
 
@@ -5525,13 +5525,13 @@ Creative Commons Attribution Non Commercial No Derivatives 3.0 Germany.
 
 ---
 
-##### `CC_BY_NC_ND_3_0_IGO`<sup>Required</sup> <a name="CC_BY_NC_ND_3_0_IGO" id="construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0_IGO"></a>
+##### `CC_BY_NC_ND_3_0_IGO`<sup>Required</sup> <a name="CC_BY_NC_ND_3_0_IGO" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_3_0_IGO"></a>
 
 ```typescript
 public readonly CC_BY_NC_ND_3_0_IGO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial No Derivatives 3.0 IGO.
 
@@ -5539,13 +5539,13 @@ Creative Commons Attribution Non Commercial No Derivatives 3.0 IGO.
 
 ---
 
-##### `CC_BY_NC_ND_4_0`<sup>Required</sup> <a name="CC_BY_NC_ND_4_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_ND_4_0"></a>
+##### `CC_BY_NC_ND_4_0`<sup>Required</sup> <a name="CC_BY_NC_ND_4_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_ND_4_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_ND_4_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial No Derivatives 4.0 International.
 
@@ -5553,13 +5553,13 @@ Creative Commons Attribution Non Commercial No Derivatives 4.0 International.
 
 ---
 
-##### `CC_BY_NC_SA_1_0`<sup>Required</sup> <a name="CC_BY_NC_SA_1_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_1_0"></a>
+##### `CC_BY_NC_SA_1_0`<sup>Required</sup> <a name="CC_BY_NC_SA_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_1_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 1.0 Generic.
 
@@ -5567,13 +5567,13 @@ Creative Commons Attribution Non Commercial Share Alike 1.0 Generic.
 
 ---
 
-##### `CC_BY_NC_SA_2_0`<sup>Required</sup> <a name="CC_BY_NC_SA_2_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0"></a>
+##### `CC_BY_NC_SA_2_0`<sup>Required</sup> <a name="CC_BY_NC_SA_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 2.0 Generic.
 
@@ -5581,13 +5581,13 @@ Creative Commons Attribution Non Commercial Share Alike 2.0 Generic.
 
 ---
 
-##### `CC_BY_NC_SA_2_0_DE`<sup>Required</sup> <a name="CC_BY_NC_SA_2_0_DE" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_DE"></a>
+##### `CC_BY_NC_SA_2_0_DE`<sup>Required</sup> <a name="CC_BY_NC_SA_2_0_DE" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_DE"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_2_0_DE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 2.0 Germany.
 
@@ -5595,13 +5595,13 @@ Creative Commons Attribution Non Commercial Share Alike 2.0 Germany.
 
 ---
 
-##### `CC_BY_NC_SA_2_0_FR`<sup>Required</sup> <a name="CC_BY_NC_SA_2_0_FR" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_FR"></a>
+##### `CC_BY_NC_SA_2_0_FR`<sup>Required</sup> <a name="CC_BY_NC_SA_2_0_FR" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_FR"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_2_0_FR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution-NonCommercial-ShareAlike 2.0 France.
 
@@ -5609,13 +5609,13 @@ Creative Commons Attribution-NonCommercial-ShareAlike 2.0 France.
 
 ---
 
-##### `CC_BY_NC_SA_2_0_UK`<sup>Required</sup> <a name="CC_BY_NC_SA_2_0_UK" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_UK"></a>
+##### `CC_BY_NC_SA_2_0_UK`<sup>Required</sup> <a name="CC_BY_NC_SA_2_0_UK" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_0_UK"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_2_0_UK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 2.0 England and Wales.
 
@@ -5623,13 +5623,13 @@ Creative Commons Attribution Non Commercial Share Alike 2.0 England and Wales.
 
 ---
 
-##### `CC_BY_NC_SA_2_5`<sup>Required</sup> <a name="CC_BY_NC_SA_2_5" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_5"></a>
+##### `CC_BY_NC_SA_2_5`<sup>Required</sup> <a name="CC_BY_NC_SA_2_5" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_2_5"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_2_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 2.5 Generic.
 
@@ -5637,13 +5637,13 @@ Creative Commons Attribution Non Commercial Share Alike 2.5 Generic.
 
 ---
 
-##### `CC_BY_NC_SA_3_0`<sup>Required</sup> <a name="CC_BY_NC_SA_3_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0"></a>
+##### `CC_BY_NC_SA_3_0`<sup>Required</sup> <a name="CC_BY_NC_SA_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 3.0 Unported.
 
@@ -5651,13 +5651,13 @@ Creative Commons Attribution Non Commercial Share Alike 3.0 Unported.
 
 ---
 
-##### `CC_BY_NC_SA_3_0_DE`<sup>Required</sup> <a name="CC_BY_NC_SA_3_0_DE" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0_DE"></a>
+##### `CC_BY_NC_SA_3_0_DE`<sup>Required</sup> <a name="CC_BY_NC_SA_3_0_DE" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0_DE"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_3_0_DE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 3.0 Germany.
 
@@ -5665,13 +5665,13 @@ Creative Commons Attribution Non Commercial Share Alike 3.0 Germany.
 
 ---
 
-##### `CC_BY_NC_SA_3_0_IGO`<sup>Required</sup> <a name="CC_BY_NC_SA_3_0_IGO" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0_IGO"></a>
+##### `CC_BY_NC_SA_3_0_IGO`<sup>Required</sup> <a name="CC_BY_NC_SA_3_0_IGO" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_3_0_IGO"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_3_0_IGO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 3.0 IGO.
 
@@ -5679,13 +5679,13 @@ Creative Commons Attribution Non Commercial Share Alike 3.0 IGO.
 
 ---
 
-##### `CC_BY_NC_SA_4_0`<sup>Required</sup> <a name="CC_BY_NC_SA_4_0" id="construct-hub.SpdxLicense.property.CC_BY_NC_SA_4_0"></a>
+##### `CC_BY_NC_SA_4_0`<sup>Required</sup> <a name="CC_BY_NC_SA_4_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_NC_SA_4_0"></a>
 
 ```typescript
 public readonly CC_BY_NC_SA_4_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Non Commercial Share Alike 4.0 International.
 
@@ -5693,13 +5693,13 @@ Creative Commons Attribution Non Commercial Share Alike 4.0 International.
 
 ---
 
-##### `CC_BY_ND_1_0`<sup>Required</sup> <a name="CC_BY_ND_1_0" id="construct-hub.SpdxLicense.property.CC_BY_ND_1_0"></a>
+##### `CC_BY_ND_1_0`<sup>Required</sup> <a name="CC_BY_ND_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_1_0"></a>
 
 ```typescript
 public readonly CC_BY_ND_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution No Derivatives 1.0 Generic.
 
@@ -5707,13 +5707,13 @@ Creative Commons Attribution No Derivatives 1.0 Generic.
 
 ---
 
-##### `CC_BY_ND_2_0`<sup>Required</sup> <a name="CC_BY_ND_2_0" id="construct-hub.SpdxLicense.property.CC_BY_ND_2_0"></a>
+##### `CC_BY_ND_2_0`<sup>Required</sup> <a name="CC_BY_ND_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_2_0"></a>
 
 ```typescript
 public readonly CC_BY_ND_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution No Derivatives 2.0 Generic.
 
@@ -5721,13 +5721,13 @@ Creative Commons Attribution No Derivatives 2.0 Generic.
 
 ---
 
-##### `CC_BY_ND_2_5`<sup>Required</sup> <a name="CC_BY_ND_2_5" id="construct-hub.SpdxLicense.property.CC_BY_ND_2_5"></a>
+##### `CC_BY_ND_2_5`<sup>Required</sup> <a name="CC_BY_ND_2_5" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_2_5"></a>
 
 ```typescript
 public readonly CC_BY_ND_2_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution No Derivatives 2.5 Generic.
 
@@ -5735,13 +5735,13 @@ Creative Commons Attribution No Derivatives 2.5 Generic.
 
 ---
 
-##### `CC_BY_ND_3_0`<sup>Required</sup> <a name="CC_BY_ND_3_0" id="construct-hub.SpdxLicense.property.CC_BY_ND_3_0"></a>
+##### `CC_BY_ND_3_0`<sup>Required</sup> <a name="CC_BY_ND_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_3_0"></a>
 
 ```typescript
 public readonly CC_BY_ND_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution No Derivatives 3.0 Unported.
 
@@ -5749,13 +5749,13 @@ Creative Commons Attribution No Derivatives 3.0 Unported.
 
 ---
 
-##### `CC_BY_ND_3_0_DE`<sup>Required</sup> <a name="CC_BY_ND_3_0_DE" id="construct-hub.SpdxLicense.property.CC_BY_ND_3_0_DE"></a>
+##### `CC_BY_ND_3_0_DE`<sup>Required</sup> <a name="CC_BY_ND_3_0_DE" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_3_0_DE"></a>
 
 ```typescript
 public readonly CC_BY_ND_3_0_DE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution No Derivatives 3.0 Germany.
 
@@ -5763,13 +5763,13 @@ Creative Commons Attribution No Derivatives 3.0 Germany.
 
 ---
 
-##### `CC_BY_ND_4_0`<sup>Required</sup> <a name="CC_BY_ND_4_0" id="construct-hub.SpdxLicense.property.CC_BY_ND_4_0"></a>
+##### `CC_BY_ND_4_0`<sup>Required</sup> <a name="CC_BY_ND_4_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_ND_4_0"></a>
 
 ```typescript
 public readonly CC_BY_ND_4_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution No Derivatives 4.0 International.
 
@@ -5777,13 +5777,13 @@ Creative Commons Attribution No Derivatives 4.0 International.
 
 ---
 
-##### `CC_BY_SA_1_0`<sup>Required</sup> <a name="CC_BY_SA_1_0" id="construct-hub.SpdxLicense.property.CC_BY_SA_1_0"></a>
+##### `CC_BY_SA_1_0`<sup>Required</sup> <a name="CC_BY_SA_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_1_0"></a>
 
 ```typescript
 public readonly CC_BY_SA_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 1.0 Generic.
 
@@ -5791,13 +5791,13 @@ Creative Commons Attribution Share Alike 1.0 Generic.
 
 ---
 
-##### `CC_BY_SA_2_0`<sup>Required</sup> <a name="CC_BY_SA_2_0" id="construct-hub.SpdxLicense.property.CC_BY_SA_2_0"></a>
+##### `CC_BY_SA_2_0`<sup>Required</sup> <a name="CC_BY_SA_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_2_0"></a>
 
 ```typescript
 public readonly CC_BY_SA_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 2.0 Generic.
 
@@ -5805,13 +5805,13 @@ Creative Commons Attribution Share Alike 2.0 Generic.
 
 ---
 
-##### `CC_BY_SA_2_0_UK`<sup>Required</sup> <a name="CC_BY_SA_2_0_UK" id="construct-hub.SpdxLicense.property.CC_BY_SA_2_0_UK"></a>
+##### `CC_BY_SA_2_0_UK`<sup>Required</sup> <a name="CC_BY_SA_2_0_UK" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_2_0_UK"></a>
 
 ```typescript
 public readonly CC_BY_SA_2_0_UK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 2.0 England and Wales.
 
@@ -5819,13 +5819,13 @@ Creative Commons Attribution Share Alike 2.0 England and Wales.
 
 ---
 
-##### `CC_BY_SA_2_1_JP`<sup>Required</sup> <a name="CC_BY_SA_2_1_JP" id="construct-hub.SpdxLicense.property.CC_BY_SA_2_1_JP"></a>
+##### `CC_BY_SA_2_1_JP`<sup>Required</sup> <a name="CC_BY_SA_2_1_JP" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_2_1_JP"></a>
 
 ```typescript
 public readonly CC_BY_SA_2_1_JP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 2.1 Japan.
 
@@ -5833,13 +5833,13 @@ Creative Commons Attribution Share Alike 2.1 Japan.
 
 ---
 
-##### `CC_BY_SA_2_5`<sup>Required</sup> <a name="CC_BY_SA_2_5" id="construct-hub.SpdxLicense.property.CC_BY_SA_2_5"></a>
+##### `CC_BY_SA_2_5`<sup>Required</sup> <a name="CC_BY_SA_2_5" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_2_5"></a>
 
 ```typescript
 public readonly CC_BY_SA_2_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 2.5 Generic.
 
@@ -5847,13 +5847,13 @@ Creative Commons Attribution Share Alike 2.5 Generic.
 
 ---
 
-##### `CC_BY_SA_3_0`<sup>Required</sup> <a name="CC_BY_SA_3_0" id="construct-hub.SpdxLicense.property.CC_BY_SA_3_0"></a>
+##### `CC_BY_SA_3_0`<sup>Required</sup> <a name="CC_BY_SA_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_3_0"></a>
 
 ```typescript
 public readonly CC_BY_SA_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 3.0 Unported.
 
@@ -5861,13 +5861,13 @@ Creative Commons Attribution Share Alike 3.0 Unported.
 
 ---
 
-##### `CC_BY_SA_3_0_AT`<sup>Required</sup> <a name="CC_BY_SA_3_0_AT" id="construct-hub.SpdxLicense.property.CC_BY_SA_3_0_AT"></a>
+##### `CC_BY_SA_3_0_AT`<sup>Required</sup> <a name="CC_BY_SA_3_0_AT" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_3_0_AT"></a>
 
 ```typescript
 public readonly CC_BY_SA_3_0_AT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 3.0 Austria.
 
@@ -5875,13 +5875,13 @@ Creative Commons Attribution Share Alike 3.0 Austria.
 
 ---
 
-##### `CC_BY_SA_3_0_DE`<sup>Required</sup> <a name="CC_BY_SA_3_0_DE" id="construct-hub.SpdxLicense.property.CC_BY_SA_3_0_DE"></a>
+##### `CC_BY_SA_3_0_DE`<sup>Required</sup> <a name="CC_BY_SA_3_0_DE" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_3_0_DE"></a>
 
 ```typescript
 public readonly CC_BY_SA_3_0_DE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 3.0 Germany.
 
@@ -5889,13 +5889,13 @@ Creative Commons Attribution Share Alike 3.0 Germany.
 
 ---
 
-##### `CC_BY_SA_3_0_IGO`<sup>Required</sup> <a name="CC_BY_SA_3_0_IGO" id="construct-hub.SpdxLicense.property.CC_BY_SA_3_0_IGO"></a>
+##### `CC_BY_SA_3_0_IGO`<sup>Required</sup> <a name="CC_BY_SA_3_0_IGO" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_3_0_IGO"></a>
 
 ```typescript
 public readonly CC_BY_SA_3_0_IGO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution-ShareAlike 3.0 IGO.
 
@@ -5903,13 +5903,13 @@ Creative Commons Attribution-ShareAlike 3.0 IGO.
 
 ---
 
-##### `CC_BY_SA_4_0`<sup>Required</sup> <a name="CC_BY_SA_4_0" id="construct-hub.SpdxLicense.property.CC_BY_SA_4_0"></a>
+##### `CC_BY_SA_4_0`<sup>Required</sup> <a name="CC_BY_SA_4_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_BY_SA_4_0"></a>
 
 ```typescript
 public readonly CC_BY_SA_4_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Attribution Share Alike 4.0 International.
 
@@ -5917,13 +5917,13 @@ Creative Commons Attribution Share Alike 4.0 International.
 
 ---
 
-##### `CC_PDDC`<sup>Required</sup> <a name="CC_PDDC" id="construct-hub.SpdxLicense.property.CC_PDDC"></a>
+##### `CC_PDDC`<sup>Required</sup> <a name="CC_PDDC" id="@gd-constructs/construct-hub.SpdxLicense.property.CC_PDDC"></a>
 
 ```typescript
 public readonly CC_PDDC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Public Domain Dedication and Certification.
 
@@ -5931,13 +5931,13 @@ Creative Commons Public Domain Dedication and Certification.
 
 ---
 
-##### `CC0_1_0`<sup>Required</sup> <a name="CC0_1_0" id="construct-hub.SpdxLicense.property.CC0_1_0"></a>
+##### `CC0_1_0`<sup>Required</sup> <a name="CC0_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CC0_1_0"></a>
 
 ```typescript
 public readonly CC0_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Creative Commons Zero v1.0 Universal.
 
@@ -5945,13 +5945,13 @@ Creative Commons Zero v1.0 Universal.
 
 ---
 
-##### `CDDL_1_0`<sup>Required</sup> <a name="CDDL_1_0" id="construct-hub.SpdxLicense.property.CDDL_1_0"></a>
+##### `CDDL_1_0`<sup>Required</sup> <a name="CDDL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CDDL_1_0"></a>
 
 ```typescript
 public readonly CDDL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Common Development and Distribution License 1.0.
 
@@ -5959,13 +5959,13 @@ Common Development and Distribution License 1.0.
 
 ---
 
-##### `CDDL_1_1`<sup>Required</sup> <a name="CDDL_1_1" id="construct-hub.SpdxLicense.property.CDDL_1_1"></a>
+##### `CDDL_1_1`<sup>Required</sup> <a name="CDDL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.CDDL_1_1"></a>
 
 ```typescript
 public readonly CDDL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Common Development and Distribution License 1.1.
 
@@ -5973,13 +5973,13 @@ Common Development and Distribution License 1.1.
 
 ---
 
-##### `CDL_1_0`<sup>Required</sup> <a name="CDL_1_0" id="construct-hub.SpdxLicense.property.CDL_1_0"></a>
+##### `CDL_1_0`<sup>Required</sup> <a name="CDL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CDL_1_0"></a>
 
 ```typescript
 public readonly CDL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Common Documentation License 1.0.
 
@@ -5987,13 +5987,13 @@ Common Documentation License 1.0.
 
 ---
 
-##### `CDLA_PERMISSIVE_1_0`<sup>Required</sup> <a name="CDLA_PERMISSIVE_1_0" id="construct-hub.SpdxLicense.property.CDLA_PERMISSIVE_1_0"></a>
+##### `CDLA_PERMISSIVE_1_0`<sup>Required</sup> <a name="CDLA_PERMISSIVE_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CDLA_PERMISSIVE_1_0"></a>
 
 ```typescript
 public readonly CDLA_PERMISSIVE_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Community Data License Agreement Permissive 1.0.
 
@@ -6001,13 +6001,13 @@ Community Data License Agreement Permissive 1.0.
 
 ---
 
-##### `CDLA_PERMISSIVE_2_0`<sup>Required</sup> <a name="CDLA_PERMISSIVE_2_0" id="construct-hub.SpdxLicense.property.CDLA_PERMISSIVE_2_0"></a>
+##### `CDLA_PERMISSIVE_2_0`<sup>Required</sup> <a name="CDLA_PERMISSIVE_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CDLA_PERMISSIVE_2_0"></a>
 
 ```typescript
 public readonly CDLA_PERMISSIVE_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Community Data License Agreement Permissive 2.0.
 
@@ -6015,13 +6015,13 @@ Community Data License Agreement Permissive 2.0.
 
 ---
 
-##### `CDLA_SHARING_1_0`<sup>Required</sup> <a name="CDLA_SHARING_1_0" id="construct-hub.SpdxLicense.property.CDLA_SHARING_1_0"></a>
+##### `CDLA_SHARING_1_0`<sup>Required</sup> <a name="CDLA_SHARING_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CDLA_SHARING_1_0"></a>
 
 ```typescript
 public readonly CDLA_SHARING_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Community Data License Agreement Sharing 1.0.
 
@@ -6029,13 +6029,13 @@ Community Data License Agreement Sharing 1.0.
 
 ---
 
-##### `CECILL_1_0`<sup>Required</sup> <a name="CECILL_1_0" id="construct-hub.SpdxLicense.property.CECILL_1_0"></a>
+##### `CECILL_1_0`<sup>Required</sup> <a name="CECILL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CECILL_1_0"></a>
 
 ```typescript
 public readonly CECILL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CeCILL Free Software License Agreement v1.0.
 
@@ -6043,13 +6043,13 @@ CeCILL Free Software License Agreement v1.0.
 
 ---
 
-##### `CECILL_1_1`<sup>Required</sup> <a name="CECILL_1_1" id="construct-hub.SpdxLicense.property.CECILL_1_1"></a>
+##### `CECILL_1_1`<sup>Required</sup> <a name="CECILL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.CECILL_1_1"></a>
 
 ```typescript
 public readonly CECILL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CeCILL Free Software License Agreement v1.1.
 
@@ -6057,13 +6057,13 @@ CeCILL Free Software License Agreement v1.1.
 
 ---
 
-##### `CECILL_2_0`<sup>Required</sup> <a name="CECILL_2_0" id="construct-hub.SpdxLicense.property.CECILL_2_0"></a>
+##### `CECILL_2_0`<sup>Required</sup> <a name="CECILL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CECILL_2_0"></a>
 
 ```typescript
 public readonly CECILL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CeCILL Free Software License Agreement v2.0.
 
@@ -6071,13 +6071,13 @@ CeCILL Free Software License Agreement v2.0.
 
 ---
 
-##### `CECILL_2_1`<sup>Required</sup> <a name="CECILL_2_1" id="construct-hub.SpdxLicense.property.CECILL_2_1"></a>
+##### `CECILL_2_1`<sup>Required</sup> <a name="CECILL_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.CECILL_2_1"></a>
 
 ```typescript
 public readonly CECILL_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CeCILL Free Software License Agreement v2.1.
 
@@ -6085,13 +6085,13 @@ CeCILL Free Software License Agreement v2.1.
 
 ---
 
-##### `CECILL_B`<sup>Required</sup> <a name="CECILL_B" id="construct-hub.SpdxLicense.property.CECILL_B"></a>
+##### `CECILL_B`<sup>Required</sup> <a name="CECILL_B" id="@gd-constructs/construct-hub.SpdxLicense.property.CECILL_B"></a>
 
 ```typescript
 public readonly CECILL_B: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CeCILL-B Free Software License Agreement.
 
@@ -6099,13 +6099,13 @@ CeCILL-B Free Software License Agreement.
 
 ---
 
-##### `CECILL_C`<sup>Required</sup> <a name="CECILL_C" id="construct-hub.SpdxLicense.property.CECILL_C"></a>
+##### `CECILL_C`<sup>Required</sup> <a name="CECILL_C" id="@gd-constructs/construct-hub.SpdxLicense.property.CECILL_C"></a>
 
 ```typescript
 public readonly CECILL_C: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CeCILL-C Free Software License Agreement.
 
@@ -6113,13 +6113,13 @@ CeCILL-C Free Software License Agreement.
 
 ---
 
-##### `CERN_OHL_1_1`<sup>Required</sup> <a name="CERN_OHL_1_1" id="construct-hub.SpdxLicense.property.CERN_OHL_1_1"></a>
+##### `CERN_OHL_1_1`<sup>Required</sup> <a name="CERN_OHL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_1_1"></a>
 
 ```typescript
 public readonly CERN_OHL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CERN Open Hardware Licence v1.1.
 
@@ -6127,13 +6127,13 @@ CERN Open Hardware Licence v1.1.
 
 ---
 
-##### `CERN_OHL_1_2`<sup>Required</sup> <a name="CERN_OHL_1_2" id="construct-hub.SpdxLicense.property.CERN_OHL_1_2"></a>
+##### `CERN_OHL_1_2`<sup>Required</sup> <a name="CERN_OHL_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_1_2"></a>
 
 ```typescript
 public readonly CERN_OHL_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CERN Open Hardware Licence v1.2.
 
@@ -6141,13 +6141,13 @@ CERN Open Hardware Licence v1.2.
 
 ---
 
-##### `CERN_OHL_P_2_0`<sup>Required</sup> <a name="CERN_OHL_P_2_0" id="construct-hub.SpdxLicense.property.CERN_OHL_P_2_0"></a>
+##### `CERN_OHL_P_2_0`<sup>Required</sup> <a name="CERN_OHL_P_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_P_2_0"></a>
 
 ```typescript
 public readonly CERN_OHL_P_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CERN Open Hardware Licence Version 2 - Permissive.
 
@@ -6155,13 +6155,13 @@ CERN Open Hardware Licence Version 2 - Permissive.
 
 ---
 
-##### `CERN_OHL_S_2_0`<sup>Required</sup> <a name="CERN_OHL_S_2_0" id="construct-hub.SpdxLicense.property.CERN_OHL_S_2_0"></a>
+##### `CERN_OHL_S_2_0`<sup>Required</sup> <a name="CERN_OHL_S_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_S_2_0"></a>
 
 ```typescript
 public readonly CERN_OHL_S_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CERN Open Hardware Licence Version 2 - Strongly Reciprocal.
 
@@ -6169,13 +6169,13 @@ CERN Open Hardware Licence Version 2 - Strongly Reciprocal.
 
 ---
 
-##### `CERN_OHL_W_2_0`<sup>Required</sup> <a name="CERN_OHL_W_2_0" id="construct-hub.SpdxLicense.property.CERN_OHL_W_2_0"></a>
+##### `CERN_OHL_W_2_0`<sup>Required</sup> <a name="CERN_OHL_W_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CERN_OHL_W_2_0"></a>
 
 ```typescript
 public readonly CERN_OHL_W_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CERN Open Hardware Licence Version 2 - Weakly Reciprocal.
 
@@ -6183,13 +6183,13 @@ CERN Open Hardware Licence Version 2 - Weakly Reciprocal.
 
 ---
 
-##### `CFITSIO`<sup>Required</sup> <a name="CFITSIO" id="construct-hub.SpdxLicense.property.CFITSIO"></a>
+##### `CFITSIO`<sup>Required</sup> <a name="CFITSIO" id="@gd-constructs/construct-hub.SpdxLicense.property.CFITSIO"></a>
 
 ```typescript
 public readonly CFITSIO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CFITSIO License.
 
@@ -6197,13 +6197,13 @@ CFITSIO License.
 
 ---
 
-##### `CHECK_CVS`<sup>Required</sup> <a name="CHECK_CVS" id="construct-hub.SpdxLicense.property.CHECK_CVS"></a>
+##### `CHECK_CVS`<sup>Required</sup> <a name="CHECK_CVS" id="@gd-constructs/construct-hub.SpdxLicense.property.CHECK_CVS"></a>
 
 ```typescript
 public readonly CHECK_CVS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 check-cvs License.
 
@@ -6211,13 +6211,13 @@ check-cvs License.
 
 ---
 
-##### `CHECKMK`<sup>Required</sup> <a name="CHECKMK" id="construct-hub.SpdxLicense.property.CHECKMK"></a>
+##### `CHECKMK`<sup>Required</sup> <a name="CHECKMK" id="@gd-constructs/construct-hub.SpdxLicense.property.CHECKMK"></a>
 
 ```typescript
 public readonly CHECKMK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Checkmk License.
 
@@ -6225,13 +6225,13 @@ Checkmk License.
 
 ---
 
-##### `CL_ARTISTIC`<sup>Required</sup> <a name="CL_ARTISTIC" id="construct-hub.SpdxLicense.property.CL_ARTISTIC"></a>
+##### `CL_ARTISTIC`<sup>Required</sup> <a name="CL_ARTISTIC" id="@gd-constructs/construct-hub.SpdxLicense.property.CL_ARTISTIC"></a>
 
 ```typescript
 public readonly CL_ARTISTIC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Clarified Artistic License.
 
@@ -6239,13 +6239,13 @@ Clarified Artistic License.
 
 ---
 
-##### `CLIPS`<sup>Required</sup> <a name="CLIPS" id="construct-hub.SpdxLicense.property.CLIPS"></a>
+##### `CLIPS`<sup>Required</sup> <a name="CLIPS" id="@gd-constructs/construct-hub.SpdxLicense.property.CLIPS"></a>
 
 ```typescript
 public readonly CLIPS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Clips License.
 
@@ -6253,13 +6253,13 @@ Clips License.
 
 ---
 
-##### `CMU_MACH`<sup>Required</sup> <a name="CMU_MACH" id="construct-hub.SpdxLicense.property.CMU_MACH"></a>
+##### `CMU_MACH`<sup>Required</sup> <a name="CMU_MACH" id="@gd-constructs/construct-hub.SpdxLicense.property.CMU_MACH"></a>
 
 ```typescript
 public readonly CMU_MACH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CMU Mach License.
 
@@ -6267,13 +6267,13 @@ CMU Mach License.
 
 ---
 
-##### `CMU_MACH_NODOC`<sup>Required</sup> <a name="CMU_MACH_NODOC" id="construct-hub.SpdxLicense.property.CMU_MACH_NODOC"></a>
+##### `CMU_MACH_NODOC`<sup>Required</sup> <a name="CMU_MACH_NODOC" id="@gd-constructs/construct-hub.SpdxLicense.property.CMU_MACH_NODOC"></a>
 
 ```typescript
 public readonly CMU_MACH_NODOC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CMU    Mach - no notices-in-documentation variant.
 
@@ -6281,13 +6281,13 @@ CMU    Mach - no notices-in-documentation variant.
 
 ---
 
-##### `CNRI_JYTHON`<sup>Required</sup> <a name="CNRI_JYTHON" id="construct-hub.SpdxLicense.property.CNRI_JYTHON"></a>
+##### `CNRI_JYTHON`<sup>Required</sup> <a name="CNRI_JYTHON" id="@gd-constructs/construct-hub.SpdxLicense.property.CNRI_JYTHON"></a>
 
 ```typescript
 public readonly CNRI_JYTHON: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CNRI Jython License.
 
@@ -6295,13 +6295,13 @@ CNRI Jython License.
 
 ---
 
-##### `CNRI_PYTHON`<sup>Required</sup> <a name="CNRI_PYTHON" id="construct-hub.SpdxLicense.property.CNRI_PYTHON"></a>
+##### `CNRI_PYTHON`<sup>Required</sup> <a name="CNRI_PYTHON" id="@gd-constructs/construct-hub.SpdxLicense.property.CNRI_PYTHON"></a>
 
 ```typescript
 public readonly CNRI_PYTHON: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CNRI Python License.
 
@@ -6309,13 +6309,13 @@ CNRI Python License.
 
 ---
 
-##### `CNRI_PYTHON_GPL_COMPATIBLE`<sup>Required</sup> <a name="CNRI_PYTHON_GPL_COMPATIBLE" id="construct-hub.SpdxLicense.property.CNRI_PYTHON_GPL_COMPATIBLE"></a>
+##### `CNRI_PYTHON_GPL_COMPATIBLE`<sup>Required</sup> <a name="CNRI_PYTHON_GPL_COMPATIBLE" id="@gd-constructs/construct-hub.SpdxLicense.property.CNRI_PYTHON_GPL_COMPATIBLE"></a>
 
 ```typescript
 public readonly CNRI_PYTHON_GPL_COMPATIBLE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CNRI Python Open Source GPL Compatible License Agreement.
 
@@ -6323,13 +6323,13 @@ CNRI Python Open Source GPL Compatible License Agreement.
 
 ---
 
-##### `COIL_1_0`<sup>Required</sup> <a name="COIL_1_0" id="construct-hub.SpdxLicense.property.COIL_1_0"></a>
+##### `COIL_1_0`<sup>Required</sup> <a name="COIL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.COIL_1_0"></a>
 
 ```typescript
 public readonly COIL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Copyfree Open Innovation License.
 
@@ -6337,13 +6337,13 @@ Copyfree Open Innovation License.
 
 ---
 
-##### `COMMUNITY_SPEC_1_0`<sup>Required</sup> <a name="COMMUNITY_SPEC_1_0" id="construct-hub.SpdxLicense.property.COMMUNITY_SPEC_1_0"></a>
+##### `COMMUNITY_SPEC_1_0`<sup>Required</sup> <a name="COMMUNITY_SPEC_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.COMMUNITY_SPEC_1_0"></a>
 
 ```typescript
 public readonly COMMUNITY_SPEC_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Community Specification License 1.0.
 
@@ -6351,13 +6351,13 @@ Community Specification License 1.0.
 
 ---
 
-##### `CONDOR_1_1`<sup>Required</sup> <a name="CONDOR_1_1" id="construct-hub.SpdxLicense.property.CONDOR_1_1"></a>
+##### `CONDOR_1_1`<sup>Required</sup> <a name="CONDOR_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.CONDOR_1_1"></a>
 
 ```typescript
 public readonly CONDOR_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Condor Public License v1.1.
 
@@ -6365,13 +6365,13 @@ Condor Public License v1.1.
 
 ---
 
-##### `COPYLEFT_NEXT_0_3_0`<sup>Required</sup> <a name="COPYLEFT_NEXT_0_3_0" id="construct-hub.SpdxLicense.property.COPYLEFT_NEXT_0_3_0"></a>
+##### `COPYLEFT_NEXT_0_3_0`<sup>Required</sup> <a name="COPYLEFT_NEXT_0_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.COPYLEFT_NEXT_0_3_0"></a>
 
 ```typescript
 public readonly COPYLEFT_NEXT_0_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 copyleft-next 0.3.0.
 
@@ -6379,13 +6379,13 @@ copyleft-next 0.3.0.
 
 ---
 
-##### `COPYLEFT_NEXT_0_3_1`<sup>Required</sup> <a name="COPYLEFT_NEXT_0_3_1" id="construct-hub.SpdxLicense.property.COPYLEFT_NEXT_0_3_1"></a>
+##### `COPYLEFT_NEXT_0_3_1`<sup>Required</sup> <a name="COPYLEFT_NEXT_0_3_1" id="@gd-constructs/construct-hub.SpdxLicense.property.COPYLEFT_NEXT_0_3_1"></a>
 
 ```typescript
 public readonly COPYLEFT_NEXT_0_3_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 copyleft-next 0.3.1.
 
@@ -6393,13 +6393,13 @@ copyleft-next 0.3.1.
 
 ---
 
-##### `CORNELL_LOSSLESS_JPEG`<sup>Required</sup> <a name="CORNELL_LOSSLESS_JPEG" id="construct-hub.SpdxLicense.property.CORNELL_LOSSLESS_JPEG"></a>
+##### `CORNELL_LOSSLESS_JPEG`<sup>Required</sup> <a name="CORNELL_LOSSLESS_JPEG" id="@gd-constructs/construct-hub.SpdxLicense.property.CORNELL_LOSSLESS_JPEG"></a>
 
 ```typescript
 public readonly CORNELL_LOSSLESS_JPEG: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Cornell Lossless JPEG License.
 
@@ -6407,13 +6407,13 @@ Cornell Lossless JPEG License.
 
 ---
 
-##### `CPAL_1_0`<sup>Required</sup> <a name="CPAL_1_0" id="construct-hub.SpdxLicense.property.CPAL_1_0"></a>
+##### `CPAL_1_0`<sup>Required</sup> <a name="CPAL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CPAL_1_0"></a>
 
 ```typescript
 public readonly CPAL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Common Public Attribution License 1.0.
 
@@ -6421,13 +6421,13 @@ Common Public Attribution License 1.0.
 
 ---
 
-##### `CPL_1_0`<sup>Required</sup> <a name="CPL_1_0" id="construct-hub.SpdxLicense.property.CPL_1_0"></a>
+##### `CPL_1_0`<sup>Required</sup> <a name="CPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CPL_1_0"></a>
 
 ```typescript
 public readonly CPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Common Public License 1.0.
 
@@ -6435,13 +6435,13 @@ Common Public License 1.0.
 
 ---
 
-##### `CPOL_1_02`<sup>Required</sup> <a name="CPOL_1_02" id="construct-hub.SpdxLicense.property.CPOL_1_02"></a>
+##### `CPOL_1_02`<sup>Required</sup> <a name="CPOL_1_02" id="@gd-constructs/construct-hub.SpdxLicense.property.CPOL_1_02"></a>
 
 ```typescript
 public readonly CPOL_1_02: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Code Project Open License 1.02.
 
@@ -6449,13 +6449,13 @@ Code Project Open License 1.02.
 
 ---
 
-##### `CRONYX`<sup>Required</sup> <a name="CRONYX" id="construct-hub.SpdxLicense.property.CRONYX"></a>
+##### `CRONYX`<sup>Required</sup> <a name="CRONYX" id="@gd-constructs/construct-hub.SpdxLicense.property.CRONYX"></a>
 
 ```typescript
 public readonly CRONYX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Cronyx License.
 
@@ -6463,13 +6463,13 @@ Cronyx License.
 
 ---
 
-##### `CROSSWORD`<sup>Required</sup> <a name="CROSSWORD" id="construct-hub.SpdxLicense.property.CROSSWORD"></a>
+##### `CROSSWORD`<sup>Required</sup> <a name="CROSSWORD" id="@gd-constructs/construct-hub.SpdxLicense.property.CROSSWORD"></a>
 
 ```typescript
 public readonly CROSSWORD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Crossword License.
 
@@ -6477,13 +6477,13 @@ Crossword License.
 
 ---
 
-##### `CRYSTAL_STACKER`<sup>Required</sup> <a name="CRYSTAL_STACKER" id="construct-hub.SpdxLicense.property.CRYSTAL_STACKER"></a>
+##### `CRYSTAL_STACKER`<sup>Required</sup> <a name="CRYSTAL_STACKER" id="@gd-constructs/construct-hub.SpdxLicense.property.CRYSTAL_STACKER"></a>
 
 ```typescript
 public readonly CRYSTAL_STACKER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CrystalStacker License.
 
@@ -6491,13 +6491,13 @@ CrystalStacker License.
 
 ---
 
-##### `CUA_OPL_1_0`<sup>Required</sup> <a name="CUA_OPL_1_0" id="construct-hub.SpdxLicense.property.CUA_OPL_1_0"></a>
+##### `CUA_OPL_1_0`<sup>Required</sup> <a name="CUA_OPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.CUA_OPL_1_0"></a>
 
 ```typescript
 public readonly CUA_OPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CUA Office Public License v1.0.
 
@@ -6505,13 +6505,13 @@ CUA Office Public License v1.0.
 
 ---
 
-##### `CUBE`<sup>Required</sup> <a name="CUBE" id="construct-hub.SpdxLicense.property.CUBE"></a>
+##### `CUBE`<sup>Required</sup> <a name="CUBE" id="@gd-constructs/construct-hub.SpdxLicense.property.CUBE"></a>
 
 ```typescript
 public readonly CUBE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Cube License.
 
@@ -6519,13 +6519,13 @@ Cube License.
 
 ---
 
-##### `CURL`<sup>Required</sup> <a name="CURL" id="construct-hub.SpdxLicense.property.CURL"></a>
+##### `CURL`<sup>Required</sup> <a name="CURL" id="@gd-constructs/construct-hub.SpdxLicense.property.CURL"></a>
 
 ```typescript
 public readonly CURL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 curl License.
 
@@ -6533,13 +6533,13 @@ curl License.
 
 ---
 
-##### `D_FSL_1_0`<sup>Required</sup> <a name="D_FSL_1_0" id="construct-hub.SpdxLicense.property.D_FSL_1_0"></a>
+##### `D_FSL_1_0`<sup>Required</sup> <a name="D_FSL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.D_FSL_1_0"></a>
 
 ```typescript
 public readonly D_FSL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Deutsche Freie Software Lizenz.
 
@@ -6547,13 +6547,13 @@ Deutsche Freie Software Lizenz.
 
 ---
 
-##### `DEC_3_CLAUSE`<sup>Required</sup> <a name="DEC_3_CLAUSE" id="construct-hub.SpdxLicense.property.DEC_3_CLAUSE"></a>
+##### `DEC_3_CLAUSE`<sup>Required</sup> <a name="DEC_3_CLAUSE" id="@gd-constructs/construct-hub.SpdxLicense.property.DEC_3_CLAUSE"></a>
 
 ```typescript
 public readonly DEC_3_CLAUSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 DEC 3-Clause License.
 
@@ -6561,13 +6561,13 @@ DEC 3-Clause License.
 
 ---
 
-##### `DIFFMARK`<sup>Required</sup> <a name="DIFFMARK" id="construct-hub.SpdxLicense.property.DIFFMARK"></a>
+##### `DIFFMARK`<sup>Required</sup> <a name="DIFFMARK" id="@gd-constructs/construct-hub.SpdxLicense.property.DIFFMARK"></a>
 
 ```typescript
 public readonly DIFFMARK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 diffmark license.
 
@@ -6575,13 +6575,13 @@ diffmark license.
 
 ---
 
-##### `DL_DE_BY_2_0`<sup>Required</sup> <a name="DL_DE_BY_2_0" id="construct-hub.SpdxLicense.property.DL_DE_BY_2_0"></a>
+##### `DL_DE_BY_2_0`<sup>Required</sup> <a name="DL_DE_BY_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.DL_DE_BY_2_0"></a>
 
 ```typescript
 public readonly DL_DE_BY_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Data licence Germany – attribution – version 2.0.
 
@@ -6589,13 +6589,13 @@ Data licence Germany – attribution – version 2.0.
 
 ---
 
-##### `DL_DE_ZERO_2_0`<sup>Required</sup> <a name="DL_DE_ZERO_2_0" id="construct-hub.SpdxLicense.property.DL_DE_ZERO_2_0"></a>
+##### `DL_DE_ZERO_2_0`<sup>Required</sup> <a name="DL_DE_ZERO_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.DL_DE_ZERO_2_0"></a>
 
 ```typescript
 public readonly DL_DE_ZERO_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Data licence Germany – zero – version 2.0.
 
@@ -6603,13 +6603,13 @@ Data licence Germany – zero – version 2.0.
 
 ---
 
-##### `DOC`<sup>Required</sup> <a name="DOC" id="construct-hub.SpdxLicense.property.DOC"></a>
+##### `DOC`<sup>Required</sup> <a name="DOC" id="@gd-constructs/construct-hub.SpdxLicense.property.DOC"></a>
 
 ```typescript
 public readonly DOC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 DOC License.
 
@@ -6617,13 +6617,13 @@ DOC License.
 
 ---
 
-##### `DOTSEQN`<sup>Required</sup> <a name="DOTSEQN" id="construct-hub.SpdxLicense.property.DOTSEQN"></a>
+##### `DOTSEQN`<sup>Required</sup> <a name="DOTSEQN" id="@gd-constructs/construct-hub.SpdxLicense.property.DOTSEQN"></a>
 
 ```typescript
 public readonly DOTSEQN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Dotseqn License.
 
@@ -6631,13 +6631,13 @@ Dotseqn License.
 
 ---
 
-##### `DRL_1_0`<sup>Required</sup> <a name="DRL_1_0" id="construct-hub.SpdxLicense.property.DRL_1_0"></a>
+##### `DRL_1_0`<sup>Required</sup> <a name="DRL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.DRL_1_0"></a>
 
 ```typescript
 public readonly DRL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Detection Rule License 1.0.
 
@@ -6645,13 +6645,13 @@ Detection Rule License 1.0.
 
 ---
 
-##### `DRL_1_1`<sup>Required</sup> <a name="DRL_1_1" id="construct-hub.SpdxLicense.property.DRL_1_1"></a>
+##### `DRL_1_1`<sup>Required</sup> <a name="DRL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.DRL_1_1"></a>
 
 ```typescript
 public readonly DRL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Detection Rule License 1.1.
 
@@ -6659,13 +6659,13 @@ Detection Rule License 1.1.
 
 ---
 
-##### `DSDP`<sup>Required</sup> <a name="DSDP" id="construct-hub.SpdxLicense.property.DSDP"></a>
+##### `DSDP`<sup>Required</sup> <a name="DSDP" id="@gd-constructs/construct-hub.SpdxLicense.property.DSDP"></a>
 
 ```typescript
 public readonly DSDP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 DSDP License.
 
@@ -6673,13 +6673,13 @@ DSDP License.
 
 ---
 
-##### `DTOA`<sup>Required</sup> <a name="DTOA" id="construct-hub.SpdxLicense.property.DTOA"></a>
+##### `DTOA`<sup>Required</sup> <a name="DTOA" id="@gd-constructs/construct-hub.SpdxLicense.property.DTOA"></a>
 
 ```typescript
 public readonly DTOA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 David M.
 
@@ -6689,13 +6689,13 @@ Gay dtoa License
 
 ---
 
-##### `DVIPDFM`<sup>Required</sup> <a name="DVIPDFM" id="construct-hub.SpdxLicense.property.DVIPDFM"></a>
+##### `DVIPDFM`<sup>Required</sup> <a name="DVIPDFM" id="@gd-constructs/construct-hub.SpdxLicense.property.DVIPDFM"></a>
 
 ```typescript
 public readonly DVIPDFM: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 dvipdfm License.
 
@@ -6703,13 +6703,13 @@ dvipdfm License.
 
 ---
 
-##### `E_GENIX`<sup>Required</sup> <a name="E_GENIX" id="construct-hub.SpdxLicense.property.E_GENIX"></a>
+##### `E_GENIX`<sup>Required</sup> <a name="E_GENIX" id="@gd-constructs/construct-hub.SpdxLicense.property.E_GENIX"></a>
 
 ```typescript
 public readonly E_GENIX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 eGenix.com Public License 1.1.0.
 
@@ -6717,13 +6717,13 @@ eGenix.com Public License 1.1.0.
 
 ---
 
-##### `ECL_1_0`<sup>Required</sup> <a name="ECL_1_0" id="construct-hub.SpdxLicense.property.ECL_1_0"></a>
+##### `ECL_1_0`<sup>Required</sup> <a name="ECL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ECL_1_0"></a>
 
 ```typescript
 public readonly ECL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Educational Community License v1.0.
 
@@ -6731,13 +6731,13 @@ Educational Community License v1.0.
 
 ---
 
-##### `ECL_2_0`<sup>Required</sup> <a name="ECL_2_0" id="construct-hub.SpdxLicense.property.ECL_2_0"></a>
+##### `ECL_2_0`<sup>Required</sup> <a name="ECL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ECL_2_0"></a>
 
 ```typescript
 public readonly ECL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Educational Community License v2.0.
 
@@ -6745,13 +6745,13 @@ Educational Community License v2.0.
 
 ---
 
-##### `ECOS_2_0`<sup>Required</sup> <a name="ECOS_2_0" id="construct-hub.SpdxLicense.property.ECOS_2_0"></a>
+##### `ECOS_2_0`<sup>Required</sup> <a name="ECOS_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ECOS_2_0"></a>
 
 ```typescript
 public readonly ECOS_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 eCos license version 2.0.
 
@@ -6759,13 +6759,13 @@ eCos license version 2.0.
 
 ---
 
-##### `EFL_1_0`<sup>Required</sup> <a name="EFL_1_0" id="construct-hub.SpdxLicense.property.EFL_1_0"></a>
+##### `EFL_1_0`<sup>Required</sup> <a name="EFL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.EFL_1_0"></a>
 
 ```typescript
 public readonly EFL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Eiffel Forum License v1.0.
 
@@ -6773,13 +6773,13 @@ Eiffel Forum License v1.0.
 
 ---
 
-##### `EFL_2_0`<sup>Required</sup> <a name="EFL_2_0" id="construct-hub.SpdxLicense.property.EFL_2_0"></a>
+##### `EFL_2_0`<sup>Required</sup> <a name="EFL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.EFL_2_0"></a>
 
 ```typescript
 public readonly EFL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Eiffel Forum License v2.0.
 
@@ -6787,13 +6787,13 @@ Eiffel Forum License v2.0.
 
 ---
 
-##### `ELASTIC_2_0`<sup>Required</sup> <a name="ELASTIC_2_0" id="construct-hub.SpdxLicense.property.ELASTIC_2_0"></a>
+##### `ELASTIC_2_0`<sup>Required</sup> <a name="ELASTIC_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ELASTIC_2_0"></a>
 
 ```typescript
 public readonly ELASTIC_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Elastic License 2.0.
 
@@ -6801,13 +6801,13 @@ Elastic License 2.0.
 
 ---
 
-##### `ENTESSA`<sup>Required</sup> <a name="ENTESSA" id="construct-hub.SpdxLicense.property.ENTESSA"></a>
+##### `ENTESSA`<sup>Required</sup> <a name="ENTESSA" id="@gd-constructs/construct-hub.SpdxLicense.property.ENTESSA"></a>
 
 ```typescript
 public readonly ENTESSA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Entessa Public License v1.0.
 
@@ -6815,13 +6815,13 @@ Entessa Public License v1.0.
 
 ---
 
-##### `EPICS`<sup>Required</sup> <a name="EPICS" id="construct-hub.SpdxLicense.property.EPICS"></a>
+##### `EPICS`<sup>Required</sup> <a name="EPICS" id="@gd-constructs/construct-hub.SpdxLicense.property.EPICS"></a>
 
 ```typescript
 public readonly EPICS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 EPICS Open License.
 
@@ -6829,13 +6829,13 @@ EPICS Open License.
 
 ---
 
-##### `EPL_1_0`<sup>Required</sup> <a name="EPL_1_0" id="construct-hub.SpdxLicense.property.EPL_1_0"></a>
+##### `EPL_1_0`<sup>Required</sup> <a name="EPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.EPL_1_0"></a>
 
 ```typescript
 public readonly EPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Eclipse Public License 1.0.
 
@@ -6843,13 +6843,13 @@ Eclipse Public License 1.0.
 
 ---
 
-##### `EPL_2_0`<sup>Required</sup> <a name="EPL_2_0" id="construct-hub.SpdxLicense.property.EPL_2_0"></a>
+##### `EPL_2_0`<sup>Required</sup> <a name="EPL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.EPL_2_0"></a>
 
 ```typescript
 public readonly EPL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Eclipse Public License 2.0.
 
@@ -6857,13 +6857,13 @@ Eclipse Public License 2.0.
 
 ---
 
-##### `ERLPL_1_1`<sup>Required</sup> <a name="ERLPL_1_1" id="construct-hub.SpdxLicense.property.ERLPL_1_1"></a>
+##### `ERLPL_1_1`<sup>Required</sup> <a name="ERLPL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.ERLPL_1_1"></a>
 
 ```typescript
 public readonly ERLPL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Erlang Public License v1.1.
 
@@ -6871,13 +6871,13 @@ Erlang Public License v1.1.
 
 ---
 
-##### `ETALAB_2_0`<sup>Required</sup> <a name="ETALAB_2_0" id="construct-hub.SpdxLicense.property.ETALAB_2_0"></a>
+##### `ETALAB_2_0`<sup>Required</sup> <a name="ETALAB_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ETALAB_2_0"></a>
 
 ```typescript
 public readonly ETALAB_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Etalab Open License 2.0.
 
@@ -6885,13 +6885,13 @@ Etalab Open License 2.0.
 
 ---
 
-##### `EUDATAGRID`<sup>Required</sup> <a name="EUDATAGRID" id="construct-hub.SpdxLicense.property.EUDATAGRID"></a>
+##### `EUDATAGRID`<sup>Required</sup> <a name="EUDATAGRID" id="@gd-constructs/construct-hub.SpdxLicense.property.EUDATAGRID"></a>
 
 ```typescript
 public readonly EUDATAGRID: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 EU DataGrid Software License.
 
@@ -6899,13 +6899,13 @@ EU DataGrid Software License.
 
 ---
 
-##### `EUPL_1_0`<sup>Required</sup> <a name="EUPL_1_0" id="construct-hub.SpdxLicense.property.EUPL_1_0"></a>
+##### `EUPL_1_0`<sup>Required</sup> <a name="EUPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.EUPL_1_0"></a>
 
 ```typescript
 public readonly EUPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 European Union Public License 1.0.
 
@@ -6913,13 +6913,13 @@ European Union Public License 1.0.
 
 ---
 
-##### `EUPL_1_1`<sup>Required</sup> <a name="EUPL_1_1" id="construct-hub.SpdxLicense.property.EUPL_1_1"></a>
+##### `EUPL_1_1`<sup>Required</sup> <a name="EUPL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.EUPL_1_1"></a>
 
 ```typescript
 public readonly EUPL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 European Union Public License 1.1.
 
@@ -6927,13 +6927,13 @@ European Union Public License 1.1.
 
 ---
 
-##### `EUPL_1_2`<sup>Required</sup> <a name="EUPL_1_2" id="construct-hub.SpdxLicense.property.EUPL_1_2"></a>
+##### `EUPL_1_2`<sup>Required</sup> <a name="EUPL_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.EUPL_1_2"></a>
 
 ```typescript
 public readonly EUPL_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 European Union Public License 1.2.
 
@@ -6941,13 +6941,13 @@ European Union Public License 1.2.
 
 ---
 
-##### `EUROSYM`<sup>Required</sup> <a name="EUROSYM" id="construct-hub.SpdxLicense.property.EUROSYM"></a>
+##### `EUROSYM`<sup>Required</sup> <a name="EUROSYM" id="@gd-constructs/construct-hub.SpdxLicense.property.EUROSYM"></a>
 
 ```typescript
 public readonly EUROSYM: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Eurosym License.
 
@@ -6955,13 +6955,13 @@ Eurosym License.
 
 ---
 
-##### `FAIR`<sup>Required</sup> <a name="FAIR" id="construct-hub.SpdxLicense.property.FAIR"></a>
+##### `FAIR`<sup>Required</sup> <a name="FAIR" id="@gd-constructs/construct-hub.SpdxLicense.property.FAIR"></a>
 
 ```typescript
 public readonly FAIR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Fair License.
 
@@ -6969,13 +6969,13 @@ Fair License.
 
 ---
 
-##### `FBM`<sup>Required</sup> <a name="FBM" id="construct-hub.SpdxLicense.property.FBM"></a>
+##### `FBM`<sup>Required</sup> <a name="FBM" id="@gd-constructs/construct-hub.SpdxLicense.property.FBM"></a>
 
 ```typescript
 public readonly FBM: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Fuzzy Bitmap License.
 
@@ -6983,13 +6983,13 @@ Fuzzy Bitmap License.
 
 ---
 
-##### `FDK_AAC`<sup>Required</sup> <a name="FDK_AAC" id="construct-hub.SpdxLicense.property.FDK_AAC"></a>
+##### `FDK_AAC`<sup>Required</sup> <a name="FDK_AAC" id="@gd-constructs/construct-hub.SpdxLicense.property.FDK_AAC"></a>
 
 ```typescript
 public readonly FDK_AAC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Fraunhofer FDK AAC Codec Library.
 
@@ -6997,13 +6997,13 @@ Fraunhofer FDK AAC Codec Library.
 
 ---
 
-##### `FERGUSON_TWOFISH`<sup>Required</sup> <a name="FERGUSON_TWOFISH" id="construct-hub.SpdxLicense.property.FERGUSON_TWOFISH"></a>
+##### `FERGUSON_TWOFISH`<sup>Required</sup> <a name="FERGUSON_TWOFISH" id="@gd-constructs/construct-hub.SpdxLicense.property.FERGUSON_TWOFISH"></a>
 
 ```typescript
 public readonly FERGUSON_TWOFISH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Ferguson Twofish License.
 
@@ -7011,13 +7011,13 @@ Ferguson Twofish License.
 
 ---
 
-##### `FRAMEWORX_1_0`<sup>Required</sup> <a name="FRAMEWORX_1_0" id="construct-hub.SpdxLicense.property.FRAMEWORX_1_0"></a>
+##### `FRAMEWORX_1_0`<sup>Required</sup> <a name="FRAMEWORX_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.FRAMEWORX_1_0"></a>
 
 ```typescript
 public readonly FRAMEWORX_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Frameworx Open License 1.0.
 
@@ -7025,13 +7025,13 @@ Frameworx Open License 1.0.
 
 ---
 
-##### `FREE_IMAGE`<sup>Required</sup> <a name="FREE_IMAGE" id="construct-hub.SpdxLicense.property.FREE_IMAGE"></a>
+##### `FREE_IMAGE`<sup>Required</sup> <a name="FREE_IMAGE" id="@gd-constructs/construct-hub.SpdxLicense.property.FREE_IMAGE"></a>
 
 ```typescript
 public readonly FREE_IMAGE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 FreeImage Public License v1.0.
 
@@ -7039,13 +7039,13 @@ FreeImage Public License v1.0.
 
 ---
 
-##### `FREEBSD_DOC`<sup>Required</sup> <a name="FREEBSD_DOC" id="construct-hub.SpdxLicense.property.FREEBSD_DOC"></a>
+##### `FREEBSD_DOC`<sup>Required</sup> <a name="FREEBSD_DOC" id="@gd-constructs/construct-hub.SpdxLicense.property.FREEBSD_DOC"></a>
 
 ```typescript
 public readonly FREEBSD_DOC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 FreeBSD Documentation License.
 
@@ -7053,13 +7053,13 @@ FreeBSD Documentation License.
 
 ---
 
-##### `FSFAP`<sup>Required</sup> <a name="FSFAP" id="construct-hub.SpdxLicense.property.FSFAP"></a>
+##### `FSFAP`<sup>Required</sup> <a name="FSFAP" id="@gd-constructs/construct-hub.SpdxLicense.property.FSFAP"></a>
 
 ```typescript
 public readonly FSFAP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 FSF All Permissive License.
 
@@ -7067,13 +7067,13 @@ FSF All Permissive License.
 
 ---
 
-##### `FSFAP_NO_WARRANTY_DISCLAIMER`<sup>Required</sup> <a name="FSFAP_NO_WARRANTY_DISCLAIMER" id="construct-hub.SpdxLicense.property.FSFAP_NO_WARRANTY_DISCLAIMER"></a>
+##### `FSFAP_NO_WARRANTY_DISCLAIMER`<sup>Required</sup> <a name="FSFAP_NO_WARRANTY_DISCLAIMER" id="@gd-constructs/construct-hub.SpdxLicense.property.FSFAP_NO_WARRANTY_DISCLAIMER"></a>
 
 ```typescript
 public readonly FSFAP_NO_WARRANTY_DISCLAIMER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 FSF All Permissive License (without Warranty).
 
@@ -7081,13 +7081,13 @@ FSF All Permissive License (without Warranty).
 
 ---
 
-##### `FSFUL`<sup>Required</sup> <a name="FSFUL" id="construct-hub.SpdxLicense.property.FSFUL"></a>
+##### `FSFUL`<sup>Required</sup> <a name="FSFUL" id="@gd-constructs/construct-hub.SpdxLicense.property.FSFUL"></a>
 
 ```typescript
 public readonly FSFUL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 FSF Unlimited License.
 
@@ -7095,13 +7095,13 @@ FSF Unlimited License.
 
 ---
 
-##### `FSFULLR`<sup>Required</sup> <a name="FSFULLR" id="construct-hub.SpdxLicense.property.FSFULLR"></a>
+##### `FSFULLR`<sup>Required</sup> <a name="FSFULLR" id="@gd-constructs/construct-hub.SpdxLicense.property.FSFULLR"></a>
 
 ```typescript
 public readonly FSFULLR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 FSF Unlimited License (with License Retention).
 
@@ -7109,13 +7109,13 @@ FSF Unlimited License (with License Retention).
 
 ---
 
-##### `FSFULLRWD`<sup>Required</sup> <a name="FSFULLRWD" id="construct-hub.SpdxLicense.property.FSFULLRWD"></a>
+##### `FSFULLRWD`<sup>Required</sup> <a name="FSFULLRWD" id="@gd-constructs/construct-hub.SpdxLicense.property.FSFULLRWD"></a>
 
 ```typescript
 public readonly FSFULLRWD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 FSF Unlimited License (With License Retention and Warranty Disclaimer).
 
@@ -7123,13 +7123,13 @@ FSF Unlimited License (With License Retention and Warranty Disclaimer).
 
 ---
 
-##### `FTL`<sup>Required</sup> <a name="FTL" id="construct-hub.SpdxLicense.property.FTL"></a>
+##### `FTL`<sup>Required</sup> <a name="FTL" id="@gd-constructs/construct-hub.SpdxLicense.property.FTL"></a>
 
 ```typescript
 public readonly FTL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Freetype Project License.
 
@@ -7137,13 +7137,13 @@ Freetype Project License.
 
 ---
 
-##### `FURUSETH`<sup>Required</sup> <a name="FURUSETH" id="construct-hub.SpdxLicense.property.FURUSETH"></a>
+##### `FURUSETH`<sup>Required</sup> <a name="FURUSETH" id="@gd-constructs/construct-hub.SpdxLicense.property.FURUSETH"></a>
 
 ```typescript
 public readonly FURUSETH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Furuseth License.
 
@@ -7151,13 +7151,13 @@ Furuseth License.
 
 ---
 
-##### `FWLW`<sup>Required</sup> <a name="FWLW" id="construct-hub.SpdxLicense.property.FWLW"></a>
+##### `FWLW`<sup>Required</sup> <a name="FWLW" id="@gd-constructs/construct-hub.SpdxLicense.property.FWLW"></a>
 
 ```typescript
 public readonly FWLW: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 fwlw License.
 
@@ -7165,13 +7165,13 @@ fwlw License.
 
 ---
 
-##### `GCR_DOCS`<sup>Required</sup> <a name="GCR_DOCS" id="construct-hub.SpdxLicense.property.GCR_DOCS"></a>
+##### `GCR_DOCS`<sup>Required</sup> <a name="GCR_DOCS" id="@gd-constructs/construct-hub.SpdxLicense.property.GCR_DOCS"></a>
 
 ```typescript
 public readonly GCR_DOCS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Gnome GCR Documentation License.
 
@@ -7179,13 +7179,13 @@ Gnome GCR Documentation License.
 
 ---
 
-##### `GD`<sup>Required</sup> <a name="GD" id="construct-hub.SpdxLicense.property.GD"></a>
+##### `GD`<sup>Required</sup> <a name="GD" id="@gd-constructs/construct-hub.SpdxLicense.property.GD"></a>
 
 ```typescript
 public readonly GD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GD License.
 
@@ -7193,13 +7193,13 @@ GD License.
 
 ---
 
-##### `GFDL_1_1`<sup>Required</sup> <a name="GFDL_1_1" id="construct-hub.SpdxLicense.property.GFDL_1_1"></a>
+##### `GFDL_1_1`<sup>Required</sup> <a name="GFDL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1"></a>
 
 ```typescript
 public readonly GFDL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.1.
 
@@ -7207,13 +7207,13 @@ GNU Free Documentation License v1.1.
 
 ---
 
-##### `GFDL_1_1_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_1_INVARIANTS_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_ONLY"></a>
+##### `GFDL_1_1_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_1_INVARIANTS_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_1_INVARIANTS_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.1 only - invariants.
 
@@ -7221,13 +7221,13 @@ GNU Free Documentation License v1.1 only - invariants.
 
 ---
 
-##### `GFDL_1_1_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_1_INVARIANTS_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_OR_LATER"></a>
+##### `GFDL_1_1_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_1_INVARIANTS_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_1_INVARIANTS_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.1 or later - invariants.
 
@@ -7235,13 +7235,13 @@ GNU Free Documentation License v1.1 or later - invariants.
 
 ---
 
-##### `GFDL_1_1_NO_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_1_NO_INVARIANTS_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_1_NO_INVARIANTS_ONLY"></a>
+##### `GFDL_1_1_NO_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_1_NO_INVARIANTS_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_NO_INVARIANTS_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_1_NO_INVARIANTS_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.1 only - no invariants.
 
@@ -7249,13 +7249,13 @@ GNU Free Documentation License v1.1 only - no invariants.
 
 ---
 
-##### `GFDL_1_1_NO_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_1_NO_INVARIANTS_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_1_NO_INVARIANTS_OR_LATER"></a>
+##### `GFDL_1_1_NO_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_1_NO_INVARIANTS_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_NO_INVARIANTS_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_1_NO_INVARIANTS_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.1 or later - no invariants.
 
@@ -7263,13 +7263,13 @@ GNU Free Documentation License v1.1 or later - no invariants.
 
 ---
 
-##### `GFDL_1_1_ONLY`<sup>Required</sup> <a name="GFDL_1_1_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_1_ONLY"></a>
+##### `GFDL_1_1_ONLY`<sup>Required</sup> <a name="GFDL_1_1_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_1_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.1 only.
 
@@ -7277,13 +7277,13 @@ GNU Free Documentation License v1.1 only.
 
 ---
 
-##### `GFDL_1_1_OR_LATER`<sup>Required</sup> <a name="GFDL_1_1_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_1_OR_LATER"></a>
+##### `GFDL_1_1_OR_LATER`<sup>Required</sup> <a name="GFDL_1_1_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_1_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_1_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.1 or later.
 
@@ -7291,13 +7291,13 @@ GNU Free Documentation License v1.1 or later.
 
 ---
 
-##### `GFDL_1_2`<sup>Required</sup> <a name="GFDL_1_2" id="construct-hub.SpdxLicense.property.GFDL_1_2"></a>
+##### `GFDL_1_2`<sup>Required</sup> <a name="GFDL_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2"></a>
 
 ```typescript
 public readonly GFDL_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.2.
 
@@ -7305,13 +7305,13 @@ GNU Free Documentation License v1.2.
 
 ---
 
-##### `GFDL_1_2_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_2_INVARIANTS_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_2_INVARIANTS_ONLY"></a>
+##### `GFDL_1_2_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_2_INVARIANTS_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_INVARIANTS_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_2_INVARIANTS_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.2 only - invariants.
 
@@ -7319,13 +7319,13 @@ GNU Free Documentation License v1.2 only - invariants.
 
 ---
 
-##### `GFDL_1_2_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_2_INVARIANTS_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_2_INVARIANTS_OR_LATER"></a>
+##### `GFDL_1_2_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_2_INVARIANTS_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_INVARIANTS_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_2_INVARIANTS_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.2 or later - invariants.
 
@@ -7333,13 +7333,13 @@ GNU Free Documentation License v1.2 or later - invariants.
 
 ---
 
-##### `GFDL_1_2_NO_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_2_NO_INVARIANTS_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_2_NO_INVARIANTS_ONLY"></a>
+##### `GFDL_1_2_NO_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_2_NO_INVARIANTS_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_NO_INVARIANTS_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_2_NO_INVARIANTS_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.2 only - no invariants.
 
@@ -7347,13 +7347,13 @@ GNU Free Documentation License v1.2 only - no invariants.
 
 ---
 
-##### `GFDL_1_2_NO_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_2_NO_INVARIANTS_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_2_NO_INVARIANTS_OR_LATER"></a>
+##### `GFDL_1_2_NO_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_2_NO_INVARIANTS_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_NO_INVARIANTS_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_2_NO_INVARIANTS_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.2 or later - no invariants.
 
@@ -7361,13 +7361,13 @@ GNU Free Documentation License v1.2 or later - no invariants.
 
 ---
 
-##### `GFDL_1_2_ONLY`<sup>Required</sup> <a name="GFDL_1_2_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_2_ONLY"></a>
+##### `GFDL_1_2_ONLY`<sup>Required</sup> <a name="GFDL_1_2_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_2_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.2 only.
 
@@ -7375,13 +7375,13 @@ GNU Free Documentation License v1.2 only.
 
 ---
 
-##### `GFDL_1_2_OR_LATER`<sup>Required</sup> <a name="GFDL_1_2_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_2_OR_LATER"></a>
+##### `GFDL_1_2_OR_LATER`<sup>Required</sup> <a name="GFDL_1_2_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_2_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_2_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.2 or later.
 
@@ -7389,13 +7389,13 @@ GNU Free Documentation License v1.2 or later.
 
 ---
 
-##### `GFDL_1_3`<sup>Required</sup> <a name="GFDL_1_3" id="construct-hub.SpdxLicense.property.GFDL_1_3"></a>
+##### `GFDL_1_3`<sup>Required</sup> <a name="GFDL_1_3" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3"></a>
 
 ```typescript
 public readonly GFDL_1_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.3.
 
@@ -7403,13 +7403,13 @@ GNU Free Documentation License v1.3.
 
 ---
 
-##### `GFDL_1_3_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_3_INVARIANTS_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_3_INVARIANTS_ONLY"></a>
+##### `GFDL_1_3_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_3_INVARIANTS_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_INVARIANTS_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_3_INVARIANTS_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.3 only - invariants.
 
@@ -7417,13 +7417,13 @@ GNU Free Documentation License v1.3 only - invariants.
 
 ---
 
-##### `GFDL_1_3_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_3_INVARIANTS_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_3_INVARIANTS_OR_LATER"></a>
+##### `GFDL_1_3_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_3_INVARIANTS_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_INVARIANTS_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_3_INVARIANTS_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.3 or later - invariants.
 
@@ -7431,13 +7431,13 @@ GNU Free Documentation License v1.3 or later - invariants.
 
 ---
 
-##### `GFDL_1_3_NO_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_3_NO_INVARIANTS_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_3_NO_INVARIANTS_ONLY"></a>
+##### `GFDL_1_3_NO_INVARIANTS_ONLY`<sup>Required</sup> <a name="GFDL_1_3_NO_INVARIANTS_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_NO_INVARIANTS_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_3_NO_INVARIANTS_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.3 only - no invariants.
 
@@ -7445,13 +7445,13 @@ GNU Free Documentation License v1.3 only - no invariants.
 
 ---
 
-##### `GFDL_1_3_NO_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_3_NO_INVARIANTS_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_3_NO_INVARIANTS_OR_LATER"></a>
+##### `GFDL_1_3_NO_INVARIANTS_OR_LATER`<sup>Required</sup> <a name="GFDL_1_3_NO_INVARIANTS_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_NO_INVARIANTS_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_3_NO_INVARIANTS_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.3 or later - no invariants.
 
@@ -7459,13 +7459,13 @@ GNU Free Documentation License v1.3 or later - no invariants.
 
 ---
 
-##### `GFDL_1_3_ONLY`<sup>Required</sup> <a name="GFDL_1_3_ONLY" id="construct-hub.SpdxLicense.property.GFDL_1_3_ONLY"></a>
+##### `GFDL_1_3_ONLY`<sup>Required</sup> <a name="GFDL_1_3_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_ONLY"></a>
 
 ```typescript
 public readonly GFDL_1_3_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.3 only.
 
@@ -7473,13 +7473,13 @@ GNU Free Documentation License v1.3 only.
 
 ---
 
-##### `GFDL_1_3_OR_LATER`<sup>Required</sup> <a name="GFDL_1_3_OR_LATER" id="construct-hub.SpdxLicense.property.GFDL_1_3_OR_LATER"></a>
+##### `GFDL_1_3_OR_LATER`<sup>Required</sup> <a name="GFDL_1_3_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GFDL_1_3_OR_LATER"></a>
 
 ```typescript
 public readonly GFDL_1_3_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Free Documentation License v1.3 or later.
 
@@ -7487,13 +7487,13 @@ GNU Free Documentation License v1.3 or later.
 
 ---
 
-##### `GIFTWARE`<sup>Required</sup> <a name="GIFTWARE" id="construct-hub.SpdxLicense.property.GIFTWARE"></a>
+##### `GIFTWARE`<sup>Required</sup> <a name="GIFTWARE" id="@gd-constructs/construct-hub.SpdxLicense.property.GIFTWARE"></a>
 
 ```typescript
 public readonly GIFTWARE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Giftware License.
 
@@ -7501,13 +7501,13 @@ Giftware License.
 
 ---
 
-##### `GL2_P_S`<sup>Required</sup> <a name="GL2_P_S" id="construct-hub.SpdxLicense.property.GL2_P_S"></a>
+##### `GL2_P_S`<sup>Required</sup> <a name="GL2_P_S" id="@gd-constructs/construct-hub.SpdxLicense.property.GL2_P_S"></a>
 
 ```typescript
 public readonly GL2_P_S: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GL2PS License.
 
@@ -7515,13 +7515,13 @@ GL2PS License.
 
 ---
 
-##### `GLIDE`<sup>Required</sup> <a name="GLIDE" id="construct-hub.SpdxLicense.property.GLIDE"></a>
+##### `GLIDE`<sup>Required</sup> <a name="GLIDE" id="@gd-constructs/construct-hub.SpdxLicense.property.GLIDE"></a>
 
 ```typescript
 public readonly GLIDE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 3dfx Glide License.
 
@@ -7529,13 +7529,13 @@ public readonly GLIDE: SpdxLicense;
 
 ---
 
-##### `GLULXE`<sup>Required</sup> <a name="GLULXE" id="construct-hub.SpdxLicense.property.GLULXE"></a>
+##### `GLULXE`<sup>Required</sup> <a name="GLULXE" id="@gd-constructs/construct-hub.SpdxLicense.property.GLULXE"></a>
 
 ```typescript
 public readonly GLULXE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Glulxe License.
 
@@ -7543,13 +7543,13 @@ Glulxe License.
 
 ---
 
-##### `GLWTPL`<sup>Required</sup> <a name="GLWTPL" id="construct-hub.SpdxLicense.property.GLWTPL"></a>
+##### `GLWTPL`<sup>Required</sup> <a name="GLWTPL" id="@gd-constructs/construct-hub.SpdxLicense.property.GLWTPL"></a>
 
 ```typescript
 public readonly GLWTPL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Good Luck With That Public License.
 
@@ -7557,13 +7557,13 @@ Good Luck With That Public License.
 
 ---
 
-##### `GNUPLOT`<sup>Required</sup> <a name="GNUPLOT" id="construct-hub.SpdxLicense.property.GNUPLOT"></a>
+##### `GNUPLOT`<sup>Required</sup> <a name="GNUPLOT" id="@gd-constructs/construct-hub.SpdxLicense.property.GNUPLOT"></a>
 
 ```typescript
 public readonly GNUPLOT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 gnuplot License.
 
@@ -7571,13 +7571,13 @@ gnuplot License.
 
 ---
 
-##### `GPL_1_0`<sup>Required</sup> <a name="GPL_1_0" id="construct-hub.SpdxLicense.property.GPL_1_0"></a>
+##### `GPL_1_0`<sup>Required</sup> <a name="GPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_1_0"></a>
 
 ```typescript
 public readonly GPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v1.0 only.
 
@@ -7585,13 +7585,13 @@ GNU General Public License v1.0 only.
 
 ---
 
-##### `GPL_1_0_ONLY`<sup>Required</sup> <a name="GPL_1_0_ONLY" id="construct-hub.SpdxLicense.property.GPL_1_0_ONLY"></a>
+##### `GPL_1_0_ONLY`<sup>Required</sup> <a name="GPL_1_0_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_1_0_ONLY"></a>
 
 ```typescript
 public readonly GPL_1_0_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v1.0 only.
 
@@ -7599,13 +7599,13 @@ GNU General Public License v1.0 only.
 
 ---
 
-##### `GPL_1_0_OR_LATER`<sup>Required</sup> <a name="GPL_1_0_OR_LATER" id="construct-hub.SpdxLicense.property.GPL_1_0_OR_LATER"></a>
+##### `GPL_1_0_OR_LATER`<sup>Required</sup> <a name="GPL_1_0_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_1_0_OR_LATER"></a>
 
 ```typescript
 public readonly GPL_1_0_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v1.0 or later.
 
@@ -7613,13 +7613,13 @@ GNU General Public License v1.0 or later.
 
 ---
 
-##### `GPL_1_0_PLUS`<sup>Required</sup> <a name="GPL_1_0_PLUS" id="construct-hub.SpdxLicense.property.GPL_1_0_PLUS"></a>
+##### `GPL_1_0_PLUS`<sup>Required</sup> <a name="GPL_1_0_PLUS" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_1_0_PLUS"></a>
 
 ```typescript
 public readonly GPL_1_0_PLUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v1.0 or later.
 
@@ -7627,13 +7627,13 @@ GNU General Public License v1.0 or later.
 
 ---
 
-##### `GPL_2_0`<sup>Required</sup> <a name="GPL_2_0" id="construct-hub.SpdxLicense.property.GPL_2_0"></a>
+##### `GPL_2_0`<sup>Required</sup> <a name="GPL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0"></a>
 
 ```typescript
 public readonly GPL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 only.
 
@@ -7641,13 +7641,13 @@ GNU General Public License v2.0 only.
 
 ---
 
-##### `GPL_2_0_ONLY`<sup>Required</sup> <a name="GPL_2_0_ONLY" id="construct-hub.SpdxLicense.property.GPL_2_0_ONLY"></a>
+##### `GPL_2_0_ONLY`<sup>Required</sup> <a name="GPL_2_0_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_ONLY"></a>
 
 ```typescript
 public readonly GPL_2_0_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 only.
 
@@ -7655,13 +7655,13 @@ GNU General Public License v2.0 only.
 
 ---
 
-##### `GPL_2_0_OR_LATER`<sup>Required</sup> <a name="GPL_2_0_OR_LATER" id="construct-hub.SpdxLicense.property.GPL_2_0_OR_LATER"></a>
+##### `GPL_2_0_OR_LATER`<sup>Required</sup> <a name="GPL_2_0_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_OR_LATER"></a>
 
 ```typescript
 public readonly GPL_2_0_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 or later.
 
@@ -7669,13 +7669,13 @@ GNU General Public License v2.0 or later.
 
 ---
 
-##### `GPL_2_0_PLUS`<sup>Required</sup> <a name="GPL_2_0_PLUS" id="construct-hub.SpdxLicense.property.GPL_2_0_PLUS"></a>
+##### `GPL_2_0_PLUS`<sup>Required</sup> <a name="GPL_2_0_PLUS" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_PLUS"></a>
 
 ```typescript
 public readonly GPL_2_0_PLUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 or later.
 
@@ -7683,13 +7683,13 @@ GNU General Public License v2.0 or later.
 
 ---
 
-##### `GPL_2_0_WITH_AUTOCONF_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_AUTOCONF_EXCEPTION" id="construct-hub.SpdxLicense.property.GPL_2_0_WITH_AUTOCONF_EXCEPTION"></a>
+##### `GPL_2_0_WITH_AUTOCONF_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_AUTOCONF_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_AUTOCONF_EXCEPTION"></a>
 
 ```typescript
 public readonly GPL_2_0_WITH_AUTOCONF_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 w/Autoconf exception.
 
@@ -7697,13 +7697,13 @@ GNU General Public License v2.0 w/Autoconf exception.
 
 ---
 
-##### `GPL_2_0_WITH_BISON_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_BISON_EXCEPTION" id="construct-hub.SpdxLicense.property.GPL_2_0_WITH_BISON_EXCEPTION"></a>
+##### `GPL_2_0_WITH_BISON_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_BISON_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_BISON_EXCEPTION"></a>
 
 ```typescript
 public readonly GPL_2_0_WITH_BISON_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 w/Bison exception.
 
@@ -7711,13 +7711,13 @@ GNU General Public License v2.0 w/Bison exception.
 
 ---
 
-##### `GPL_2_0_WITH_CLASSPATH_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_CLASSPATH_EXCEPTION" id="construct-hub.SpdxLicense.property.GPL_2_0_WITH_CLASSPATH_EXCEPTION"></a>
+##### `GPL_2_0_WITH_CLASSPATH_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_CLASSPATH_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_CLASSPATH_EXCEPTION"></a>
 
 ```typescript
 public readonly GPL_2_0_WITH_CLASSPATH_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 w/Classpath exception.
 
@@ -7725,13 +7725,13 @@ GNU General Public License v2.0 w/Classpath exception.
 
 ---
 
-##### `GPL_2_0_WITH_FONT_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_FONT_EXCEPTION" id="construct-hub.SpdxLicense.property.GPL_2_0_WITH_FONT_EXCEPTION"></a>
+##### `GPL_2_0_WITH_FONT_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_FONT_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_FONT_EXCEPTION"></a>
 
 ```typescript
 public readonly GPL_2_0_WITH_FONT_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 w/Font exception.
 
@@ -7739,13 +7739,13 @@ GNU General Public License v2.0 w/Font exception.
 
 ---
 
-##### `GPL_2_0_WITH_GCC_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_GCC_EXCEPTION" id="construct-hub.SpdxLicense.property.GPL_2_0_WITH_GCC_EXCEPTION"></a>
+##### `GPL_2_0_WITH_GCC_EXCEPTION`<sup>Required</sup> <a name="GPL_2_0_WITH_GCC_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_2_0_WITH_GCC_EXCEPTION"></a>
 
 ```typescript
 public readonly GPL_2_0_WITH_GCC_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v2.0 w/GCC Runtime Library exception.
 
@@ -7753,13 +7753,13 @@ GNU General Public License v2.0 w/GCC Runtime Library exception.
 
 ---
 
-##### `GPL_3_0`<sup>Required</sup> <a name="GPL_3_0" id="construct-hub.SpdxLicense.property.GPL_3_0"></a>
+##### `GPL_3_0`<sup>Required</sup> <a name="GPL_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0"></a>
 
 ```typescript
 public readonly GPL_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v3.0 only.
 
@@ -7767,13 +7767,13 @@ GNU General Public License v3.0 only.
 
 ---
 
-##### `GPL_3_0_ONLY`<sup>Required</sup> <a name="GPL_3_0_ONLY" id="construct-hub.SpdxLicense.property.GPL_3_0_ONLY"></a>
+##### `GPL_3_0_ONLY`<sup>Required</sup> <a name="GPL_3_0_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_ONLY"></a>
 
 ```typescript
 public readonly GPL_3_0_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v3.0 only.
 
@@ -7781,13 +7781,13 @@ GNU General Public License v3.0 only.
 
 ---
 
-##### `GPL_3_0_OR_LATER`<sup>Required</sup> <a name="GPL_3_0_OR_LATER" id="construct-hub.SpdxLicense.property.GPL_3_0_OR_LATER"></a>
+##### `GPL_3_0_OR_LATER`<sup>Required</sup> <a name="GPL_3_0_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_OR_LATER"></a>
 
 ```typescript
 public readonly GPL_3_0_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v3.0 or later.
 
@@ -7795,13 +7795,13 @@ GNU General Public License v3.0 or later.
 
 ---
 
-##### `GPL_3_0_PLUS`<sup>Required</sup> <a name="GPL_3_0_PLUS" id="construct-hub.SpdxLicense.property.GPL_3_0_PLUS"></a>
+##### `GPL_3_0_PLUS`<sup>Required</sup> <a name="GPL_3_0_PLUS" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_PLUS"></a>
 
 ```typescript
 public readonly GPL_3_0_PLUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v3.0 or later.
 
@@ -7809,13 +7809,13 @@ GNU General Public License v3.0 or later.
 
 ---
 
-##### `GPL_3_0_WITH_AUTOCONF_EXCEPTION`<sup>Required</sup> <a name="GPL_3_0_WITH_AUTOCONF_EXCEPTION" id="construct-hub.SpdxLicense.property.GPL_3_0_WITH_AUTOCONF_EXCEPTION"></a>
+##### `GPL_3_0_WITH_AUTOCONF_EXCEPTION`<sup>Required</sup> <a name="GPL_3_0_WITH_AUTOCONF_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_WITH_AUTOCONF_EXCEPTION"></a>
 
 ```typescript
 public readonly GPL_3_0_WITH_AUTOCONF_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v3.0 w/Autoconf exception.
 
@@ -7823,13 +7823,13 @@ GNU General Public License v3.0 w/Autoconf exception.
 
 ---
 
-##### `GPL_3_0_WITH_GCC_EXCEPTION`<sup>Required</sup> <a name="GPL_3_0_WITH_GCC_EXCEPTION" id="construct-hub.SpdxLicense.property.GPL_3_0_WITH_GCC_EXCEPTION"></a>
+##### `GPL_3_0_WITH_GCC_EXCEPTION`<sup>Required</sup> <a name="GPL_3_0_WITH_GCC_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.GPL_3_0_WITH_GCC_EXCEPTION"></a>
 
 ```typescript
 public readonly GPL_3_0_WITH_GCC_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU General Public License v3.0 w/GCC Runtime Library exception.
 
@@ -7837,13 +7837,13 @@ GNU General Public License v3.0 w/GCC Runtime Library exception.
 
 ---
 
-##### `GRAPHICS_GEMS`<sup>Required</sup> <a name="GRAPHICS_GEMS" id="construct-hub.SpdxLicense.property.GRAPHICS_GEMS"></a>
+##### `GRAPHICS_GEMS`<sup>Required</sup> <a name="GRAPHICS_GEMS" id="@gd-constructs/construct-hub.SpdxLicense.property.GRAPHICS_GEMS"></a>
 
 ```typescript
 public readonly GRAPHICS_GEMS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Graphics Gems License.
 
@@ -7851,13 +7851,13 @@ Graphics Gems License.
 
 ---
 
-##### `GSOAP_1_3B`<sup>Required</sup> <a name="GSOAP_1_3B" id="construct-hub.SpdxLicense.property.GSOAP_1_3B"></a>
+##### `GSOAP_1_3B`<sup>Required</sup> <a name="GSOAP_1_3B" id="@gd-constructs/construct-hub.SpdxLicense.property.GSOAP_1_3B"></a>
 
 ```typescript
 public readonly GSOAP_1_3B: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 gSOAP Public License v1.3b.
 
@@ -7865,13 +7865,13 @@ gSOAP Public License v1.3b.
 
 ---
 
-##### `GTKBOOK`<sup>Required</sup> <a name="GTKBOOK" id="construct-hub.SpdxLicense.property.GTKBOOK"></a>
+##### `GTKBOOK`<sup>Required</sup> <a name="GTKBOOK" id="@gd-constructs/construct-hub.SpdxLicense.property.GTKBOOK"></a>
 
 ```typescript
 public readonly GTKBOOK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 gtkbook License.
 
@@ -7879,13 +7879,13 @@ gtkbook License.
 
 ---
 
-##### `HASKELL_REPORT`<sup>Required</sup> <a name="HASKELL_REPORT" id="construct-hub.SpdxLicense.property.HASKELL_REPORT"></a>
+##### `HASKELL_REPORT`<sup>Required</sup> <a name="HASKELL_REPORT" id="@gd-constructs/construct-hub.SpdxLicense.property.HASKELL_REPORT"></a>
 
 ```typescript
 public readonly HASKELL_REPORT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Haskell Language Report License.
 
@@ -7893,13 +7893,13 @@ Haskell Language Report License.
 
 ---
 
-##### `HDPARM`<sup>Required</sup> <a name="HDPARM" id="construct-hub.SpdxLicense.property.HDPARM"></a>
+##### `HDPARM`<sup>Required</sup> <a name="HDPARM" id="@gd-constructs/construct-hub.SpdxLicense.property.HDPARM"></a>
 
 ```typescript
 public readonly HDPARM: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 hdparm License.
 
@@ -7907,13 +7907,13 @@ hdparm License.
 
 ---
 
-##### `HIPPOCRATIC_2_1`<sup>Required</sup> <a name="HIPPOCRATIC_2_1" id="construct-hub.SpdxLicense.property.HIPPOCRATIC_2_1"></a>
+##### `HIPPOCRATIC_2_1`<sup>Required</sup> <a name="HIPPOCRATIC_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.HIPPOCRATIC_2_1"></a>
 
 ```typescript
 public readonly HIPPOCRATIC_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Hippocratic License 2.1.
 
@@ -7921,13 +7921,13 @@ Hippocratic License 2.1.
 
 ---
 
-##### `HP_1986`<sup>Required</sup> <a name="HP_1986" id="construct-hub.SpdxLicense.property.HP_1986"></a>
+##### `HP_1986`<sup>Required</sup> <a name="HP_1986" id="@gd-constructs/construct-hub.SpdxLicense.property.HP_1986"></a>
 
 ```typescript
 public readonly HP_1986: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Hewlett-Packard 1986 License.
 
@@ -7935,13 +7935,13 @@ Hewlett-Packard 1986 License.
 
 ---
 
-##### `HP_1989`<sup>Required</sup> <a name="HP_1989" id="construct-hub.SpdxLicense.property.HP_1989"></a>
+##### `HP_1989`<sup>Required</sup> <a name="HP_1989" id="@gd-constructs/construct-hub.SpdxLicense.property.HP_1989"></a>
 
 ```typescript
 public readonly HP_1989: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Hewlett-Packard 1989 License.
 
@@ -7949,13 +7949,13 @@ Hewlett-Packard 1989 License.
 
 ---
 
-##### `HPND`<sup>Required</sup> <a name="HPND" id="construct-hub.SpdxLicense.property.HPND"></a>
+##### `HPND`<sup>Required</sup> <a name="HPND" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND"></a>
 
 ```typescript
 public readonly HPND: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer.
 
@@ -7963,13 +7963,13 @@ Historical Permission Notice and Disclaimer.
 
 ---
 
-##### `HPND_DEC`<sup>Required</sup> <a name="HPND_DEC" id="construct-hub.SpdxLicense.property.HPND_DEC"></a>
+##### `HPND_DEC`<sup>Required</sup> <a name="HPND_DEC" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_DEC"></a>
 
 ```typescript
 public readonly HPND_DEC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - DEC variant.
 
@@ -7977,13 +7977,13 @@ Historical Permission Notice and Disclaimer - DEC variant.
 
 ---
 
-##### `HPND_DOC`<sup>Required</sup> <a name="HPND_DOC" id="construct-hub.SpdxLicense.property.HPND_DOC"></a>
+##### `HPND_DOC`<sup>Required</sup> <a name="HPND_DOC" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_DOC"></a>
 
 ```typescript
 public readonly HPND_DOC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - documentation variant.
 
@@ -7991,13 +7991,13 @@ Historical Permission Notice and Disclaimer - documentation variant.
 
 ---
 
-##### `HPND_DOC_SELL`<sup>Required</sup> <a name="HPND_DOC_SELL" id="construct-hub.SpdxLicense.property.HPND_DOC_SELL"></a>
+##### `HPND_DOC_SELL`<sup>Required</sup> <a name="HPND_DOC_SELL" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_DOC_SELL"></a>
 
 ```typescript
 public readonly HPND_DOC_SELL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - documentation sell variant.
 
@@ -8005,13 +8005,13 @@ Historical Permission Notice and Disclaimer - documentation sell variant.
 
 ---
 
-##### `HPND_EXPORT_US`<sup>Required</sup> <a name="HPND_EXPORT_US" id="construct-hub.SpdxLicense.property.HPND_EXPORT_US"></a>
+##### `HPND_EXPORT_US`<sup>Required</sup> <a name="HPND_EXPORT_US" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_EXPORT_US"></a>
 
 ```typescript
 public readonly HPND_EXPORT_US: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 HPND with US Government export control warning.
 
@@ -8019,13 +8019,13 @@ HPND with US Government export control warning.
 
 ---
 
-##### `HPND_EXPORT_US_MODIFY`<sup>Required</sup> <a name="HPND_EXPORT_US_MODIFY" id="construct-hub.SpdxLicense.property.HPND_EXPORT_US_MODIFY"></a>
+##### `HPND_EXPORT_US_MODIFY`<sup>Required</sup> <a name="HPND_EXPORT_US_MODIFY" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_EXPORT_US_MODIFY"></a>
 
 ```typescript
 public readonly HPND_EXPORT_US_MODIFY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 HPND with US Government export control warning and modification rqmt.
 
@@ -8033,13 +8033,13 @@ HPND with US Government export control warning and modification rqmt.
 
 ---
 
-##### `HPND_FENNEBERG_LIVINGSTON`<sup>Required</sup> <a name="HPND_FENNEBERG_LIVINGSTON" id="construct-hub.SpdxLicense.property.HPND_FENNEBERG_LIVINGSTON"></a>
+##### `HPND_FENNEBERG_LIVINGSTON`<sup>Required</sup> <a name="HPND_FENNEBERG_LIVINGSTON" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_FENNEBERG_LIVINGSTON"></a>
 
 ```typescript
 public readonly HPND_FENNEBERG_LIVINGSTON: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - Fenneberg-Livingston variant.
 
@@ -8047,13 +8047,13 @@ Historical Permission Notice and Disclaimer - Fenneberg-Livingston variant.
 
 ---
 
-##### `HPND_INRIA_IMAG`<sup>Required</sup> <a name="HPND_INRIA_IMAG" id="construct-hub.SpdxLicense.property.HPND_INRIA_IMAG"></a>
+##### `HPND_INRIA_IMAG`<sup>Required</sup> <a name="HPND_INRIA_IMAG" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_INRIA_IMAG"></a>
 
 ```typescript
 public readonly HPND_INRIA_IMAG: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer    - INRIA-IMAG variant.
 
@@ -8061,13 +8061,13 @@ Historical Permission Notice and Disclaimer    - INRIA-IMAG variant.
 
 ---
 
-##### `HPND_KEVLIN_HENNEY`<sup>Required</sup> <a name="HPND_KEVLIN_HENNEY" id="construct-hub.SpdxLicense.property.HPND_KEVLIN_HENNEY"></a>
+##### `HPND_KEVLIN_HENNEY`<sup>Required</sup> <a name="HPND_KEVLIN_HENNEY" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_KEVLIN_HENNEY"></a>
 
 ```typescript
 public readonly HPND_KEVLIN_HENNEY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - Kevlin Henney variant.
 
@@ -8075,13 +8075,13 @@ Historical Permission Notice and Disclaimer - Kevlin Henney variant.
 
 ---
 
-##### `HPND_MARKUS_KUHN`<sup>Required</sup> <a name="HPND_MARKUS_KUHN" id="construct-hub.SpdxLicense.property.HPND_MARKUS_KUHN"></a>
+##### `HPND_MARKUS_KUHN`<sup>Required</sup> <a name="HPND_MARKUS_KUHN" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_MARKUS_KUHN"></a>
 
 ```typescript
 public readonly HPND_MARKUS_KUHN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - Markus Kuhn variant.
 
@@ -8089,13 +8089,13 @@ Historical Permission Notice and Disclaimer - Markus Kuhn variant.
 
 ---
 
-##### `HPND_MIT_DISCLAIMER`<sup>Required</sup> <a name="HPND_MIT_DISCLAIMER" id="construct-hub.SpdxLicense.property.HPND_MIT_DISCLAIMER"></a>
+##### `HPND_MIT_DISCLAIMER`<sup>Required</sup> <a name="HPND_MIT_DISCLAIMER" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_MIT_DISCLAIMER"></a>
 
 ```typescript
 public readonly HPND_MIT_DISCLAIMER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer with MIT disclaimer.
 
@@ -8103,13 +8103,13 @@ Historical Permission Notice and Disclaimer with MIT disclaimer.
 
 ---
 
-##### `HPND_PBMPLUS`<sup>Required</sup> <a name="HPND_PBMPLUS" id="construct-hub.SpdxLicense.property.HPND_PBMPLUS"></a>
+##### `HPND_PBMPLUS`<sup>Required</sup> <a name="HPND_PBMPLUS" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_PBMPLUS"></a>
 
 ```typescript
 public readonly HPND_PBMPLUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - Pbmplus variant.
 
@@ -8117,13 +8117,13 @@ Historical Permission Notice and Disclaimer - Pbmplus variant.
 
 ---
 
-##### `HPND_SELL_MIT_DISCLAIMER_XSERVER`<sup>Required</sup> <a name="HPND_SELL_MIT_DISCLAIMER_XSERVER" id="construct-hub.SpdxLicense.property.HPND_SELL_MIT_DISCLAIMER_XSERVER"></a>
+##### `HPND_SELL_MIT_DISCLAIMER_XSERVER`<sup>Required</sup> <a name="HPND_SELL_MIT_DISCLAIMER_XSERVER" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_SELL_MIT_DISCLAIMER_XSERVER"></a>
 
 ```typescript
 public readonly HPND_SELL_MIT_DISCLAIMER_XSERVER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - sell xserver variant with MIT disclaimer.
 
@@ -8131,13 +8131,13 @@ Historical Permission Notice and Disclaimer - sell xserver variant with MIT disc
 
 ---
 
-##### `HPND_SELL_REGEXPR`<sup>Required</sup> <a name="HPND_SELL_REGEXPR" id="construct-hub.SpdxLicense.property.HPND_SELL_REGEXPR"></a>
+##### `HPND_SELL_REGEXPR`<sup>Required</sup> <a name="HPND_SELL_REGEXPR" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_SELL_REGEXPR"></a>
 
 ```typescript
 public readonly HPND_SELL_REGEXPR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - sell regexpr variant.
 
@@ -8145,13 +8145,13 @@ Historical Permission Notice and Disclaimer - sell regexpr variant.
 
 ---
 
-##### `HPND_SELL_VARIANT`<sup>Required</sup> <a name="HPND_SELL_VARIANT" id="construct-hub.SpdxLicense.property.HPND_SELL_VARIANT"></a>
+##### `HPND_SELL_VARIANT`<sup>Required</sup> <a name="HPND_SELL_VARIANT" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_SELL_VARIANT"></a>
 
 ```typescript
 public readonly HPND_SELL_VARIANT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - sell variant.
 
@@ -8159,13 +8159,13 @@ Historical Permission Notice and Disclaimer - sell variant.
 
 ---
 
-##### `HPND_SELL_VARIANT_MIT_DISCLAIMER`<sup>Required</sup> <a name="HPND_SELL_VARIANT_MIT_DISCLAIMER" id="construct-hub.SpdxLicense.property.HPND_SELL_VARIANT_MIT_DISCLAIMER"></a>
+##### `HPND_SELL_VARIANT_MIT_DISCLAIMER`<sup>Required</sup> <a name="HPND_SELL_VARIANT_MIT_DISCLAIMER" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_SELL_VARIANT_MIT_DISCLAIMER"></a>
 
 ```typescript
 public readonly HPND_SELL_VARIANT_MIT_DISCLAIMER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 HPND sell variant with MIT disclaimer.
 
@@ -8173,13 +8173,13 @@ HPND sell variant with MIT disclaimer.
 
 ---
 
-##### `HPND_UC`<sup>Required</sup> <a name="HPND_UC" id="construct-hub.SpdxLicense.property.HPND_UC"></a>
+##### `HPND_UC`<sup>Required</sup> <a name="HPND_UC" id="@gd-constructs/construct-hub.SpdxLicense.property.HPND_UC"></a>
 
 ```typescript
 public readonly HPND_UC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Historical Permission Notice and Disclaimer - University of California variant.
 
@@ -8187,13 +8187,13 @@ Historical Permission Notice and Disclaimer - University of California variant.
 
 ---
 
-##### `HTMLTIDY`<sup>Required</sup> <a name="HTMLTIDY" id="construct-hub.SpdxLicense.property.HTMLTIDY"></a>
+##### `HTMLTIDY`<sup>Required</sup> <a name="HTMLTIDY" id="@gd-constructs/construct-hub.SpdxLicense.property.HTMLTIDY"></a>
 
 ```typescript
 public readonly HTMLTIDY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 HTML Tidy License.
 
@@ -8201,13 +8201,13 @@ HTML Tidy License.
 
 ---
 
-##### `I_MATIX`<sup>Required</sup> <a name="I_MATIX" id="construct-hub.SpdxLicense.property.I_MATIX"></a>
+##### `I_MATIX`<sup>Required</sup> <a name="I_MATIX" id="@gd-constructs/construct-hub.SpdxLicense.property.I_MATIX"></a>
 
 ```typescript
 public readonly I_MATIX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 iMatix Standard Function Library Agreement.
 
@@ -8215,13 +8215,13 @@ iMatix Standard Function Library Agreement.
 
 ---
 
-##### `IBM_PIBS`<sup>Required</sup> <a name="IBM_PIBS" id="construct-hub.SpdxLicense.property.IBM_PIBS"></a>
+##### `IBM_PIBS`<sup>Required</sup> <a name="IBM_PIBS" id="@gd-constructs/construct-hub.SpdxLicense.property.IBM_PIBS"></a>
 
 ```typescript
 public readonly IBM_PIBS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 IBM PowerPC Initialization and Boot Software.
 
@@ -8229,13 +8229,13 @@ IBM PowerPC Initialization and Boot Software.
 
 ---
 
-##### `ICU`<sup>Required</sup> <a name="ICU" id="construct-hub.SpdxLicense.property.ICU"></a>
+##### `ICU`<sup>Required</sup> <a name="ICU" id="@gd-constructs/construct-hub.SpdxLicense.property.ICU"></a>
 
 ```typescript
 public readonly ICU: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ICU License.
 
@@ -8243,13 +8243,13 @@ ICU License.
 
 ---
 
-##### `IEC_CODE_COMPONENTS_EULA`<sup>Required</sup> <a name="IEC_CODE_COMPONENTS_EULA" id="construct-hub.SpdxLicense.property.IEC_CODE_COMPONENTS_EULA"></a>
+##### `IEC_CODE_COMPONENTS_EULA`<sup>Required</sup> <a name="IEC_CODE_COMPONENTS_EULA" id="@gd-constructs/construct-hub.SpdxLicense.property.IEC_CODE_COMPONENTS_EULA"></a>
 
 ```typescript
 public readonly IEC_CODE_COMPONENTS_EULA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 IEC    Code Components End-user licence agreement.
 
@@ -8257,13 +8257,13 @@ IEC    Code Components End-user licence agreement.
 
 ---
 
-##### `IJG`<sup>Required</sup> <a name="IJG" id="construct-hub.SpdxLicense.property.IJG"></a>
+##### `IJG`<sup>Required</sup> <a name="IJG" id="@gd-constructs/construct-hub.SpdxLicense.property.IJG"></a>
 
 ```typescript
 public readonly IJG: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Independent JPEG Group License.
 
@@ -8271,13 +8271,13 @@ Independent JPEG Group License.
 
 ---
 
-##### `IJG_SHORT`<sup>Required</sup> <a name="IJG_SHORT" id="construct-hub.SpdxLicense.property.IJG_SHORT"></a>
+##### `IJG_SHORT`<sup>Required</sup> <a name="IJG_SHORT" id="@gd-constructs/construct-hub.SpdxLicense.property.IJG_SHORT"></a>
 
 ```typescript
 public readonly IJG_SHORT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Independent JPEG Group License - short.
 
@@ -8285,13 +8285,13 @@ Independent JPEG Group License - short.
 
 ---
 
-##### `IMAGE_MAGICK`<sup>Required</sup> <a name="IMAGE_MAGICK" id="construct-hub.SpdxLicense.property.IMAGE_MAGICK"></a>
+##### `IMAGE_MAGICK`<sup>Required</sup> <a name="IMAGE_MAGICK" id="@gd-constructs/construct-hub.SpdxLicense.property.IMAGE_MAGICK"></a>
 
 ```typescript
 public readonly IMAGE_MAGICK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ImageMagick License.
 
@@ -8299,13 +8299,13 @@ ImageMagick License.
 
 ---
 
-##### `IMLIB2`<sup>Required</sup> <a name="IMLIB2" id="construct-hub.SpdxLicense.property.IMLIB2"></a>
+##### `IMLIB2`<sup>Required</sup> <a name="IMLIB2" id="@gd-constructs/construct-hub.SpdxLicense.property.IMLIB2"></a>
 
 ```typescript
 public readonly IMLIB2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Imlib2 License.
 
@@ -8313,13 +8313,13 @@ Imlib2 License.
 
 ---
 
-##### `INFO_ZIP`<sup>Required</sup> <a name="INFO_ZIP" id="construct-hub.SpdxLicense.property.INFO_ZIP"></a>
+##### `INFO_ZIP`<sup>Required</sup> <a name="INFO_ZIP" id="@gd-constructs/construct-hub.SpdxLicense.property.INFO_ZIP"></a>
 
 ```typescript
 public readonly INFO_ZIP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Info-ZIP License.
 
@@ -8327,13 +8327,13 @@ Info-ZIP License.
 
 ---
 
-##### `INNER_NET_2_0`<sup>Required</sup> <a name="INNER_NET_2_0" id="construct-hub.SpdxLicense.property.INNER_NET_2_0"></a>
+##### `INNER_NET_2_0`<sup>Required</sup> <a name="INNER_NET_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.INNER_NET_2_0"></a>
 
 ```typescript
 public readonly INNER_NET_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Inner Net License v2.0.
 
@@ -8341,13 +8341,13 @@ Inner Net License v2.0.
 
 ---
 
-##### `INTEL`<sup>Required</sup> <a name="INTEL" id="construct-hub.SpdxLicense.property.INTEL"></a>
+##### `INTEL`<sup>Required</sup> <a name="INTEL" id="@gd-constructs/construct-hub.SpdxLicense.property.INTEL"></a>
 
 ```typescript
 public readonly INTEL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Intel Open Source License.
 
@@ -8355,13 +8355,13 @@ Intel Open Source License.
 
 ---
 
-##### `INTEL_ACPI`<sup>Required</sup> <a name="INTEL_ACPI" id="construct-hub.SpdxLicense.property.INTEL_ACPI"></a>
+##### `INTEL_ACPI`<sup>Required</sup> <a name="INTEL_ACPI" id="@gd-constructs/construct-hub.SpdxLicense.property.INTEL_ACPI"></a>
 
 ```typescript
 public readonly INTEL_ACPI: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Intel ACPI Software License Agreement.
 
@@ -8369,13 +8369,13 @@ Intel ACPI Software License Agreement.
 
 ---
 
-##### `INTERBASE_1_0`<sup>Required</sup> <a name="INTERBASE_1_0" id="construct-hub.SpdxLicense.property.INTERBASE_1_0"></a>
+##### `INTERBASE_1_0`<sup>Required</sup> <a name="INTERBASE_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.INTERBASE_1_0"></a>
 
 ```typescript
 public readonly INTERBASE_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Interbase Public License v1.0.
 
@@ -8383,13 +8383,13 @@ Interbase Public License v1.0.
 
 ---
 
-##### `IPA`<sup>Required</sup> <a name="IPA" id="construct-hub.SpdxLicense.property.IPA"></a>
+##### `IPA`<sup>Required</sup> <a name="IPA" id="@gd-constructs/construct-hub.SpdxLicense.property.IPA"></a>
 
 ```typescript
 public readonly IPA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 IPA Font License.
 
@@ -8397,13 +8397,13 @@ IPA Font License.
 
 ---
 
-##### `IPL_1_0`<sup>Required</sup> <a name="IPL_1_0" id="construct-hub.SpdxLicense.property.IPL_1_0"></a>
+##### `IPL_1_0`<sup>Required</sup> <a name="IPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.IPL_1_0"></a>
 
 ```typescript
 public readonly IPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 IBM Public License v1.0.
 
@@ -8411,13 +8411,13 @@ IBM Public License v1.0.
 
 ---
 
-##### `ISC`<sup>Required</sup> <a name="ISC" id="construct-hub.SpdxLicense.property.ISC"></a>
+##### `ISC`<sup>Required</sup> <a name="ISC" id="@gd-constructs/construct-hub.SpdxLicense.property.ISC"></a>
 
 ```typescript
 public readonly ISC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ISC License.
 
@@ -8425,13 +8425,13 @@ ISC License.
 
 ---
 
-##### `ISC_VEILLARD`<sup>Required</sup> <a name="ISC_VEILLARD" id="construct-hub.SpdxLicense.property.ISC_VEILLARD"></a>
+##### `ISC_VEILLARD`<sup>Required</sup> <a name="ISC_VEILLARD" id="@gd-constructs/construct-hub.SpdxLicense.property.ISC_VEILLARD"></a>
 
 ```typescript
 public readonly ISC_VEILLARD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ISC Veillard variant.
 
@@ -8439,13 +8439,13 @@ ISC Veillard variant.
 
 ---
 
-##### `JAM`<sup>Required</sup> <a name="JAM" id="construct-hub.SpdxLicense.property.JAM"></a>
+##### `JAM`<sup>Required</sup> <a name="JAM" id="@gd-constructs/construct-hub.SpdxLicense.property.JAM"></a>
 
 ```typescript
 public readonly JAM: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Jam License.
 
@@ -8453,13 +8453,13 @@ Jam License.
 
 ---
 
-##### `JASPER_2_0`<sup>Required</sup> <a name="JASPER_2_0" id="construct-hub.SpdxLicense.property.JASPER_2_0"></a>
+##### `JASPER_2_0`<sup>Required</sup> <a name="JASPER_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.JASPER_2_0"></a>
 
 ```typescript
 public readonly JASPER_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 JasPer License.
 
@@ -8467,13 +8467,13 @@ JasPer License.
 
 ---
 
-##### `JPL_IMAGE`<sup>Required</sup> <a name="JPL_IMAGE" id="construct-hub.SpdxLicense.property.JPL_IMAGE"></a>
+##### `JPL_IMAGE`<sup>Required</sup> <a name="JPL_IMAGE" id="@gd-constructs/construct-hub.SpdxLicense.property.JPL_IMAGE"></a>
 
 ```typescript
 public readonly JPL_IMAGE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 JPL Image Use Policy.
 
@@ -8481,13 +8481,13 @@ JPL Image Use Policy.
 
 ---
 
-##### `JPNIC`<sup>Required</sup> <a name="JPNIC" id="construct-hub.SpdxLicense.property.JPNIC"></a>
+##### `JPNIC`<sup>Required</sup> <a name="JPNIC" id="@gd-constructs/construct-hub.SpdxLicense.property.JPNIC"></a>
 
 ```typescript
 public readonly JPNIC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Japan Network Information Center License.
 
@@ -8495,13 +8495,13 @@ Japan Network Information Center License.
 
 ---
 
-##### `JSON`<sup>Required</sup> <a name="JSON" id="construct-hub.SpdxLicense.property.JSON"></a>
+##### `JSON`<sup>Required</sup> <a name="JSON" id="@gd-constructs/construct-hub.SpdxLicense.property.JSON"></a>
 
 ```typescript
 public readonly JSON: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 JSON License.
 
@@ -8509,13 +8509,13 @@ JSON License.
 
 ---
 
-##### `KASTRUP`<sup>Required</sup> <a name="KASTRUP" id="construct-hub.SpdxLicense.property.KASTRUP"></a>
+##### `KASTRUP`<sup>Required</sup> <a name="KASTRUP" id="@gd-constructs/construct-hub.SpdxLicense.property.KASTRUP"></a>
 
 ```typescript
 public readonly KASTRUP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Kastrup License.
 
@@ -8523,13 +8523,13 @@ Kastrup License.
 
 ---
 
-##### `KAZLIB`<sup>Required</sup> <a name="KAZLIB" id="construct-hub.SpdxLicense.property.KAZLIB"></a>
+##### `KAZLIB`<sup>Required</sup> <a name="KAZLIB" id="@gd-constructs/construct-hub.SpdxLicense.property.KAZLIB"></a>
 
 ```typescript
 public readonly KAZLIB: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Kazlib License.
 
@@ -8537,13 +8537,13 @@ Kazlib License.
 
 ---
 
-##### `KNUTH_CTAN`<sup>Required</sup> <a name="KNUTH_CTAN" id="construct-hub.SpdxLicense.property.KNUTH_CTAN"></a>
+##### `KNUTH_CTAN`<sup>Required</sup> <a name="KNUTH_CTAN" id="@gd-constructs/construct-hub.SpdxLicense.property.KNUTH_CTAN"></a>
 
 ```typescript
 public readonly KNUTH_CTAN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Knuth CTAN License.
 
@@ -8551,13 +8551,13 @@ Knuth CTAN License.
 
 ---
 
-##### `LAL_1_2`<sup>Required</sup> <a name="LAL_1_2" id="construct-hub.SpdxLicense.property.LAL_1_2"></a>
+##### `LAL_1_2`<sup>Required</sup> <a name="LAL_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.LAL_1_2"></a>
 
 ```typescript
 public readonly LAL_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Licence Art Libre 1.2.
 
@@ -8565,13 +8565,13 @@ Licence Art Libre 1.2.
 
 ---
 
-##### `LAL_1_3`<sup>Required</sup> <a name="LAL_1_3" id="construct-hub.SpdxLicense.property.LAL_1_3"></a>
+##### `LAL_1_3`<sup>Required</sup> <a name="LAL_1_3" id="@gd-constructs/construct-hub.SpdxLicense.property.LAL_1_3"></a>
 
 ```typescript
 public readonly LAL_1_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Licence Art Libre 1.3.
 
@@ -8579,13 +8579,13 @@ Licence Art Libre 1.3.
 
 ---
 
-##### `LATEX2_E`<sup>Required</sup> <a name="LATEX2_E" id="construct-hub.SpdxLicense.property.LATEX2_E"></a>
+##### `LATEX2_E`<sup>Required</sup> <a name="LATEX2_E" id="@gd-constructs/construct-hub.SpdxLicense.property.LATEX2_E"></a>
 
 ```typescript
 public readonly LATEX2_E: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Latex2e License.
 
@@ -8593,13 +8593,13 @@ Latex2e License.
 
 ---
 
-##### `LATEX2E_TRANSLATED_NOTICE`<sup>Required</sup> <a name="LATEX2E_TRANSLATED_NOTICE" id="construct-hub.SpdxLicense.property.LATEX2E_TRANSLATED_NOTICE"></a>
+##### `LATEX2E_TRANSLATED_NOTICE`<sup>Required</sup> <a name="LATEX2E_TRANSLATED_NOTICE" id="@gd-constructs/construct-hub.SpdxLicense.property.LATEX2E_TRANSLATED_NOTICE"></a>
 
 ```typescript
 public readonly LATEX2E_TRANSLATED_NOTICE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Latex2e with translated notice permission.
 
@@ -8607,13 +8607,13 @@ Latex2e with translated notice permission.
 
 ---
 
-##### `LEPTONICA`<sup>Required</sup> <a name="LEPTONICA" id="construct-hub.SpdxLicense.property.LEPTONICA"></a>
+##### `LEPTONICA`<sup>Required</sup> <a name="LEPTONICA" id="@gd-constructs/construct-hub.SpdxLicense.property.LEPTONICA"></a>
 
 ```typescript
 public readonly LEPTONICA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Leptonica License.
 
@@ -8621,13 +8621,13 @@ Leptonica License.
 
 ---
 
-##### `LGPL_2_0`<sup>Required</sup> <a name="LGPL_2_0" id="construct-hub.SpdxLicense.property.LGPL_2_0"></a>
+##### `LGPL_2_0`<sup>Required</sup> <a name="LGPL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_0"></a>
 
 ```typescript
 public readonly LGPL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Library General Public License v2 only.
 
@@ -8635,13 +8635,13 @@ GNU Library General Public License v2 only.
 
 ---
 
-##### `LGPL_2_0_ONLY`<sup>Required</sup> <a name="LGPL_2_0_ONLY" id="construct-hub.SpdxLicense.property.LGPL_2_0_ONLY"></a>
+##### `LGPL_2_0_ONLY`<sup>Required</sup> <a name="LGPL_2_0_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_0_ONLY"></a>
 
 ```typescript
 public readonly LGPL_2_0_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Library General Public License v2 only.
 
@@ -8649,13 +8649,13 @@ GNU Library General Public License v2 only.
 
 ---
 
-##### `LGPL_2_0_OR_LATER`<sup>Required</sup> <a name="LGPL_2_0_OR_LATER" id="construct-hub.SpdxLicense.property.LGPL_2_0_OR_LATER"></a>
+##### `LGPL_2_0_OR_LATER`<sup>Required</sup> <a name="LGPL_2_0_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_0_OR_LATER"></a>
 
 ```typescript
 public readonly LGPL_2_0_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Library General Public License v2 or later.
 
@@ -8663,13 +8663,13 @@ GNU Library General Public License v2 or later.
 
 ---
 
-##### `LGPL_2_0_PLUS`<sup>Required</sup> <a name="LGPL_2_0_PLUS" id="construct-hub.SpdxLicense.property.LGPL_2_0_PLUS"></a>
+##### `LGPL_2_0_PLUS`<sup>Required</sup> <a name="LGPL_2_0_PLUS" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_0_PLUS"></a>
 
 ```typescript
 public readonly LGPL_2_0_PLUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Library General Public License v2 or later.
 
@@ -8677,13 +8677,13 @@ GNU Library General Public License v2 or later.
 
 ---
 
-##### `LGPL_2_1`<sup>Required</sup> <a name="LGPL_2_1" id="construct-hub.SpdxLicense.property.LGPL_2_1"></a>
+##### `LGPL_2_1`<sup>Required</sup> <a name="LGPL_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_1"></a>
 
 ```typescript
 public readonly LGPL_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Lesser General Public License v2.1 only.
 
@@ -8691,13 +8691,13 @@ GNU Lesser General Public License v2.1 only.
 
 ---
 
-##### `LGPL_2_1_ONLY`<sup>Required</sup> <a name="LGPL_2_1_ONLY" id="construct-hub.SpdxLicense.property.LGPL_2_1_ONLY"></a>
+##### `LGPL_2_1_ONLY`<sup>Required</sup> <a name="LGPL_2_1_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_1_ONLY"></a>
 
 ```typescript
 public readonly LGPL_2_1_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Lesser General Public License v2.1 only.
 
@@ -8705,13 +8705,13 @@ GNU Lesser General Public License v2.1 only.
 
 ---
 
-##### `LGPL_2_1_OR_LATER`<sup>Required</sup> <a name="LGPL_2_1_OR_LATER" id="construct-hub.SpdxLicense.property.LGPL_2_1_OR_LATER"></a>
+##### `LGPL_2_1_OR_LATER`<sup>Required</sup> <a name="LGPL_2_1_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_1_OR_LATER"></a>
 
 ```typescript
 public readonly LGPL_2_1_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Lesser General Public License v2.1 or later.
 
@@ -8719,13 +8719,13 @@ GNU Lesser General Public License v2.1 or later.
 
 ---
 
-##### `LGPL_2_1_PLUS`<sup>Required</sup> <a name="LGPL_2_1_PLUS" id="construct-hub.SpdxLicense.property.LGPL_2_1_PLUS"></a>
+##### `LGPL_2_1_PLUS`<sup>Required</sup> <a name="LGPL_2_1_PLUS" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_2_1_PLUS"></a>
 
 ```typescript
 public readonly LGPL_2_1_PLUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Lesser General Public License v2.1 or later.
 
@@ -8733,13 +8733,13 @@ GNU Lesser General Public License v2.1 or later.
 
 ---
 
-##### `LGPL_3_0`<sup>Required</sup> <a name="LGPL_3_0" id="construct-hub.SpdxLicense.property.LGPL_3_0"></a>
+##### `LGPL_3_0`<sup>Required</sup> <a name="LGPL_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_3_0"></a>
 
 ```typescript
 public readonly LGPL_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Lesser General Public License v3.0 only.
 
@@ -8747,13 +8747,13 @@ GNU Lesser General Public License v3.0 only.
 
 ---
 
-##### `LGPL_3_0_ONLY`<sup>Required</sup> <a name="LGPL_3_0_ONLY" id="construct-hub.SpdxLicense.property.LGPL_3_0_ONLY"></a>
+##### `LGPL_3_0_ONLY`<sup>Required</sup> <a name="LGPL_3_0_ONLY" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_3_0_ONLY"></a>
 
 ```typescript
 public readonly LGPL_3_0_ONLY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Lesser General Public License v3.0 only.
 
@@ -8761,13 +8761,13 @@ GNU Lesser General Public License v3.0 only.
 
 ---
 
-##### `LGPL_3_0_OR_LATER`<sup>Required</sup> <a name="LGPL_3_0_OR_LATER" id="construct-hub.SpdxLicense.property.LGPL_3_0_OR_LATER"></a>
+##### `LGPL_3_0_OR_LATER`<sup>Required</sup> <a name="LGPL_3_0_OR_LATER" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_3_0_OR_LATER"></a>
 
 ```typescript
 public readonly LGPL_3_0_OR_LATER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Lesser General Public License v3.0 or later.
 
@@ -8775,13 +8775,13 @@ GNU Lesser General Public License v3.0 or later.
 
 ---
 
-##### `LGPL_3_0_PLUS`<sup>Required</sup> <a name="LGPL_3_0_PLUS" id="construct-hub.SpdxLicense.property.LGPL_3_0_PLUS"></a>
+##### `LGPL_3_0_PLUS`<sup>Required</sup> <a name="LGPL_3_0_PLUS" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPL_3_0_PLUS"></a>
 
 ```typescript
 public readonly LGPL_3_0_PLUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 GNU Lesser General Public License v3.0 or later.
 
@@ -8789,13 +8789,13 @@ GNU Lesser General Public License v3.0 or later.
 
 ---
 
-##### `LGPLLR`<sup>Required</sup> <a name="LGPLLR" id="construct-hub.SpdxLicense.property.LGPLLR"></a>
+##### `LGPLLR`<sup>Required</sup> <a name="LGPLLR" id="@gd-constructs/construct-hub.SpdxLicense.property.LGPLLR"></a>
 
 ```typescript
 public readonly LGPLLR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Lesser General Public License For Linguistic Resources.
 
@@ -8803,13 +8803,13 @@ Lesser General Public License For Linguistic Resources.
 
 ---
 
-##### `LIBPNG`<sup>Required</sup> <a name="LIBPNG" id="construct-hub.SpdxLicense.property.LIBPNG"></a>
+##### `LIBPNG`<sup>Required</sup> <a name="LIBPNG" id="@gd-constructs/construct-hub.SpdxLicense.property.LIBPNG"></a>
 
 ```typescript
 public readonly LIBPNG: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 libpng License.
 
@@ -8817,13 +8817,13 @@ libpng License.
 
 ---
 
-##### `LIBPNG_2_0`<sup>Required</sup> <a name="LIBPNG_2_0" id="construct-hub.SpdxLicense.property.LIBPNG_2_0"></a>
+##### `LIBPNG_2_0`<sup>Required</sup> <a name="LIBPNG_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.LIBPNG_2_0"></a>
 
 ```typescript
 public readonly LIBPNG_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 PNG Reference Library version 2.
 
@@ -8831,13 +8831,13 @@ PNG Reference Library version 2.
 
 ---
 
-##### `LIBSELINUX_1_0`<sup>Required</sup> <a name="LIBSELINUX_1_0" id="construct-hub.SpdxLicense.property.LIBSELINUX_1_0"></a>
+##### `LIBSELINUX_1_0`<sup>Required</sup> <a name="LIBSELINUX_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.LIBSELINUX_1_0"></a>
 
 ```typescript
 public readonly LIBSELINUX_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 libselinux public domain notice.
 
@@ -8845,13 +8845,13 @@ libselinux public domain notice.
 
 ---
 
-##### `LIBTIFF`<sup>Required</sup> <a name="LIBTIFF" id="construct-hub.SpdxLicense.property.LIBTIFF"></a>
+##### `LIBTIFF`<sup>Required</sup> <a name="LIBTIFF" id="@gd-constructs/construct-hub.SpdxLicense.property.LIBTIFF"></a>
 
 ```typescript
 public readonly LIBTIFF: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 libtiff License.
 
@@ -8859,13 +8859,13 @@ libtiff License.
 
 ---
 
-##### `LIBUTIL_DAVID_NUGENT`<sup>Required</sup> <a name="LIBUTIL_DAVID_NUGENT" id="construct-hub.SpdxLicense.property.LIBUTIL_DAVID_NUGENT"></a>
+##### `LIBUTIL_DAVID_NUGENT`<sup>Required</sup> <a name="LIBUTIL_DAVID_NUGENT" id="@gd-constructs/construct-hub.SpdxLicense.property.LIBUTIL_DAVID_NUGENT"></a>
 
 ```typescript
 public readonly LIBUTIL_DAVID_NUGENT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 libutil David Nugent License.
 
@@ -8873,13 +8873,13 @@ libutil David Nugent License.
 
 ---
 
-##### `LILIQ_P_1_1`<sup>Required</sup> <a name="LILIQ_P_1_1" id="construct-hub.SpdxLicense.property.LILIQ_P_1_1"></a>
+##### `LILIQ_P_1_1`<sup>Required</sup> <a name="LILIQ_P_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.LILIQ_P_1_1"></a>
 
 ```typescript
 public readonly LILIQ_P_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Licence Libre du Québec – Permissive version 1.1.
 
@@ -8887,13 +8887,13 @@ Licence Libre du Québec – Permissive version 1.1.
 
 ---
 
-##### `LILIQ_R_1_1`<sup>Required</sup> <a name="LILIQ_R_1_1" id="construct-hub.SpdxLicense.property.LILIQ_R_1_1"></a>
+##### `LILIQ_R_1_1`<sup>Required</sup> <a name="LILIQ_R_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.LILIQ_R_1_1"></a>
 
 ```typescript
 public readonly LILIQ_R_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Licence Libre du Québec – Réciprocité version 1.1.
 
@@ -8901,13 +8901,13 @@ Licence Libre du Québec – Réciprocité version 1.1.
 
 ---
 
-##### `LILIQ_RPLUS_1_1`<sup>Required</sup> <a name="LILIQ_RPLUS_1_1" id="construct-hub.SpdxLicense.property.LILIQ_RPLUS_1_1"></a>
+##### `LILIQ_RPLUS_1_1`<sup>Required</sup> <a name="LILIQ_RPLUS_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.LILIQ_RPLUS_1_1"></a>
 
 ```typescript
 public readonly LILIQ_RPLUS_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Licence Libre du Québec – Réciprocité forte version 1.1.
 
@@ -8915,13 +8915,13 @@ Licence Libre du Québec – Réciprocité forte version 1.1.
 
 ---
 
-##### `LINUX_MAN_PAGES_1_PARA`<sup>Required</sup> <a name="LINUX_MAN_PAGES_1_PARA" id="construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_1_PARA"></a>
+##### `LINUX_MAN_PAGES_1_PARA`<sup>Required</sup> <a name="LINUX_MAN_PAGES_1_PARA" id="@gd-constructs/construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_1_PARA"></a>
 
 ```typescript
 public readonly LINUX_MAN_PAGES_1_PARA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Linux man-pages - 1 paragraph.
 
@@ -8929,13 +8929,13 @@ Linux man-pages - 1 paragraph.
 
 ---
 
-##### `LINUX_MAN_PAGES_COPYLEFT`<sup>Required</sup> <a name="LINUX_MAN_PAGES_COPYLEFT" id="construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT"></a>
+##### `LINUX_MAN_PAGES_COPYLEFT`<sup>Required</sup> <a name="LINUX_MAN_PAGES_COPYLEFT" id="@gd-constructs/construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT"></a>
 
 ```typescript
 public readonly LINUX_MAN_PAGES_COPYLEFT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Linux man-pages Copyleft.
 
@@ -8943,13 +8943,13 @@ Linux man-pages Copyleft.
 
 ---
 
-##### `LINUX_MAN_PAGES_COPYLEFT_2_PARA`<sup>Required</sup> <a name="LINUX_MAN_PAGES_COPYLEFT_2_PARA" id="construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT_2_PARA"></a>
+##### `LINUX_MAN_PAGES_COPYLEFT_2_PARA`<sup>Required</sup> <a name="LINUX_MAN_PAGES_COPYLEFT_2_PARA" id="@gd-constructs/construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT_2_PARA"></a>
 
 ```typescript
 public readonly LINUX_MAN_PAGES_COPYLEFT_2_PARA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Linux man-pages Copyleft - 2 paragraphs.
 
@@ -8957,13 +8957,13 @@ Linux man-pages Copyleft - 2 paragraphs.
 
 ---
 
-##### `LINUX_MAN_PAGES_COPYLEFT_VAR`<sup>Required</sup> <a name="LINUX_MAN_PAGES_COPYLEFT_VAR" id="construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT_VAR"></a>
+##### `LINUX_MAN_PAGES_COPYLEFT_VAR`<sup>Required</sup> <a name="LINUX_MAN_PAGES_COPYLEFT_VAR" id="@gd-constructs/construct-hub.SpdxLicense.property.LINUX_MAN_PAGES_COPYLEFT_VAR"></a>
 
 ```typescript
 public readonly LINUX_MAN_PAGES_COPYLEFT_VAR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Linux man-pages Copyleft Variant.
 
@@ -8971,13 +8971,13 @@ Linux man-pages Copyleft Variant.
 
 ---
 
-##### `LINUX_OPENIB`<sup>Required</sup> <a name="LINUX_OPENIB" id="construct-hub.SpdxLicense.property.LINUX_OPENIB"></a>
+##### `LINUX_OPENIB`<sup>Required</sup> <a name="LINUX_OPENIB" id="@gd-constructs/construct-hub.SpdxLicense.property.LINUX_OPENIB"></a>
 
 ```typescript
 public readonly LINUX_OPENIB: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Linux Kernel Variant of OpenIB.org license.
 
@@ -8985,13 +8985,13 @@ Linux Kernel Variant of OpenIB.org license.
 
 ---
 
-##### `LOOP`<sup>Required</sup> <a name="LOOP" id="construct-hub.SpdxLicense.property.LOOP"></a>
+##### `LOOP`<sup>Required</sup> <a name="LOOP" id="@gd-constructs/construct-hub.SpdxLicense.property.LOOP"></a>
 
 ```typescript
 public readonly LOOP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Common Lisp LOOP License.
 
@@ -8999,13 +8999,13 @@ Common Lisp LOOP License.
 
 ---
 
-##### `LPD_DOCUMENT`<sup>Required</sup> <a name="LPD_DOCUMENT" id="construct-hub.SpdxLicense.property.LPD_DOCUMENT"></a>
+##### `LPD_DOCUMENT`<sup>Required</sup> <a name="LPD_DOCUMENT" id="@gd-constructs/construct-hub.SpdxLicense.property.LPD_DOCUMENT"></a>
 
 ```typescript
 public readonly LPD_DOCUMENT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 LPD Documentation License.
 
@@ -9013,13 +9013,13 @@ LPD Documentation License.
 
 ---
 
-##### `LPL_1_0`<sup>Required</sup> <a name="LPL_1_0" id="construct-hub.SpdxLicense.property.LPL_1_0"></a>
+##### `LPL_1_0`<sup>Required</sup> <a name="LPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.LPL_1_0"></a>
 
 ```typescript
 public readonly LPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Lucent Public License Version 1.0.
 
@@ -9027,13 +9027,13 @@ Lucent Public License Version 1.0.
 
 ---
 
-##### `LPL_1_02`<sup>Required</sup> <a name="LPL_1_02" id="construct-hub.SpdxLicense.property.LPL_1_02"></a>
+##### `LPL_1_02`<sup>Required</sup> <a name="LPL_1_02" id="@gd-constructs/construct-hub.SpdxLicense.property.LPL_1_02"></a>
 
 ```typescript
 public readonly LPL_1_02: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Lucent Public License v1.02.
 
@@ -9041,13 +9041,13 @@ Lucent Public License v1.02.
 
 ---
 
-##### `LPPL_1_0`<sup>Required</sup> <a name="LPPL_1_0" id="construct-hub.SpdxLicense.property.LPPL_1_0"></a>
+##### `LPPL_1_0`<sup>Required</sup> <a name="LPPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_0"></a>
 
 ```typescript
 public readonly LPPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 LaTeX Project Public License v1.0.
 
@@ -9055,13 +9055,13 @@ LaTeX Project Public License v1.0.
 
 ---
 
-##### `LPPL_1_1`<sup>Required</sup> <a name="LPPL_1_1" id="construct-hub.SpdxLicense.property.LPPL_1_1"></a>
+##### `LPPL_1_1`<sup>Required</sup> <a name="LPPL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_1"></a>
 
 ```typescript
 public readonly LPPL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 LaTeX Project Public License v1.1.
 
@@ -9069,13 +9069,13 @@ LaTeX Project Public License v1.1.
 
 ---
 
-##### `LPPL_1_2`<sup>Required</sup> <a name="LPPL_1_2" id="construct-hub.SpdxLicense.property.LPPL_1_2"></a>
+##### `LPPL_1_2`<sup>Required</sup> <a name="LPPL_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_2"></a>
 
 ```typescript
 public readonly LPPL_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 LaTeX Project Public License v1.2.
 
@@ -9083,13 +9083,13 @@ LaTeX Project Public License v1.2.
 
 ---
 
-##### `LPPL_1_3A`<sup>Required</sup> <a name="LPPL_1_3A" id="construct-hub.SpdxLicense.property.LPPL_1_3A"></a>
+##### `LPPL_1_3A`<sup>Required</sup> <a name="LPPL_1_3A" id="@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_3A"></a>
 
 ```typescript
 public readonly LPPL_1_3A: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 LaTeX Project Public License v1.3a.
 
@@ -9097,13 +9097,13 @@ LaTeX Project Public License v1.3a.
 
 ---
 
-##### `LPPL_1_3C`<sup>Required</sup> <a name="LPPL_1_3C" id="construct-hub.SpdxLicense.property.LPPL_1_3C"></a>
+##### `LPPL_1_3C`<sup>Required</sup> <a name="LPPL_1_3C" id="@gd-constructs/construct-hub.SpdxLicense.property.LPPL_1_3C"></a>
 
 ```typescript
 public readonly LPPL_1_3C: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 LaTeX Project Public License v1.3c.
 
@@ -9111,13 +9111,13 @@ LaTeX Project Public License v1.3c.
 
 ---
 
-##### `LSOF`<sup>Required</sup> <a name="LSOF" id="construct-hub.SpdxLicense.property.LSOF"></a>
+##### `LSOF`<sup>Required</sup> <a name="LSOF" id="@gd-constructs/construct-hub.SpdxLicense.property.LSOF"></a>
 
 ```typescript
 public readonly LSOF: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 lsof License.
 
@@ -9125,13 +9125,13 @@ lsof License.
 
 ---
 
-##### `LUCIDA_BITMAP_FONTS`<sup>Required</sup> <a name="LUCIDA_BITMAP_FONTS" id="construct-hub.SpdxLicense.property.LUCIDA_BITMAP_FONTS"></a>
+##### `LUCIDA_BITMAP_FONTS`<sup>Required</sup> <a name="LUCIDA_BITMAP_FONTS" id="@gd-constructs/construct-hub.SpdxLicense.property.LUCIDA_BITMAP_FONTS"></a>
 
 ```typescript
 public readonly LUCIDA_BITMAP_FONTS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Lucida Bitmap Fonts License.
 
@@ -9139,13 +9139,13 @@ Lucida Bitmap Fonts License.
 
 ---
 
-##### `LZMA_SDK_9_11_TO_9_20`<sup>Required</sup> <a name="LZMA_SDK_9_11_TO_9_20" id="construct-hub.SpdxLicense.property.LZMA_SDK_9_11_TO_9_20"></a>
+##### `LZMA_SDK_9_11_TO_9_20`<sup>Required</sup> <a name="LZMA_SDK_9_11_TO_9_20" id="@gd-constructs/construct-hub.SpdxLicense.property.LZMA_SDK_9_11_TO_9_20"></a>
 
 ```typescript
 public readonly LZMA_SDK_9_11_TO_9_20: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 LZMA SDK License (versions 9.11 to 9.20).
 
@@ -9153,13 +9153,13 @@ LZMA SDK License (versions 9.11 to 9.20).
 
 ---
 
-##### `LZMA_SDK_9_22`<sup>Required</sup> <a name="LZMA_SDK_9_22" id="construct-hub.SpdxLicense.property.LZMA_SDK_9_22"></a>
+##### `LZMA_SDK_9_22`<sup>Required</sup> <a name="LZMA_SDK_9_22" id="@gd-constructs/construct-hub.SpdxLicense.property.LZMA_SDK_9_22"></a>
 
 ```typescript
 public readonly LZMA_SDK_9_22: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 LZMA SDK License (versions 9.22 and beyond).
 
@@ -9167,13 +9167,13 @@ LZMA SDK License (versions 9.22 and beyond).
 
 ---
 
-##### `MACKERRAS_3_CLAUSE`<sup>Required</sup> <a name="MACKERRAS_3_CLAUSE" id="construct-hub.SpdxLicense.property.MACKERRAS_3_CLAUSE"></a>
+##### `MACKERRAS_3_CLAUSE`<sup>Required</sup> <a name="MACKERRAS_3_CLAUSE" id="@gd-constructs/construct-hub.SpdxLicense.property.MACKERRAS_3_CLAUSE"></a>
 
 ```typescript
 public readonly MACKERRAS_3_CLAUSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mackerras 3-Clause License.
 
@@ -9181,13 +9181,13 @@ Mackerras 3-Clause License.
 
 ---
 
-##### `MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT`<sup>Required</sup> <a name="MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT" id="construct-hub.SpdxLicense.property.MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT"></a>
+##### `MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT`<sup>Required</sup> <a name="MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT" id="@gd-constructs/construct-hub.SpdxLicense.property.MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT"></a>
 
 ```typescript
 public readonly MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mackerras 3-Clause - acknowledgment variant.
 
@@ -9195,13 +9195,13 @@ Mackerras 3-Clause - acknowledgment variant.
 
 ---
 
-##### `MAGAZ`<sup>Required</sup> <a name="MAGAZ" id="construct-hub.SpdxLicense.property.MAGAZ"></a>
+##### `MAGAZ`<sup>Required</sup> <a name="MAGAZ" id="@gd-constructs/construct-hub.SpdxLicense.property.MAGAZ"></a>
 
 ```typescript
 public readonly MAGAZ: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 magaz License.
 
@@ -9209,13 +9209,13 @@ magaz License.
 
 ---
 
-##### `MAILPRIO`<sup>Required</sup> <a name="MAILPRIO" id="construct-hub.SpdxLicense.property.MAILPRIO"></a>
+##### `MAILPRIO`<sup>Required</sup> <a name="MAILPRIO" id="@gd-constructs/construct-hub.SpdxLicense.property.MAILPRIO"></a>
 
 ```typescript
 public readonly MAILPRIO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 mailprio License.
 
@@ -9223,13 +9223,13 @@ mailprio License.
 
 ---
 
-##### `MAKE_INDEX`<sup>Required</sup> <a name="MAKE_INDEX" id="construct-hub.SpdxLicense.property.MAKE_INDEX"></a>
+##### `MAKE_INDEX`<sup>Required</sup> <a name="MAKE_INDEX" id="@gd-constructs/construct-hub.SpdxLicense.property.MAKE_INDEX"></a>
 
 ```typescript
 public readonly MAKE_INDEX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MakeIndex License.
 
@@ -9237,13 +9237,13 @@ MakeIndex License.
 
 ---
 
-##### `MARTIN_BIRGMEIER`<sup>Required</sup> <a name="MARTIN_BIRGMEIER" id="construct-hub.SpdxLicense.property.MARTIN_BIRGMEIER"></a>
+##### `MARTIN_BIRGMEIER`<sup>Required</sup> <a name="MARTIN_BIRGMEIER" id="@gd-constructs/construct-hub.SpdxLicense.property.MARTIN_BIRGMEIER"></a>
 
 ```typescript
 public readonly MARTIN_BIRGMEIER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Martin Birgmeier License.
 
@@ -9251,13 +9251,13 @@ Martin Birgmeier License.
 
 ---
 
-##### `MCPHEE_SLIDESHOW`<sup>Required</sup> <a name="MCPHEE_SLIDESHOW" id="construct-hub.SpdxLicense.property.MCPHEE_SLIDESHOW"></a>
+##### `MCPHEE_SLIDESHOW`<sup>Required</sup> <a name="MCPHEE_SLIDESHOW" id="@gd-constructs/construct-hub.SpdxLicense.property.MCPHEE_SLIDESHOW"></a>
 
 ```typescript
 public readonly MCPHEE_SLIDESHOW: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 McPhee Slideshow License.
 
@@ -9265,13 +9265,13 @@ McPhee Slideshow License.
 
 ---
 
-##### `METAMAIL`<sup>Required</sup> <a name="METAMAIL" id="construct-hub.SpdxLicense.property.METAMAIL"></a>
+##### `METAMAIL`<sup>Required</sup> <a name="METAMAIL" id="@gd-constructs/construct-hub.SpdxLicense.property.METAMAIL"></a>
 
 ```typescript
 public readonly METAMAIL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 metamail License.
 
@@ -9279,13 +9279,13 @@ metamail License.
 
 ---
 
-##### `MINPACK`<sup>Required</sup> <a name="MINPACK" id="construct-hub.SpdxLicense.property.MINPACK"></a>
+##### `MINPACK`<sup>Required</sup> <a name="MINPACK" id="@gd-constructs/construct-hub.SpdxLicense.property.MINPACK"></a>
 
 ```typescript
 public readonly MINPACK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Minpack License.
 
@@ -9293,13 +9293,13 @@ Minpack License.
 
 ---
 
-##### `MIR_O_S`<sup>Required</sup> <a name="MIR_O_S" id="construct-hub.SpdxLicense.property.MIR_O_S"></a>
+##### `MIR_O_S`<sup>Required</sup> <a name="MIR_O_S" id="@gd-constructs/construct-hub.SpdxLicense.property.MIR_O_S"></a>
 
 ```typescript
 public readonly MIR_O_S: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 The MirOS Licence.
 
@@ -9307,13 +9307,13 @@ The MirOS Licence.
 
 ---
 
-##### `MIT`<sup>Required</sup> <a name="MIT" id="construct-hub.SpdxLicense.property.MIT"></a>
+##### `MIT`<sup>Required</sup> <a name="MIT" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT"></a>
 
 ```typescript
 public readonly MIT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MIT License.
 
@@ -9321,13 +9321,13 @@ MIT License.
 
 ---
 
-##### `MIT_0`<sup>Required</sup> <a name="MIT_0" id="construct-hub.SpdxLicense.property.MIT_0"></a>
+##### `MIT_0`<sup>Required</sup> <a name="MIT_0" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_0"></a>
 
 ```typescript
 public readonly MIT_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MIT No Attribution.
 
@@ -9335,13 +9335,13 @@ MIT No Attribution.
 
 ---
 
-##### `MIT_ADVERTISING`<sup>Required</sup> <a name="MIT_ADVERTISING" id="construct-hub.SpdxLicense.property.MIT_ADVERTISING"></a>
+##### `MIT_ADVERTISING`<sup>Required</sup> <a name="MIT_ADVERTISING" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_ADVERTISING"></a>
 
 ```typescript
 public readonly MIT_ADVERTISING: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Enlightenment License (e16).
 
@@ -9349,13 +9349,13 @@ Enlightenment License (e16).
 
 ---
 
-##### `MIT_CMU`<sup>Required</sup> <a name="MIT_CMU" id="construct-hub.SpdxLicense.property.MIT_CMU"></a>
+##### `MIT_CMU`<sup>Required</sup> <a name="MIT_CMU" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_CMU"></a>
 
 ```typescript
 public readonly MIT_CMU: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 CMU License.
 
@@ -9363,13 +9363,13 @@ CMU License.
 
 ---
 
-##### `MIT_ENNA`<sup>Required</sup> <a name="MIT_ENNA" id="construct-hub.SpdxLicense.property.MIT_ENNA"></a>
+##### `MIT_ENNA`<sup>Required</sup> <a name="MIT_ENNA" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_ENNA"></a>
 
 ```typescript
 public readonly MIT_ENNA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 enna License.
 
@@ -9377,13 +9377,13 @@ enna License.
 
 ---
 
-##### `MIT_FEH`<sup>Required</sup> <a name="MIT_FEH" id="construct-hub.SpdxLicense.property.MIT_FEH"></a>
+##### `MIT_FEH`<sup>Required</sup> <a name="MIT_FEH" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_FEH"></a>
 
 ```typescript
 public readonly MIT_FEH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 feh License.
 
@@ -9391,13 +9391,13 @@ feh License.
 
 ---
 
-##### `MIT_FESTIVAL`<sup>Required</sup> <a name="MIT_FESTIVAL" id="construct-hub.SpdxLicense.property.MIT_FESTIVAL"></a>
+##### `MIT_FESTIVAL`<sup>Required</sup> <a name="MIT_FESTIVAL" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_FESTIVAL"></a>
 
 ```typescript
 public readonly MIT_FESTIVAL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MIT Festival Variant.
 
@@ -9405,13 +9405,13 @@ MIT Festival Variant.
 
 ---
 
-##### `MIT_MODERN_VARIANT`<sup>Required</sup> <a name="MIT_MODERN_VARIANT" id="construct-hub.SpdxLicense.property.MIT_MODERN_VARIANT"></a>
+##### `MIT_MODERN_VARIANT`<sup>Required</sup> <a name="MIT_MODERN_VARIANT" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_MODERN_VARIANT"></a>
 
 ```typescript
 public readonly MIT_MODERN_VARIANT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MIT License Modern Variant.
 
@@ -9419,13 +9419,13 @@ MIT License Modern Variant.
 
 ---
 
-##### `MIT_OPEN_GROUP`<sup>Required</sup> <a name="MIT_OPEN_GROUP" id="construct-hub.SpdxLicense.property.MIT_OPEN_GROUP"></a>
+##### `MIT_OPEN_GROUP`<sup>Required</sup> <a name="MIT_OPEN_GROUP" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_OPEN_GROUP"></a>
 
 ```typescript
 public readonly MIT_OPEN_GROUP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MIT Open Group variant.
 
@@ -9433,13 +9433,13 @@ MIT Open Group variant.
 
 ---
 
-##### `MIT_TESTREGEX`<sup>Required</sup> <a name="MIT_TESTREGEX" id="construct-hub.SpdxLicense.property.MIT_TESTREGEX"></a>
+##### `MIT_TESTREGEX`<sup>Required</sup> <a name="MIT_TESTREGEX" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_TESTREGEX"></a>
 
 ```typescript
 public readonly MIT_TESTREGEX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MIT testregex Variant.
 
@@ -9447,13 +9447,13 @@ MIT testregex Variant.
 
 ---
 
-##### `MIT_WU`<sup>Required</sup> <a name="MIT_WU" id="construct-hub.SpdxLicense.property.MIT_WU"></a>
+##### `MIT_WU`<sup>Required</sup> <a name="MIT_WU" id="@gd-constructs/construct-hub.SpdxLicense.property.MIT_WU"></a>
 
 ```typescript
 public readonly MIT_WU: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MIT Tom Wu Variant.
 
@@ -9461,13 +9461,13 @@ MIT Tom Wu Variant.
 
 ---
 
-##### `MITNFA`<sup>Required</sup> <a name="MITNFA" id="construct-hub.SpdxLicense.property.MITNFA"></a>
+##### `MITNFA`<sup>Required</sup> <a name="MITNFA" id="@gd-constructs/construct-hub.SpdxLicense.property.MITNFA"></a>
 
 ```typescript
 public readonly MITNFA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MIT +no-false-attribs license.
 
@@ -9475,13 +9475,13 @@ MIT +no-false-attribs license.
 
 ---
 
-##### `MMIXWARE`<sup>Required</sup> <a name="MMIXWARE" id="construct-hub.SpdxLicense.property.MMIXWARE"></a>
+##### `MMIXWARE`<sup>Required</sup> <a name="MMIXWARE" id="@gd-constructs/construct-hub.SpdxLicense.property.MMIXWARE"></a>
 
 ```typescript
 public readonly MMIXWARE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MMIXware License.
 
@@ -9489,13 +9489,13 @@ MMIXware License.
 
 ---
 
-##### `MOTOSOTO`<sup>Required</sup> <a name="MOTOSOTO" id="construct-hub.SpdxLicense.property.MOTOSOTO"></a>
+##### `MOTOSOTO`<sup>Required</sup> <a name="MOTOSOTO" id="@gd-constructs/construct-hub.SpdxLicense.property.MOTOSOTO"></a>
 
 ```typescript
 public readonly MOTOSOTO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Motosoto License.
 
@@ -9503,13 +9503,13 @@ Motosoto License.
 
 ---
 
-##### `MPEG_SSG`<sup>Required</sup> <a name="MPEG_SSG" id="construct-hub.SpdxLicense.property.MPEG_SSG"></a>
+##### `MPEG_SSG`<sup>Required</sup> <a name="MPEG_SSG" id="@gd-constructs/construct-hub.SpdxLicense.property.MPEG_SSG"></a>
 
 ```typescript
 public readonly MPEG_SSG: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 MPEG Software Simulation.
 
@@ -9517,13 +9517,13 @@ MPEG Software Simulation.
 
 ---
 
-##### `MPI_PERMISSIVE`<sup>Required</sup> <a name="MPI_PERMISSIVE" id="construct-hub.SpdxLicense.property.MPI_PERMISSIVE"></a>
+##### `MPI_PERMISSIVE`<sup>Required</sup> <a name="MPI_PERMISSIVE" id="@gd-constructs/construct-hub.SpdxLicense.property.MPI_PERMISSIVE"></a>
 
 ```typescript
 public readonly MPI_PERMISSIVE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 mpi Permissive License.
 
@@ -9531,13 +9531,13 @@ mpi Permissive License.
 
 ---
 
-##### `MPICH2`<sup>Required</sup> <a name="MPICH2" id="construct-hub.SpdxLicense.property.MPICH2"></a>
+##### `MPICH2`<sup>Required</sup> <a name="MPICH2" id="@gd-constructs/construct-hub.SpdxLicense.property.MPICH2"></a>
 
 ```typescript
 public readonly MPICH2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 mpich2 License.
 
@@ -9545,13 +9545,13 @@ mpich2 License.
 
 ---
 
-##### `MPL_1_0`<sup>Required</sup> <a name="MPL_1_0" id="construct-hub.SpdxLicense.property.MPL_1_0"></a>
+##### `MPL_1_0`<sup>Required</sup> <a name="MPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.MPL_1_0"></a>
 
 ```typescript
 public readonly MPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mozilla Public License 1.0.
 
@@ -9559,13 +9559,13 @@ Mozilla Public License 1.0.
 
 ---
 
-##### `MPL_1_1`<sup>Required</sup> <a name="MPL_1_1" id="construct-hub.SpdxLicense.property.MPL_1_1"></a>
+##### `MPL_1_1`<sup>Required</sup> <a name="MPL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.MPL_1_1"></a>
 
 ```typescript
 public readonly MPL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mozilla Public License 1.1.
 
@@ -9573,13 +9573,13 @@ Mozilla Public License 1.1.
 
 ---
 
-##### `MPL_2_0`<sup>Required</sup> <a name="MPL_2_0" id="construct-hub.SpdxLicense.property.MPL_2_0"></a>
+##### `MPL_2_0`<sup>Required</sup> <a name="MPL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.MPL_2_0"></a>
 
 ```typescript
 public readonly MPL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mozilla Public License 2.0.
 
@@ -9587,13 +9587,13 @@ Mozilla Public License 2.0.
 
 ---
 
-##### `MPL_2_0_NO_COPYLEFT_EXCEPTION`<sup>Required</sup> <a name="MPL_2_0_NO_COPYLEFT_EXCEPTION" id="construct-hub.SpdxLicense.property.MPL_2_0_NO_COPYLEFT_EXCEPTION"></a>
+##### `MPL_2_0_NO_COPYLEFT_EXCEPTION`<sup>Required</sup> <a name="MPL_2_0_NO_COPYLEFT_EXCEPTION" id="@gd-constructs/construct-hub.SpdxLicense.property.MPL_2_0_NO_COPYLEFT_EXCEPTION"></a>
 
 ```typescript
 public readonly MPL_2_0_NO_COPYLEFT_EXCEPTION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mozilla Public License 2.0 (no copyleft exception).
 
@@ -9601,13 +9601,13 @@ Mozilla Public License 2.0 (no copyleft exception).
 
 ---
 
-##### `MPLUS`<sup>Required</sup> <a name="MPLUS" id="construct-hub.SpdxLicense.property.MPLUS"></a>
+##### `MPLUS`<sup>Required</sup> <a name="MPLUS" id="@gd-constructs/construct-hub.SpdxLicense.property.MPLUS"></a>
 
 ```typescript
 public readonly MPLUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 mplus Font License.
 
@@ -9615,13 +9615,13 @@ mplus Font License.
 
 ---
 
-##### `MS_LPL`<sup>Required</sup> <a name="MS_LPL" id="construct-hub.SpdxLicense.property.MS_LPL"></a>
+##### `MS_LPL`<sup>Required</sup> <a name="MS_LPL" id="@gd-constructs/construct-hub.SpdxLicense.property.MS_LPL"></a>
 
 ```typescript
 public readonly MS_LPL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Microsoft Limited Public License.
 
@@ -9629,13 +9629,13 @@ Microsoft Limited Public License.
 
 ---
 
-##### `MS_PL`<sup>Required</sup> <a name="MS_PL" id="construct-hub.SpdxLicense.property.MS_PL"></a>
+##### `MS_PL`<sup>Required</sup> <a name="MS_PL" id="@gd-constructs/construct-hub.SpdxLicense.property.MS_PL"></a>
 
 ```typescript
 public readonly MS_PL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Microsoft Public License.
 
@@ -9643,13 +9643,13 @@ Microsoft Public License.
 
 ---
 
-##### `MS_RL`<sup>Required</sup> <a name="MS_RL" id="construct-hub.SpdxLicense.property.MS_RL"></a>
+##### `MS_RL`<sup>Required</sup> <a name="MS_RL" id="@gd-constructs/construct-hub.SpdxLicense.property.MS_RL"></a>
 
 ```typescript
 public readonly MS_RL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Microsoft Reciprocal License.
 
@@ -9657,13 +9657,13 @@ Microsoft Reciprocal License.
 
 ---
 
-##### `MTLL`<sup>Required</sup> <a name="MTLL" id="construct-hub.SpdxLicense.property.MTLL"></a>
+##### `MTLL`<sup>Required</sup> <a name="MTLL" id="@gd-constructs/construct-hub.SpdxLicense.property.MTLL"></a>
 
 ```typescript
 public readonly MTLL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Matrix Template Library License.
 
@@ -9671,13 +9671,13 @@ Matrix Template Library License.
 
 ---
 
-##### `MULANPSL_1_0`<sup>Required</sup> <a name="MULANPSL_1_0" id="construct-hub.SpdxLicense.property.MULANPSL_1_0"></a>
+##### `MULANPSL_1_0`<sup>Required</sup> <a name="MULANPSL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.MULANPSL_1_0"></a>
 
 ```typescript
 public readonly MULANPSL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mulan Permissive Software License, Version 1.
 
@@ -9685,13 +9685,13 @@ Mulan Permissive Software License, Version 1.
 
 ---
 
-##### `MULANPSL_2_0`<sup>Required</sup> <a name="MULANPSL_2_0" id="construct-hub.SpdxLicense.property.MULANPSL_2_0"></a>
+##### `MULANPSL_2_0`<sup>Required</sup> <a name="MULANPSL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.MULANPSL_2_0"></a>
 
 ```typescript
 public readonly MULANPSL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mulan Permissive Software License, Version 2.
 
@@ -9699,13 +9699,13 @@ Mulan Permissive Software License, Version 2.
 
 ---
 
-##### `MULTICS`<sup>Required</sup> <a name="MULTICS" id="construct-hub.SpdxLicense.property.MULTICS"></a>
+##### `MULTICS`<sup>Required</sup> <a name="MULTICS" id="@gd-constructs/construct-hub.SpdxLicense.property.MULTICS"></a>
 
 ```typescript
 public readonly MULTICS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Multics License.
 
@@ -9713,13 +9713,13 @@ Multics License.
 
 ---
 
-##### `MUP`<sup>Required</sup> <a name="MUP" id="construct-hub.SpdxLicense.property.MUP"></a>
+##### `MUP`<sup>Required</sup> <a name="MUP" id="@gd-constructs/construct-hub.SpdxLicense.property.MUP"></a>
 
 ```typescript
 public readonly MUP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Mup License.
 
@@ -9727,13 +9727,13 @@ Mup License.
 
 ---
 
-##### `NAIST_2003`<sup>Required</sup> <a name="NAIST_2003" id="construct-hub.SpdxLicense.property.NAIST_2003"></a>
+##### `NAIST_2003`<sup>Required</sup> <a name="NAIST_2003" id="@gd-constructs/construct-hub.SpdxLicense.property.NAIST_2003"></a>
 
 ```typescript
 public readonly NAIST_2003: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Nara Institute of Science and Technology License (2003).
 
@@ -9741,13 +9741,13 @@ Nara Institute of Science and Technology License (2003).
 
 ---
 
-##### `NASA_1_3`<sup>Required</sup> <a name="NASA_1_3" id="construct-hub.SpdxLicense.property.NASA_1_3"></a>
+##### `NASA_1_3`<sup>Required</sup> <a name="NASA_1_3" id="@gd-constructs/construct-hub.SpdxLicense.property.NASA_1_3"></a>
 
 ```typescript
 public readonly NASA_1_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NASA Open Source Agreement 1.3.
 
@@ -9755,13 +9755,13 @@ NASA Open Source Agreement 1.3.
 
 ---
 
-##### `NAUMEN`<sup>Required</sup> <a name="NAUMEN" id="construct-hub.SpdxLicense.property.NAUMEN"></a>
+##### `NAUMEN`<sup>Required</sup> <a name="NAUMEN" id="@gd-constructs/construct-hub.SpdxLicense.property.NAUMEN"></a>
 
 ```typescript
 public readonly NAUMEN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Naumen Public License.
 
@@ -9769,13 +9769,13 @@ Naumen Public License.
 
 ---
 
-##### `NBPL_1_0`<sup>Required</sup> <a name="NBPL_1_0" id="construct-hub.SpdxLicense.property.NBPL_1_0"></a>
+##### `NBPL_1_0`<sup>Required</sup> <a name="NBPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.NBPL_1_0"></a>
 
 ```typescript
 public readonly NBPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Net Boolean Public License v1.
 
@@ -9783,13 +9783,13 @@ Net Boolean Public License v1.
 
 ---
 
-##### `NCGL_UK_2_0`<sup>Required</sup> <a name="NCGL_UK_2_0" id="construct-hub.SpdxLicense.property.NCGL_UK_2_0"></a>
+##### `NCGL_UK_2_0`<sup>Required</sup> <a name="NCGL_UK_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.NCGL_UK_2_0"></a>
 
 ```typescript
 public readonly NCGL_UK_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Non-Commercial Government Licence.
 
@@ -9797,13 +9797,13 @@ Non-Commercial Government Licence.
 
 ---
 
-##### `NCSA`<sup>Required</sup> <a name="NCSA" id="construct-hub.SpdxLicense.property.NCSA"></a>
+##### `NCSA`<sup>Required</sup> <a name="NCSA" id="@gd-constructs/construct-hub.SpdxLicense.property.NCSA"></a>
 
 ```typescript
 public readonly NCSA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 University of Illinois/NCSA Open Source License.
 
@@ -9811,13 +9811,13 @@ University of Illinois/NCSA Open Source License.
 
 ---
 
-##### `NET_CD_F`<sup>Required</sup> <a name="NET_CD_F" id="construct-hub.SpdxLicense.property.NET_CD_F"></a>
+##### `NET_CD_F`<sup>Required</sup> <a name="NET_CD_F" id="@gd-constructs/construct-hub.SpdxLicense.property.NET_CD_F"></a>
 
 ```typescript
 public readonly NET_CD_F: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NetCDF license.
 
@@ -9825,13 +9825,13 @@ NetCDF license.
 
 ---
 
-##### `NET_SNMP`<sup>Required</sup> <a name="NET_SNMP" id="construct-hub.SpdxLicense.property.NET_SNMP"></a>
+##### `NET_SNMP`<sup>Required</sup> <a name="NET_SNMP" id="@gd-constructs/construct-hub.SpdxLicense.property.NET_SNMP"></a>
 
 ```typescript
 public readonly NET_SNMP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Net-SNMP License.
 
@@ -9839,13 +9839,13 @@ Net-SNMP License.
 
 ---
 
-##### `NEWSLETR`<sup>Required</sup> <a name="NEWSLETR" id="construct-hub.SpdxLicense.property.NEWSLETR"></a>
+##### `NEWSLETR`<sup>Required</sup> <a name="NEWSLETR" id="@gd-constructs/construct-hub.SpdxLicense.property.NEWSLETR"></a>
 
 ```typescript
 public readonly NEWSLETR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Newsletr License.
 
@@ -9853,13 +9853,13 @@ Newsletr License.
 
 ---
 
-##### `NGPL`<sup>Required</sup> <a name="NGPL" id="construct-hub.SpdxLicense.property.NGPL"></a>
+##### `NGPL`<sup>Required</sup> <a name="NGPL" id="@gd-constructs/construct-hub.SpdxLicense.property.NGPL"></a>
 
 ```typescript
 public readonly NGPL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Nethack General Public License.
 
@@ -9867,13 +9867,13 @@ Nethack General Public License.
 
 ---
 
-##### `NICTA_1_0`<sup>Required</sup> <a name="NICTA_1_0" id="construct-hub.SpdxLicense.property.NICTA_1_0"></a>
+##### `NICTA_1_0`<sup>Required</sup> <a name="NICTA_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.NICTA_1_0"></a>
 
 ```typescript
 public readonly NICTA_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NICTA Public Software License, Version 1.0.
 
@@ -9881,13 +9881,13 @@ NICTA Public Software License, Version 1.0.
 
 ---
 
-##### `NIST_PD`<sup>Required</sup> <a name="NIST_PD" id="construct-hub.SpdxLicense.property.NIST_PD"></a>
+##### `NIST_PD`<sup>Required</sup> <a name="NIST_PD" id="@gd-constructs/construct-hub.SpdxLicense.property.NIST_PD"></a>
 
 ```typescript
 public readonly NIST_PD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NIST Public Domain Notice.
 
@@ -9895,13 +9895,13 @@ NIST Public Domain Notice.
 
 ---
 
-##### `NIST_PD_FALLBACK`<sup>Required</sup> <a name="NIST_PD_FALLBACK" id="construct-hub.SpdxLicense.property.NIST_PD_FALLBACK"></a>
+##### `NIST_PD_FALLBACK`<sup>Required</sup> <a name="NIST_PD_FALLBACK" id="@gd-constructs/construct-hub.SpdxLicense.property.NIST_PD_FALLBACK"></a>
 
 ```typescript
 public readonly NIST_PD_FALLBACK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NIST Public Domain Notice with license fallback.
 
@@ -9909,13 +9909,13 @@ NIST Public Domain Notice with license fallback.
 
 ---
 
-##### `NIST_SOFTWARE`<sup>Required</sup> <a name="NIST_SOFTWARE" id="construct-hub.SpdxLicense.property.NIST_SOFTWARE"></a>
+##### `NIST_SOFTWARE`<sup>Required</sup> <a name="NIST_SOFTWARE" id="@gd-constructs/construct-hub.SpdxLicense.property.NIST_SOFTWARE"></a>
 
 ```typescript
 public readonly NIST_SOFTWARE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NIST Software License.
 
@@ -9923,13 +9923,13 @@ NIST Software License.
 
 ---
 
-##### `NLOD_1_0`<sup>Required</sup> <a name="NLOD_1_0" id="construct-hub.SpdxLicense.property.NLOD_1_0"></a>
+##### `NLOD_1_0`<sup>Required</sup> <a name="NLOD_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.NLOD_1_0"></a>
 
 ```typescript
 public readonly NLOD_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Norwegian Licence for Open Government Data (NLOD) 1.0.
 
@@ -9937,13 +9937,13 @@ Norwegian Licence for Open Government Data (NLOD) 1.0.
 
 ---
 
-##### `NLOD_2_0`<sup>Required</sup> <a name="NLOD_2_0" id="construct-hub.SpdxLicense.property.NLOD_2_0"></a>
+##### `NLOD_2_0`<sup>Required</sup> <a name="NLOD_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.NLOD_2_0"></a>
 
 ```typescript
 public readonly NLOD_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Norwegian Licence for Open Government Data (NLOD) 2.0.
 
@@ -9951,13 +9951,13 @@ Norwegian Licence for Open Government Data (NLOD) 2.0.
 
 ---
 
-##### `NLPL`<sup>Required</sup> <a name="NLPL" id="construct-hub.SpdxLicense.property.NLPL"></a>
+##### `NLPL`<sup>Required</sup> <a name="NLPL" id="@gd-constructs/construct-hub.SpdxLicense.property.NLPL"></a>
 
 ```typescript
 public readonly NLPL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 No Limit Public License.
 
@@ -9965,13 +9965,13 @@ No Limit Public License.
 
 ---
 
-##### `NOKIA`<sup>Required</sup> <a name="NOKIA" id="construct-hub.SpdxLicense.property.NOKIA"></a>
+##### `NOKIA`<sup>Required</sup> <a name="NOKIA" id="@gd-constructs/construct-hub.SpdxLicense.property.NOKIA"></a>
 
 ```typescript
 public readonly NOKIA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Nokia Open Source License.
 
@@ -9979,13 +9979,13 @@ Nokia Open Source License.
 
 ---
 
-##### `NOSL`<sup>Required</sup> <a name="NOSL" id="construct-hub.SpdxLicense.property.NOSL"></a>
+##### `NOSL`<sup>Required</sup> <a name="NOSL" id="@gd-constructs/construct-hub.SpdxLicense.property.NOSL"></a>
 
 ```typescript
 public readonly NOSL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Netizen Open Source License.
 
@@ -9993,13 +9993,13 @@ Netizen Open Source License.
 
 ---
 
-##### `NOWEB`<sup>Required</sup> <a name="NOWEB" id="construct-hub.SpdxLicense.property.NOWEB"></a>
+##### `NOWEB`<sup>Required</sup> <a name="NOWEB" id="@gd-constructs/construct-hub.SpdxLicense.property.NOWEB"></a>
 
 ```typescript
 public readonly NOWEB: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Noweb License.
 
@@ -10007,13 +10007,13 @@ Noweb License.
 
 ---
 
-##### `NPL_1_0`<sup>Required</sup> <a name="NPL_1_0" id="construct-hub.SpdxLicense.property.NPL_1_0"></a>
+##### `NPL_1_0`<sup>Required</sup> <a name="NPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.NPL_1_0"></a>
 
 ```typescript
 public readonly NPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Netscape Public License v1.0.
 
@@ -10021,13 +10021,13 @@ Netscape Public License v1.0.
 
 ---
 
-##### `NPL_1_1`<sup>Required</sup> <a name="NPL_1_1" id="construct-hub.SpdxLicense.property.NPL_1_1"></a>
+##### `NPL_1_1`<sup>Required</sup> <a name="NPL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.NPL_1_1"></a>
 
 ```typescript
 public readonly NPL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Netscape Public License v1.1.
 
@@ -10035,13 +10035,13 @@ Netscape Public License v1.1.
 
 ---
 
-##### `NPOSL_3_0`<sup>Required</sup> <a name="NPOSL_3_0" id="construct-hub.SpdxLicense.property.NPOSL_3_0"></a>
+##### `NPOSL_3_0`<sup>Required</sup> <a name="NPOSL_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.NPOSL_3_0"></a>
 
 ```typescript
 public readonly NPOSL_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Non-Profit Open Software License 3.0.
 
@@ -10049,13 +10049,13 @@ Non-Profit Open Software License 3.0.
 
 ---
 
-##### `NRL`<sup>Required</sup> <a name="NRL" id="construct-hub.SpdxLicense.property.NRL"></a>
+##### `NRL`<sup>Required</sup> <a name="NRL" id="@gd-constructs/construct-hub.SpdxLicense.property.NRL"></a>
 
 ```typescript
 public readonly NRL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NRL License.
 
@@ -10063,13 +10063,13 @@ NRL License.
 
 ---
 
-##### `NTP`<sup>Required</sup> <a name="NTP" id="construct-hub.SpdxLicense.property.NTP"></a>
+##### `NTP`<sup>Required</sup> <a name="NTP" id="@gd-constructs/construct-hub.SpdxLicense.property.NTP"></a>
 
 ```typescript
 public readonly NTP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NTP License.
 
@@ -10077,13 +10077,13 @@ NTP License.
 
 ---
 
-##### `NTP_0`<sup>Required</sup> <a name="NTP_0" id="construct-hub.SpdxLicense.property.NTP_0"></a>
+##### `NTP_0`<sup>Required</sup> <a name="NTP_0" id="@gd-constructs/construct-hub.SpdxLicense.property.NTP_0"></a>
 
 ```typescript
 public readonly NTP_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 NTP No Attribution.
 
@@ -10091,13 +10091,13 @@ NTP No Attribution.
 
 ---
 
-##### `NUNIT`<sup>Required</sup> <a name="NUNIT" id="construct-hub.SpdxLicense.property.NUNIT"></a>
+##### `NUNIT`<sup>Required</sup> <a name="NUNIT" id="@gd-constructs/construct-hub.SpdxLicense.property.NUNIT"></a>
 
 ```typescript
 public readonly NUNIT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Nunit License.
 
@@ -10105,13 +10105,13 @@ Nunit License.
 
 ---
 
-##### `O_UDA_1_0`<sup>Required</sup> <a name="O_UDA_1_0" id="construct-hub.SpdxLicense.property.O_UDA_1_0"></a>
+##### `O_UDA_1_0`<sup>Required</sup> <a name="O_UDA_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.O_UDA_1_0"></a>
 
 ```typescript
 public readonly O_UDA_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Use of Data Agreement v1.0.
 
@@ -10119,13 +10119,13 @@ Open Use of Data Agreement v1.0.
 
 ---
 
-##### `OCCT_PL`<sup>Required</sup> <a name="OCCT_PL" id="construct-hub.SpdxLicense.property.OCCT_PL"></a>
+##### `OCCT_PL`<sup>Required</sup> <a name="OCCT_PL" id="@gd-constructs/construct-hub.SpdxLicense.property.OCCT_PL"></a>
 
 ```typescript
 public readonly OCCT_PL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open CASCADE Technology Public License.
 
@@ -10133,13 +10133,13 @@ Open CASCADE Technology Public License.
 
 ---
 
-##### `OCLC_2_0`<sup>Required</sup> <a name="OCLC_2_0" id="construct-hub.SpdxLicense.property.OCLC_2_0"></a>
+##### `OCLC_2_0`<sup>Required</sup> <a name="OCLC_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OCLC_2_0"></a>
 
 ```typescript
 public readonly OCLC_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 OCLC Research Public License 2.0.
 
@@ -10147,13 +10147,13 @@ OCLC Research Public License 2.0.
 
 ---
 
-##### `ODBL_1_0`<sup>Required</sup> <a name="ODBL_1_0" id="construct-hub.SpdxLicense.property.ODBL_1_0"></a>
+##### `ODBL_1_0`<sup>Required</sup> <a name="ODBL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ODBL_1_0"></a>
 
 ```typescript
 public readonly ODBL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Data Commons Open Database License v1.0.
 
@@ -10161,13 +10161,13 @@ Open Data Commons Open Database License v1.0.
 
 ---
 
-##### `ODC_BY_1_0`<sup>Required</sup> <a name="ODC_BY_1_0" id="construct-hub.SpdxLicense.property.ODC_BY_1_0"></a>
+##### `ODC_BY_1_0`<sup>Required</sup> <a name="ODC_BY_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ODC_BY_1_0"></a>
 
 ```typescript
 public readonly ODC_BY_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Data Commons Attribution License v1.0.
 
@@ -10175,13 +10175,13 @@ Open Data Commons Attribution License v1.0.
 
 ---
 
-##### `OFFIS`<sup>Required</sup> <a name="OFFIS" id="construct-hub.SpdxLicense.property.OFFIS"></a>
+##### `OFFIS`<sup>Required</sup> <a name="OFFIS" id="@gd-constructs/construct-hub.SpdxLicense.property.OFFIS"></a>
 
 ```typescript
 public readonly OFFIS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 OFFIS License.
 
@@ -10189,13 +10189,13 @@ OFFIS License.
 
 ---
 
-##### `OFL_1_0`<sup>Required</sup> <a name="OFL_1_0" id="construct-hub.SpdxLicense.property.OFL_1_0"></a>
+##### `OFL_1_0`<sup>Required</sup> <a name="OFL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_0"></a>
 
 ```typescript
 public readonly OFL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SIL Open Font License 1.0.
 
@@ -10203,13 +10203,13 @@ SIL Open Font License 1.0.
 
 ---
 
-##### `OFL_1_0_NO_RFN`<sup>Required</sup> <a name="OFL_1_0_NO_RFN" id="construct-hub.SpdxLicense.property.OFL_1_0_NO_RFN"></a>
+##### `OFL_1_0_NO_RFN`<sup>Required</sup> <a name="OFL_1_0_NO_RFN" id="@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_0_NO_RFN"></a>
 
 ```typescript
 public readonly OFL_1_0_NO_RFN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SIL Open Font License 1.0 with no Reserved Font Name.
 
@@ -10217,13 +10217,13 @@ SIL Open Font License 1.0 with no Reserved Font Name.
 
 ---
 
-##### `OFL_1_0_RFN`<sup>Required</sup> <a name="OFL_1_0_RFN" id="construct-hub.SpdxLicense.property.OFL_1_0_RFN"></a>
+##### `OFL_1_0_RFN`<sup>Required</sup> <a name="OFL_1_0_RFN" id="@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_0_RFN"></a>
 
 ```typescript
 public readonly OFL_1_0_RFN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SIL Open Font License 1.0 with Reserved Font Name.
 
@@ -10231,13 +10231,13 @@ SIL Open Font License 1.0 with Reserved Font Name.
 
 ---
 
-##### `OFL_1_1`<sup>Required</sup> <a name="OFL_1_1" id="construct-hub.SpdxLicense.property.OFL_1_1"></a>
+##### `OFL_1_1`<sup>Required</sup> <a name="OFL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_1"></a>
 
 ```typescript
 public readonly OFL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SIL Open Font License 1.1.
 
@@ -10245,13 +10245,13 @@ SIL Open Font License 1.1.
 
 ---
 
-##### `OFL_1_1_NO_RFN`<sup>Required</sup> <a name="OFL_1_1_NO_RFN" id="construct-hub.SpdxLicense.property.OFL_1_1_NO_RFN"></a>
+##### `OFL_1_1_NO_RFN`<sup>Required</sup> <a name="OFL_1_1_NO_RFN" id="@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_1_NO_RFN"></a>
 
 ```typescript
 public readonly OFL_1_1_NO_RFN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SIL Open Font License 1.1 with no Reserved Font Name.
 
@@ -10259,13 +10259,13 @@ SIL Open Font License 1.1 with no Reserved Font Name.
 
 ---
 
-##### `OFL_1_1_RFN`<sup>Required</sup> <a name="OFL_1_1_RFN" id="construct-hub.SpdxLicense.property.OFL_1_1_RFN"></a>
+##### `OFL_1_1_RFN`<sup>Required</sup> <a name="OFL_1_1_RFN" id="@gd-constructs/construct-hub.SpdxLicense.property.OFL_1_1_RFN"></a>
 
 ```typescript
 public readonly OFL_1_1_RFN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SIL Open Font License 1.1 with Reserved Font Name.
 
@@ -10273,13 +10273,13 @@ SIL Open Font License 1.1 with Reserved Font Name.
 
 ---
 
-##### `OGC_1_0`<sup>Required</sup> <a name="OGC_1_0" id="construct-hub.SpdxLicense.property.OGC_1_0"></a>
+##### `OGC_1_0`<sup>Required</sup> <a name="OGC_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OGC_1_0"></a>
 
 ```typescript
 public readonly OGC_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 OGC Software License, Version 1.0.
 
@@ -10287,13 +10287,13 @@ OGC Software License, Version 1.0.
 
 ---
 
-##### `OGDL_TAIWAN_1_0`<sup>Required</sup> <a name="OGDL_TAIWAN_1_0" id="construct-hub.SpdxLicense.property.OGDL_TAIWAN_1_0"></a>
+##### `OGDL_TAIWAN_1_0`<sup>Required</sup> <a name="OGDL_TAIWAN_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OGDL_TAIWAN_1_0"></a>
 
 ```typescript
 public readonly OGDL_TAIWAN_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Taiwan Open Government Data License, version 1.0.
 
@@ -10301,13 +10301,13 @@ Taiwan Open Government Data License, version 1.0.
 
 ---
 
-##### `OGL_CANADA_2_0`<sup>Required</sup> <a name="OGL_CANADA_2_0" id="construct-hub.SpdxLicense.property.OGL_CANADA_2_0"></a>
+##### `OGL_CANADA_2_0`<sup>Required</sup> <a name="OGL_CANADA_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OGL_CANADA_2_0"></a>
 
 ```typescript
 public readonly OGL_CANADA_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Government Licence - Canada.
 
@@ -10315,13 +10315,13 @@ Open Government Licence - Canada.
 
 ---
 
-##### `OGL_UK_1_0`<sup>Required</sup> <a name="OGL_UK_1_0" id="construct-hub.SpdxLicense.property.OGL_UK_1_0"></a>
+##### `OGL_UK_1_0`<sup>Required</sup> <a name="OGL_UK_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OGL_UK_1_0"></a>
 
 ```typescript
 public readonly OGL_UK_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Government Licence v1.0.
 
@@ -10329,13 +10329,13 @@ Open Government Licence v1.0.
 
 ---
 
-##### `OGL_UK_2_0`<sup>Required</sup> <a name="OGL_UK_2_0" id="construct-hub.SpdxLicense.property.OGL_UK_2_0"></a>
+##### `OGL_UK_2_0`<sup>Required</sup> <a name="OGL_UK_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OGL_UK_2_0"></a>
 
 ```typescript
 public readonly OGL_UK_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Government Licence v2.0.
 
@@ -10343,13 +10343,13 @@ Open Government Licence v2.0.
 
 ---
 
-##### `OGL_UK_3_0`<sup>Required</sup> <a name="OGL_UK_3_0" id="construct-hub.SpdxLicense.property.OGL_UK_3_0"></a>
+##### `OGL_UK_3_0`<sup>Required</sup> <a name="OGL_UK_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OGL_UK_3_0"></a>
 
 ```typescript
 public readonly OGL_UK_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Government Licence v3.0.
 
@@ -10357,13 +10357,13 @@ Open Government Licence v3.0.
 
 ---
 
-##### `OGTSL`<sup>Required</sup> <a name="OGTSL" id="construct-hub.SpdxLicense.property.OGTSL"></a>
+##### `OGTSL`<sup>Required</sup> <a name="OGTSL" id="@gd-constructs/construct-hub.SpdxLicense.property.OGTSL"></a>
 
 ```typescript
 public readonly OGTSL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Group Test Suite License.
 
@@ -10371,13 +10371,13 @@ Open Group Test Suite License.
 
 ---
 
-##### `OLDAP_1_1`<sup>Required</sup> <a name="OLDAP_1_1" id="construct-hub.SpdxLicense.property.OLDAP_1_1"></a>
+##### `OLDAP_1_1`<sup>Required</sup> <a name="OLDAP_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_1_1"></a>
 
 ```typescript
 public readonly OLDAP_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v1.1.
 
@@ -10385,13 +10385,13 @@ Open LDAP Public License v1.1.
 
 ---
 
-##### `OLDAP_1_2`<sup>Required</sup> <a name="OLDAP_1_2" id="construct-hub.SpdxLicense.property.OLDAP_1_2"></a>
+##### `OLDAP_1_2`<sup>Required</sup> <a name="OLDAP_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_1_2"></a>
 
 ```typescript
 public readonly OLDAP_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v1.2.
 
@@ -10399,13 +10399,13 @@ Open LDAP Public License v1.2.
 
 ---
 
-##### `OLDAP_1_3`<sup>Required</sup> <a name="OLDAP_1_3" id="construct-hub.SpdxLicense.property.OLDAP_1_3"></a>
+##### `OLDAP_1_3`<sup>Required</sup> <a name="OLDAP_1_3" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_1_3"></a>
 
 ```typescript
 public readonly OLDAP_1_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v1.3.
 
@@ -10413,13 +10413,13 @@ Open LDAP Public License v1.3.
 
 ---
 
-##### `OLDAP_1_4`<sup>Required</sup> <a name="OLDAP_1_4" id="construct-hub.SpdxLicense.property.OLDAP_1_4"></a>
+##### `OLDAP_1_4`<sup>Required</sup> <a name="OLDAP_1_4" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_1_4"></a>
 
 ```typescript
 public readonly OLDAP_1_4: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v1.4.
 
@@ -10427,13 +10427,13 @@ Open LDAP Public License v1.4.
 
 ---
 
-##### `OLDAP_2_0`<sup>Required</sup> <a name="OLDAP_2_0" id="construct-hub.SpdxLicense.property.OLDAP_2_0"></a>
+##### `OLDAP_2_0`<sup>Required</sup> <a name="OLDAP_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_0"></a>
 
 ```typescript
 public readonly OLDAP_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.0 (or possibly 2.0A and 2.0B).
 
@@ -10441,13 +10441,13 @@ Open LDAP Public License v2.0 (or possibly 2.0A and 2.0B).
 
 ---
 
-##### `OLDAP_2_0_1`<sup>Required</sup> <a name="OLDAP_2_0_1" id="construct-hub.SpdxLicense.property.OLDAP_2_0_1"></a>
+##### `OLDAP_2_0_1`<sup>Required</sup> <a name="OLDAP_2_0_1" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_0_1"></a>
 
 ```typescript
 public readonly OLDAP_2_0_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.0.1.
 
@@ -10455,13 +10455,13 @@ Open LDAP Public License v2.0.1.
 
 ---
 
-##### `OLDAP_2_1`<sup>Required</sup> <a name="OLDAP_2_1" id="construct-hub.SpdxLicense.property.OLDAP_2_1"></a>
+##### `OLDAP_2_1`<sup>Required</sup> <a name="OLDAP_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_1"></a>
 
 ```typescript
 public readonly OLDAP_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.1.
 
@@ -10469,13 +10469,13 @@ Open LDAP Public License v2.1.
 
 ---
 
-##### `OLDAP_2_2`<sup>Required</sup> <a name="OLDAP_2_2" id="construct-hub.SpdxLicense.property.OLDAP_2_2"></a>
+##### `OLDAP_2_2`<sup>Required</sup> <a name="OLDAP_2_2" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_2"></a>
 
 ```typescript
 public readonly OLDAP_2_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.2.
 
@@ -10483,13 +10483,13 @@ Open LDAP Public License v2.2.
 
 ---
 
-##### `OLDAP_2_2_1`<sup>Required</sup> <a name="OLDAP_2_2_1" id="construct-hub.SpdxLicense.property.OLDAP_2_2_1"></a>
+##### `OLDAP_2_2_1`<sup>Required</sup> <a name="OLDAP_2_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_2_1"></a>
 
 ```typescript
 public readonly OLDAP_2_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.2.1.
 
@@ -10497,13 +10497,13 @@ Open LDAP Public License v2.2.1.
 
 ---
 
-##### `OLDAP_2_2_2`<sup>Required</sup> <a name="OLDAP_2_2_2" id="construct-hub.SpdxLicense.property.OLDAP_2_2_2"></a>
+##### `OLDAP_2_2_2`<sup>Required</sup> <a name="OLDAP_2_2_2" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_2_2"></a>
 
 ```typescript
 public readonly OLDAP_2_2_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License 2.2.2.
 
@@ -10511,13 +10511,13 @@ Open LDAP Public License 2.2.2.
 
 ---
 
-##### `OLDAP_2_3`<sup>Required</sup> <a name="OLDAP_2_3" id="construct-hub.SpdxLicense.property.OLDAP_2_3"></a>
+##### `OLDAP_2_3`<sup>Required</sup> <a name="OLDAP_2_3" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_3"></a>
 
 ```typescript
 public readonly OLDAP_2_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.3.
 
@@ -10525,13 +10525,13 @@ Open LDAP Public License v2.3.
 
 ---
 
-##### `OLDAP_2_4`<sup>Required</sup> <a name="OLDAP_2_4" id="construct-hub.SpdxLicense.property.OLDAP_2_4"></a>
+##### `OLDAP_2_4`<sup>Required</sup> <a name="OLDAP_2_4" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_4"></a>
 
 ```typescript
 public readonly OLDAP_2_4: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.4.
 
@@ -10539,13 +10539,13 @@ Open LDAP Public License v2.4.
 
 ---
 
-##### `OLDAP_2_5`<sup>Required</sup> <a name="OLDAP_2_5" id="construct-hub.SpdxLicense.property.OLDAP_2_5"></a>
+##### `OLDAP_2_5`<sup>Required</sup> <a name="OLDAP_2_5" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_5"></a>
 
 ```typescript
 public readonly OLDAP_2_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.5.
 
@@ -10553,13 +10553,13 @@ Open LDAP Public License v2.5.
 
 ---
 
-##### `OLDAP_2_6`<sup>Required</sup> <a name="OLDAP_2_6" id="construct-hub.SpdxLicense.property.OLDAP_2_6"></a>
+##### `OLDAP_2_6`<sup>Required</sup> <a name="OLDAP_2_6" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_6"></a>
 
 ```typescript
 public readonly OLDAP_2_6: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.6.
 
@@ -10567,13 +10567,13 @@ Open LDAP Public License v2.6.
 
 ---
 
-##### `OLDAP_2_7`<sup>Required</sup> <a name="OLDAP_2_7" id="construct-hub.SpdxLicense.property.OLDAP_2_7"></a>
+##### `OLDAP_2_7`<sup>Required</sup> <a name="OLDAP_2_7" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_7"></a>
 
 ```typescript
 public readonly OLDAP_2_7: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.7.
 
@@ -10581,13 +10581,13 @@ Open LDAP Public License v2.7.
 
 ---
 
-##### `OLDAP_2_8`<sup>Required</sup> <a name="OLDAP_2_8" id="construct-hub.SpdxLicense.property.OLDAP_2_8"></a>
+##### `OLDAP_2_8`<sup>Required</sup> <a name="OLDAP_2_8" id="@gd-constructs/construct-hub.SpdxLicense.property.OLDAP_2_8"></a>
 
 ```typescript
 public readonly OLDAP_2_8: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open LDAP Public License v2.8.
 
@@ -10595,13 +10595,13 @@ Open LDAP Public License v2.8.
 
 ---
 
-##### `OLFL_1_3`<sup>Required</sup> <a name="OLFL_1_3" id="construct-hub.SpdxLicense.property.OLFL_1_3"></a>
+##### `OLFL_1_3`<sup>Required</sup> <a name="OLFL_1_3" id="@gd-constructs/construct-hub.SpdxLicense.property.OLFL_1_3"></a>
 
 ```typescript
 public readonly OLFL_1_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Logistics Foundation License Version 1.3.
 
@@ -10609,13 +10609,13 @@ Open Logistics Foundation License Version 1.3.
 
 ---
 
-##### `OML`<sup>Required</sup> <a name="OML" id="construct-hub.SpdxLicense.property.OML"></a>
+##### `OML`<sup>Required</sup> <a name="OML" id="@gd-constructs/construct-hub.SpdxLicense.property.OML"></a>
 
 ```typescript
 public readonly OML: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Market License.
 
@@ -10623,13 +10623,13 @@ Open Market License.
 
 ---
 
-##### `OPEN_SS_L`<sup>Required</sup> <a name="OPEN_SS_L" id="construct-hub.SpdxLicense.property.OPEN_SS_L"></a>
+##### `OPEN_SS_L`<sup>Required</sup> <a name="OPEN_SS_L" id="@gd-constructs/construct-hub.SpdxLicense.property.OPEN_SS_L"></a>
 
 ```typescript
 public readonly OPEN_SS_L: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 OpenSSL License.
 
@@ -10637,13 +10637,13 @@ OpenSSL License.
 
 ---
 
-##### `OPEN_VISION`<sup>Required</sup> <a name="OPEN_VISION" id="construct-hub.SpdxLicense.property.OPEN_VISION"></a>
+##### `OPEN_VISION`<sup>Required</sup> <a name="OPEN_VISION" id="@gd-constructs/construct-hub.SpdxLicense.property.OPEN_VISION"></a>
 
 ```typescript
 public readonly OPEN_VISION: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 OpenVision License.
 
@@ -10651,13 +10651,13 @@ OpenVision License.
 
 ---
 
-##### `OPENPBS_2_3`<sup>Required</sup> <a name="OPENPBS_2_3" id="construct-hub.SpdxLicense.property.OPENPBS_2_3"></a>
+##### `OPENPBS_2_3`<sup>Required</sup> <a name="OPENPBS_2_3" id="@gd-constructs/construct-hub.SpdxLicense.property.OPENPBS_2_3"></a>
 
 ```typescript
 public readonly OPENPBS_2_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 OpenPBS v2.3 Software License.
 
@@ -10665,13 +10665,13 @@ OpenPBS v2.3 Software License.
 
 ---
 
-##### `OPENSSL_STANDALONE`<sup>Required</sup> <a name="OPENSSL_STANDALONE" id="construct-hub.SpdxLicense.property.OPENSSL_STANDALONE"></a>
+##### `OPENSSL_STANDALONE`<sup>Required</sup> <a name="OPENSSL_STANDALONE" id="@gd-constructs/construct-hub.SpdxLicense.property.OPENSSL_STANDALONE"></a>
 
 ```typescript
 public readonly OPENSSL_STANDALONE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 OpenSSL License - standalone.
 
@@ -10679,13 +10679,13 @@ OpenSSL License - standalone.
 
 ---
 
-##### `OPL_1_0`<sup>Required</sup> <a name="OPL_1_0" id="construct-hub.SpdxLicense.property.OPL_1_0"></a>
+##### `OPL_1_0`<sup>Required</sup> <a name="OPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OPL_1_0"></a>
 
 ```typescript
 public readonly OPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Public License v1.0.
 
@@ -10693,13 +10693,13 @@ Open Public License v1.0.
 
 ---
 
-##### `OPL_UK_3_0`<sup>Required</sup> <a name="OPL_UK_3_0" id="construct-hub.SpdxLicense.property.OPL_UK_3_0"></a>
+##### `OPL_UK_3_0`<sup>Required</sup> <a name="OPL_UK_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OPL_UK_3_0"></a>
 
 ```typescript
 public readonly OPL_UK_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 United    Kingdom Open Parliament Licence v3.0.
 
@@ -10707,13 +10707,13 @@ United    Kingdom Open Parliament Licence v3.0.
 
 ---
 
-##### `OPUBL_1_0`<sup>Required</sup> <a name="OPUBL_1_0" id="construct-hub.SpdxLicense.property.OPUBL_1_0"></a>
+##### `OPUBL_1_0`<sup>Required</sup> <a name="OPUBL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OPUBL_1_0"></a>
 
 ```typescript
 public readonly OPUBL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Publication License v1.0.
 
@@ -10721,13 +10721,13 @@ Open Publication License v1.0.
 
 ---
 
-##### `OSET_PL_2_1`<sup>Required</sup> <a name="OSET_PL_2_1" id="construct-hub.SpdxLicense.property.OSET_PL_2_1"></a>
+##### `OSET_PL_2_1`<sup>Required</sup> <a name="OSET_PL_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.OSET_PL_2_1"></a>
 
 ```typescript
 public readonly OSET_PL_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 OSET Public License version 2.1.
 
@@ -10735,13 +10735,13 @@ OSET Public License version 2.1.
 
 ---
 
-##### `OSL_1_0`<sup>Required</sup> <a name="OSL_1_0" id="construct-hub.SpdxLicense.property.OSL_1_0"></a>
+##### `OSL_1_0`<sup>Required</sup> <a name="OSL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OSL_1_0"></a>
 
 ```typescript
 public readonly OSL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Software License 1.0.
 
@@ -10749,13 +10749,13 @@ Open Software License 1.0.
 
 ---
 
-##### `OSL_1_1`<sup>Required</sup> <a name="OSL_1_1" id="construct-hub.SpdxLicense.property.OSL_1_1"></a>
+##### `OSL_1_1`<sup>Required</sup> <a name="OSL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.OSL_1_1"></a>
 
 ```typescript
 public readonly OSL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Software License 1.1.
 
@@ -10763,13 +10763,13 @@ Open Software License 1.1.
 
 ---
 
-##### `OSL_2_0`<sup>Required</sup> <a name="OSL_2_0" id="construct-hub.SpdxLicense.property.OSL_2_0"></a>
+##### `OSL_2_0`<sup>Required</sup> <a name="OSL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OSL_2_0"></a>
 
 ```typescript
 public readonly OSL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Software License 2.0.
 
@@ -10777,13 +10777,13 @@ Open Software License 2.0.
 
 ---
 
-##### `OSL_2_1`<sup>Required</sup> <a name="OSL_2_1" id="construct-hub.SpdxLicense.property.OSL_2_1"></a>
+##### `OSL_2_1`<sup>Required</sup> <a name="OSL_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.OSL_2_1"></a>
 
 ```typescript
 public readonly OSL_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Software License 2.1.
 
@@ -10791,13 +10791,13 @@ Open Software License 2.1.
 
 ---
 
-##### `OSL_3_0`<sup>Required</sup> <a name="OSL_3_0" id="construct-hub.SpdxLicense.property.OSL_3_0"></a>
+##### `OSL_3_0`<sup>Required</sup> <a name="OSL_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.OSL_3_0"></a>
 
 ```typescript
 public readonly OSL_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Software License 3.0.
 
@@ -10805,13 +10805,13 @@ Open Software License 3.0.
 
 ---
 
-##### `PADL`<sup>Required</sup> <a name="PADL" id="construct-hub.SpdxLicense.property.PADL"></a>
+##### `PADL`<sup>Required</sup> <a name="PADL" id="@gd-constructs/construct-hub.SpdxLicense.property.PADL"></a>
 
 ```typescript
 public readonly PADL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 PADL License.
 
@@ -10819,13 +10819,13 @@ PADL License.
 
 ---
 
-##### `PARITY_6_0_0`<sup>Required</sup> <a name="PARITY_6_0_0" id="construct-hub.SpdxLicense.property.PARITY_6_0_0"></a>
+##### `PARITY_6_0_0`<sup>Required</sup> <a name="PARITY_6_0_0" id="@gd-constructs/construct-hub.SpdxLicense.property.PARITY_6_0_0"></a>
 
 ```typescript
 public readonly PARITY_6_0_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 The Parity Public License 6.0.0.
 
@@ -10833,13 +10833,13 @@ The Parity Public License 6.0.0.
 
 ---
 
-##### `PARITY_7_0_0`<sup>Required</sup> <a name="PARITY_7_0_0" id="construct-hub.SpdxLicense.property.PARITY_7_0_0"></a>
+##### `PARITY_7_0_0`<sup>Required</sup> <a name="PARITY_7_0_0" id="@gd-constructs/construct-hub.SpdxLicense.property.PARITY_7_0_0"></a>
 
 ```typescript
 public readonly PARITY_7_0_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 The Parity Public License 7.0.0.
 
@@ -10847,13 +10847,13 @@ The Parity Public License 7.0.0.
 
 ---
 
-##### `PDDL_1_0`<sup>Required</sup> <a name="PDDL_1_0" id="construct-hub.SpdxLicense.property.PDDL_1_0"></a>
+##### `PDDL_1_0`<sup>Required</sup> <a name="PDDL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.PDDL_1_0"></a>
 
 ```typescript
 public readonly PDDL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Open Data Commons Public Domain Dedication & License 1.0.
 
@@ -10861,13 +10861,13 @@ Open Data Commons Public Domain Dedication & License 1.0.
 
 ---
 
-##### `PHP_3_0`<sup>Required</sup> <a name="PHP_3_0" id="construct-hub.SpdxLicense.property.PHP_3_0"></a>
+##### `PHP_3_0`<sup>Required</sup> <a name="PHP_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.PHP_3_0"></a>
 
 ```typescript
 public readonly PHP_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 PHP License v3.0.
 
@@ -10875,13 +10875,13 @@ PHP License v3.0.
 
 ---
 
-##### `PHP_3_01`<sup>Required</sup> <a name="PHP_3_01" id="construct-hub.SpdxLicense.property.PHP_3_01"></a>
+##### `PHP_3_01`<sup>Required</sup> <a name="PHP_3_01" id="@gd-constructs/construct-hub.SpdxLicense.property.PHP_3_01"></a>
 
 ```typescript
 public readonly PHP_3_01: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 PHP License v3.01.
 
@@ -10889,13 +10889,13 @@ PHP License v3.01.
 
 ---
 
-##### `PIXAR`<sup>Required</sup> <a name="PIXAR" id="construct-hub.SpdxLicense.property.PIXAR"></a>
+##### `PIXAR`<sup>Required</sup> <a name="PIXAR" id="@gd-constructs/construct-hub.SpdxLicense.property.PIXAR"></a>
 
 ```typescript
 public readonly PIXAR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Pixar License.
 
@@ -10903,13 +10903,13 @@ Pixar License.
 
 ---
 
-##### `PLEXUS`<sup>Required</sup> <a name="PLEXUS" id="construct-hub.SpdxLicense.property.PLEXUS"></a>
+##### `PLEXUS`<sup>Required</sup> <a name="PLEXUS" id="@gd-constructs/construct-hub.SpdxLicense.property.PLEXUS"></a>
 
 ```typescript
 public readonly PLEXUS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Plexus Classworlds License.
 
@@ -10917,13 +10917,13 @@ Plexus Classworlds License.
 
 ---
 
-##### `PNMSTITCH`<sup>Required</sup> <a name="PNMSTITCH" id="construct-hub.SpdxLicense.property.PNMSTITCH"></a>
+##### `PNMSTITCH`<sup>Required</sup> <a name="PNMSTITCH" id="@gd-constructs/construct-hub.SpdxLicense.property.PNMSTITCH"></a>
 
 ```typescript
 public readonly PNMSTITCH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 pnmstitch License.
 
@@ -10931,13 +10931,13 @@ pnmstitch License.
 
 ---
 
-##### `POLYFORM_NONCOMMERCIAL_1_0_0`<sup>Required</sup> <a name="POLYFORM_NONCOMMERCIAL_1_0_0" id="construct-hub.SpdxLicense.property.POLYFORM_NONCOMMERCIAL_1_0_0"></a>
+##### `POLYFORM_NONCOMMERCIAL_1_0_0`<sup>Required</sup> <a name="POLYFORM_NONCOMMERCIAL_1_0_0" id="@gd-constructs/construct-hub.SpdxLicense.property.POLYFORM_NONCOMMERCIAL_1_0_0"></a>
 
 ```typescript
 public readonly POLYFORM_NONCOMMERCIAL_1_0_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 PolyForm Noncommercial License 1.0.0.
 
@@ -10945,13 +10945,13 @@ PolyForm Noncommercial License 1.0.0.
 
 ---
 
-##### `POLYFORM_SMALL_BUSINESS_1_0_0`<sup>Required</sup> <a name="POLYFORM_SMALL_BUSINESS_1_0_0" id="construct-hub.SpdxLicense.property.POLYFORM_SMALL_BUSINESS_1_0_0"></a>
+##### `POLYFORM_SMALL_BUSINESS_1_0_0`<sup>Required</sup> <a name="POLYFORM_SMALL_BUSINESS_1_0_0" id="@gd-constructs/construct-hub.SpdxLicense.property.POLYFORM_SMALL_BUSINESS_1_0_0"></a>
 
 ```typescript
 public readonly POLYFORM_SMALL_BUSINESS_1_0_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 PolyForm Small Business License 1.0.0.
 
@@ -10959,13 +10959,13 @@ PolyForm Small Business License 1.0.0.
 
 ---
 
-##### `POSTGRE_SQ_L`<sup>Required</sup> <a name="POSTGRE_SQ_L" id="construct-hub.SpdxLicense.property.POSTGRE_SQ_L"></a>
+##### `POSTGRE_SQ_L`<sup>Required</sup> <a name="POSTGRE_SQ_L" id="@gd-constructs/construct-hub.SpdxLicense.property.POSTGRE_SQ_L"></a>
 
 ```typescript
 public readonly POSTGRE_SQ_L: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 PostgreSQL License.
 
@@ -10973,13 +10973,13 @@ PostgreSQL License.
 
 ---
 
-##### `PSF_2_0`<sup>Required</sup> <a name="PSF_2_0" id="construct-hub.SpdxLicense.property.PSF_2_0"></a>
+##### `PSF_2_0`<sup>Required</sup> <a name="PSF_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.PSF_2_0"></a>
 
 ```typescript
 public readonly PSF_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Python Software Foundation License 2.0.
 
@@ -10987,13 +10987,13 @@ Python Software Foundation License 2.0.
 
 ---
 
-##### `PSFRAG`<sup>Required</sup> <a name="PSFRAG" id="construct-hub.SpdxLicense.property.PSFRAG"></a>
+##### `PSFRAG`<sup>Required</sup> <a name="PSFRAG" id="@gd-constructs/construct-hub.SpdxLicense.property.PSFRAG"></a>
 
 ```typescript
 public readonly PSFRAG: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 psfrag License.
 
@@ -11001,13 +11001,13 @@ psfrag License.
 
 ---
 
-##### `PSUTILS`<sup>Required</sup> <a name="PSUTILS" id="construct-hub.SpdxLicense.property.PSUTILS"></a>
+##### `PSUTILS`<sup>Required</sup> <a name="PSUTILS" id="@gd-constructs/construct-hub.SpdxLicense.property.PSUTILS"></a>
 
 ```typescript
 public readonly PSUTILS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 psutils License.
 
@@ -11015,13 +11015,13 @@ psutils License.
 
 ---
 
-##### `PYTHON_2_0`<sup>Required</sup> <a name="PYTHON_2_0" id="construct-hub.SpdxLicense.property.PYTHON_2_0"></a>
+##### `PYTHON_2_0`<sup>Required</sup> <a name="PYTHON_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.PYTHON_2_0"></a>
 
 ```typescript
 public readonly PYTHON_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Python License 2.0.
 
@@ -11029,13 +11029,13 @@ Python License 2.0.
 
 ---
 
-##### `PYTHON_2_0_1`<sup>Required</sup> <a name="PYTHON_2_0_1" id="construct-hub.SpdxLicense.property.PYTHON_2_0_1"></a>
+##### `PYTHON_2_0_1`<sup>Required</sup> <a name="PYTHON_2_0_1" id="@gd-constructs/construct-hub.SpdxLicense.property.PYTHON_2_0_1"></a>
 
 ```typescript
 public readonly PYTHON_2_0_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Python License 2.0.1.
 
@@ -11043,13 +11043,13 @@ Python License 2.0.1.
 
 ---
 
-##### `PYTHON_LDAP`<sup>Required</sup> <a name="PYTHON_LDAP" id="construct-hub.SpdxLicense.property.PYTHON_LDAP"></a>
+##### `PYTHON_LDAP`<sup>Required</sup> <a name="PYTHON_LDAP" id="@gd-constructs/construct-hub.SpdxLicense.property.PYTHON_LDAP"></a>
 
 ```typescript
 public readonly PYTHON_LDAP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Python ldap License.
 
@@ -11057,13 +11057,13 @@ Python ldap License.
 
 ---
 
-##### `QHULL`<sup>Required</sup> <a name="QHULL" id="construct-hub.SpdxLicense.property.QHULL"></a>
+##### `QHULL`<sup>Required</sup> <a name="QHULL" id="@gd-constructs/construct-hub.SpdxLicense.property.QHULL"></a>
 
 ```typescript
 public readonly QHULL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Qhull License.
 
@@ -11071,13 +11071,13 @@ Qhull License.
 
 ---
 
-##### `QPL_1_0`<sup>Required</sup> <a name="QPL_1_0" id="construct-hub.SpdxLicense.property.QPL_1_0"></a>
+##### `QPL_1_0`<sup>Required</sup> <a name="QPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.QPL_1_0"></a>
 
 ```typescript
 public readonly QPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Q Public License 1.0.
 
@@ -11085,13 +11085,13 @@ Q Public License 1.0.
 
 ---
 
-##### `QPL_1_0_INRIA_2004`<sup>Required</sup> <a name="QPL_1_0_INRIA_2004" id="construct-hub.SpdxLicense.property.QPL_1_0_INRIA_2004"></a>
+##### `QPL_1_0_INRIA_2004`<sup>Required</sup> <a name="QPL_1_0_INRIA_2004" id="@gd-constructs/construct-hub.SpdxLicense.property.QPL_1_0_INRIA_2004"></a>
 
 ```typescript
 public readonly QPL_1_0_INRIA_2004: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Q Public License 1.0 - INRIA 2004 variant.
 
@@ -11099,13 +11099,13 @@ Q Public License 1.0 - INRIA 2004 variant.
 
 ---
 
-##### `RADVD`<sup>Required</sup> <a name="RADVD" id="construct-hub.SpdxLicense.property.RADVD"></a>
+##### `RADVD`<sup>Required</sup> <a name="RADVD" id="@gd-constructs/construct-hub.SpdxLicense.property.RADVD"></a>
 
 ```typescript
 public readonly RADVD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 radvd License.
 
@@ -11113,13 +11113,13 @@ radvd License.
 
 ---
 
-##### `RDISC`<sup>Required</sup> <a name="RDISC" id="construct-hub.SpdxLicense.property.RDISC"></a>
+##### `RDISC`<sup>Required</sup> <a name="RDISC" id="@gd-constructs/construct-hub.SpdxLicense.property.RDISC"></a>
 
 ```typescript
 public readonly RDISC: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Rdisc License.
 
@@ -11127,13 +11127,13 @@ Rdisc License.
 
 ---
 
-##### `RHECOS_1_1`<sup>Required</sup> <a name="RHECOS_1_1" id="construct-hub.SpdxLicense.property.RHECOS_1_1"></a>
+##### `RHECOS_1_1`<sup>Required</sup> <a name="RHECOS_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.RHECOS_1_1"></a>
 
 ```typescript
 public readonly RHECOS_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Red Hat eCos Public License v1.1.
 
@@ -11141,13 +11141,13 @@ Red Hat eCos Public License v1.1.
 
 ---
 
-##### `RPL_1_1`<sup>Required</sup> <a name="RPL_1_1" id="construct-hub.SpdxLicense.property.RPL_1_1"></a>
+##### `RPL_1_1`<sup>Required</sup> <a name="RPL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.RPL_1_1"></a>
 
 ```typescript
 public readonly RPL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Reciprocal Public License 1.1.
 
@@ -11155,13 +11155,13 @@ Reciprocal Public License 1.1.
 
 ---
 
-##### `RPL_1_5`<sup>Required</sup> <a name="RPL_1_5" id="construct-hub.SpdxLicense.property.RPL_1_5"></a>
+##### `RPL_1_5`<sup>Required</sup> <a name="RPL_1_5" id="@gd-constructs/construct-hub.SpdxLicense.property.RPL_1_5"></a>
 
 ```typescript
 public readonly RPL_1_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Reciprocal Public License 1.5.
 
@@ -11169,13 +11169,13 @@ Reciprocal Public License 1.5.
 
 ---
 
-##### `RPSL_1_0`<sup>Required</sup> <a name="RPSL_1_0" id="construct-hub.SpdxLicense.property.RPSL_1_0"></a>
+##### `RPSL_1_0`<sup>Required</sup> <a name="RPSL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.RPSL_1_0"></a>
 
 ```typescript
 public readonly RPSL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 RealNetworks Public Source License v1.0.
 
@@ -11183,13 +11183,13 @@ RealNetworks Public Source License v1.0.
 
 ---
 
-##### `RSA_MD`<sup>Required</sup> <a name="RSA_MD" id="construct-hub.SpdxLicense.property.RSA_MD"></a>
+##### `RSA_MD`<sup>Required</sup> <a name="RSA_MD" id="@gd-constructs/construct-hub.SpdxLicense.property.RSA_MD"></a>
 
 ```typescript
 public readonly RSA_MD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 RSA Message-Digest License.
 
@@ -11197,13 +11197,13 @@ RSA Message-Digest License.
 
 ---
 
-##### `RSCPL`<sup>Required</sup> <a name="RSCPL" id="construct-hub.SpdxLicense.property.RSCPL"></a>
+##### `RSCPL`<sup>Required</sup> <a name="RSCPL" id="@gd-constructs/construct-hub.SpdxLicense.property.RSCPL"></a>
 
 ```typescript
 public readonly RSCPL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Ricoh Source Code Public License.
 
@@ -11211,13 +11211,13 @@ Ricoh Source Code Public License.
 
 ---
 
-##### `RUBY`<sup>Required</sup> <a name="RUBY" id="construct-hub.SpdxLicense.property.RUBY"></a>
+##### `RUBY`<sup>Required</sup> <a name="RUBY" id="@gd-constructs/construct-hub.SpdxLicense.property.RUBY"></a>
 
 ```typescript
 public readonly RUBY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Ruby License.
 
@@ -11225,13 +11225,13 @@ Ruby License.
 
 ---
 
-##### `SAX_PD`<sup>Required</sup> <a name="SAX_PD" id="construct-hub.SpdxLicense.property.SAX_PD"></a>
+##### `SAX_PD`<sup>Required</sup> <a name="SAX_PD" id="@gd-constructs/construct-hub.SpdxLicense.property.SAX_PD"></a>
 
 ```typescript
 public readonly SAX_PD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sax Public Domain Notice.
 
@@ -11239,13 +11239,13 @@ Sax Public Domain Notice.
 
 ---
 
-##### `SAX_PD_2_0`<sup>Required</sup> <a name="SAX_PD_2_0" id="construct-hub.SpdxLicense.property.SAX_PD_2_0"></a>
+##### `SAX_PD_2_0`<sup>Required</sup> <a name="SAX_PD_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.SAX_PD_2_0"></a>
 
 ```typescript
 public readonly SAX_PD_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sax Public Domain Notice 2.0.
 
@@ -11253,13 +11253,13 @@ Sax Public Domain Notice 2.0.
 
 ---
 
-##### `SAXPATH`<sup>Required</sup> <a name="SAXPATH" id="construct-hub.SpdxLicense.property.SAXPATH"></a>
+##### `SAXPATH`<sup>Required</sup> <a name="SAXPATH" id="@gd-constructs/construct-hub.SpdxLicense.property.SAXPATH"></a>
 
 ```typescript
 public readonly SAXPATH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Saxpath License.
 
@@ -11267,13 +11267,13 @@ Saxpath License.
 
 ---
 
-##### `SCEA`<sup>Required</sup> <a name="SCEA" id="construct-hub.SpdxLicense.property.SCEA"></a>
+##### `SCEA`<sup>Required</sup> <a name="SCEA" id="@gd-constructs/construct-hub.SpdxLicense.property.SCEA"></a>
 
 ```typescript
 public readonly SCEA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SCEA Shared Source License.
 
@@ -11281,13 +11281,13 @@ SCEA Shared Source License.
 
 ---
 
-##### `SCHEME_REPORT`<sup>Required</sup> <a name="SCHEME_REPORT" id="construct-hub.SpdxLicense.property.SCHEME_REPORT"></a>
+##### `SCHEME_REPORT`<sup>Required</sup> <a name="SCHEME_REPORT" id="@gd-constructs/construct-hub.SpdxLicense.property.SCHEME_REPORT"></a>
 
 ```typescript
 public readonly SCHEME_REPORT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Scheme Language Report License.
 
@@ -11295,13 +11295,13 @@ Scheme Language Report License.
 
 ---
 
-##### `SENDMAIL`<sup>Required</sup> <a name="SENDMAIL" id="construct-hub.SpdxLicense.property.SENDMAIL"></a>
+##### `SENDMAIL`<sup>Required</sup> <a name="SENDMAIL" id="@gd-constructs/construct-hub.SpdxLicense.property.SENDMAIL"></a>
 
 ```typescript
 public readonly SENDMAIL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sendmail License.
 
@@ -11309,13 +11309,13 @@ Sendmail License.
 
 ---
 
-##### `SENDMAIL_8_23`<sup>Required</sup> <a name="SENDMAIL_8_23" id="construct-hub.SpdxLicense.property.SENDMAIL_8_23"></a>
+##### `SENDMAIL_8_23`<sup>Required</sup> <a name="SENDMAIL_8_23" id="@gd-constructs/construct-hub.SpdxLicense.property.SENDMAIL_8_23"></a>
 
 ```typescript
 public readonly SENDMAIL_8_23: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sendmail License 8.23.
 
@@ -11323,13 +11323,13 @@ Sendmail License 8.23.
 
 ---
 
-##### `SGI_B_1_0`<sup>Required</sup> <a name="SGI_B_1_0" id="construct-hub.SpdxLicense.property.SGI_B_1_0"></a>
+##### `SGI_B_1_0`<sup>Required</sup> <a name="SGI_B_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.SGI_B_1_0"></a>
 
 ```typescript
 public readonly SGI_B_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SGI Free Software License B v1.0.
 
@@ -11337,13 +11337,13 @@ SGI Free Software License B v1.0.
 
 ---
 
-##### `SGI_B_1_1`<sup>Required</sup> <a name="SGI_B_1_1" id="construct-hub.SpdxLicense.property.SGI_B_1_1"></a>
+##### `SGI_B_1_1`<sup>Required</sup> <a name="SGI_B_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.SGI_B_1_1"></a>
 
 ```typescript
 public readonly SGI_B_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SGI Free Software License B v1.1.
 
@@ -11351,13 +11351,13 @@ SGI Free Software License B v1.1.
 
 ---
 
-##### `SGI_B_2_0`<sup>Required</sup> <a name="SGI_B_2_0" id="construct-hub.SpdxLicense.property.SGI_B_2_0"></a>
+##### `SGI_B_2_0`<sup>Required</sup> <a name="SGI_B_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.SGI_B_2_0"></a>
 
 ```typescript
 public readonly SGI_B_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SGI Free Software License B v2.0.
 
@@ -11365,13 +11365,13 @@ SGI Free Software License B v2.0.
 
 ---
 
-##### `SGI_OPENGL`<sup>Required</sup> <a name="SGI_OPENGL" id="construct-hub.SpdxLicense.property.SGI_OPENGL"></a>
+##### `SGI_OPENGL`<sup>Required</sup> <a name="SGI_OPENGL" id="@gd-constructs/construct-hub.SpdxLicense.property.SGI_OPENGL"></a>
 
 ```typescript
 public readonly SGI_OPENGL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SGI OpenGL License.
 
@@ -11379,13 +11379,13 @@ SGI OpenGL License.
 
 ---
 
-##### `SGP4`<sup>Required</sup> <a name="SGP4" id="construct-hub.SpdxLicense.property.SGP4"></a>
+##### `SGP4`<sup>Required</sup> <a name="SGP4" id="@gd-constructs/construct-hub.SpdxLicense.property.SGP4"></a>
 
 ```typescript
 public readonly SGP4: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SGP4 Permission Notice.
 
@@ -11393,13 +11393,13 @@ SGP4 Permission Notice.
 
 ---
 
-##### `SHL_0_5`<sup>Required</sup> <a name="SHL_0_5" id="construct-hub.SpdxLicense.property.SHL_0_5"></a>
+##### `SHL_0_5`<sup>Required</sup> <a name="SHL_0_5" id="@gd-constructs/construct-hub.SpdxLicense.property.SHL_0_5"></a>
 
 ```typescript
 public readonly SHL_0_5: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Solderpad Hardware License v0.5.
 
@@ -11407,13 +11407,13 @@ Solderpad Hardware License v0.5.
 
 ---
 
-##### `SHL_0_51`<sup>Required</sup> <a name="SHL_0_51" id="construct-hub.SpdxLicense.property.SHL_0_51"></a>
+##### `SHL_0_51`<sup>Required</sup> <a name="SHL_0_51" id="@gd-constructs/construct-hub.SpdxLicense.property.SHL_0_51"></a>
 
 ```typescript
 public readonly SHL_0_51: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Solderpad Hardware License, Version 0.51.
 
@@ -11421,13 +11421,13 @@ Solderpad Hardware License, Version 0.51.
 
 ---
 
-##### `SIMPL_2_0`<sup>Required</sup> <a name="SIMPL_2_0" id="construct-hub.SpdxLicense.property.SIMPL_2_0"></a>
+##### `SIMPL_2_0`<sup>Required</sup> <a name="SIMPL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.SIMPL_2_0"></a>
 
 ```typescript
 public readonly SIMPL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Simple Public License 2.0.
 
@@ -11435,13 +11435,13 @@ Simple Public License 2.0.
 
 ---
 
-##### `SISSL`<sup>Required</sup> <a name="SISSL" id="construct-hub.SpdxLicense.property.SISSL"></a>
+##### `SISSL`<sup>Required</sup> <a name="SISSL" id="@gd-constructs/construct-hub.SpdxLicense.property.SISSL"></a>
 
 ```typescript
 public readonly SISSL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sun Industry Standards Source License v1.1.
 
@@ -11449,13 +11449,13 @@ Sun Industry Standards Source License v1.1.
 
 ---
 
-##### `SISSL_1_2`<sup>Required</sup> <a name="SISSL_1_2" id="construct-hub.SpdxLicense.property.SISSL_1_2"></a>
+##### `SISSL_1_2`<sup>Required</sup> <a name="SISSL_1_2" id="@gd-constructs/construct-hub.SpdxLicense.property.SISSL_1_2"></a>
 
 ```typescript
 public readonly SISSL_1_2: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sun Industry Standards Source License v1.2.
 
@@ -11463,13 +11463,13 @@ Sun Industry Standards Source License v1.2.
 
 ---
 
-##### `SL`<sup>Required</sup> <a name="SL" id="construct-hub.SpdxLicense.property.SL"></a>
+##### `SL`<sup>Required</sup> <a name="SL" id="@gd-constructs/construct-hub.SpdxLicense.property.SL"></a>
 
 ```typescript
 public readonly SL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SL License.
 
@@ -11477,13 +11477,13 @@ SL License.
 
 ---
 
-##### `SLEEPYCAT`<sup>Required</sup> <a name="SLEEPYCAT" id="construct-hub.SpdxLicense.property.SLEEPYCAT"></a>
+##### `SLEEPYCAT`<sup>Required</sup> <a name="SLEEPYCAT" id="@gd-constructs/construct-hub.SpdxLicense.property.SLEEPYCAT"></a>
 
 ```typescript
 public readonly SLEEPYCAT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sleepycat License.
 
@@ -11491,13 +11491,13 @@ Sleepycat License.
 
 ---
 
-##### `SMLNJ`<sup>Required</sup> <a name="SMLNJ" id="construct-hub.SpdxLicense.property.SMLNJ"></a>
+##### `SMLNJ`<sup>Required</sup> <a name="SMLNJ" id="@gd-constructs/construct-hub.SpdxLicense.property.SMLNJ"></a>
 
 ```typescript
 public readonly SMLNJ: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Standard ML of New Jersey License.
 
@@ -11505,13 +11505,13 @@ Standard ML of New Jersey License.
 
 ---
 
-##### `SMPPL`<sup>Required</sup> <a name="SMPPL" id="construct-hub.SpdxLicense.property.SMPPL"></a>
+##### `SMPPL`<sup>Required</sup> <a name="SMPPL" id="@gd-constructs/construct-hub.SpdxLicense.property.SMPPL"></a>
 
 ```typescript
 public readonly SMPPL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Secure Messaging Protocol Public License.
 
@@ -11519,13 +11519,13 @@ Secure Messaging Protocol Public License.
 
 ---
 
-##### `SNIA`<sup>Required</sup> <a name="SNIA" id="construct-hub.SpdxLicense.property.SNIA"></a>
+##### `SNIA`<sup>Required</sup> <a name="SNIA" id="@gd-constructs/construct-hub.SpdxLicense.property.SNIA"></a>
 
 ```typescript
 public readonly SNIA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SNIA Public License 1.1.
 
@@ -11533,13 +11533,13 @@ SNIA Public License 1.1.
 
 ---
 
-##### `SNPRINTF`<sup>Required</sup> <a name="SNPRINTF" id="construct-hub.SpdxLicense.property.SNPRINTF"></a>
+##### `SNPRINTF`<sup>Required</sup> <a name="SNPRINTF" id="@gd-constructs/construct-hub.SpdxLicense.property.SNPRINTF"></a>
 
 ```typescript
 public readonly SNPRINTF: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 snprintf License.
 
@@ -11547,13 +11547,13 @@ snprintf License.
 
 ---
 
-##### `SOFT_SURFER`<sup>Required</sup> <a name="SOFT_SURFER" id="construct-hub.SpdxLicense.property.SOFT_SURFER"></a>
+##### `SOFT_SURFER`<sup>Required</sup> <a name="SOFT_SURFER" id="@gd-constructs/construct-hub.SpdxLicense.property.SOFT_SURFER"></a>
 
 ```typescript
 public readonly SOFT_SURFER: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 softSurfer License.
 
@@ -11561,13 +11561,13 @@ softSurfer License.
 
 ---
 
-##### `SOUNDEX`<sup>Required</sup> <a name="SOUNDEX" id="construct-hub.SpdxLicense.property.SOUNDEX"></a>
+##### `SOUNDEX`<sup>Required</sup> <a name="SOUNDEX" id="@gd-constructs/construct-hub.SpdxLicense.property.SOUNDEX"></a>
 
 ```typescript
 public readonly SOUNDEX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Soundex License.
 
@@ -11575,13 +11575,13 @@ Soundex License.
 
 ---
 
-##### `SPENCER_86`<sup>Required</sup> <a name="SPENCER_86" id="construct-hub.SpdxLicense.property.SPENCER_86"></a>
+##### `SPENCER_86`<sup>Required</sup> <a name="SPENCER_86" id="@gd-constructs/construct-hub.SpdxLicense.property.SPENCER_86"></a>
 
 ```typescript
 public readonly SPENCER_86: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Spencer License 86.
 
@@ -11589,13 +11589,13 @@ Spencer License 86.
 
 ---
 
-##### `SPENCER_94`<sup>Required</sup> <a name="SPENCER_94" id="construct-hub.SpdxLicense.property.SPENCER_94"></a>
+##### `SPENCER_94`<sup>Required</sup> <a name="SPENCER_94" id="@gd-constructs/construct-hub.SpdxLicense.property.SPENCER_94"></a>
 
 ```typescript
 public readonly SPENCER_94: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Spencer License 94.
 
@@ -11603,13 +11603,13 @@ Spencer License 94.
 
 ---
 
-##### `SPENCER_99`<sup>Required</sup> <a name="SPENCER_99" id="construct-hub.SpdxLicense.property.SPENCER_99"></a>
+##### `SPENCER_99`<sup>Required</sup> <a name="SPENCER_99" id="@gd-constructs/construct-hub.SpdxLicense.property.SPENCER_99"></a>
 
 ```typescript
 public readonly SPENCER_99: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Spencer License 99.
 
@@ -11617,13 +11617,13 @@ Spencer License 99.
 
 ---
 
-##### `SPL_1_0`<sup>Required</sup> <a name="SPL_1_0" id="construct-hub.SpdxLicense.property.SPL_1_0"></a>
+##### `SPL_1_0`<sup>Required</sup> <a name="SPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.SPL_1_0"></a>
 
 ```typescript
 public readonly SPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sun Public License v1.0.
 
@@ -11631,13 +11631,13 @@ Sun Public License v1.0.
 
 ---
 
-##### `SSH_KEYSCAN`<sup>Required</sup> <a name="SSH_KEYSCAN" id="construct-hub.SpdxLicense.property.SSH_KEYSCAN"></a>
+##### `SSH_KEYSCAN`<sup>Required</sup> <a name="SSH_KEYSCAN" id="@gd-constructs/construct-hub.SpdxLicense.property.SSH_KEYSCAN"></a>
 
 ```typescript
 public readonly SSH_KEYSCAN: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ssh-keyscan License.
 
@@ -11645,13 +11645,13 @@ ssh-keyscan License.
 
 ---
 
-##### `SSH_OPENSSH`<sup>Required</sup> <a name="SSH_OPENSSH" id="construct-hub.SpdxLicense.property.SSH_OPENSSH"></a>
+##### `SSH_OPENSSH`<sup>Required</sup> <a name="SSH_OPENSSH" id="@gd-constructs/construct-hub.SpdxLicense.property.SSH_OPENSSH"></a>
 
 ```typescript
 public readonly SSH_OPENSSH: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SSH OpenSSH license.
 
@@ -11659,13 +11659,13 @@ SSH OpenSSH license.
 
 ---
 
-##### `SSH_SHORT`<sup>Required</sup> <a name="SSH_SHORT" id="construct-hub.SpdxLicense.property.SSH_SHORT"></a>
+##### `SSH_SHORT`<sup>Required</sup> <a name="SSH_SHORT" id="@gd-constructs/construct-hub.SpdxLicense.property.SSH_SHORT"></a>
 
 ```typescript
 public readonly SSH_SHORT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SSH short notice.
 
@@ -11673,13 +11673,13 @@ SSH short notice.
 
 ---
 
-##### `SSLEAY_STANDALONE`<sup>Required</sup> <a name="SSLEAY_STANDALONE" id="construct-hub.SpdxLicense.property.SSLEAY_STANDALONE"></a>
+##### `SSLEAY_STANDALONE`<sup>Required</sup> <a name="SSLEAY_STANDALONE" id="@gd-constructs/construct-hub.SpdxLicense.property.SSLEAY_STANDALONE"></a>
 
 ```typescript
 public readonly SSLEAY_STANDALONE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SSLeay License - standalone.
 
@@ -11687,13 +11687,13 @@ SSLeay License - standalone.
 
 ---
 
-##### `SSPL_1_0`<sup>Required</sup> <a name="SSPL_1_0" id="construct-hub.SpdxLicense.property.SSPL_1_0"></a>
+##### `SSPL_1_0`<sup>Required</sup> <a name="SSPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.SSPL_1_0"></a>
 
 ```typescript
 public readonly SSPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Server Side Public License, v 1.
 
@@ -11701,13 +11701,13 @@ Server Side Public License, v 1.
 
 ---
 
-##### `STANDARDML_NJ`<sup>Required</sup> <a name="STANDARDML_NJ" id="construct-hub.SpdxLicense.property.STANDARDML_NJ"></a>
+##### `STANDARDML_NJ`<sup>Required</sup> <a name="STANDARDML_NJ" id="@gd-constructs/construct-hub.SpdxLicense.property.STANDARDML_NJ"></a>
 
 ```typescript
 public readonly STANDARDML_NJ: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Standard ML of New Jersey License.
 
@@ -11715,13 +11715,13 @@ Standard ML of New Jersey License.
 
 ---
 
-##### `SUGARCRM_1_1_3`<sup>Required</sup> <a name="SUGARCRM_1_1_3" id="construct-hub.SpdxLicense.property.SUGARCRM_1_1_3"></a>
+##### `SUGARCRM_1_1_3`<sup>Required</sup> <a name="SUGARCRM_1_1_3" id="@gd-constructs/construct-hub.SpdxLicense.property.SUGARCRM_1_1_3"></a>
 
 ```typescript
 public readonly SUGARCRM_1_1_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SugarCRM Public License v1.1.3.
 
@@ -11729,13 +11729,13 @@ SugarCRM Public License v1.1.3.
 
 ---
 
-##### `SUN_PPP`<sup>Required</sup> <a name="SUN_PPP" id="construct-hub.SpdxLicense.property.SUN_PPP"></a>
+##### `SUN_PPP`<sup>Required</sup> <a name="SUN_PPP" id="@gd-constructs/construct-hub.SpdxLicense.property.SUN_PPP"></a>
 
 ```typescript
 public readonly SUN_PPP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sun PPP License.
 
@@ -11743,13 +11743,13 @@ Sun PPP License.
 
 ---
 
-##### `SUN_PRO`<sup>Required</sup> <a name="SUN_PRO" id="construct-hub.SpdxLicense.property.SUN_PRO"></a>
+##### `SUN_PRO`<sup>Required</sup> <a name="SUN_PRO" id="@gd-constructs/construct-hub.SpdxLicense.property.SUN_PRO"></a>
 
 ```typescript
 public readonly SUN_PRO: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 SunPro License.
 
@@ -11757,13 +11757,13 @@ SunPro License.
 
 ---
 
-##### `SWL`<sup>Required</sup> <a name="SWL" id="construct-hub.SpdxLicense.property.SWL"></a>
+##### `SWL`<sup>Required</sup> <a name="SWL" id="@gd-constructs/construct-hub.SpdxLicense.property.SWL"></a>
 
 ```typescript
 public readonly SWL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Scheme Widget Library (SWL) Software License Agreement.
 
@@ -11771,13 +11771,13 @@ Scheme Widget Library (SWL) Software License Agreement.
 
 ---
 
-##### `SWRULE`<sup>Required</sup> <a name="SWRULE" id="construct-hub.SpdxLicense.property.SWRULE"></a>
+##### `SWRULE`<sup>Required</sup> <a name="SWRULE" id="@gd-constructs/construct-hub.SpdxLicense.property.SWRULE"></a>
 
 ```typescript
 public readonly SWRULE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 swrule License.
 
@@ -11785,13 +11785,13 @@ swrule License.
 
 ---
 
-##### `SYMLINKS`<sup>Required</sup> <a name="SYMLINKS" id="construct-hub.SpdxLicense.property.SYMLINKS"></a>
+##### `SYMLINKS`<sup>Required</sup> <a name="SYMLINKS" id="@gd-constructs/construct-hub.SpdxLicense.property.SYMLINKS"></a>
 
 ```typescript
 public readonly SYMLINKS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Symlinks License.
 
@@ -11799,13 +11799,13 @@ Symlinks License.
 
 ---
 
-##### `TAPR_OHL_1_0`<sup>Required</sup> <a name="TAPR_OHL_1_0" id="construct-hub.SpdxLicense.property.TAPR_OHL_1_0"></a>
+##### `TAPR_OHL_1_0`<sup>Required</sup> <a name="TAPR_OHL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.TAPR_OHL_1_0"></a>
 
 ```typescript
 public readonly TAPR_OHL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 TAPR Open Hardware License v1.0.
 
@@ -11813,13 +11813,13 @@ TAPR Open Hardware License v1.0.
 
 ---
 
-##### `TCL`<sup>Required</sup> <a name="TCL" id="construct-hub.SpdxLicense.property.TCL"></a>
+##### `TCL`<sup>Required</sup> <a name="TCL" id="@gd-constructs/construct-hub.SpdxLicense.property.TCL"></a>
 
 ```typescript
 public readonly TCL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 TCL/TK License.
 
@@ -11827,13 +11827,13 @@ TCL/TK License.
 
 ---
 
-##### `TCP_WRAPPERS`<sup>Required</sup> <a name="TCP_WRAPPERS" id="construct-hub.SpdxLicense.property.TCP_WRAPPERS"></a>
+##### `TCP_WRAPPERS`<sup>Required</sup> <a name="TCP_WRAPPERS" id="@gd-constructs/construct-hub.SpdxLicense.property.TCP_WRAPPERS"></a>
 
 ```typescript
 public readonly TCP_WRAPPERS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 TCP Wrappers License.
 
@@ -11841,13 +11841,13 @@ TCP Wrappers License.
 
 ---
 
-##### `TERM_READ_KEY`<sup>Required</sup> <a name="TERM_READ_KEY" id="construct-hub.SpdxLicense.property.TERM_READ_KEY"></a>
+##### `TERM_READ_KEY`<sup>Required</sup> <a name="TERM_READ_KEY" id="@gd-constructs/construct-hub.SpdxLicense.property.TERM_READ_KEY"></a>
 
 ```typescript
 public readonly TERM_READ_KEY: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 TermReadKey License.
 
@@ -11855,13 +11855,13 @@ TermReadKey License.
 
 ---
 
-##### `TGPPL_1_0`<sup>Required</sup> <a name="TGPPL_1_0" id="construct-hub.SpdxLicense.property.TGPPL_1_0"></a>
+##### `TGPPL_1_0`<sup>Required</sup> <a name="TGPPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.TGPPL_1_0"></a>
 
 ```typescript
 public readonly TGPPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Transitive Grace Period Public Licence 1.0.
 
@@ -11869,13 +11869,13 @@ Transitive Grace Period Public Licence 1.0.
 
 ---
 
-##### `TMATE`<sup>Required</sup> <a name="TMATE" id="construct-hub.SpdxLicense.property.TMATE"></a>
+##### `TMATE`<sup>Required</sup> <a name="TMATE" id="@gd-constructs/construct-hub.SpdxLicense.property.TMATE"></a>
 
 ```typescript
 public readonly TMATE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 TMate Open Source License.
 
@@ -11883,13 +11883,13 @@ TMate Open Source License.
 
 ---
 
-##### `TORQUE_1_1`<sup>Required</sup> <a name="TORQUE_1_1" id="construct-hub.SpdxLicense.property.TORQUE_1_1"></a>
+##### `TORQUE_1_1`<sup>Required</sup> <a name="TORQUE_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.TORQUE_1_1"></a>
 
 ```typescript
 public readonly TORQUE_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 TORQUE v2.5+ Software License v1.1.
 
@@ -11897,13 +11897,13 @@ TORQUE v2.5+ Software License v1.1.
 
 ---
 
-##### `TOSL`<sup>Required</sup> <a name="TOSL" id="construct-hub.SpdxLicense.property.TOSL"></a>
+##### `TOSL`<sup>Required</sup> <a name="TOSL" id="@gd-constructs/construct-hub.SpdxLicense.property.TOSL"></a>
 
 ```typescript
 public readonly TOSL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Trusster Open Source License.
 
@@ -11911,13 +11911,13 @@ Trusster Open Source License.
 
 ---
 
-##### `TPDL`<sup>Required</sup> <a name="TPDL" id="construct-hub.SpdxLicense.property.TPDL"></a>
+##### `TPDL`<sup>Required</sup> <a name="TPDL" id="@gd-constructs/construct-hub.SpdxLicense.property.TPDL"></a>
 
 ```typescript
 public readonly TPDL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Time::ParseDate License.
 
@@ -11925,13 +11925,13 @@ Time::ParseDate License.
 
 ---
 
-##### `TPL_1_0`<sup>Required</sup> <a name="TPL_1_0" id="construct-hub.SpdxLicense.property.TPL_1_0"></a>
+##### `TPL_1_0`<sup>Required</sup> <a name="TPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.TPL_1_0"></a>
 
 ```typescript
 public readonly TPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 THOR Public License 1.0.
 
@@ -11939,13 +11939,13 @@ THOR Public License 1.0.
 
 ---
 
-##### `TTWL`<sup>Required</sup> <a name="TTWL" id="construct-hub.SpdxLicense.property.TTWL"></a>
+##### `TTWL`<sup>Required</sup> <a name="TTWL" id="@gd-constructs/construct-hub.SpdxLicense.property.TTWL"></a>
 
 ```typescript
 public readonly TTWL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Text-Tabs+Wrap License.
 
@@ -11953,13 +11953,13 @@ Text-Tabs+Wrap License.
 
 ---
 
-##### `TTYP0`<sup>Required</sup> <a name="TTYP0" id="construct-hub.SpdxLicense.property.TTYP0"></a>
+##### `TTYP0`<sup>Required</sup> <a name="TTYP0" id="@gd-constructs/construct-hub.SpdxLicense.property.TTYP0"></a>
 
 ```typescript
 public readonly TTYP0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 TTYP0 License.
 
@@ -11967,13 +11967,13 @@ TTYP0 License.
 
 ---
 
-##### `TU_BERLIN_1_0`<sup>Required</sup> <a name="TU_BERLIN_1_0" id="construct-hub.SpdxLicense.property.TU_BERLIN_1_0"></a>
+##### `TU_BERLIN_1_0`<sup>Required</sup> <a name="TU_BERLIN_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.TU_BERLIN_1_0"></a>
 
 ```typescript
 public readonly TU_BERLIN_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Technische Universitaet Berlin License 1.0.
 
@@ -11981,13 +11981,13 @@ Technische Universitaet Berlin License 1.0.
 
 ---
 
-##### `TU_BERLIN_2_0`<sup>Required</sup> <a name="TU_BERLIN_2_0" id="construct-hub.SpdxLicense.property.TU_BERLIN_2_0"></a>
+##### `TU_BERLIN_2_0`<sup>Required</sup> <a name="TU_BERLIN_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.TU_BERLIN_2_0"></a>
 
 ```typescript
 public readonly TU_BERLIN_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Technische Universitaet Berlin License 2.0.
 
@@ -11995,13 +11995,13 @@ Technische Universitaet Berlin License 2.0.
 
 ---
 
-##### `UCAR`<sup>Required</sup> <a name="UCAR" id="construct-hub.SpdxLicense.property.UCAR"></a>
+##### `UCAR`<sup>Required</sup> <a name="UCAR" id="@gd-constructs/construct-hub.SpdxLicense.property.UCAR"></a>
 
 ```typescript
 public readonly UCAR: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 UCAR License.
 
@@ -12009,13 +12009,13 @@ UCAR License.
 
 ---
 
-##### `UCL_1_0`<sup>Required</sup> <a name="UCL_1_0" id="construct-hub.SpdxLicense.property.UCL_1_0"></a>
+##### `UCL_1_0`<sup>Required</sup> <a name="UCL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.UCL_1_0"></a>
 
 ```typescript
 public readonly UCL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Upstream Compatibility License v1.0.
 
@@ -12023,13 +12023,13 @@ Upstream Compatibility License v1.0.
 
 ---
 
-##### `ULEM`<sup>Required</sup> <a name="ULEM" id="construct-hub.SpdxLicense.property.ULEM"></a>
+##### `ULEM`<sup>Required</sup> <a name="ULEM" id="@gd-constructs/construct-hub.SpdxLicense.property.ULEM"></a>
 
 ```typescript
 public readonly ULEM: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 ulem License.
 
@@ -12037,13 +12037,13 @@ ulem License.
 
 ---
 
-##### `UMICH_MERIT`<sup>Required</sup> <a name="UMICH_MERIT" id="construct-hub.SpdxLicense.property.UMICH_MERIT"></a>
+##### `UMICH_MERIT`<sup>Required</sup> <a name="UMICH_MERIT" id="@gd-constructs/construct-hub.SpdxLicense.property.UMICH_MERIT"></a>
 
 ```typescript
 public readonly UMICH_MERIT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Michigan/Merit Networks License.
 
@@ -12051,13 +12051,13 @@ Michigan/Merit Networks License.
 
 ---
 
-##### `UNICODE_3_0`<sup>Required</sup> <a name="UNICODE_3_0" id="construct-hub.SpdxLicense.property.UNICODE_3_0"></a>
+##### `UNICODE_3_0`<sup>Required</sup> <a name="UNICODE_3_0" id="@gd-constructs/construct-hub.SpdxLicense.property.UNICODE_3_0"></a>
 
 ```typescript
 public readonly UNICODE_3_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Unicode License v3.
 
@@ -12065,13 +12065,13 @@ Unicode License v3.
 
 ---
 
-##### `UNICODE_DFS_2015`<sup>Required</sup> <a name="UNICODE_DFS_2015" id="construct-hub.SpdxLicense.property.UNICODE_DFS_2015"></a>
+##### `UNICODE_DFS_2015`<sup>Required</sup> <a name="UNICODE_DFS_2015" id="@gd-constructs/construct-hub.SpdxLicense.property.UNICODE_DFS_2015"></a>
 
 ```typescript
 public readonly UNICODE_DFS_2015: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Unicode License Agreement - Data Files and Software (2015).
 
@@ -12079,13 +12079,13 @@ Unicode License Agreement - Data Files and Software (2015).
 
 ---
 
-##### `UNICODE_DFS_2016`<sup>Required</sup> <a name="UNICODE_DFS_2016" id="construct-hub.SpdxLicense.property.UNICODE_DFS_2016"></a>
+##### `UNICODE_DFS_2016`<sup>Required</sup> <a name="UNICODE_DFS_2016" id="@gd-constructs/construct-hub.SpdxLicense.property.UNICODE_DFS_2016"></a>
 
 ```typescript
 public readonly UNICODE_DFS_2016: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Unicode License Agreement - Data Files and Software (2016).
 
@@ -12093,13 +12093,13 @@ Unicode License Agreement - Data Files and Software (2016).
 
 ---
 
-##### `UNICODE_TOU`<sup>Required</sup> <a name="UNICODE_TOU" id="construct-hub.SpdxLicense.property.UNICODE_TOU"></a>
+##### `UNICODE_TOU`<sup>Required</sup> <a name="UNICODE_TOU" id="@gd-constructs/construct-hub.SpdxLicense.property.UNICODE_TOU"></a>
 
 ```typescript
 public readonly UNICODE_TOU: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Unicode Terms of Use.
 
@@ -12107,13 +12107,13 @@ Unicode Terms of Use.
 
 ---
 
-##### `UNIX_CRYPT`<sup>Required</sup> <a name="UNIX_CRYPT" id="construct-hub.SpdxLicense.property.UNIX_CRYPT"></a>
+##### `UNIX_CRYPT`<sup>Required</sup> <a name="UNIX_CRYPT" id="@gd-constructs/construct-hub.SpdxLicense.property.UNIX_CRYPT"></a>
 
 ```typescript
 public readonly UNIX_CRYPT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 UnixCrypt License.
 
@@ -12121,13 +12121,13 @@ UnixCrypt License.
 
 ---
 
-##### `UNLICENSE`<sup>Required</sup> <a name="UNLICENSE" id="construct-hub.SpdxLicense.property.UNLICENSE"></a>
+##### `UNLICENSE`<sup>Required</sup> <a name="UNLICENSE" id="@gd-constructs/construct-hub.SpdxLicense.property.UNLICENSE"></a>
 
 ```typescript
 public readonly UNLICENSE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 The Unlicense.
 
@@ -12135,25 +12135,25 @@ The Unlicense.
 
 ---
 
-##### `UNLICENSED`<sup>Required</sup> <a name="UNLICENSED" id="construct-hub.SpdxLicense.property.UNLICENSED"></a>
+##### `UNLICENSED`<sup>Required</sup> <a name="UNLICENSED" id="@gd-constructs/construct-hub.SpdxLicense.property.UNLICENSED"></a>
 
 ```typescript
 public readonly UNLICENSED: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Packages that have not been licensed.
 
 ---
 
-##### `UPL_1_0`<sup>Required</sup> <a name="UPL_1_0" id="construct-hub.SpdxLicense.property.UPL_1_0"></a>
+##### `UPL_1_0`<sup>Required</sup> <a name="UPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.UPL_1_0"></a>
 
 ```typescript
 public readonly UPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Universal Permissive License v1.0.
 
@@ -12161,13 +12161,13 @@ Universal Permissive License v1.0.
 
 ---
 
-##### `URT_RLE`<sup>Required</sup> <a name="URT_RLE" id="construct-hub.SpdxLicense.property.URT_RLE"></a>
+##### `URT_RLE`<sup>Required</sup> <a name="URT_RLE" id="@gd-constructs/construct-hub.SpdxLicense.property.URT_RLE"></a>
 
 ```typescript
 public readonly URT_RLE: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Utah Raster Toolkit Run Length Encoded License.
 
@@ -12175,13 +12175,13 @@ Utah Raster Toolkit Run Length Encoded License.
 
 ---
 
-##### `VIM`<sup>Required</sup> <a name="VIM" id="construct-hub.SpdxLicense.property.VIM"></a>
+##### `VIM`<sup>Required</sup> <a name="VIM" id="@gd-constructs/construct-hub.SpdxLicense.property.VIM"></a>
 
 ```typescript
 public readonly VIM: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Vim License.
 
@@ -12189,13 +12189,13 @@ Vim License.
 
 ---
 
-##### `VOSTROM`<sup>Required</sup> <a name="VOSTROM" id="construct-hub.SpdxLicense.property.VOSTROM"></a>
+##### `VOSTROM`<sup>Required</sup> <a name="VOSTROM" id="@gd-constructs/construct-hub.SpdxLicense.property.VOSTROM"></a>
 
 ```typescript
 public readonly VOSTROM: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 VOSTROM Public License for Open Source.
 
@@ -12203,13 +12203,13 @@ VOSTROM Public License for Open Source.
 
 ---
 
-##### `VSL_1_0`<sup>Required</sup> <a name="VSL_1_0" id="construct-hub.SpdxLicense.property.VSL_1_0"></a>
+##### `VSL_1_0`<sup>Required</sup> <a name="VSL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.VSL_1_0"></a>
 
 ```typescript
 public readonly VSL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Vovida Software License v1.0.
 
@@ -12217,13 +12217,13 @@ Vovida Software License v1.0.
 
 ---
 
-##### `W3_C`<sup>Required</sup> <a name="W3_C" id="construct-hub.SpdxLicense.property.W3_C"></a>
+##### `W3_C`<sup>Required</sup> <a name="W3_C" id="@gd-constructs/construct-hub.SpdxLicense.property.W3_C"></a>
 
 ```typescript
 public readonly W3_C: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 W3C Software Notice and License (2002-12-31).
 
@@ -12231,13 +12231,13 @@ W3C Software Notice and License (2002-12-31).
 
 ---
 
-##### `W3_M`<sup>Required</sup> <a name="W3_M" id="construct-hub.SpdxLicense.property.W3_M"></a>
+##### `W3_M`<sup>Required</sup> <a name="W3_M" id="@gd-constructs/construct-hub.SpdxLicense.property.W3_M"></a>
 
 ```typescript
 public readonly W3_M: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 w3m License.
 
@@ -12245,13 +12245,13 @@ w3m License.
 
 ---
 
-##### `W3C_19980720`<sup>Required</sup> <a name="W3C_19980720" id="construct-hub.SpdxLicense.property.W3C_19980720"></a>
+##### `W3C_19980720`<sup>Required</sup> <a name="W3C_19980720" id="@gd-constructs/construct-hub.SpdxLicense.property.W3C_19980720"></a>
 
 ```typescript
 public readonly W3C_19980720: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 W3C Software Notice and License (1998-07-20).
 
@@ -12259,13 +12259,13 @@ W3C Software Notice and License (1998-07-20).
 
 ---
 
-##### `W3C_20150513`<sup>Required</sup> <a name="W3C_20150513" id="construct-hub.SpdxLicense.property.W3C_20150513"></a>
+##### `W3C_20150513`<sup>Required</sup> <a name="W3C_20150513" id="@gd-constructs/construct-hub.SpdxLicense.property.W3C_20150513"></a>
 
 ```typescript
 public readonly W3C_20150513: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 W3C Software Notice and Document License (2015-05-13).
 
@@ -12273,13 +12273,13 @@ W3C Software Notice and Document License (2015-05-13).
 
 ---
 
-##### `WATCOM_1_0`<sup>Required</sup> <a name="WATCOM_1_0" id="construct-hub.SpdxLicense.property.WATCOM_1_0"></a>
+##### `WATCOM_1_0`<sup>Required</sup> <a name="WATCOM_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.WATCOM_1_0"></a>
 
 ```typescript
 public readonly WATCOM_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Sybase Open Watcom Public License 1.0.
 
@@ -12287,13 +12287,13 @@ Sybase Open Watcom Public License 1.0.
 
 ---
 
-##### `WIDGET_WORKSHOP`<sup>Required</sup> <a name="WIDGET_WORKSHOP" id="construct-hub.SpdxLicense.property.WIDGET_WORKSHOP"></a>
+##### `WIDGET_WORKSHOP`<sup>Required</sup> <a name="WIDGET_WORKSHOP" id="@gd-constructs/construct-hub.SpdxLicense.property.WIDGET_WORKSHOP"></a>
 
 ```typescript
 public readonly WIDGET_WORKSHOP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Widget Workshop License.
 
@@ -12301,13 +12301,13 @@ Widget Workshop License.
 
 ---
 
-##### `WSUIPA`<sup>Required</sup> <a name="WSUIPA" id="construct-hub.SpdxLicense.property.WSUIPA"></a>
+##### `WSUIPA`<sup>Required</sup> <a name="WSUIPA" id="@gd-constructs/construct-hub.SpdxLicense.property.WSUIPA"></a>
 
 ```typescript
 public readonly WSUIPA: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Wsuipa License.
 
@@ -12315,13 +12315,13 @@ Wsuipa License.
 
 ---
 
-##### `WTFPL`<sup>Required</sup> <a name="WTFPL" id="construct-hub.SpdxLicense.property.WTFPL"></a>
+##### `WTFPL`<sup>Required</sup> <a name="WTFPL" id="@gd-constructs/construct-hub.SpdxLicense.property.WTFPL"></a>
 
 ```typescript
 public readonly WTFPL: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Do What The F*ck You Want To Public License.
 
@@ -12329,13 +12329,13 @@ Do What The F*ck You Want To Public License.
 
 ---
 
-##### `WX_WINDOWS`<sup>Required</sup> <a name="WX_WINDOWS" id="construct-hub.SpdxLicense.property.WX_WINDOWS"></a>
+##### `WX_WINDOWS`<sup>Required</sup> <a name="WX_WINDOWS" id="@gd-constructs/construct-hub.SpdxLicense.property.WX_WINDOWS"></a>
 
 ```typescript
 public readonly WX_WINDOWS: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 wxWindows Library License.
 
@@ -12343,13 +12343,13 @@ wxWindows Library License.
 
 ---
 
-##### `X11`<sup>Required</sup> <a name="X11" id="construct-hub.SpdxLicense.property.X11"></a>
+##### `X11`<sup>Required</sup> <a name="X11" id="@gd-constructs/construct-hub.SpdxLicense.property.X11"></a>
 
 ```typescript
 public readonly X11: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 X11 License.
 
@@ -12357,13 +12357,13 @@ X11 License.
 
 ---
 
-##### `X11_DISTRIBUTE_MODIFICATIONS_VARIANT`<sup>Required</sup> <a name="X11_DISTRIBUTE_MODIFICATIONS_VARIANT" id="construct-hub.SpdxLicense.property.X11_DISTRIBUTE_MODIFICATIONS_VARIANT"></a>
+##### `X11_DISTRIBUTE_MODIFICATIONS_VARIANT`<sup>Required</sup> <a name="X11_DISTRIBUTE_MODIFICATIONS_VARIANT" id="@gd-constructs/construct-hub.SpdxLicense.property.X11_DISTRIBUTE_MODIFICATIONS_VARIANT"></a>
 
 ```typescript
 public readonly X11_DISTRIBUTE_MODIFICATIONS_VARIANT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 X11 License Distribution Modification Variant.
 
@@ -12371,13 +12371,13 @@ X11 License Distribution Modification Variant.
 
 ---
 
-##### `XDEBUG_1_03`<sup>Required</sup> <a name="XDEBUG_1_03" id="construct-hub.SpdxLicense.property.XDEBUG_1_03"></a>
+##### `XDEBUG_1_03`<sup>Required</sup> <a name="XDEBUG_1_03" id="@gd-constructs/construct-hub.SpdxLicense.property.XDEBUG_1_03"></a>
 
 ```typescript
 public readonly XDEBUG_1_03: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Xdebug License v 1.03.
 
@@ -12385,13 +12385,13 @@ Xdebug License v 1.03.
 
 ---
 
-##### `XEROX`<sup>Required</sup> <a name="XEROX" id="construct-hub.SpdxLicense.property.XEROX"></a>
+##### `XEROX`<sup>Required</sup> <a name="XEROX" id="@gd-constructs/construct-hub.SpdxLicense.property.XEROX"></a>
 
 ```typescript
 public readonly XEROX: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Xerox License.
 
@@ -12399,13 +12399,13 @@ Xerox License.
 
 ---
 
-##### `XFIG`<sup>Required</sup> <a name="XFIG" id="construct-hub.SpdxLicense.property.XFIG"></a>
+##### `XFIG`<sup>Required</sup> <a name="XFIG" id="@gd-constructs/construct-hub.SpdxLicense.property.XFIG"></a>
 
 ```typescript
 public readonly XFIG: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Xfig License.
 
@@ -12413,13 +12413,13 @@ Xfig License.
 
 ---
 
-##### `XFREE86_1_1`<sup>Required</sup> <a name="XFREE86_1_1" id="construct-hub.SpdxLicense.property.XFREE86_1_1"></a>
+##### `XFREE86_1_1`<sup>Required</sup> <a name="XFREE86_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.XFREE86_1_1"></a>
 
 ```typescript
 public readonly XFREE86_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 XFree86 License 1.1.
 
@@ -12427,13 +12427,13 @@ XFree86 License 1.1.
 
 ---
 
-##### `XINETD`<sup>Required</sup> <a name="XINETD" id="construct-hub.SpdxLicense.property.XINETD"></a>
+##### `XINETD`<sup>Required</sup> <a name="XINETD" id="@gd-constructs/construct-hub.SpdxLicense.property.XINETD"></a>
 
 ```typescript
 public readonly XINETD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 xinetd License.
 
@@ -12441,13 +12441,13 @@ xinetd License.
 
 ---
 
-##### `XKEYBOARD_CONFIG_ZINOVIEV`<sup>Required</sup> <a name="XKEYBOARD_CONFIG_ZINOVIEV" id="construct-hub.SpdxLicense.property.XKEYBOARD_CONFIG_ZINOVIEV"></a>
+##### `XKEYBOARD_CONFIG_ZINOVIEV`<sup>Required</sup> <a name="XKEYBOARD_CONFIG_ZINOVIEV" id="@gd-constructs/construct-hub.SpdxLicense.property.XKEYBOARD_CONFIG_ZINOVIEV"></a>
 
 ```typescript
 public readonly XKEYBOARD_CONFIG_ZINOVIEV: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 xkeyboard-config Zinoviev License.
 
@@ -12455,13 +12455,13 @@ xkeyboard-config Zinoviev License.
 
 ---
 
-##### `XLOCK`<sup>Required</sup> <a name="XLOCK" id="construct-hub.SpdxLicense.property.XLOCK"></a>
+##### `XLOCK`<sup>Required</sup> <a name="XLOCK" id="@gd-constructs/construct-hub.SpdxLicense.property.XLOCK"></a>
 
 ```typescript
 public readonly XLOCK: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 xlock License.
 
@@ -12469,13 +12469,13 @@ xlock License.
 
 ---
 
-##### `XNET`<sup>Required</sup> <a name="XNET" id="construct-hub.SpdxLicense.property.XNET"></a>
+##### `XNET`<sup>Required</sup> <a name="XNET" id="@gd-constructs/construct-hub.SpdxLicense.property.XNET"></a>
 
 ```typescript
 public readonly XNET: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 X.Net License.
 
@@ -12483,13 +12483,13 @@ X.Net License.
 
 ---
 
-##### `XPP`<sup>Required</sup> <a name="XPP" id="construct-hub.SpdxLicense.property.XPP"></a>
+##### `XPP`<sup>Required</sup> <a name="XPP" id="@gd-constructs/construct-hub.SpdxLicense.property.XPP"></a>
 
 ```typescript
 public readonly XPP: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 XPP License.
 
@@ -12497,13 +12497,13 @@ XPP License.
 
 ---
 
-##### `XSKAT`<sup>Required</sup> <a name="XSKAT" id="construct-hub.SpdxLicense.property.XSKAT"></a>
+##### `XSKAT`<sup>Required</sup> <a name="XSKAT" id="@gd-constructs/construct-hub.SpdxLicense.property.XSKAT"></a>
 
 ```typescript
 public readonly XSKAT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 XSkat License.
 
@@ -12511,13 +12511,13 @@ XSkat License.
 
 ---
 
-##### `YPL_1_0`<sup>Required</sup> <a name="YPL_1_0" id="construct-hub.SpdxLicense.property.YPL_1_0"></a>
+##### `YPL_1_0`<sup>Required</sup> <a name="YPL_1_0" id="@gd-constructs/construct-hub.SpdxLicense.property.YPL_1_0"></a>
 
 ```typescript
 public readonly YPL_1_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Yahoo!
 
@@ -12527,13 +12527,13 @@ Public License v1.0
 
 ---
 
-##### `YPL_1_1`<sup>Required</sup> <a name="YPL_1_1" id="construct-hub.SpdxLicense.property.YPL_1_1"></a>
+##### `YPL_1_1`<sup>Required</sup> <a name="YPL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.YPL_1_1"></a>
 
 ```typescript
 public readonly YPL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Yahoo!
 
@@ -12543,13 +12543,13 @@ Public License v1.1
 
 ---
 
-##### `ZED`<sup>Required</sup> <a name="ZED" id="construct-hub.SpdxLicense.property.ZED"></a>
+##### `ZED`<sup>Required</sup> <a name="ZED" id="@gd-constructs/construct-hub.SpdxLicense.property.ZED"></a>
 
 ```typescript
 public readonly ZED: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Zed License.
 
@@ -12557,13 +12557,13 @@ Zed License.
 
 ---
 
-##### `ZEEFF`<sup>Required</sup> <a name="ZEEFF" id="construct-hub.SpdxLicense.property.ZEEFF"></a>
+##### `ZEEFF`<sup>Required</sup> <a name="ZEEFF" id="@gd-constructs/construct-hub.SpdxLicense.property.ZEEFF"></a>
 
 ```typescript
 public readonly ZEEFF: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Zeeff License.
 
@@ -12571,13 +12571,13 @@ Zeeff License.
 
 ---
 
-##### `ZEND_2_0`<sup>Required</sup> <a name="ZEND_2_0" id="construct-hub.SpdxLicense.property.ZEND_2_0"></a>
+##### `ZEND_2_0`<sup>Required</sup> <a name="ZEND_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ZEND_2_0"></a>
 
 ```typescript
 public readonly ZEND_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Zend License v2.0.
 
@@ -12585,13 +12585,13 @@ Zend License v2.0.
 
 ---
 
-##### `ZERO_BSD`<sup>Required</sup> <a name="ZERO_BSD" id="construct-hub.SpdxLicense.property.ZERO_BSD"></a>
+##### `ZERO_BSD`<sup>Required</sup> <a name="ZERO_BSD" id="@gd-constructs/construct-hub.SpdxLicense.property.ZERO_BSD"></a>
 
 ```typescript
 public readonly ZERO_BSD: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 BSD Zero Clause License.
 
@@ -12599,13 +12599,13 @@ BSD Zero Clause License.
 
 ---
 
-##### `ZIMBRA_1_3`<sup>Required</sup> <a name="ZIMBRA_1_3" id="construct-hub.SpdxLicense.property.ZIMBRA_1_3"></a>
+##### `ZIMBRA_1_3`<sup>Required</sup> <a name="ZIMBRA_1_3" id="@gd-constructs/construct-hub.SpdxLicense.property.ZIMBRA_1_3"></a>
 
 ```typescript
 public readonly ZIMBRA_1_3: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Zimbra Public License v1.3.
 
@@ -12613,13 +12613,13 @@ Zimbra Public License v1.3.
 
 ---
 
-##### `ZIMBRA_1_4`<sup>Required</sup> <a name="ZIMBRA_1_4" id="construct-hub.SpdxLicense.property.ZIMBRA_1_4"></a>
+##### `ZIMBRA_1_4`<sup>Required</sup> <a name="ZIMBRA_1_4" id="@gd-constructs/construct-hub.SpdxLicense.property.ZIMBRA_1_4"></a>
 
 ```typescript
 public readonly ZIMBRA_1_4: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Zimbra Public License v1.4.
 
@@ -12627,13 +12627,13 @@ Zimbra Public License v1.4.
 
 ---
 
-##### `ZLIB`<sup>Required</sup> <a name="ZLIB" id="construct-hub.SpdxLicense.property.ZLIB"></a>
+##### `ZLIB`<sup>Required</sup> <a name="ZLIB" id="@gd-constructs/construct-hub.SpdxLicense.property.ZLIB"></a>
 
 ```typescript
 public readonly ZLIB: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 zlib License.
 
@@ -12641,13 +12641,13 @@ zlib License.
 
 ---
 
-##### `ZLIB_ACKNOWLEDGEMENT`<sup>Required</sup> <a name="ZLIB_ACKNOWLEDGEMENT" id="construct-hub.SpdxLicense.property.ZLIB_ACKNOWLEDGEMENT"></a>
+##### `ZLIB_ACKNOWLEDGEMENT`<sup>Required</sup> <a name="ZLIB_ACKNOWLEDGEMENT" id="@gd-constructs/construct-hub.SpdxLicense.property.ZLIB_ACKNOWLEDGEMENT"></a>
 
 ```typescript
 public readonly ZLIB_ACKNOWLEDGEMENT: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 zlib/libpng License with Acknowledgement.
 
@@ -12655,13 +12655,13 @@ zlib/libpng License with Acknowledgement.
 
 ---
 
-##### `ZPL_1_1`<sup>Required</sup> <a name="ZPL_1_1" id="construct-hub.SpdxLicense.property.ZPL_1_1"></a>
+##### `ZPL_1_1`<sup>Required</sup> <a name="ZPL_1_1" id="@gd-constructs/construct-hub.SpdxLicense.property.ZPL_1_1"></a>
 
 ```typescript
 public readonly ZPL_1_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Zope Public License 1.1.
 
@@ -12669,13 +12669,13 @@ Zope Public License 1.1.
 
 ---
 
-##### `ZPL_2_0`<sup>Required</sup> <a name="ZPL_2_0" id="construct-hub.SpdxLicense.property.ZPL_2_0"></a>
+##### `ZPL_2_0`<sup>Required</sup> <a name="ZPL_2_0" id="@gd-constructs/construct-hub.SpdxLicense.property.ZPL_2_0"></a>
 
 ```typescript
 public readonly ZPL_2_0: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Zope Public License 2.0.
 
@@ -12683,13 +12683,13 @@ Zope Public License 2.0.
 
 ---
 
-##### `ZPL_2_1`<sup>Required</sup> <a name="ZPL_2_1" id="construct-hub.SpdxLicense.property.ZPL_2_1"></a>
+##### `ZPL_2_1`<sup>Required</sup> <a name="ZPL_2_1" id="@gd-constructs/construct-hub.SpdxLicense.property.ZPL_2_1"></a>
 
 ```typescript
 public readonly ZPL_2_1: SpdxLicense;
 ```
 
-- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.SpdxLicense">SpdxLicense</a>
 
 Zope Public License 2.1.
 
@@ -12697,14 +12697,14 @@ Zope Public License 2.1.
 
 ---
 
-### TagCondition <a name="TagCondition" id="construct-hub.TagCondition"></a>
+### TagCondition <a name="TagCondition" id="@gd-constructs/construct-hub.TagCondition"></a>
 
 Condition for applying a custom tag to a package.
 
-#### Initializers <a name="Initializers" id="construct-hub.TagCondition.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.TagCondition.Initializer"></a>
 
 ```typescript
-import { TagCondition } from 'construct-hub'
+import { TagCondition } from '@gd-constructs/construct-hub'
 
 new TagCondition()
 ```
@@ -12718,11 +12718,11 @@ new TagCondition()
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.TagCondition.bind">bind</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagCondition.bind">bind</a></code> | *No description.* |
 
 ---
 
-##### `bind` <a name="bind" id="construct-hub.TagCondition.bind"></a>
+##### `bind` <a name="bind" id="@gd-constructs/construct-hub.TagCondition.bind"></a>
 
 ```typescript
 public bind(): TagConditionConfig
@@ -12732,50 +12732,50 @@ public bind(): TagConditionConfig
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.TagCondition.and">and</a></code> | Create an && condition which applies only when all condition arguments are true. |
-| <code><a href="#construct-hub.TagCondition.field">field</a></code> | Target a field within the `package.json` to assert against. Nested fields can be accessed by passing multiple keys. `TagCondition.field('key1', 'key2')` will access `packageJson?.key1?.key2`. |
-| <code><a href="#construct-hub.TagCondition.not">not</a></code> | Create a ! |
-| <code><a href="#construct-hub.TagCondition.or">or</a></code> | Create an \|\| condition which applies if any of the condition arguments are true. |
-| <code><a href="#construct-hub.TagCondition.readme">readme</a></code> | Create a condition with logic targeting the README of the package. |
+| <code><a href="#@gd-constructs/construct-hub.TagCondition.and">and</a></code> | Create an && condition which applies only when all condition arguments are true. |
+| <code><a href="#@gd-constructs/construct-hub.TagCondition.field">field</a></code> | Target a field within the `package.json` to assert against. Nested fields can be accessed by passing multiple keys. `TagCondition.field('key1', 'key2')` will access `packageJson?.key1?.key2`. |
+| <code><a href="#@gd-constructs/construct-hub.TagCondition.not">not</a></code> | Create a ! |
+| <code><a href="#@gd-constructs/construct-hub.TagCondition.or">or</a></code> | Create an \|\| condition which applies if any of the condition arguments are true. |
+| <code><a href="#@gd-constructs/construct-hub.TagCondition.readme">readme</a></code> | Create a condition with logic targeting the README of the package. |
 
 ---
 
-##### `and` <a name="and" id="construct-hub.TagCondition.and"></a>
+##### `and` <a name="and" id="@gd-constructs/construct-hub.TagCondition.and"></a>
 
 ```typescript
-import { TagCondition } from 'construct-hub'
+import { TagCondition } from '@gd-constructs/construct-hub'
 
 TagCondition.and(conds: TagCondition)
 ```
 
 Create an && condition which applies only when all condition arguments are true.
 
-###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.and.parameter.conds"></a>
+###### `conds`<sup>Required</sup> <a name="conds" id="@gd-constructs/construct-hub.TagCondition.and.parameter.conds"></a>
 
-- *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagCondition">TagCondition</a>
 
 ---
 
-##### `field` <a name="field" id="construct-hub.TagCondition.field"></a>
+##### `field` <a name="field" id="@gd-constructs/construct-hub.TagCondition.field"></a>
 
 ```typescript
-import { TagCondition } from 'construct-hub'
+import { TagCondition } from '@gd-constructs/construct-hub'
 
 TagCondition.field(keys: string)
 ```
 
 Target a field within the `package.json` to assert against. Nested fields can be accessed by passing multiple keys. `TagCondition.field('key1', 'key2')` will access `packageJson?.key1?.key2`.
 
-###### `keys`<sup>Required</sup> <a name="keys" id="construct-hub.TagCondition.field.parameter.keys"></a>
+###### `keys`<sup>Required</sup> <a name="keys" id="@gd-constructs/construct-hub.TagCondition.field.parameter.keys"></a>
 
 - *Type:* string
 
 ---
 
-##### `not` <a name="not" id="construct-hub.TagCondition.not"></a>
+##### `not` <a name="not" id="@gd-constructs/construct-hub.TagCondition.not"></a>
 
 ```typescript
-import { TagCondition } from 'construct-hub'
+import { TagCondition } from '@gd-constructs/construct-hub'
 
 TagCondition.not(conds: TagCondition)
 ```
@@ -12784,32 +12784,32 @@ Create a !
 
 condition which applies if the condition argument is false
 
-###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.not.parameter.conds"></a>
+###### `conds`<sup>Required</sup> <a name="conds" id="@gd-constructs/construct-hub.TagCondition.not.parameter.conds"></a>
 
-- *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagCondition">TagCondition</a>
 
 ---
 
-##### `or` <a name="or" id="construct-hub.TagCondition.or"></a>
+##### `or` <a name="or" id="@gd-constructs/construct-hub.TagCondition.or"></a>
 
 ```typescript
-import { TagCondition } from 'construct-hub'
+import { TagCondition } from '@gd-constructs/construct-hub'
 
 TagCondition.or(conds: TagCondition)
 ```
 
 Create an || condition which applies if any of the condition arguments are true.
 
-###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.or.parameter.conds"></a>
+###### `conds`<sup>Required</sup> <a name="conds" id="@gd-constructs/construct-hub.TagCondition.or.parameter.conds"></a>
 
-- *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagCondition">TagCondition</a>
 
 ---
 
-##### `readme` <a name="readme" id="construct-hub.TagCondition.readme"></a>
+##### `readme` <a name="readme" id="@gd-constructs/construct-hub.TagCondition.readme"></a>
 
 ```typescript
-import { TagCondition } from 'construct-hub'
+import { TagCondition } from '@gd-constructs/construct-hub'
 
 TagCondition.readme()
 ```
@@ -12818,25 +12818,25 @@ Create a condition with logic targeting the README of the package.
 
 
 
-### TagConditionField <a name="TagConditionField" id="construct-hub.TagConditionField"></a>
+### TagConditionField <a name="TagConditionField" id="@gd-constructs/construct-hub.TagConditionField"></a>
 
 Target a field to use in logic to dictate whether a tag is relevant.
 
-#### Initializers <a name="Initializers" id="construct-hub.TagConditionField.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.TagConditionField.Initializer"></a>
 
 ```typescript
-import { TagConditionField } from 'construct-hub'
+import { TagConditionField } from '@gd-constructs/construct-hub'
 
 new TagConditionField(field: string[])
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.TagConditionField.Initializer.parameter.field">field</a></code> | <code>string[]</code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionField.Initializer.parameter.field">field</a></code> | <code>string[]</code> | *No description.* |
 
 ---
 
-##### `field`<sup>Required</sup> <a name="field" id="construct-hub.TagConditionField.Initializer.parameter.field"></a>
+##### `field`<sup>Required</sup> <a name="field" id="@gd-constructs/construct-hub.TagConditionField.Initializer.parameter.field"></a>
 
 - *Type:* string[]
 
@@ -12846,13 +12846,13 @@ new TagConditionField(field: string[])
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.TagConditionField.eq">eq</a></code> | Create a === condition which applies if the specified field within the package's package.json is equal to the passed value. |
-| <code><a href="#construct-hub.TagConditionField.includes">includes</a></code> | Create a `field.includes(value)` condition which applies if the specified field within the package's package.json includes the value. This works for arrays or strings. |
-| <code><a href="#construct-hub.TagConditionField.startsWith">startsWith</a></code> | Create a `field.startsWith(value)` condition which applies if the specified field within the package's package.json begins with the value. This works only for string values. |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionField.eq">eq</a></code> | Create a === condition which applies if the specified field within the package's package.json is equal to the passed value. |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionField.includes">includes</a></code> | Create a `field.includes(value)` condition which applies if the specified field within the package's package.json includes the value. This works for arrays or strings. |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionField.startsWith">startsWith</a></code> | Create a `field.startsWith(value)` condition which applies if the specified field within the package's package.json begins with the value. This works only for string values. |
 
 ---
 
-##### `eq` <a name="eq" id="construct-hub.TagConditionField.eq"></a>
+##### `eq` <a name="eq" id="@gd-constructs/construct-hub.TagConditionField.eq"></a>
 
 ```typescript
 public eq(value: any): TagCondition
@@ -12860,13 +12860,13 @@ public eq(value: any): TagCondition
 
 Create a === condition which applies if the specified field within the package's package.json is equal to the passed value.
 
-###### `value`<sup>Required</sup> <a name="value" id="construct-hub.TagConditionField.eq.parameter.value"></a>
+###### `value`<sup>Required</sup> <a name="value" id="@gd-constructs/construct-hub.TagConditionField.eq.parameter.value"></a>
 
 - *Type:* any
 
 ---
 
-##### `includes` <a name="includes" id="construct-hub.TagConditionField.includes"></a>
+##### `includes` <a name="includes" id="@gd-constructs/construct-hub.TagConditionField.includes"></a>
 
 ```typescript
 public includes(value: any, options?: TagConditionIncludesOptions): TagCondition
@@ -12874,19 +12874,19 @@ public includes(value: any, options?: TagConditionIncludesOptions): TagCondition
 
 Create a `field.includes(value)` condition which applies if the specified field within the package's package.json includes the value. This works for arrays or strings.
 
-###### `value`<sup>Required</sup> <a name="value" id="construct-hub.TagConditionField.includes.parameter.value"></a>
+###### `value`<sup>Required</sup> <a name="value" id="@gd-constructs/construct-hub.TagConditionField.includes.parameter.value"></a>
 
 - *Type:* any
 
 ---
 
-###### `options`<sup>Optional</sup> <a name="options" id="construct-hub.TagConditionField.includes.parameter.options"></a>
+###### `options`<sup>Optional</sup> <a name="options" id="@gd-constructs/construct-hub.TagConditionField.includes.parameter.options"></a>
 
-- *Type:* <a href="#construct-hub.TagConditionIncludesOptions">TagConditionIncludesOptions</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagConditionIncludesOptions">TagConditionIncludesOptions</a>
 
 ---
 
-##### `startsWith` <a name="startsWith" id="construct-hub.TagConditionField.startsWith"></a>
+##### `startsWith` <a name="startsWith" id="@gd-constructs/construct-hub.TagConditionField.startsWith"></a>
 
 ```typescript
 public startsWith(value: string): TagCondition
@@ -12894,7 +12894,7 @@ public startsWith(value: string): TagCondition
 
 Create a `field.startsWith(value)` condition which applies if the specified field within the package's package.json begins with the value. This works only for string values.
 
-###### `value`<sup>Required</sup> <a name="value" id="construct-hub.TagConditionField.startsWith.parameter.value"></a>
+###### `value`<sup>Required</sup> <a name="value" id="@gd-constructs/construct-hub.TagConditionField.startsWith.parameter.value"></a>
 
 - *Type:* string
 
@@ -12903,14 +12903,14 @@ Create a `field.startsWith(value)` condition which applies if the specified fiel
 
 
 
-### TagConditionReadme <a name="TagConditionReadme" id="construct-hub.TagConditionReadme"></a>
+### TagConditionReadme <a name="TagConditionReadme" id="@gd-constructs/construct-hub.TagConditionReadme"></a>
 
 Target the README of the package to dictate whether a tag is relevant.
 
-#### Initializers <a name="Initializers" id="construct-hub.TagConditionReadme.Initializer"></a>
+#### Initializers <a name="Initializers" id="@gd-constructs/construct-hub.TagConditionReadme.Initializer"></a>
 
 ```typescript
-import { TagConditionReadme } from 'construct-hub'
+import { TagConditionReadme } from '@gd-constructs/construct-hub'
 
 new TagConditionReadme()
 ```
@@ -12924,11 +12924,11 @@ new TagConditionReadme()
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.TagConditionReadme.includes">includes</a></code> | Create a `readme.includes(value)` condition which applies if the README includes the specified string. |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionReadme.includes">includes</a></code> | Create a `readme.includes(value)` condition which applies if the README includes the specified string. |
 
 ---
 
-##### `includes` <a name="includes" id="construct-hub.TagConditionReadme.includes"></a>
+##### `includes` <a name="includes" id="@gd-constructs/construct-hub.TagConditionReadme.includes"></a>
 
 ```typescript
 public includes(value: string, options?: TagConditionIncludesOptions): TagCondition
@@ -12936,15 +12936,15 @@ public includes(value: string, options?: TagConditionIncludesOptions): TagCondit
 
 Create a `readme.includes(value)` condition which applies if the README includes the specified string.
 
-###### `value`<sup>Required</sup> <a name="value" id="construct-hub.TagConditionReadme.includes.parameter.value"></a>
+###### `value`<sup>Required</sup> <a name="value" id="@gd-constructs/construct-hub.TagConditionReadme.includes.parameter.value"></a>
 
 - *Type:* string
 
 ---
 
-###### `options`<sup>Optional</sup> <a name="options" id="construct-hub.TagConditionReadme.includes.parameter.options"></a>
+###### `options`<sup>Optional</sup> <a name="options" id="@gd-constructs/construct-hub.TagConditionReadme.includes.parameter.options"></a>
 
-- *Type:* <a href="#construct-hub.TagConditionIncludesOptions">TagConditionIncludesOptions</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.TagConditionIncludesOptions">TagConditionIncludesOptions</a>
 
 ---
 
@@ -12953,9 +12953,9 @@ Create a `readme.includes(value)` condition which applies if the README includes
 
 ## Protocols <a name="Protocols" id="Protocols"></a>
 
-### IDenyList <a name="IDenyList" id="construct-hub.IDenyList"></a>
+### IDenyList <a name="IDenyList" id="@gd-constructs/construct-hub.IDenyList"></a>
 
-- *Implemented By:* <a href="#construct-hub.IDenyList">IDenyList</a>
+- *Implemented By:* <a href="#@gd-constructs/construct-hub.IDenyList">IDenyList</a>
 
 DenyList features exposed to extension points.
 
@@ -12963,11 +12963,11 @@ DenyList features exposed to extension points.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.IDenyList.grantRead">grantRead</a></code> | Grants an AWS Lambda function permissions to read the deny list, and adds the relevant environment variables expected by the `DenyListClient`. |
+| <code><a href="#@gd-constructs/construct-hub.IDenyList.grantRead">grantRead</a></code> | Grants an AWS Lambda function permissions to read the deny list, and adds the relevant environment variables expected by the `DenyListClient`. |
 
 ---
 
-##### `grantRead` <a name="grantRead" id="construct-hub.IDenyList.grantRead"></a>
+##### `grantRead` <a name="grantRead" id="@gd-constructs/construct-hub.IDenyList.grantRead"></a>
 
 ```typescript
 public grantRead(handler: Function): void
@@ -12975,26 +12975,26 @@ public grantRead(handler: Function): void
 
 Grants an AWS Lambda function permissions to read the deny list, and adds the relevant environment variables expected by the `DenyListClient`.
 
-###### `handler`<sup>Required</sup> <a name="handler" id="construct-hub.IDenyList.grantRead.parameter.handler"></a>
+###### `handler`<sup>Required</sup> <a name="handler" id="@gd-constructs/construct-hub.IDenyList.grantRead.parameter.handler"></a>
 
 - *Type:* aws-cdk-lib.aws_lambda.Function
 
 ---
 
 
-### ILicenseList <a name="ILicenseList" id="construct-hub.ILicenseList"></a>
+### ILicenseList <a name="ILicenseList" id="@gd-constructs/construct-hub.ILicenseList"></a>
 
-- *Implemented By:* <a href="#construct-hub.ILicenseList">ILicenseList</a>
+- *Implemented By:* <a href="#@gd-constructs/construct-hub.ILicenseList">ILicenseList</a>
 
 #### Methods <a name="Methods" id="Methods"></a>
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.ILicenseList.grantRead">grantRead</a></code> | Grants an AWS Lambda function permissions to read the license allow list, and adds the relevant environment variables expected by the `LicenseListClient`. |
+| <code><a href="#@gd-constructs/construct-hub.ILicenseList.grantRead">grantRead</a></code> | Grants an AWS Lambda function permissions to read the license allow list, and adds the relevant environment variables expected by the `LicenseListClient`. |
 
 ---
 
-##### `grantRead` <a name="grantRead" id="construct-hub.ILicenseList.grantRead"></a>
+##### `grantRead` <a name="grantRead" id="@gd-constructs/construct-hub.ILicenseList.grantRead"></a>
 
 ```typescript
 public grantRead(handler: Function): void
@@ -13002,16 +13002,16 @@ public grantRead(handler: Function): void
 
 Grants an AWS Lambda function permissions to read the license allow list, and adds the relevant environment variables expected by the `LicenseListClient`.
 
-###### `handler`<sup>Required</sup> <a name="handler" id="construct-hub.ILicenseList.grantRead.parameter.handler"></a>
+###### `handler`<sup>Required</sup> <a name="handler" id="@gd-constructs/construct-hub.ILicenseList.grantRead.parameter.handler"></a>
 
 - *Type:* aws-cdk-lib.aws_lambda.Function
 
 ---
 
 
-### IMonitoring <a name="IMonitoring" id="construct-hub.IMonitoring"></a>
+### IMonitoring <a name="IMonitoring" id="@gd-constructs/construct-hub.IMonitoring"></a>
 
-- *Implemented By:* <a href="#construct-hub.IMonitoring">IMonitoring</a>
+- *Implemented By:* <a href="#@gd-constructs/construct-hub.IMonitoring">IMonitoring</a>
 
 ConstructHub monitoring features exposed to extension points.
 
@@ -13019,12 +13019,12 @@ ConstructHub monitoring features exposed to extension points.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.IMonitoring.addHighSeverityAlarm">addHighSeverityAlarm</a></code> | Adds a high-severity alarm. |
-| <code><a href="#construct-hub.IMonitoring.addLowSeverityAlarm">addLowSeverityAlarm</a></code> | Adds a low-severity alarm. |
+| <code><a href="#@gd-constructs/construct-hub.IMonitoring.addHighSeverityAlarm">addHighSeverityAlarm</a></code> | Adds a high-severity alarm. |
+| <code><a href="#@gd-constructs/construct-hub.IMonitoring.addLowSeverityAlarm">addLowSeverityAlarm</a></code> | Adds a low-severity alarm. |
 
 ---
 
-##### `addHighSeverityAlarm` <a name="addHighSeverityAlarm" id="construct-hub.IMonitoring.addHighSeverityAlarm"></a>
+##### `addHighSeverityAlarm` <a name="addHighSeverityAlarm" id="@gd-constructs/construct-hub.IMonitoring.addHighSeverityAlarm"></a>
 
 ```typescript
 public addHighSeverityAlarm(title: string, alarm: AlarmBase): void
@@ -13035,7 +13035,7 @@ Adds a high-severity alarm.
 If this alarm goes off, the action specified in
 `highSeverityAlarmActionArn` is triggered.
 
-###### `title`<sup>Required</sup> <a name="title" id="construct-hub.IMonitoring.addHighSeverityAlarm.parameter.title"></a>
+###### `title`<sup>Required</sup> <a name="title" id="@gd-constructs/construct-hub.IMonitoring.addHighSeverityAlarm.parameter.title"></a>
 
 - *Type:* string
 
@@ -13043,7 +13043,7 @@ a user-friendly title for the alarm (will be rendered on the high-severity Cloud
 
 ---
 
-###### `alarm`<sup>Required</sup> <a name="alarm" id="construct-hub.IMonitoring.addHighSeverityAlarm.parameter.alarm"></a>
+###### `alarm`<sup>Required</sup> <a name="alarm" id="@gd-constructs/construct-hub.IMonitoring.addHighSeverityAlarm.parameter.alarm"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.AlarmBase
 
@@ -13051,7 +13051,7 @@ the alarm to be added to the high-severity dashboard.
 
 ---
 
-##### `addLowSeverityAlarm` <a name="addLowSeverityAlarm" id="construct-hub.IMonitoring.addLowSeverityAlarm"></a>
+##### `addLowSeverityAlarm` <a name="addLowSeverityAlarm" id="@gd-constructs/construct-hub.IMonitoring.addLowSeverityAlarm"></a>
 
 ```typescript
 public addLowSeverityAlarm(title: string, alarm: AlarmBase): void
@@ -13062,7 +13062,7 @@ Adds a low-severity alarm.
 If this alarm goes off, the action specified in
 `normalAlarmAction` is triggered.
 
-###### `title`<sup>Required</sup> <a name="title" id="construct-hub.IMonitoring.addLowSeverityAlarm.parameter.title"></a>
+###### `title`<sup>Required</sup> <a name="title" id="@gd-constructs/construct-hub.IMonitoring.addLowSeverityAlarm.parameter.title"></a>
 
 - *Type:* string
 
@@ -13070,7 +13070,7 @@ a user-friendly title for the alarm (not currently used).
 
 ---
 
-###### `alarm`<sup>Required</sup> <a name="alarm" id="construct-hub.IMonitoring.addLowSeverityAlarm.parameter.alarm"></a>
+###### `alarm`<sup>Required</sup> <a name="alarm" id="@gd-constructs/construct-hub.IMonitoring.addLowSeverityAlarm.parameter.alarm"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.AlarmBase
 
@@ -13079,9 +13079,9 @@ the alarm to be added.
 ---
 
 
-### IOverviewDashboard <a name="IOverviewDashboard" id="construct-hub.IOverviewDashboard"></a>
+### IOverviewDashboard <a name="IOverviewDashboard" id="@gd-constructs/construct-hub.IOverviewDashboard"></a>
 
-- *Implemented By:* <a href="#construct-hub.IOverviewDashboard">IOverviewDashboard</a>
+- *Implemented By:* <a href="#@gd-constructs/construct-hub.IOverviewDashboard">IOverviewDashboard</a>
 
 ConstructHub overview dashboard exposed to extension points.
 
@@ -13089,12 +13089,12 @@ ConstructHub overview dashboard exposed to extension points.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard">addConcurrentExecutionMetricToDashboard</a></code> | Adds a metric widget to the overview dashboard showing the total number concurrent executions of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function. |
-| <code><a href="#construct-hub.IOverviewDashboard.addDLQMetricToDashboard">addDLQMetricToDashboard</a></code> | Adds widgets to overview dashboard with link to the dashboard and number of visible messages. |
+| <code><a href="#@gd-constructs/construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard">addConcurrentExecutionMetricToDashboard</a></code> | Adds a metric widget to the overview dashboard showing the total number concurrent executions of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function. |
+| <code><a href="#@gd-constructs/construct-hub.IOverviewDashboard.addDLQMetricToDashboard">addDLQMetricToDashboard</a></code> | Adds widgets to overview dashboard with link to the dashboard and number of visible messages. |
 
 ---
 
-##### `addConcurrentExecutionMetricToDashboard` <a name="addConcurrentExecutionMetricToDashboard" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard"></a>
+##### `addConcurrentExecutionMetricToDashboard` <a name="addConcurrentExecutionMetricToDashboard" id="@gd-constructs/construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard"></a>
 
 ```typescript
 public addConcurrentExecutionMetricToDashboard(fn: IFunction, name?: string): void
@@ -13105,7 +13105,7 @@ Adds a metric widget to the overview dashboard showing the total number concurre
 This can be
 used to see which function has the most impact of the service quota.
 
-###### `fn`<sup>Required</sup> <a name="fn" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard.parameter.fn"></a>
+###### `fn`<sup>Required</sup> <a name="fn" id="@gd-constructs/construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard.parameter.fn"></a>
 
 - *Type:* aws-cdk-lib.aws_lambda.IFunction
 
@@ -13113,13 +13113,13 @@ Lambda function to be monitored.
 
 ---
 
-###### `name`<sup>Optional</sup> <a name="name" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard.parameter.name"></a>
+###### `name`<sup>Optional</sup> <a name="name" id="@gd-constructs/construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard.parameter.name"></a>
 
 - *Type:* string
 
 ---
 
-##### `addDLQMetricToDashboard` <a name="addDLQMetricToDashboard" id="construct-hub.IOverviewDashboard.addDLQMetricToDashboard"></a>
+##### `addDLQMetricToDashboard` <a name="addDLQMetricToDashboard" id="@gd-constructs/construct-hub.IOverviewDashboard.addDLQMetricToDashboard"></a>
 
 ```typescript
 public addDLQMetricToDashboard(name: string, deadLetterQueue: IQueue, reDriveFunction?: IFunction): void
@@ -13127,7 +13127,7 @@ public addDLQMetricToDashboard(name: string, deadLetterQueue: IQueue, reDriveFun
 
 Adds widgets to overview dashboard with link to the dashboard and number of visible messages.
 
-###### `name`<sup>Required</sup> <a name="name" id="construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.name"></a>
+###### `name`<sup>Required</sup> <a name="name" id="@gd-constructs/construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.name"></a>
 
 - *Type:* string
 
@@ -13135,7 +13135,7 @@ of the DLQ that will be used in the dashboard.
 
 ---
 
-###### `deadLetterQueue`<sup>Required</sup> <a name="deadLetterQueue" id="construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.deadLetterQueue"></a>
+###### `deadLetterQueue`<sup>Required</sup> <a name="deadLetterQueue" id="@gd-constructs/construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.deadLetterQueue"></a>
 
 - *Type:* aws-cdk-lib.aws_sqs.IQueue
 
@@ -13143,7 +13143,7 @@ Dead Letter Queue to be used in the dashboard.
 
 ---
 
-###### `reDriveFunction`<sup>Optional</sup> <a name="reDriveFunction" id="construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.reDriveFunction"></a>
+###### `reDriveFunction`<sup>Optional</sup> <a name="reDriveFunction" id="@gd-constructs/construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.reDriveFunction"></a>
 
 - *Type:* aws-cdk-lib.aws_lambda.IFunction
 
@@ -13152,9 +13152,9 @@ a lambda function that will be used to re-drive the DLQ.
 ---
 
 
-### IPackageSource <a name="IPackageSource" id="construct-hub.IPackageSource"></a>
+### IPackageSource <a name="IPackageSource" id="@gd-constructs/construct-hub.IPackageSource"></a>
 
-- *Implemented By:* construct-hub.sources.CodeArtifact, construct-hub.sources.NpmJs, <a href="#construct-hub.IPackageSource">IPackageSource</a>
+- *Implemented By:* @gd-constructs/construct-hub.sources.CodeArtifact, @gd-constructs/construct-hub.sources.NpmJs, <a href="#@gd-constructs/construct-hub.IPackageSource">IPackageSource</a>
 
 A package source for ConstructHub.
 
@@ -13162,11 +13162,11 @@ A package source for ConstructHub.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.IPackageSource.bind">bind</a></code> | Binds the package source to a scope and target queue. |
+| <code><a href="#@gd-constructs/construct-hub.IPackageSource.bind">bind</a></code> | Binds the package source to a scope and target queue. |
 
 ---
 
-##### `bind` <a name="bind" id="construct-hub.IPackageSource.bind"></a>
+##### `bind` <a name="bind" id="@gd-constructs/construct-hub.IPackageSource.bind"></a>
 
 ```typescript
 public bind(scope: Construct, opts: PackageSourceBindOptions): PackageSourceBindResult
@@ -13174,7 +13174,7 @@ public bind(scope: Construct, opts: PackageSourceBindOptions): PackageSourceBind
 
 Binds the package source to a scope and target queue.
 
-###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.IPackageSource.bind.parameter.scope"></a>
+###### `scope`<sup>Required</sup> <a name="scope" id="@gd-constructs/construct-hub.IPackageSource.bind.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
@@ -13182,18 +13182,18 @@ the construct scope in which the binding happens.
 
 ---
 
-###### `opts`<sup>Required</sup> <a name="opts" id="construct-hub.IPackageSource.bind.parameter.opts"></a>
+###### `opts`<sup>Required</sup> <a name="opts" id="@gd-constructs/construct-hub.IPackageSource.bind.parameter.opts"></a>
 
-- *Type:* <a href="#construct-hub.PackageSourceBindOptions">PackageSourceBindOptions</a>
+- *Type:* <a href="#@gd-constructs/construct-hub.PackageSourceBindOptions">PackageSourceBindOptions</a>
 
 options for binding the package source.
 
 ---
 
 
-### IRepository <a name="IRepository" id="construct-hub.IRepository"></a>
+### IRepository <a name="IRepository" id="@gd-constructs/construct-hub.IRepository"></a>
 
-- *Implemented By:* <a href="#construct-hub.IRepository">IRepository</a>
+- *Implemented By:* <a href="#@gd-constructs/construct-hub.IRepository">IRepository</a>
 
 The CodeArtifact repository API exposed to extensions.
 
@@ -13201,11 +13201,11 @@ The CodeArtifact repository API exposed to extensions.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.IRepository.addExternalConnection">addExternalConnection</a></code> | Adds an external connection to this repository. |
+| <code><a href="#@gd-constructs/construct-hub.IRepository.addExternalConnection">addExternalConnection</a></code> | Adds an external connection to this repository. |
 
 ---
 
-##### `addExternalConnection` <a name="addExternalConnection" id="construct-hub.IRepository.addExternalConnection"></a>
+##### `addExternalConnection` <a name="addExternalConnection" id="@gd-constructs/construct-hub.IRepository.addExternalConnection"></a>
 
 ```typescript
 public addExternalConnection(id: string): void
@@ -13213,7 +13213,7 @@ public addExternalConnection(id: string): void
 
 Adds an external connection to this repository.
 
-###### `id`<sup>Required</sup> <a name="id" id="construct-hub.IRepository.addExternalConnection.parameter.id"></a>
+###### `id`<sup>Required</sup> <a name="id" id="@gd-constructs/construct-hub.IRepository.addExternalConnection.parameter.id"></a>
 
 - *Type:* string
 
@@ -13224,7 +13224,7 @@ the id of the external connection (i.e: `public:npmjs`).
 
 ## Enums <a name="Enums" id="Enums"></a>
 
-### Isolation <a name="Isolation" id="construct-hub.Isolation"></a>
+### Isolation <a name="Isolation" id="@gd-constructs/construct-hub.Isolation"></a>
 
 How possibly risky operations (such as doc-generation, which requires installing the indexed packages in order to trans-literate sample code) are isolated to mitigate possible arbitrary code execution vulnerabilities in and around `npm install` or the transliterator's use of the TypeScript compiler.
 
@@ -13232,13 +13232,13 @@ How possibly risky operations (such as doc-generation, which requires installing
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.Isolation.UNLIMITED_INTERNET_ACCESS">UNLIMITED_INTERNET_ACCESS</a></code> | No isolation is done whatsoever. The doc-generation process still is provisioned with least-privilege permissions, but retains complete access to internet. |
-| <code><a href="#construct-hub.Isolation.LIMITED_INTERNET_ACCESS">LIMITED_INTERNET_ACCESS</a></code> | The same protections as `UNLIMITED_INTERNET_ACCESS`, except outbound internet connections are limited to IP address ranges corresponding to hosting endpoints for npmjs.com. |
-| <code><a href="#construct-hub.Isolation.NO_INTERNET_ACCESS">NO_INTERNET_ACCESS</a></code> | The same protections as `LIMITED_INTERNET_ACCESS`, except all remaining internet access is removed. |
+| <code><a href="#@gd-constructs/construct-hub.Isolation.UNLIMITED_INTERNET_ACCESS">UNLIMITED_INTERNET_ACCESS</a></code> | No isolation is done whatsoever. The doc-generation process still is provisioned with least-privilege permissions, but retains complete access to internet. |
+| <code><a href="#@gd-constructs/construct-hub.Isolation.LIMITED_INTERNET_ACCESS">LIMITED_INTERNET_ACCESS</a></code> | The same protections as `UNLIMITED_INTERNET_ACCESS`, except outbound internet connections are limited to IP address ranges corresponding to hosting endpoints for npmjs.com. |
+| <code><a href="#@gd-constructs/construct-hub.Isolation.NO_INTERNET_ACCESS">NO_INTERNET_ACCESS</a></code> | The same protections as `LIMITED_INTERNET_ACCESS`, except all remaining internet access is removed. |
 
 ---
 
-##### `UNLIMITED_INTERNET_ACCESS` <a name="UNLIMITED_INTERNET_ACCESS" id="construct-hub.Isolation.UNLIMITED_INTERNET_ACCESS"></a>
+##### `UNLIMITED_INTERNET_ACCESS` <a name="UNLIMITED_INTERNET_ACCESS" id="@gd-constructs/construct-hub.Isolation.UNLIMITED_INTERNET_ACCESS"></a>
 
 No isolation is done whatsoever. The doc-generation process still is provisioned with least-privilege permissions, but retains complete access to internet.
 
@@ -13253,14 +13253,14 @@ transitive dependencies).
 ---
 
 
-##### `LIMITED_INTERNET_ACCESS` <a name="LIMITED_INTERNET_ACCESS" id="construct-hub.Isolation.LIMITED_INTERNET_ACCESS"></a>
+##### `LIMITED_INTERNET_ACCESS` <a name="LIMITED_INTERNET_ACCESS" id="@gd-constructs/construct-hub.Isolation.LIMITED_INTERNET_ACCESS"></a>
 
 The same protections as `UNLIMITED_INTERNET_ACCESS`, except outbound internet connections are limited to IP address ranges corresponding to hosting endpoints for npmjs.com.
 
 ---
 
 
-##### `NO_INTERNET_ACCESS` <a name="NO_INTERNET_ACCESS" id="construct-hub.Isolation.NO_INTERNET_ACCESS"></a>
+##### `NO_INTERNET_ACCESS` <a name="NO_INTERNET_ACCESS" id="@gd-constructs/construct-hub.Isolation.NO_INTERNET_ACCESS"></a>
 
 The same protections as `LIMITED_INTERNET_ACCESS`, except all remaining internet access is removed.
 
@@ -13274,7 +13274,7 @@ ConstructHub instances.
 ---
 
 
-### TagConditionLogicType <a name="TagConditionLogicType" id="construct-hub.TagConditionLogicType"></a>
+### TagConditionLogicType <a name="TagConditionLogicType" id="@gd-constructs/construct-hub.TagConditionLogicType"></a>
 
 Logic operators for performing specific conditional logic.
 
@@ -13282,62 +13282,62 @@ Logic operators for performing specific conditional logic.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.TagConditionLogicType.AND">AND</a></code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionLogicType.OR">OR</a></code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionLogicType.NOT">NOT</a></code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionLogicType.EQUALS">EQUALS</a></code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionLogicType.INCLUDES">INCLUDES</a></code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionLogicType.STARTS_WITH">STARTS_WITH</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionLogicType.AND">AND</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionLogicType.OR">OR</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionLogicType.NOT">NOT</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionLogicType.EQUALS">EQUALS</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionLogicType.INCLUDES">INCLUDES</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionLogicType.STARTS_WITH">STARTS_WITH</a></code> | *No description.* |
 
 ---
 
-##### `AND` <a name="AND" id="construct-hub.TagConditionLogicType.AND"></a>
-
----
-
-
-##### `OR` <a name="OR" id="construct-hub.TagConditionLogicType.OR"></a>
+##### `AND` <a name="AND" id="@gd-constructs/construct-hub.TagConditionLogicType.AND"></a>
 
 ---
 
 
-##### `NOT` <a name="NOT" id="construct-hub.TagConditionLogicType.NOT"></a>
+##### `OR` <a name="OR" id="@gd-constructs/construct-hub.TagConditionLogicType.OR"></a>
 
 ---
 
 
-##### `EQUALS` <a name="EQUALS" id="construct-hub.TagConditionLogicType.EQUALS"></a>
+##### `NOT` <a name="NOT" id="@gd-constructs/construct-hub.TagConditionLogicType.NOT"></a>
 
 ---
 
 
-##### `INCLUDES` <a name="INCLUDES" id="construct-hub.TagConditionLogicType.INCLUDES"></a>
+##### `EQUALS` <a name="EQUALS" id="@gd-constructs/construct-hub.TagConditionLogicType.EQUALS"></a>
 
 ---
 
 
-##### `STARTS_WITH` <a name="STARTS_WITH" id="construct-hub.TagConditionLogicType.STARTS_WITH"></a>
+##### `INCLUDES` <a name="INCLUDES" id="@gd-constructs/construct-hub.TagConditionLogicType.INCLUDES"></a>
 
 ---
 
 
-### TagConditionSource <a name="TagConditionSource" id="construct-hub.TagConditionSource"></a>
+##### `STARTS_WITH` <a name="STARTS_WITH" id="@gd-constructs/construct-hub.TagConditionLogicType.STARTS_WITH"></a>
+
+---
+
+
+### TagConditionSource <a name="TagConditionSource" id="@gd-constructs/construct-hub.TagConditionSource"></a>
 
 #### Members <a name="Members" id="Members"></a>
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.TagConditionSource.PACKAGE_JSON">PACKAGE_JSON</a></code> | *No description.* |
-| <code><a href="#construct-hub.TagConditionSource.README">README</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionSource.PACKAGE_JSON">PACKAGE_JSON</a></code> | *No description.* |
+| <code><a href="#@gd-constructs/construct-hub.TagConditionSource.README">README</a></code> | *No description.* |
 
 ---
 
-##### `PACKAGE_JSON` <a name="PACKAGE_JSON" id="construct-hub.TagConditionSource.PACKAGE_JSON"></a>
+##### `PACKAGE_JSON` <a name="PACKAGE_JSON" id="@gd-constructs/construct-hub.TagConditionSource.PACKAGE_JSON"></a>
 
 ---
 
 
-##### `README` <a name="README" id="construct-hub.TagConditionSource.README"></a>
+##### `README` <a name="README" id="@gd-constructs/construct-hub.TagConditionSource.README"></a>
 
 ---
 
