@@ -41,7 +41,7 @@ import { S3StorageFactory } from '../s3/storage';
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid
  * CloudWatch Metric grain, as this will also be the period of the CloudWatch
- * alarm that montiors the health of the follower.
+ * alarm that monitors the health of the follower.
  */
 const FOLLOWER_RUN_RATE = Duration.minutes(5);
 
@@ -552,7 +552,7 @@ export class NpmJs implements IPackageSource {
     // Finally - the "not running" alarm depends on the schedule (it won't run until the schedule
     // exists!), and the schedule depends on the failure alarm existing (we don't want it to run
     // before we can know it is failing). This means the returned `IDependable` effectively ensures
-    // all alarms have been provisionned already! Isn't it nice!
+    // all alarms have been provisioned already! Isn't it nice!
     notRunningAlarm.node.addDependency(schedule);
     schedule.node.addDependency(failureAlarm);
   }
@@ -581,7 +581,7 @@ export class NpmJs implements IPackageSource {
       // able to register new canary package versions within the SLA. In such cases, there is
       // nothing that can be done except for waiting until the replica has finally caught up. We
       // hence suppress the alarm if the replica lag is getting within 3 evaluation periods of the
-      // visbility SLA.
+      // visibility SLA.
       expression: `IF(FILL(mLag, REPEAT) < ${Math.max(
         visibilitySla.toSeconds() - 3 * period.toSeconds(),
         3 * period.toSeconds()
@@ -599,7 +599,7 @@ export class NpmJs implements IPackageSource {
         `Runbook: ${RUNBOOK_URL}`,
       ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-      evaluationPeriods: 2,
+      evaluationPeriods: 4,
       treatMissingData: TreatMissingData.NOT_BREACHING,
       threshold: visibilitySla.toSeconds(),
     });
