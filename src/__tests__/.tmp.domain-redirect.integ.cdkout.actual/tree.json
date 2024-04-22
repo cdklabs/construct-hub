@@ -1,0 +1,511 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "DomainRedirectIntegrationTest": {
+        "id": "DomainRedirectIntegrationTest",
+        "path": "DomainRedirectIntegrationTest",
+        "children": {
+          "SourceZone": {
+            "id": "SourceZone",
+            "path": "DomainRedirectIntegrationTest/SourceZone",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.84.0"
+            }
+          },
+          "MyDomainRedirect": {
+            "id": "MyDomainRedirect",
+            "path": "DomainRedirectIntegrationTest/MyDomainRedirect",
+            "children": {
+              "Certificate": {
+                "id": "Certificate",
+                "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate",
+                "children": {
+                  "CertificateRequestorFunction": {
+                    "id": "CertificateRequestorFunction",
+                    "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction",
+                    "children": {
+                      "ServiceRole": {
+                        "id": "ServiceRole",
+                        "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole",
+                        "children": {
+                          "ImportServiceRole": {
+                            "id": "ImportServiceRole",
+                            "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/ImportServiceRole",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.Resource",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                              "aws:cdk:cloudformation:props": {
+                                "assumeRolePolicyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": "sts:AssumeRole",
+                                      "Effect": "Allow",
+                                      "Principal": {
+                                        "Service": "lambda.amazonaws.com"
+                                      }
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "managedPolicyArns": [
+                                  {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "DefaultPolicy": {
+                            "id": "DefaultPolicy",
+                            "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/DefaultPolicy",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/DefaultPolicy/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                                  "aws:cdk:cloudformation:props": {
+                                    "policyDocument": {
+                                      "Statement": [
+                                        {
+                                          "Action": [
+                                            "acm:RequestCertificate",
+                                            "acm:DescribeCertificate",
+                                            "acm:DeleteCertificate",
+                                            "acm:AddTagsToCertificate"
+                                          ],
+                                          "Effect": "Allow",
+                                          "Resource": "*"
+                                        },
+                                        {
+                                          "Action": "route53:GetChange",
+                                          "Effect": "Allow",
+                                          "Resource": "*"
+                                        },
+                                        {
+                                          "Action": "route53:changeResourceRecordSets",
+                                          "Condition": {
+                                            "ForAllValues:StringEquals": {
+                                              "route53:ChangeResourceRecordSetsRecordTypes": [
+                                                "CNAME"
+                                              ],
+                                              "route53:ChangeResourceRecordSetsActions": [
+                                                "UPSERT"
+                                              ]
+                                            },
+                                            "ForAllValues:StringLike": {
+                                              "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
+                                                "*.from.com"
+                                              ]
+                                            }
+                                          },
+                                          "Effect": "Allow",
+                                          "Resource": {
+                                            "Fn::Join": [
+                                              "",
+                                              [
+                                                "arn:",
+                                                {
+                                                  "Ref": "AWS::Partition"
+                                                },
+                                                ":route53:::hostedzone/AZ1234"
+                                              ]
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      "Version": "2012-10-17"
+                                    },
+                                    "policyName": "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicy54E1AEDA",
+                                    "roles": [
+                                      {
+                                        "Ref": "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                                  "version": "2.84.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.Policy",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.Role",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Code": {
+                        "id": "Code",
+                        "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/Code",
+                        "children": {
+                          "Stage": {
+                            "id": "Stage",
+                            "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/Code/Stage",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.AssetStaging",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "AssetBucket": {
+                            "id": "AssetBucket",
+                            "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/Code/AssetBucket",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                          "aws:cdk:cloudformation:props": {
+                            "code": {
+                              "s3Bucket": {
+                                "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+                              },
+                              "s3Key": "861509f9607aa6bb9fd7034fb10fe6f0c60d91dfd7f010b9ef666869dec9bbd9.zip"
+                            },
+                            "role": {
+                              "Fn::GetAtt": [
+                                "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B",
+                                "Arn"
+                              ]
+                            },
+                            "handler": "index.certificateRequestHandler",
+                            "runtime": "nodejs16.x",
+                            "timeout": 900
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.Function",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "CertificateRequestorResource": {
+                    "id": "CertificateRequestorResource",
+                    "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorResource",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorResource/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_certificatemanager.DnsValidatedCertificate",
+                  "version": "2.84.0"
+                }
+              },
+              "Distribution": {
+                "id": "Distribution",
+                "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Distribution",
+                "children": {
+                  "Origin1": {
+                    "id": "Origin1",
+                    "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Distribution/Origin1",
+                    "constructInfo": {
+                      "fqn": "constructs.Construct",
+                      "version": "10.0.5"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "DomainRedirectIntegrationTest/MyDomainRedirect/Distribution/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::CloudFront::Distribution",
+                      "aws:cdk:cloudformation:props": {
+                        "distributionConfig": {
+                          "enabled": true,
+                          "origins": [
+                            {
+                              "domainName": {
+                                "Fn::Select": [
+                                  2,
+                                  {
+                                    "Fn::Split": [
+                                      "/",
+                                      {
+                                        "Fn::GetAtt": [
+                                          "DomainRedirectBucketsA177hjRedirectBucketconstructsdevAF40E4F7",
+                                          "WebsiteURL"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "id": "DomainRedirectIntegrationTestMyDomainRedirectDistributionOrigin19BC14965",
+                              "customOriginConfig": {
+                                "originSslProtocols": [
+                                  "TLSv1.2"
+                                ],
+                                "originProtocolPolicy": "http-only"
+                              }
+                            }
+                          ],
+                          "defaultCacheBehavior": {
+                            "pathPattern": "*",
+                            "targetOriginId": "DomainRedirectIntegrationTestMyDomainRedirectDistributionOrigin19BC14965",
+                            "cachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+                            "compress": true,
+                            "viewerProtocolPolicy": "allow-all"
+                          },
+                          "aliases": [
+                            "from.com"
+                          ],
+                          "httpVersion": "http2",
+                          "ipv6Enabled": true,
+                          "viewerCertificate": {
+                            "acmCertificateArn": {
+                              "Fn::GetAtt": [
+                                "MyDomainRedirectCertificateCertificateRequestorResourceFBF8557C",
+                                "Arn"
+                              ]
+                            },
+                            "minimumProtocolVersion": "TLSv1.2_2018",
+                            "sslSupportMethod": "sni-only"
+                          }
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cloudfront.CfnDistribution",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudfront.Distribution",
+                  "version": "2.84.0"
+                }
+              },
+              "ARecord": {
+                "id": "ARecord",
+                "path": "DomainRedirectIntegrationTest/MyDomainRedirect/ARecord",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "DomainRedirectIntegrationTest/MyDomainRedirect/ARecord/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Route53::RecordSet",
+                      "aws:cdk:cloudformation:props": {
+                        "name": "from.com.",
+                        "type": "A",
+                        "aliasTarget": {
+                          "hostedZoneId": {
+                            "Fn::FindInMap": [
+                              "AWSCloudFrontPartitionHostedZoneIdMap",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "zoneId"
+                            ]
+                          },
+                          "dnsName": {
+                            "Fn::GetAtt": [
+                              "MyDomainRedirectDistributionCF05BA92",
+                              "DomainName"
+                            ]
+                          }
+                        },
+                        "comment": "Created by the AWS CDK",
+                        "hostedZoneId": "AZ1234"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_route53.CfnRecordSet",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_route53.ARecord",
+                  "version": "2.84.0"
+                }
+              },
+              "AaaaRecord": {
+                "id": "AaaaRecord",
+                "path": "DomainRedirectIntegrationTest/MyDomainRedirect/AaaaRecord",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "DomainRedirectIntegrationTest/MyDomainRedirect/AaaaRecord/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Route53::RecordSet",
+                      "aws:cdk:cloudformation:props": {
+                        "name": "from.com.",
+                        "type": "AAAA",
+                        "aliasTarget": {
+                          "hostedZoneId": {
+                            "Fn::FindInMap": [
+                              "AWSCloudFrontPartitionHostedZoneIdMap",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "zoneId"
+                            ]
+                          },
+                          "dnsName": {
+                            "Fn::GetAtt": [
+                              "MyDomainRedirectDistributionCF05BA92",
+                              "DomainName"
+                            ]
+                          }
+                        },
+                        "comment": "Created by the AWS CDK",
+                        "hostedZoneId": "AZ1234"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_route53.CfnRecordSet",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_route53.AaaaRecord",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "DomainRedirectBucketsA177hj": {
+            "id": "DomainRedirectBucketsA177hj",
+            "path": "DomainRedirectIntegrationTest/DomainRedirectBucketsA177hj",
+            "children": {
+              "RedirectBucket-constructs.dev": {
+                "id": "RedirectBucket-constructs.dev",
+                "path": "DomainRedirectIntegrationTest/DomainRedirectBucketsA177hj/RedirectBucket-constructs.dev",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "DomainRedirectIntegrationTest/DomainRedirectBucketsA177hj/RedirectBucket-constructs.dev/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "websiteConfiguration": {
+                          "redirectAllRequestsTo": {
+                            "hostName": "constructs.dev"
+                          }
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "AWSCloudFrontPartitionHostedZoneIdMap": {
+            "id": "AWSCloudFrontPartitionHostedZoneIdMap",
+            "path": "DomainRedirectIntegrationTest/AWSCloudFrontPartitionHostedZoneIdMap",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnMapping",
+              "version": "2.84.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "DomainRedirectIntegrationTest/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.84.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "DomainRedirectIntegrationTest/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.84.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.84.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.0.5"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.84.0"
+    }
+  }
+}

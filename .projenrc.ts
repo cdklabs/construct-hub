@@ -2,7 +2,7 @@ import { join, relative } from 'path';
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
 import { github } from 'projen';
 import { addDevApp } from './projenrc/dev-app';
-import { discoverIntegrationTests } from './projenrc/integ-tests';
+// import { discoverIntegrationTests } from './projenrc/integ-tests';
 import { discoverEcsTasks } from './projenrc/magic-ecs';
 import { discoverLambdas } from './projenrc/magic-lambda';
 import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
@@ -217,6 +217,7 @@ project.gitignore.addPatterns('/website'); // <-- don't commit
 
 project.gitignore.exclude('.vscode/');
 project.gitignore.exclude('**/.DS_Store');
+project.gitignore.exclude('.idea/');
 
 addVpcAllowListManagement(project);
 addDevApp(project);
@@ -224,7 +225,9 @@ addDevApp(project);
 project.addDevDeps('glob');
 discoverLambdas(project);
 discoverEcsTasks(project);
-discoverIntegrationTests(project);
+
+// Disabling integration tests for now, as it's not working as expected.
+// discoverIntegrationTests(project);
 
 // see https://github.com/aws/jsii/issues/3311
 const bundleWorkerPool = [

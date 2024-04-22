@@ -1,0 +1,3262 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "TestDenyList": {
+        "id": "TestDenyList",
+        "path": "TestDenyList",
+        "children": {
+          "MockDataBucket": {
+            "id": "MockDataBucket",
+            "path": "TestDenyList/MockDataBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "TestDenyList/MockDataBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [
+                      {
+                        "key": "aws-cdk:auto-delete-objects",
+                        "value": "true"
+                      },
+                      {
+                        "key": "aws-cdk:cr-owned:1bf84d9e",
+                        "value": "true"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.84.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "TestDenyList/MockDataBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/MockDataBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "MockDataBucket4719A0C1"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "s3:GetBucket*",
+                                "s3:List*",
+                                "s3:DeleteObject*"
+                              ],
+                              "Effect": "Allow",
+                              "Principal": {
+                                "AWS": {
+                                  "Fn::GetAtt": [
+                                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                                    "Arn"
+                                  ]
+                                }
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "MockDataBucket4719A0C1",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "MockDataBucket4719A0C1",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.84.0"
+                }
+              },
+              "AutoDeleteObjectsCustomResource": {
+                "id": "AutoDeleteObjectsCustomResource",
+                "path": "TestDenyList/MockDataBucket/AutoDeleteObjectsCustomResource",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "TestDenyList/MockDataBucket/AutoDeleteObjectsCustomResource/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CustomResource",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.84.0"
+            }
+          },
+          "DefaultCrNodeVersionMap": {
+            "id": "DefaultCrNodeVersionMap",
+            "path": "TestDenyList/DefaultCrNodeVersionMap",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnMapping",
+              "version": "2.84.0"
+            }
+          },
+          "Custom::S3AutoDeleteObjectsCustomResourceProvider": {
+            "id": "Custom::S3AutoDeleteObjectsCustomResourceProvider",
+            "path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider",
+            "children": {
+              "Staging": {
+                "id": "Staging",
+                "path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Staging",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.AssetStaging",
+                  "version": "2.84.0"
+                }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.84.0"
+                }
+              },
+              "Handler": {
+                "id": "Handler",
+                "path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CustomResourceProvider",
+              "version": "2.84.0"
+            }
+          },
+          "MockData": {
+            "id": "MockData",
+            "path": "TestDenyList/MockData",
+            "children": {
+              "AwsCliLayer": {
+                "id": "AwsCliLayer",
+                "path": "TestDenyList/MockData/AwsCliLayer",
+                "children": {
+                  "Code": {
+                    "id": "Code",
+                    "path": "TestDenyList/MockData/AwsCliLayer/Code",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "TestDenyList/MockData/AwsCliLayer/Code/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "TestDenyList/MockData/AwsCliLayer/Code/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/MockData/AwsCliLayer/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::LayerVersion",
+                      "aws:cdk:cloudformation:props": {
+                        "content": {
+                          "s3Bucket": {
+                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                          },
+                          "s3Key": "3322b7049fb0ed2b7cbb644a2ada8d1116ff80c32dca89e6ada846b5de26f961.zip"
+                        },
+                        "description": "/opt/awscli/aws"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnLayerVersion",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.lambda_layer_awscli.AwsCliLayer",
+                  "version": "2.84.0"
+                }
+              },
+              "CustomResourceHandler": {
+                "id": "CustomResourceHandler",
+                "path": "TestDenyList/MockData/CustomResourceHandler",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.SingletonFunction",
+                  "version": "2.84.0"
+                }
+              },
+              "Asset1": {
+                "id": "Asset1",
+                "path": "TestDenyList/MockData/Asset1",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "TestDenyList/MockData/Asset1/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "TestDenyList/MockData/Asset1/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.84.0"
+                }
+              },
+              "CustomResource": {
+                "id": "CustomResource",
+                "path": "TestDenyList/MockData/CustomResource",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "TestDenyList/MockData/CustomResource/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CustomResource",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3_deployment.BucketDeployment",
+              "version": "2.84.0"
+            }
+          },
+          "Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C": {
+            "id": "Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C",
+            "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":s3:::",
+                                          {
+                                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                                          }
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":s3:::",
+                                          {
+                                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*",
+                                    "s3:DeleteObject*",
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging",
+                                    "s3:Abort*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "MockDataBucket4719A0C1",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "MockDataBucket4719A0C1",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*",
+                                    "s3:DeleteObject*",
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging",
+                                    "s3:Abort*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DenyListBucketC1C9D3D9",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DenyListBucketC1C9D3D9",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+                            "roles": [
+                              {
+                                "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.84.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.84.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+                      }
+                    },
+                    "handler": "index.handler",
+                    "layers": [
+                      {
+                        "Ref": "MockDataAwsCliLayerE631E742"
+                      }
+                    ],
+                    "runtime": "python3.9",
+                    "timeout": 900
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.84.0"
+            }
+          },
+          "Monitoring": {
+            "id": "Monitoring",
+            "path": "TestDenyList/Monitoring",
+            "children": {
+              "Watchful": {
+                "id": "Watchful",
+                "path": "TestDenyList/Monitoring/Watchful",
+                "children": {
+                  "Dashboard": {
+                    "id": "Dashboard",
+                    "path": "TestDenyList/Monitoring/Watchful/Dashboard",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/Monitoring/Watchful/Dashboard/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::CloudWatch::Dashboard",
+                          "aws:cdk:cloudformation:props": {
+                            "dashboardBody": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Deny List - Prune Function\\n\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "#/functions/",
+                                  {
+                                    "Ref": "DenyListPrunePruneHandler5F946B07"
+                                  },
+                                  "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "#logEventViewer:group=/aws/lambda/",
+                                  {
+                                    "Ref": "DenyListPrunePruneHandler5F946B07"
+                                  },
+                                  ")\"}},{\"type\":\"metric\",\"width\":6,\"height\":6,\"x\":0,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Invocations/5min\",\"region\":\"",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "\",\"metrics\":[[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+                                  {
+                                    "Ref": "DenyListPrunePruneHandler5F946B07"
+                                  },
+                                  "\",{\"stat\":\"Sum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":6,\"height\":6,\"x\":6,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Errors/5min\",\"region\":\"",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "\",\"metrics\":[[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+                                  {
+                                    "Ref": "DenyListPrunePruneHandler5F946B07"
+                                  },
+                                  "\",{\"stat\":\"Sum\"}]],\"annotations\":{\"horizontal\":[{\"label\":\"Errors > 0 for 3 datapoints within 15 minutes\",\"value\":0,\"yAxis\":\"left\"}]},\"yAxis\":{}}},{\"type\":\"metric\",\"width\":6,\"height\":6,\"x\":12,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Throttles/5min\",\"region\":\"",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "\",\"metrics\":[[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"",
+                                  {
+                                    "Ref": "DenyListPrunePruneHandler5F946B07"
+                                  },
+                                  "\",{\"stat\":\"Sum\"}]],\"annotations\":{\"horizontal\":[{\"label\":\"Throttles > 0 for 3 datapoints within 15 minutes\",\"value\":0,\"yAxis\":\"left\"}]},\"yAxis\":{}}},{\"type\":\"metric\",\"width\":6,\"height\":6,\"x\":18,\"y\":2,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Duration/5min\",\"region\":\"",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "\",\"metrics\":[[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"",
+                                  {
+                                    "Ref": "DenyListPrunePruneHandler5F946B07"
+                                  },
+                                  "\",{\"label\":\"p99\",\"stat\":\"p99\"}]],\"annotations\":{\"horizontal\":[{\"label\":\"p99 > 720000 for 3 datapoints within 15 minutes\",\"value\":720000,\"yAxis\":\"left\"}]},\"yAxis\":{}}},{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":8,\"properties\":{\"markdown\":\"# Deny List - Prune Delete Function\\n\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "#/functions/",
+                                  {
+                                    "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                  },
+                                  "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "#logEventViewer:group=/aws/lambda/",
+                                  {
+                                    "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                  },
+                                  ")\"}},{\"type\":\"metric\",\"width\":6,\"height\":6,\"x\":0,\"y\":10,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Invocations/5min\",\"region\":\"",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "\",\"metrics\":[[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+                                  {
+                                    "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                  },
+                                  "\",{\"stat\":\"Sum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":6,\"height\":6,\"x\":6,\"y\":10,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Errors/5min\",\"region\":\"",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "\",\"metrics\":[[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+                                  {
+                                    "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                  },
+                                  "\",{\"stat\":\"Sum\"}]],\"annotations\":{\"horizontal\":[{\"label\":\"Errors > 0 for 3 datapoints within 15 minutes\",\"value\":0,\"yAxis\":\"left\"}]},\"yAxis\":{}}},{\"type\":\"metric\",\"width\":6,\"height\":6,\"x\":12,\"y\":10,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Throttles/5min\",\"region\":\"",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "\",\"metrics\":[[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"",
+                                  {
+                                    "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                  },
+                                  "\",{\"stat\":\"Sum\"}]],\"annotations\":{\"horizontal\":[{\"label\":\"Throttles > 0 for 3 datapoints within 15 minutes\",\"value\":0,\"yAxis\":\"left\"}]},\"yAxis\":{}}},{\"type\":\"metric\",\"width\":6,\"height\":6,\"x\":18,\"y\":10,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Duration/5min\",\"region\":\"",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  "\",\"metrics\":[[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"",
+                                  {
+                                    "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                  },
+                                  "\",{\"label\":\"p99\",\"stat\":\"p99\"}]],\"annotations\":{\"horizontal\":[{\"label\":\"p99 > 48000 for 3 datapoints within 15 minutes\",\"value\":48000,\"yAxis\":\"left\"}]},\"yAxis\":{}}}]}"
+                                ]
+                              ]
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_cloudwatch.CfnDashboard",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "WatchfulDashboard": {
+                    "id": "WatchfulDashboard",
+                    "path": "TestDenyList/Monitoring/Watchful/WatchfulDashboard",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnOutput",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "TestDenyListPrunePruneHandlerDB8102B7": {
+                    "id": "TestDenyListPrunePruneHandlerDB8102B7",
+                    "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7",
+                    "children": {
+                      "ErrorsAlarm": {
+                        "id": "ErrorsAlarm",
+                        "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/ErrorsAlarm",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/ErrorsAlarm/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                              "aws:cdk:cloudformation:props": {
+                                "comparisonOperator": "GreaterThanThreshold",
+                                "evaluationPeriods": 3,
+                                "alarmActions": [],
+                                "alarmDescription": "Over 0 errors per minute",
+                                "dimensions": [
+                                  {
+                                    "name": "FunctionName",
+                                    "value": {
+                                      "Ref": "DenyListPrunePruneHandler5F946B07"
+                                    }
+                                  }
+                                ],
+                                "metricName": "Errors",
+                                "namespace": "AWS/Lambda",
+                                "period": 300,
+                                "statistic": "Sum",
+                                "threshold": 0
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "ThrottlesAlarm": {
+                        "id": "ThrottlesAlarm",
+                        "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/ThrottlesAlarm",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/ThrottlesAlarm/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                              "aws:cdk:cloudformation:props": {
+                                "comparisonOperator": "GreaterThanThreshold",
+                                "evaluationPeriods": 3,
+                                "alarmActions": [],
+                                "alarmDescription": "Over 0 throttles per minute",
+                                "dimensions": [
+                                  {
+                                    "name": "FunctionName",
+                                    "value": {
+                                      "Ref": "DenyListPrunePruneHandler5F946B07"
+                                    }
+                                  }
+                                ],
+                                "metricName": "Throttles",
+                                "namespace": "AWS/Lambda",
+                                "period": 300,
+                                "statistic": "Sum",
+                                "threshold": 0
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "DurationAlarm": {
+                        "id": "DurationAlarm",
+                        "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/DurationAlarm",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneHandlerDB8102B7/DurationAlarm/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                              "aws:cdk:cloudformation:props": {
+                                "comparisonOperator": "GreaterThanThreshold",
+                                "evaluationPeriods": 3,
+                                "alarmActions": [],
+                                "alarmDescription": "p99 latency >= 720s (80%)",
+                                "metrics": [
+                                  {
+                                    "metricStat": {
+                                      "metric": {
+                                        "metricName": "Duration",
+                                        "namespace": "AWS/Lambda",
+                                        "dimensions": [
+                                          {
+                                            "name": "FunctionName",
+                                            "value": {
+                                              "Ref": "DenyListPrunePruneHandler5F946B07"
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      "period": 300,
+                                      "stat": "p99"
+                                    },
+                                    "id": "m1",
+                                    "label": "p99",
+                                    "returnData": true
+                                  }
+                                ],
+                                "threshold": 720000
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "cdk-watchful.WatchLambdaFunction",
+                      "version": "0.6.458"
+                    }
+                  },
+                  "TestDenyListPrunePruneQueueHandlerE748308E": {
+                    "id": "TestDenyListPrunePruneQueueHandlerE748308E",
+                    "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E",
+                    "children": {
+                      "ErrorsAlarm": {
+                        "id": "ErrorsAlarm",
+                        "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/ErrorsAlarm",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/ErrorsAlarm/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                              "aws:cdk:cloudformation:props": {
+                                "comparisonOperator": "GreaterThanThreshold",
+                                "evaluationPeriods": 3,
+                                "alarmActions": [],
+                                "alarmDescription": "Over 0 errors per minute",
+                                "dimensions": [
+                                  {
+                                    "name": "FunctionName",
+                                    "value": {
+                                      "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                    }
+                                  }
+                                ],
+                                "metricName": "Errors",
+                                "namespace": "AWS/Lambda",
+                                "period": 300,
+                                "statistic": "Sum",
+                                "threshold": 0
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "ThrottlesAlarm": {
+                        "id": "ThrottlesAlarm",
+                        "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/ThrottlesAlarm",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/ThrottlesAlarm/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                              "aws:cdk:cloudformation:props": {
+                                "comparisonOperator": "GreaterThanThreshold",
+                                "evaluationPeriods": 3,
+                                "alarmActions": [],
+                                "alarmDescription": "Over 0 throttles per minute",
+                                "dimensions": [
+                                  {
+                                    "name": "FunctionName",
+                                    "value": {
+                                      "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                    }
+                                  }
+                                ],
+                                "metricName": "Throttles",
+                                "namespace": "AWS/Lambda",
+                                "period": 300,
+                                "statistic": "Sum",
+                                "threshold": 0
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "DurationAlarm": {
+                        "id": "DurationAlarm",
+                        "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/DurationAlarm",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/Monitoring/Watchful/TestDenyListPrunePruneQueueHandlerE748308E/DurationAlarm/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                              "aws:cdk:cloudformation:props": {
+                                "comparisonOperator": "GreaterThanThreshold",
+                                "evaluationPeriods": 3,
+                                "alarmActions": [],
+                                "alarmDescription": "p99 latency >= 48s (80%)",
+                                "metrics": [
+                                  {
+                                    "metricStat": {
+                                      "metric": {
+                                        "metricName": "Duration",
+                                        "namespace": "AWS/Lambda",
+                                        "dimensions": [
+                                          {
+                                            "name": "FunctionName",
+                                            "value": {
+                                              "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      "period": 300,
+                                      "stat": "p99"
+                                    },
+                                    "id": "m1",
+                                    "label": "p99",
+                                    "returnData": true
+                                  }
+                                ],
+                                "threshold": 48000
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "cdk-watchful.WatchLambdaFunction",
+                      "version": "0.6.458"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "cdk-watchful.Watchful",
+                  "version": "0.6.458"
+                }
+              },
+              "HighSeverityDashboard": {
+                "id": "HighSeverityDashboard",
+                "path": "TestDenyList/Monitoring/HighSeverityDashboard",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/Monitoring/HighSeverityDashboard/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::CloudWatch::Dashboard",
+                      "aws:cdk:cloudformation:props": {
+                        "dashboardBody": "{\"widgets\":[]}"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cloudwatch.CfnDashboard",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "OverviewDashboard": {
+            "id": "OverviewDashboard",
+            "path": "TestDenyList/OverviewDashboard",
+            "children": {
+              "Overview dashboard": {
+                "id": "Overview dashboard",
+                "path": "TestDenyList/OverviewDashboard/Overview dashboard",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/OverviewDashboard/Overview dashboard/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::CloudWatch::Dashboard",
+                      "aws:cdk:cloudformation:props": {
+                        "dashboardBody": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "{\"widgets\":[{\"type\":\"metric\",\"width\":12,\"height\":8,\"x\":0,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Lambda concurrent execution quota\",\"region\":\"",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              "\",\"metrics\":[[{\"label\":\"Concurrent executions quota usage %\",\"expression\":\"mLambdaUsage / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"ConcurrentExecutions\",{\"stat\":\"Maximum\",\"visible\":false,\"id\":\"mLambdaUsage\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"mLambdaQuota\"}],[{\"label\":\"PruneHandlerLambda quota usage %\",\"expression\":\"m1 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+                              {
+                                "Ref": "DenyListPrunePruneHandler5F946B07"
+                              },
+                              "\",{\"label\":\"PruneHandlerLambda\",\"stat\":\"Maximum\",\"visible\":false,\"id\":\"m1\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"lambdaQuotaLimit\"}],[{\"label\":\"PruneQueueHandlerLambda quota usage %\",\"expression\":\"m2 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+                              {
+                                "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                              },
+                              "\",{\"label\":\"PruneQueueHandlerLambda\",\"stat\":\"Maximum\",\"visible\":false,\"id\":\"m2\"}]],\"annotations\":{\"horizontal\":[{\"value\":70,\"yAxis\":\"right\"}]},\"yAxis\":{\"right\":{\"label\":\"Quota Percent\",\"min\":0,\"max\":100}}}}]}"
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cloudwatch.CfnDashboard",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard",
+                  "version": "2.84.0"
+                }
+              },
+              "OverviewDashboard--lambdaServiceQuota": {
+                "id": "OverviewDashboard--lambdaServiceQuota",
+                "path": "TestDenyList/OverviewDashboard/OverviewDashboard--lambdaServiceQuota",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/OverviewDashboard/OverviewDashboard--lambdaServiceQuota/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                      "aws:cdk:cloudformation:props": {
+                        "comparisonOperator": "GreaterThanThreshold",
+                        "evaluationPeriods": 5,
+                        "alarmDescription": "Lambda concurrent execution exceeded 70% of SERVICE_QUOTA\n\nRunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md\n\nRequest a service quota increase for lambda functions",
+                        "metrics": [
+                          {
+                            "expression": "mLambdaUsage / mLambdaQuota * 100",
+                            "id": "expr_1",
+                            "label": "Concurrent executions quota usage %"
+                          },
+                          {
+                            "metricStat": {
+                              "metric": {
+                                "metricName": "ConcurrentExecutions",
+                                "namespace": "AWS/Lambda"
+                              },
+                              "period": 300,
+                              "stat": "Maximum"
+                            },
+                            "id": "mLambdaUsage",
+                            "returnData": false
+                          },
+                          {
+                            "expression": "SERVICE_QUOTA(mLambdaUsage)",
+                            "id": "mLambdaQuota",
+                            "returnData": false
+                          }
+                        ],
+                        "threshold": 70,
+                        "treatMissingData": "missing"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "DenyList": {
+            "id": "DenyList",
+            "path": "TestDenyList/DenyList",
+            "children": {
+              "Bucket": {
+                "id": "Bucket",
+                "path": "TestDenyList/DenyList/Bucket",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/DenyList/Bucket/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "bucketEncryption": {
+                          "serverSideEncryptionConfiguration": [
+                            {
+                              "serverSideEncryptionByDefault": {
+                                "sseAlgorithm": "AES256"
+                              }
+                            }
+                          ]
+                        },
+                        "publicAccessBlockConfiguration": {
+                          "blockPublicAcls": true,
+                          "blockPublicPolicy": true,
+                          "ignorePublicAcls": true,
+                          "restrictPublicBuckets": true
+                        },
+                        "tags": [
+                          {
+                            "key": "aws-cdk:auto-delete-objects",
+                            "value": "true"
+                          },
+                          {
+                            "key": "aws-cdk:cr-owned:7abd3c79",
+                            "value": "true"
+                          }
+                        ],
+                        "versioningConfiguration": {
+                          "status": "Enabled"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Policy": {
+                    "id": "Policy",
+                    "path": "TestDenyList/DenyList/Bucket/Policy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/DenyList/Bucket/Policy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                          "aws:cdk:cloudformation:props": {
+                            "bucket": {
+                              "Ref": "DenyListBucketC1C9D3D9"
+                            },
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:*",
+                                  "Condition": {
+                                    "Bool": {
+                                      "aws:SecureTransport": "false"
+                                    }
+                                  },
+                                  "Effect": "Deny",
+                                  "Principal": {
+                                    "AWS": "*"
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DenyListBucketC1C9D3D9",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DenyListBucketC1C9D3D9",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "s3:GetBucket*",
+                                    "s3:List*",
+                                    "s3:DeleteObject*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": {
+                                      "Fn::GetAtt": [
+                                        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                                        "Arn"
+                                      ]
+                                    }
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DenyListBucketC1C9D3D9",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DenyListBucketC1C9D3D9",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AutoDeleteObjectsCustomResource": {
+                    "id": "AutoDeleteObjectsCustomResource",
+                    "path": "TestDenyList/DenyList/Bucket/AutoDeleteObjectsCustomResource",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "TestDenyList/DenyList/Bucket/AutoDeleteObjectsCustomResource/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Notifications": {
+                    "id": "Notifications",
+                    "path": "TestDenyList/DenyList/Bucket/Notifications",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/DenyList/Bucket/Notifications/Resource",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "constructs.Construct",
+                      "version": "10.0.5"
+                    }
+                  },
+                  "AllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7": {
+                    "id": "AllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7",
+                    "path": "TestDenyList/DenyList/Bucket/AllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                      "aws:cdk:cloudformation:props": {
+                        "action": "lambda:InvokeFunction",
+                        "functionName": {
+                          "Fn::GetAtt": [
+                            "DenyListPrunePruneHandler5F946B07",
+                            "Arn"
+                          ]
+                        },
+                        "principal": "s3.amazonaws.com",
+                        "sourceAccount": {
+                          "Ref": "AWS::AccountId"
+                        },
+                        "sourceArn": {
+                          "Fn::GetAtt": [
+                            "DenyListBucketC1C9D3D9",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.84.0"
+                }
+              },
+              "FailoverBucket": {
+                "id": "FailoverBucket",
+                "path": "TestDenyList/DenyList/FailoverBucket",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/DenyList/FailoverBucket/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "bucketEncryption": {
+                          "serverSideEncryptionConfiguration": [
+                            {
+                              "serverSideEncryptionByDefault": {
+                                "sseAlgorithm": "AES256"
+                              }
+                            }
+                          ]
+                        },
+                        "publicAccessBlockConfiguration": {
+                          "blockPublicAcls": true,
+                          "blockPublicPolicy": true,
+                          "ignorePublicAcls": true,
+                          "restrictPublicBuckets": true
+                        },
+                        "tags": [
+                          {
+                            "key": "aws-cdk:auto-delete-objects",
+                            "value": "true"
+                          },
+                          {
+                            "key": "failover",
+                            "value": "true"
+                          }
+                        ],
+                        "versioningConfiguration": {
+                          "status": "Enabled"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Policy": {
+                    "id": "Policy",
+                    "path": "TestDenyList/DenyList/FailoverBucket/Policy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/DenyList/FailoverBucket/Policy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                          "aws:cdk:cloudformation:props": {
+                            "bucket": {
+                              "Ref": "DenyListFailoverBucketC0405145"
+                            },
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:*",
+                                  "Condition": {
+                                    "Bool": {
+                                      "aws:SecureTransport": "false"
+                                    }
+                                  },
+                                  "Effect": "Deny",
+                                  "Principal": {
+                                    "AWS": "*"
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DenyListFailoverBucketC0405145",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DenyListFailoverBucketC0405145",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "s3:GetBucket*",
+                                    "s3:List*",
+                                    "s3:DeleteObject*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": {
+                                      "Fn::GetAtt": [
+                                        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                                        "Arn"
+                                      ]
+                                    }
+                                  },
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DenyListFailoverBucketC0405145",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DenyListFailoverBucketC0405145",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AutoDeleteObjectsCustomResource": {
+                    "id": "AutoDeleteObjectsCustomResource",
+                    "path": "TestDenyList/DenyList/FailoverBucket/AutoDeleteObjectsCustomResource",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "TestDenyList/DenyList/FailoverBucket/AutoDeleteObjectsCustomResource/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.84.0"
+                }
+              },
+              "SnapshotCommand": {
+                "id": "SnapshotCommand",
+                "path": "TestDenyList/DenyList/SnapshotCommand",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.84.0"
+                }
+              },
+              "BucketDeployment": {
+                "id": "BucketDeployment",
+                "path": "TestDenyList/DenyList/BucketDeployment",
+                "children": {
+                  "AwsCliLayer": {
+                    "id": "AwsCliLayer",
+                    "path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer",
+                    "children": {
+                      "Code": {
+                        "id": "Code",
+                        "path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Code",
+                        "children": {
+                          "Stage": {
+                            "id": "Stage",
+                            "path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Code/Stage",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.AssetStaging",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "AssetBucket": {
+                            "id": "AssetBucket",
+                            "path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Code/AssetBucket",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::LayerVersion",
+                          "aws:cdk:cloudformation:props": {
+                            "content": {
+                              "s3Bucket": {
+                                "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                              },
+                              "s3Key": "3322b7049fb0ed2b7cbb644a2ada8d1116ff80c32dca89e6ada846b5de26f961.zip"
+                            },
+                            "description": "/opt/awscli/aws"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnLayerVersion",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.lambda_layer_awscli.AwsCliLayer",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "CustomResourceHandler": {
+                    "id": "CustomResourceHandler",
+                    "path": "TestDenyList/DenyList/BucketDeployment/CustomResourceHandler",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.SingletonFunction",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Asset1": {
+                    "id": "Asset1",
+                    "path": "TestDenyList/DenyList/BucketDeployment/Asset1",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "TestDenyList/DenyList/BucketDeployment/Asset1/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "TestDenyList/DenyList/BucketDeployment/Asset1/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "CustomResource": {
+                    "id": "CustomResource",
+                    "path": "TestDenyList/DenyList/BucketDeployment/CustomResource",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "TestDenyList/DenyList/BucketDeployment/CustomResource/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_deployment.BucketDeployment",
+                  "version": "2.84.0"
+                }
+              },
+              "Prune": {
+                "id": "Prune",
+                "path": "TestDenyList/DenyList/Prune",
+                "children": {
+                  "DeleteQueue": {
+                    "id": "DeleteQueue",
+                    "path": "TestDenyList/DenyList/Prune/DeleteQueue",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/DenyList/Prune/DeleteQueue/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::SQS::Queue",
+                          "aws:cdk:cloudformation:props": {
+                            "visibilityTimeout": 120
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_sqs.CfnQueue",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_sqs.Queue",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "PruneHandler": {
+                    "id": "PruneHandler",
+                    "path": "TestDenyList/DenyList/Prune/PruneHandler",
+                    "children": {
+                      "ServiceRole": {
+                        "id": "ServiceRole",
+                        "path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole",
+                        "children": {
+                          "ImportServiceRole": {
+                            "id": "ImportServiceRole",
+                            "path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/ImportServiceRole",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.Resource",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                              "aws:cdk:cloudformation:props": {
+                                "assumeRolePolicyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": "sts:AssumeRole",
+                                      "Effect": "Allow",
+                                      "Principal": {
+                                        "Service": "lambda.amazonaws.com"
+                                      }
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "managedPolicyArns": [
+                                  {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "DefaultPolicy": {
+                            "id": "DefaultPolicy",
+                            "path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/DefaultPolicy",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/DefaultPolicy/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                                  "aws:cdk:cloudformation:props": {
+                                    "policyDocument": {
+                                      "Statement": [
+                                        {
+                                          "Action": [
+                                            "sqs:SendMessage",
+                                            "sqs:GetQueueAttributes",
+                                            "sqs:GetQueueUrl"
+                                          ],
+                                          "Effect": "Allow",
+                                          "Resource": {
+                                            "Fn::GetAtt": [
+                                              "DenyListPruneDeleteQueueF9D9EBE3",
+                                              "Arn"
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          "Action": [
+                                            "s3:GetObject*",
+                                            "s3:GetBucket*",
+                                            "s3:List*"
+                                          ],
+                                          "Effect": "Allow",
+                                          "Resource": [
+                                            {
+                                              "Fn::GetAtt": [
+                                                "MockDataBucket4719A0C1",
+                                                "Arn"
+                                              ]
+                                            },
+                                            {
+                                              "Fn::Join": [
+                                                "",
+                                                [
+                                                  {
+                                                    "Fn::GetAtt": [
+                                                      "MockDataBucket4719A0C1",
+                                                      "Arn"
+                                                    ]
+                                                  },
+                                                  "/*"
+                                                ]
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "Action": [
+                                            "s3:GetObject*",
+                                            "s3:GetBucket*",
+                                            "s3:List*"
+                                          ],
+                                          "Effect": "Allow",
+                                          "Resource": [
+                                            {
+                                              "Fn::GetAtt": [
+                                                "DenyListBucketC1C9D3D9",
+                                                "Arn"
+                                              ]
+                                            },
+                                            {
+                                              "Fn::Join": [
+                                                "",
+                                                [
+                                                  {
+                                                    "Fn::GetAtt": [
+                                                      "DenyListBucketC1C9D3D9",
+                                                      "Arn"
+                                                    ]
+                                                  },
+                                                  "/*"
+                                                ]
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "Action": "lambda:InvokeFunction",
+                                          "Effect": "Allow",
+                                          "Resource": [
+                                            {
+                                              "Fn::GetAtt": [
+                                                "CatalogBuilderMock263D4D67",
+                                                "Arn"
+                                              ]
+                                            },
+                                            {
+                                              "Fn::Join": [
+                                                "",
+                                                [
+                                                  {
+                                                    "Fn::GetAtt": [
+                                                      "CatalogBuilderMock263D4D67",
+                                                      "Arn"
+                                                    ]
+                                                  },
+                                                  ":*"
+                                                ]
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ],
+                                      "Version": "2012-10-17"
+                                    },
+                                    "policyName": "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
+                                    "roles": [
+                                      {
+                                        "Ref": "DenyListPrunePruneHandlerServiceRole234C8EF9"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                                  "version": "2.84.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.Policy",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.Role",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Code": {
+                        "id": "Code",
+                        "path": "TestDenyList/DenyList/Prune/PruneHandler/Code",
+                        "children": {
+                          "Stage": {
+                            "id": "Stage",
+                            "path": "TestDenyList/DenyList/Prune/PruneHandler/Code/Stage",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.AssetStaging",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "AssetBucket": {
+                            "id": "AssetBucket",
+                            "path": "TestDenyList/DenyList/Prune/PruneHandler/Code/AssetBucket",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/DenyList/Prune/PruneHandler/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                          "aws:cdk:cloudformation:props": {
+                            "code": {
+                              "s3Bucket": {
+                                "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                              },
+                              "s3Key": "af095c3c3f6c6e424ac5e9cc1b60e4b0baa89248626958e05f3179de466d4b14.zip"
+                            },
+                            "role": {
+                              "Fn::GetAtt": [
+                                "DenyListPrunePruneHandlerServiceRole234C8EF9",
+                                "Arn"
+                              ]
+                            },
+                            "architectures": [
+                              "arm64"
+                            ],
+                            "description": "backend/deny-list/prune-handler.lambda.ts",
+                            "environment": {
+                              "variables": {
+                                "PACKAGE_DATA_BUCKET_NAME": {
+                                  "Ref": "MockDataBucket4719A0C1"
+                                },
+                                "PACKAGE_DATA_KEY_PREFIX": "data/",
+                                "PRUNE_QUEUE_URL": {
+                                  "Ref": "DenyListPruneDeleteQueueF9D9EBE3"
+                                },
+                                "DENY_LIST_BUCKET_NAME": {
+                                  "Ref": "DenyListBucketC1C9D3D9"
+                                },
+                                "DENY_LIST_OBJECT_KEY": "deny-list.json",
+                                "ON_CHANGE_FUNCTION_NAME": {
+                                  "Fn::GetAtt": [
+                                    "CatalogBuilderMock263D4D67",
+                                    "Arn"
+                                  ]
+                                }
+                              }
+                            },
+                            "handler": "index.handler",
+                            "runtime": "nodejs16.x",
+                            "timeout": 900
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.Function",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "PruneQueueHandler": {
+                    "id": "PruneQueueHandler",
+                    "path": "TestDenyList/DenyList/Prune/PruneQueueHandler",
+                    "children": {
+                      "ServiceRole": {
+                        "id": "ServiceRole",
+                        "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole",
+                        "children": {
+                          "ImportServiceRole": {
+                            "id": "ImportServiceRole",
+                            "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/ImportServiceRole",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.Resource",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                              "aws:cdk:cloudformation:props": {
+                                "assumeRolePolicyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": "sts:AssumeRole",
+                                      "Effect": "Allow",
+                                      "Principal": {
+                                        "Service": "lambda.amazonaws.com"
+                                      }
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "managedPolicyArns": [
+                                  {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "DefaultPolicy": {
+                            "id": "DefaultPolicy",
+                            "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/DefaultPolicy",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/DefaultPolicy/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                                  "aws:cdk:cloudformation:props": {
+                                    "policyDocument": {
+                                      "Statement": [
+                                        {
+                                          "Action": "s3:DeleteObject*",
+                                          "Effect": "Allow",
+                                          "Resource": {
+                                            "Fn::Join": [
+                                              "",
+                                              [
+                                                {
+                                                  "Fn::GetAtt": [
+                                                    "MockDataBucket4719A0C1",
+                                                    "Arn"
+                                                  ]
+                                                },
+                                                "/*"
+                                              ]
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          "Action": [
+                                            "sqs:ReceiveMessage",
+                                            "sqs:ChangeMessageVisibility",
+                                            "sqs:GetQueueUrl",
+                                            "sqs:DeleteMessage",
+                                            "sqs:GetQueueAttributes"
+                                          ],
+                                          "Effect": "Allow",
+                                          "Resource": {
+                                            "Fn::GetAtt": [
+                                              "DenyListPruneDeleteQueueF9D9EBE3",
+                                              "Arn"
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      "Version": "2012-10-17"
+                                    },
+                                    "policyName": "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
+                                    "roles": [
+                                      {
+                                        "Ref": "DenyListPrunePruneQueueHandlerServiceRole9BB94361"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                                  "version": "2.84.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.Policy",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.Role",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Code": {
+                        "id": "Code",
+                        "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Code",
+                        "children": {
+                          "Stage": {
+                            "id": "Stage",
+                            "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Code/Stage",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.AssetStaging",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "AssetBucket": {
+                            "id": "AssetBucket",
+                            "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Code/AssetBucket",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                          "aws:cdk:cloudformation:props": {
+                            "code": {
+                              "s3Bucket": {
+                                "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                              },
+                              "s3Key": "2a51a5a459cb9e428c4bf5cc4d67b9f714c6e19d2bfb54d356feb44cbac46aa8.zip"
+                            },
+                            "role": {
+                              "Fn::GetAtt": [
+                                "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
+                                "Arn"
+                              ]
+                            },
+                            "architectures": [
+                              "arm64"
+                            ],
+                            "description": "backend/deny-list/prune-queue-handler.lambda.ts",
+                            "environment": {
+                              "variables": {
+                                "PACKAGE_DATA_BUCKET_NAME": {
+                                  "Ref": "MockDataBucket4719A0C1"
+                                }
+                              }
+                            },
+                            "handler": "index.handler",
+                            "runtime": "nodejs16.x",
+                            "timeout": 60
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "SqsEventSource:TestDenyListPruneDeleteQueue888622B9": {
+                        "id": "SqsEventSource:TestDenyListPruneDeleteQueue888622B9",
+                        "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/SqsEventSource:TestDenyListPruneDeleteQueue888622B9",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TestDenyList/DenyList/Prune/PruneQueueHandler/SqsEventSource:TestDenyListPruneDeleteQueue888622B9/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::EventSourceMapping",
+                              "aws:cdk:cloudformation:props": {
+                                "functionName": {
+                                  "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+                                },
+                                "eventSourceArn": {
+                                  "Fn::GetAtt": [
+                                    "DenyListPruneDeleteQueueF9D9EBE3",
+                                    "Arn"
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnEventSourceMapping",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.EventSourceMapping",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.Function",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.0.5"
+                }
+              },
+              "PeriodicPrune": {
+                "id": "PeriodicPrune",
+                "path": "TestDenyList/DenyList/PeriodicPrune",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/DenyList/PeriodicPrune/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Events::Rule",
+                      "aws:cdk:cloudformation:props": {
+                        "scheduleExpression": "rate(5 minutes)",
+                        "state": "ENABLED",
+                        "targets": [
+                          {
+                            "id": "Target0",
+                            "arn": {
+                              "Fn::GetAtt": [
+                                "DenyListPrunePruneHandler5F946B07",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_events.CfnRule",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AllowEventRuleTestDenyListPrunePruneHandlerDB8102B7": {
+                    "id": "AllowEventRuleTestDenyListPrunePruneHandlerDB8102B7",
+                    "path": "TestDenyList/DenyList/PeriodicPrune/AllowEventRuleTestDenyListPrunePruneHandlerDB8102B7",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                      "aws:cdk:cloudformation:props": {
+                        "action": "lambda:InvokeFunction",
+                        "functionName": {
+                          "Fn::GetAtt": [
+                            "DenyListPrunePruneHandler5F946B07",
+                            "Arn"
+                          ]
+                        },
+                        "principal": "events.amazonaws.com",
+                        "sourceArn": {
+                          "Fn::GetAtt": [
+                            "DenyListPeriodicPruneC53BF9DB",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_events.Rule",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "S3StorageFactory": {
+            "id": "S3StorageFactory",
+            "path": "TestDenyList/S3StorageFactory",
+            "constructInfo": {
+              "fqn": "construct-hub.S3StorageFactory",
+              "version": "0.0.0"
+            }
+          },
+          "BucketNotificationsHandler050a0587b7544547bf325f094a3db834": {
+            "id": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834",
+            "path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834",
+            "children": {
+              "Role": {
+                "id": "Role",
+                "path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role",
+                "children": {
+                  "ImportRole": {
+                    "id": "ImportRole",
+                    "path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/ImportRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:PutBucketNotification",
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
+                            "roles": [
+                              {
+                                "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.84.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "CatalogBuilderMock": {
+            "id": "CatalogBuilderMock",
+            "path": "TestDenyList/CatalogBuilderMock",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "TestDenyList/CatalogBuilderMock/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "TestDenyList/CatalogBuilderMock/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/CatalogBuilderMock/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.84.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "TestDenyList/CatalogBuilderMock/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "TestDenyList/CatalogBuilderMock/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "TestDenyList/CatalogBuilderMock/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.84.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TestDenyList/CatalogBuilderMock/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "a2b6fc284e07f2948c5e5664c1dfcff68ed9bbaef106822e51b3ffe723fce733.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "CatalogBuilderMockServiceRole8558CA02",
+                        "Arn"
+                      ]
+                    },
+                    "architectures": [
+                      "arm64"
+                    ],
+                    "description": "__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
+                    "handler": "index.handler",
+                    "runtime": "nodejs16.x"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.84.0"
+            }
+          },
+          "ClientTest": {
+            "id": "ClientTest",
+            "path": "TestDenyList/ClientTest",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "TestDenyList/ClientTest/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "TestDenyList/ClientTest/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/ClientTest/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "TestDenyList/ClientTest/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/ClientTest/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DenyListBucketC1C9D3D9",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DenyListBucketC1C9D3D9",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "ClientTestServiceRoleDefaultPolicy3CB30A97",
+                            "roles": [
+                              {
+                                "Ref": "ClientTestServiceRole4F7802CF"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.84.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "TestDenyList/ClientTest/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "TestDenyList/ClientTest/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "TestDenyList/ClientTest/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.84.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TestDenyList/ClientTest/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "90feca89f103a6b6d7cf4e9796dccb2cde1b6de117c66222cc6d8943054d2ee8.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "ClientTestServiceRole4F7802CF",
+                        "Arn"
+                      ]
+                    },
+                    "architectures": [
+                      "arm64"
+                    ],
+                    "description": "__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts",
+                    "environment": {
+                      "variables": {
+                        "BUCKET_NAME": {
+                          "Ref": "DenyListBucketC1C9D3D9"
+                        },
+                        "DENY_LIST_BUCKET_NAME": {
+                          "Ref": "DenyListBucketC1C9D3D9"
+                        },
+                        "DENY_LIST_OBJECT_KEY": "deny-list.json",
+                        "FILE_NAME": "deny-list.json"
+                      }
+                    },
+                    "handler": "index.handler",
+                    "runtime": "nodejs16.x"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.84.0"
+                }
+              },
+              "Trigger": {
+                "id": "Trigger",
+                "path": "TestDenyList/ClientTest/Trigger",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "TestDenyList/ClientTest/Trigger/Default",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "TestDenyList/ClientTest/Trigger/Default/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.triggers.Trigger",
+                  "version": "2.84.0"
+                }
+              },
+              "CurrentVersion": {
+                "id": "CurrentVersion",
+                "path": "TestDenyList/ClientTest/CurrentVersion",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/ClientTest/CurrentVersion/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Version",
+                      "aws:cdk:cloudformation:props": {
+                        "functionName": {
+                          "Ref": "ClientTestBE4CEC14"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnVersion",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.Version",
+                  "version": "2.84.0"
+                }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "TestDenyList/ClientTest/Role",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.84.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "TestDenyList/ClientTest/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/ClientTest/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "lambda:InvokeFunction",
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "ClientTestBE4CEC14",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "*"
+                                  ]
+                                ]
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "ClientTestPolicy7C5CF4ED",
+                        "roles": [
+                          {
+                            "Fn::Select": [
+                              1,
+                              {
+                                "Fn::Split": [
+                                  "/",
+                                  {
+                                    "Fn::Select": [
+                                      5,
+                                      {
+                                        "Fn::Split": [
+                                          ":",
+                                          {
+                                            "Fn::GetAtt": [
+                                              "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+                                              "Arn"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.84.0"
+            }
+          },
+          "AWSCDK.TriggerCustomResourceProviderCustomResourceProvider": {
+            "id": "AWSCDK.TriggerCustomResourceProviderCustomResourceProvider",
+            "path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider",
+            "children": {
+              "Staging": {
+                "id": "Staging",
+                "path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Staging",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.AssetStaging",
+                  "version": "2.84.0"
+                }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Role",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.84.0"
+                }
+              },
+              "Handler": {
+                "id": "Handler",
+                "path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CustomResourceProvider",
+              "version": "2.84.0"
+            }
+          },
+          "PruneTest": {
+            "id": "PruneTest",
+            "path": "TestDenyList/PruneTest",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "TestDenyList/PruneTest/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "TestDenyList/PruneTest/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/PruneTest/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "TestDenyList/PruneTest/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TestDenyList/PruneTest/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "MockDataBucket4719A0C1",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "MockDataBucket4719A0C1",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "PruneTestServiceRoleDefaultPolicyBD33ABA2",
+                            "roles": [
+                              {
+                                "Ref": "PruneTestServiceRole91D2E3A2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.84.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "TestDenyList/PruneTest/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "TestDenyList/PruneTest/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "TestDenyList/PruneTest/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.84.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TestDenyList/PruneTest/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "0371bf938ff2cb7d107f016044b2dd982a9a51c34445cf560faae19362254ebd.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "PruneTestServiceRole91D2E3A2",
+                        "Arn"
+                      ]
+                    },
+                    "architectures": [
+                      "arm64"
+                    ],
+                    "description": "__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts",
+                    "environment": {
+                      "variables": {
+                        "BUCKET_NAME": {
+                          "Ref": "MockDataBucket4719A0C1"
+                        },
+                        "EXPECTED_KEYS": "[\"data/your/v1.2.4/world.txt\",\"data/your/v1.2.4/hello.txt\"]",
+                        "TIMEOUT_SEC": "120"
+                      }
+                    },
+                    "handler": "index.handler",
+                    "runtime": "nodejs16.x",
+                    "timeout": 300
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.84.0"
+                }
+              },
+              "Trigger": {
+                "id": "Trigger",
+                "path": "TestDenyList/PruneTest/Trigger",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "TestDenyList/PruneTest/Trigger/Default",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "TestDenyList/PruneTest/Trigger/Default/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.triggers.Trigger",
+                  "version": "2.84.0"
+                }
+              },
+              "CurrentVersion": {
+                "id": "CurrentVersion",
+                "path": "TestDenyList/PruneTest/CurrentVersion",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/PruneTest/CurrentVersion/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Version",
+                      "aws:cdk:cloudformation:props": {
+                        "functionName": {
+                          "Ref": "PruneTest66C7D9FC"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnVersion",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.Version",
+                  "version": "2.84.0"
+                }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "TestDenyList/PruneTest/Role",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.84.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "TestDenyList/PruneTest/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TestDenyList/PruneTest/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "lambda:InvokeFunction",
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "PruneTest66C7D9FC",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "*"
+                                  ]
+                                ]
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "PruneTestPolicyA887E151",
+                        "roles": [
+                          {
+                            "Fn::Select": [
+                              1,
+                              {
+                                "Fn::Split": [
+                                  "/",
+                                  {
+                                    "Fn::Select": [
+                                      5,
+                                      {
+                                        "Fn::Split": [
+                                          ":",
+                                          {
+                                            "Fn::GetAtt": [
+                                              "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+                                              "Arn"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.84.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "TestDenyList/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.84.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "TestDenyList/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.84.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.84.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.0.5"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.84.0"
+    }
+  }
+}
