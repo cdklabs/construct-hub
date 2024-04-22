@@ -44,7 +44,7 @@ construct:
 
 ```ts nofixture
 import { App, Stack } from 'aws-cdk-lib/core';
-import { ConstructHub } from 'construct-hub';
+import { ConstructHub } from '@gd-constructs/construct-hub';
 
 // The usual... you might have used `cdk init app` instead!
 const app = new App();
@@ -86,7 +86,7 @@ CodeArtifact repositories:
 ```ts nofixture
 import * as codeartifact from 'aws-cdk-lib/aws-codeartifact';
 import { App, Stack } from 'aws-cdk-lib/core';
-import { sources, ConstructHub } from 'construct-hub';
+import { sources, ConstructHub } from '@gd-constructs/construct-hub';
 
 // The usual... you might have used `cdk init app` instead!
 const app = new App();
@@ -130,7 +130,7 @@ that specify which package or package versions should never be lested:
 
 ```ts nofixture
 import { App, Stack } from 'aws-cdk-lib/core';
-import { ConstructHub } from 'construct-hub';
+import { ConstructHub } from '@gd-constructs/construct-hub';
 
 // The usual... you might have used `cdk init app` instead!
 const app = new App();
@@ -228,7 +228,7 @@ package source manually like so:
 ```ts nofixture
 import * as codeartifact from 'aws-cdk-lib/aws-codeartifact';
 import { App, Duration, Stack } from 'aws-cdk-lib/core';
-import { sources, ConstructHub } from 'construct-hub';
+import { sources, ConstructHub } from '@gd-constructs/construct-hub';
 
 const app = new App();
 const stack = new Stack(app, 'StackName', { /* ... */ });

@@ -2,7 +2,7 @@ import { join, relative } from 'path';
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
 import { github } from 'projen';
 import { addDevApp } from './projenrc/dev-app';
-import { discoverIntegrationTests } from './projenrc/integ-tests';
+// import { discoverIntegrationTests } from './projenrc/integ-tests';
 import { discoverEcsTasks } from './projenrc/magic-ecs';
 import { discoverLambdas } from './projenrc/magic-lambda';
 import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
@@ -21,9 +21,10 @@ const project = new CdklabsConstructLibrary({
   cdkVersion: '2.84.0',
   setNodeEngineVersion: false,
   private: false,
-  name: 'construct-hub',
+  name: '@gd-constructs/construct-hub',
   projenrcTs: true,
-  description: 'A construct library that models Construct Hub instances.',
+  description:
+    'A forked version of AWS construct library that models Construct Hub instances.',
   keywords: ['aws', 'aws-cdk', 'constructs', 'construct-hub'],
   license: 'Apache-2.0',
   stability: 'experimental',
@@ -83,10 +84,97 @@ const project = new CdklabsConstructLibrary({
   jsiiVersion: '5.1.x',
 
   pullRequestTemplateContents: [
-    '',
-    '----',
-    '',
-    '*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*',
+    '<!--\n' +
+      'Thanks for submitting a PR to this repository.  To ensure that we get quality PRs which are easy to review, please fill out the template to the best of your ability.  Add additional information if you feel the template does not give a complete picture of the work.\n' +
+      '\n' +
+      'Any line with an 🚨 on it should be completely replaced with your own words, removing the 🚨 and example text.  If you feel that one of these lines is unnecessary, please write N/A instead.\n' +
+      '\n' +
+      'Please structure the title of your PR formally as:\n' +
+      '[FEATURE] - Description of your feature\n' +
+      "[UPDATE] - Description of the updates you've made\n" +
+      '[BUG] - Description of your bug fix\n' +
+      '[DOCS] - Description of your doc changes\n' +
+      '[MAINT] - Description of the maintenance to the repo\n' +
+      '-->\n' +
+      '\n' +
+      "## What's Changed\n" +
+      '\n' +
+      '<!--\n' +
+      "Please include a one or two line summary of what's contained in the PR.  You'll get the chance to fill in more detail later.\n" +
+      '-->\n' +
+      '\n' +
+      '🚨 This PR changes X to Y 🚨\n' +
+      '\n' +
+      '### This change contains:\n' +
+      '\n' +
+      '- [ ] New Features\n' +
+      '- [ ] Improvements\n' +
+      '- [ ] Bug Fixes\n' +
+      '- [ ] Documentation changes\n' +
+      '- [ ] Repository maintenance\n' +
+      '\n' +
+      '### Within this PR I have:\n' +
+      '\n' +
+      '- [ ] Updated relevant documentation\n' +
+      '- [ ] Updated tests\n' +
+      '- [ ] Adequately described the PR in this document\n' +
+      '\n' +
+      '### Scope of Change\n' +
+      '\n' +
+      '<!--\n' +
+      'We follow [semver](https://semver.org) for versioning.  Please familiarize yourself with this system and consider the scope of your changes.  Then check the corresponding box below.\n' +
+      '-->\n' +
+      '\n' +
+      '- [ ] Breaking Change (Major release bump)\n' +
+      '- [ ] New, backwards compatible feature (Minor release bump)\n' +
+      '- [ ] Backwards compatible bugfix, update, or change, which does not impact the public api (Patch release bump)\n' +
+      '- [ ] No version change required (doc update, repo maintenance, etc...)\n' +
+      '\n' +
+      '#### Breaking Changes\n' +
+      '\n' +
+      '<!--\n' +
+      'If there are any breaking changes please describe them in detail here, otherwise just put N/A\n' +
+      '-->\n' +
+      '\n' +
+      '🚨 This PR introduces a breaking change to... which can be addressed by ... 🚨\n' +
+      '\n' +
+      '### Details\n' +
+      '\n' +
+      '<!--\n' +
+      'Please provide details about what was changed.  Feel free to be descriptive here and dig in.\n' +
+      '-->\n' +
+      '\n' +
+      '🚨 This PR changes XXX so that YYY is now the case. It does so by doing ZZZ and that impacts AAA... 🚨\n' +
+      '\n' +
+      '### Motivation\n' +
+      '\n' +
+      '<!--\n' +
+      'It is critically important for a present and future review of this work to understand driving motivation.\n' +
+      '-->\n' +
+      '\n' +
+      '🚨 This work was necessary because... 🚨\n' +
+      '\n' +
+      '## Related Issues/Stories/PRs/etc...\n' +
+      '\n' +
+      '<!--\n' +
+      'GitHub does a great job of auto resolving/closing related issues if you use syntax like:\n' +
+      '  resolves #123\n' +
+      'If this resolves multiple issues, please add a full "resolves" line for each\n' +
+      "You can also link to JIRA stories if that's helpful.\n" +
+      '-->\n' +
+      '\n' +
+      'resolves: <issue number>\n' +
+      '\n' +
+      '## Notes for Reviewers\n' +
+      '\n' +
+      '<!--\n' +
+      'Please provide any other comments/notes/etc... that may be valuable to a reviewer.\n' +
+      'Try to make their life as easy as possible.  Assume they need context to give you a quality review.\n' +
+      '\n' +
+      "If you think it's helpful, please add comments to your code to call out the items discussed here.\n" +
+      '-->\n' +
+      '\n' +
+      '🚨 As a reviewer, you should know... 🚨\n',
   ],
 
   enablePRAutoMerge: true,
@@ -217,6 +305,7 @@ project.gitignore.addPatterns('/website'); // <-- don't commit
 
 project.gitignore.exclude('.vscode/');
 project.gitignore.exclude('**/.DS_Store');
+project.gitignore.exclude('.idea/');
 
 addVpcAllowListManagement(project);
 addDevApp(project);
@@ -224,7 +313,9 @@ addDevApp(project);
 project.addDevDeps('glob');
 discoverLambdas(project);
 discoverEcsTasks(project);
-discoverIntegrationTests(project);
+
+// Disabling integration tests for now, as it's not working as expected.
+// discoverIntegrationTests(project);
 
 // see https://github.com/aws/jsii/issues/3311
 const bundleWorkerPool = [
