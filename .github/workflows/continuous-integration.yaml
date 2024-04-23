@@ -1,0 +1,173 @@
+name: Continuous Integration / Deployment
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+  push:
+    branches:
+      - main
+      - testcicd
+  workflow_dispatch:
+    inputs:
+      awsAccount:
+        type: choice
+        description: "The AWS account to target for testing/deployment"
+        required: true
+        default: "NON_PCI_DEV_PRIVATE"
+        options:
+          - NON_PCI_DEV_PRIVATE
+          - NON_PCI_DEV
+          - NON_PCI_PROD
+      tag:
+        type: string
+        description: "Repository tag/commit/branch to checkout"
+        required: true
+        default: "main"
+      deployInfra:
+        type: boolean
+        description: "Deploy Infrastructure (optional)"
+        required: true
+        # TODO: MAKE THIS FALSE BY DEFAULT BEFORE MERGING
+        default: true
+
+# Adding the concurrency tag with cancel-in-progress: true stops builds
+#  for a certain group if a new push comes in with that same group.
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cicd:
+    runs-on:
+      group: 7920-godaddyconstruc0
+      labels:
+        - self-hosted
+
+    # Variables defined here are available to all steps in this entire workflow job
+    env:
+      ARTIFACTORY_TOKEN_SECRET_NAME: "/GitHub/ARTIFACTORY_TOKEN_SECRET"
+      REGION: "us-west-2"
+      GLOBAL_SSG_DEPLOY_ROLE_ARN_SSM_PARAM_NAME: "/GitHub/GoDaddyConstructsSsgDeployRoleArn"
+
+    steps:
+      # Setup
+      - name: Log Env values
+        run: |
+          echo "GitHub event name: ${{ github.event_name }}"
+          echo "Labels: ${{ github.event.label }}"
+
+      - name: Log inputs if workflow_dispatch
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "AWS Organization: ${{ needs.set-organization.outputs.organization }}"
+          echo "AWS Account: ${{ github.event.inputs.awsAccount }}"
+          echo "Tag: ${{ github.event.inputs.tag }}"
+          echo "Deploy Infra: ${{ github.event.inputs.deployInfra }}"
+
+      # Checkout all branches for diff comparisons
+      - name: Checkout Code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      - name: Setup Python
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984
+        with:
+          python-version: 3.8
+      - name: Setup NodeJS
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      # Get the Artifactory NPM token and URL from ASM on CICD account
+      - name: Get Artifactory NPM token from ASM
+        run: |
+          SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $ARTIFACTORY_TOKEN_SECRET_NAME --query SecretString --region $REGION --output text)
+          echo "Extracting the ARTIFACTORY_TOKEN from the $ARTIFACTORY_TOKEN_SECRET_NAME secret"
+          ARTIFACTORY_NPM_TOKEN=$(echo $SECRET_JSON | jq -r .ARTIFACTORY_TOKEN)
+          echo "::add-mask::ARTIFACTORY_NPM_TOKEN"
+          echo "ARTIFACTORY_NPM_TOKEN=${ARTIFACTORY_NPM_TOKEN}" >> $GITHUB_ENV
+          echo "Done extracting the $ARTIFACTORY_TOKEN_SECRET_NAME secret"
+
+      # Clean
+      - name: Clean Application
+        run: make clean
+
+      # Install NPM Dependencies
+      - name: Install NPM Dependencies
+        run: make init-app
+
+      # Build
+      - name: Build application
+        run: make build-app
+
+      # Lint
+      - name: Lint application
+        run: make lint-app
+
+      # Unit tests
+      - name: Run unit tests for application
+        run: make test-app-unit
+
+      # Snapshot tests
+      - name: Run snapshot tests for application
+        run: make test-app-snapshot
+
+      # Get the SSG Deploy role ARN for the AWS account to deploy the infrastructure to
+      - name: Get Global account CICD role from ASM
+        #if: ${{ github.event.inputs.deployInfra == 'true' || github.event_name == 'push' }}
+        run: |
+          echo "Getting SSG Deploy Role ARN for ${{ github.event.inputs.awsAccount }}"
+          ACCOUNT=$(if [[ "${{ github.event_name }}" == "workflow_dispatch" ]];
+              then echo "${{ github.event.inputs.awsAccount }}"
+            elif [[ "${{ github.event_name }}" == "pull_request" ]];
+              then echo "NON_PCI_DEV_PRIVATE";
+            else echo "NON_PCI_DEV";
+          fi)
+          echo "Account: $ACCOUNT"
+          GLOBAL_SSG_DEPLOY_ROLE_ARN=$(aws secretsmanager get-secret-value --secret-id $GLOBAL_SSG_DEPLOY_ROLE_ARN_SSM_PARAM_NAME --query SecretString --region us-west-2 --output text | jq -r .${ACCOUNT})
+          echo "GLOBAL_SSG_DEPLOY_ROLE_ARN=${GLOBAL_SSG_DEPLOY_ROLE_ARN}" >> $GITHUB_ENV
+          echo "Role ARN to be used for this deployment: ${GLOBAL_SSG_DEPLOY_ROLE_ARN}"
+
+      # Assume into the SSG Deploy Role
+      - name: Get AWS credentials for SSG Deploy Role
+        #if: ${{ github.event.inputs.deployInfra == 'true' || github.event_name == 'push' }}
+        run: |
+          eval $(aws sts assume-role --role-arn ${{ env.GLOBAL_SSG_DEPLOY_ROLE_ARN }} --role-session-name test | jq -r '.Credentials | "export DEPLOY_AWS_ACCESS_KEY_ID=\(.AccessKeyId)\nexport DEPLOY_AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey)\nexport DEPLOY_AWS_SESSION_TOKEN=\(.SessionToken)\n"')
+          echo "::add-mask::$DEPLOY_AWS_ACCESS_KEY_ID"
+          echo "::add-mask::$DEPLOY_AWS_SECRET_ACCESS_KEY"
+          echo "::add-mask::$DEPLOY_AWS_SESSION_TOKEN"
+
+          echo "DEPLOY_AWS_ACCESS_KEY_ID=${DEPLOY_AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
+          echo "DEPLOY_AWS_SECRET_ACCESS_KEY=${DEPLOY_AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
+          echo "DEPLOY_AWS_SESSION_TOKEN=${DEPLOY_AWS_SESSION_TOKEN}" >> $GITHUB_ENV
+
+      # Configure AWS credentials for SSG Deploy Role
+      - name: Configure AWS credentials for Deploy Role
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
+        #if: ${{ github.event.inputs.deployInfra == 'true' || github.event_name == 'push' }}
+        with:
+          aws-access-key-id: ${{ env.DEPLOY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ env.DEPLOY_AWS_SESSION_TOKEN }}
+          aws-region: us-west-2
+
+      # Run cdk Synth and diff
+      - name: make build-infra
+        run: make build-infra
+
+      # Deploy the ConstructHub Stacks
+      - name: Deploy Infra
+        #if: ${{ github.event.inputs.deployInfra == 'true' }}
+        run: |
+          aws sts get-caller-identity
+          make deploy-infra
+        env:
+          ORGANIZATION: ${{ needs.set-organization.outputs.organization }}
+          SSG_DEPLOYMENT_REGION: us-west-2
+
+      # Clear Deploy Role credentials
+      - name: Clear Deploy Role credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=" >> $GITHUB_ENV
+          echo "AWS_SESSION_TOKEN=" >> $GITHUB_ENV
