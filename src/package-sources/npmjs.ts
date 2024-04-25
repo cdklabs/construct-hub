@@ -540,7 +540,7 @@ export class NpmJs implements IPackageSource {
         `Runbook: ${RUNBOOK_URL}`,
       ].join('/n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 1,
+      evaluationPeriods: 2,
       threshold: 1,
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
