@@ -80,7 +80,7 @@ const project = new CdklabsConstructLibrary({
   peerDeps,
 
   minNodeVersion: '16.16.0',
-  jsiiVersion: '5.1.x',
+  jsiiVersion: '5.2.x',
 
   pullRequestTemplateContents: [
     '',
