@@ -8,9 +8,10 @@ import { discoverLambdas } from './projenrc/magic-lambda';
 import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
 import { addVpcAllowListManagement } from './projenrc/vps-allow-list';
 
+const cdkVersion = '2.120.0';
 const peerDeps = [
-  '@aws-cdk/aws-servicecatalogappregistry-alpha@2.84.0-alpha.0',
-  'aws-cdk-lib@^2.84.0',
+  `@aws-cdk/aws-servicecatalogappregistry-alpha@${cdkVersion}-alpha.0`,
+  `aws-cdk-lib@^${cdkVersion}`,
   'cdk-watchful',
   'constructs',
 ];
@@ -18,7 +19,7 @@ const peerDeps = [
 const cdkCli = 'aws-cdk@^2';
 
 const project = new CdklabsConstructLibrary({
-  cdkVersion: '2.84.0',
+  cdkVersion,
   setNodeEngineVersion: false,
   private: false,
   name: 'construct-hub',
@@ -71,16 +72,18 @@ const project = new CdklabsConstructLibrary({
     '@octokit/rest',
     'markdown-it',
     'markdown-it-emoji',
-    'changelog-filename-regex',
     '@types/markdown-it',
     '@types/markdown-it-emoji',
-    '@types/changelog-filename-regex',
   ],
 
   peerDeps,
 
   minNodeVersion: '16.16.0',
-  jsiiVersion: '5.2.x',
+  jsiiVersion: '5.4.x',
+  typescriptVersion: '5.4.x',
+  rosettaOptions: {
+    version: '5.4.x',
+  },
 
   pullRequestTemplateContents: [
     '',
@@ -199,10 +202,6 @@ project.addTask('bundle', {
   description: 'Bundle all lambda and ECS functions',
 });
 
-// I have to put this here, otherwise projen overrides this with a `jsii-docgen`
-// dependency without a version. I don't know where or why.
-project.addDevDeps('jsii-docgen@^10.2.0');
-
 // extract the "build/" directory from "construct-hub-webapp" into "./website"
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
@@ -225,6 +224,14 @@ project.addDevDeps('glob');
 discoverLambdas(project);
 discoverEcsTasks(project);
 discoverIntegrationTests(project);
+
+// use custom version number of integ-runner
+project.deps.removeDependency('@aws-cdk/integ-runner');
+project.deps.removeDependency('@aws-cdk/integ-tests-alpha');
+project.addDevDeps(
+  `@aws-cdk/integ-runner@${cdkVersion}-alpha.0`,
+  `@aws-cdk/integ-tests-alpha@${cdkVersion}-alpha.0`
+);
 
 // see https://github.com/aws/jsii/issues/3311
 const bundleWorkerPool = [

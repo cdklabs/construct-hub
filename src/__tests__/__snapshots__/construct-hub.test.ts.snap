@@ -3,107 +3,6 @@
 exports[`minimal usage 1`] = `
 {
   "Mappings": {
-    "DefaultCrNodeVersionMap": {
-      "af-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs16.x",
-      },
-      "me-central-1": {
-        "value": "nodejs16.x",
-      },
-      "me-south-1": {
-        "value": "nodejs16.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-2": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs14.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-west-2": {
-        "value": "nodejs16.x",
-      },
-    },
     "ServiceprincipalMap": {
       "af-south-1": {
         "states": "states.af-south-1.amazonaws.com",
@@ -134,6 +33,9 @@ exports[`minimal usage 1`] = `
       },
       "ap-southeast-3": {
         "states": "states.ap-southeast-3.amazonaws.com",
+      },
+      "ap-southeast-4": {
+        "states": "states.ap-southeast-4.amazonaws.com",
       },
       "ca-central-1": {
         "states": "states.ca-central-1.amazonaws.com",
@@ -167,6 +69,9 @@ exports[`minimal usage 1`] = `
       },
       "eu-west-3": {
         "states": "states.eu-west-3.amazonaws.com",
+      },
+      "il-central-1": {
+        "states": "states.il-central-1.amazonaws.com",
       },
       "me-central-1": {
         "states": "states.me-central-1.amazonaws.com",
@@ -400,7 +305,6 @@ import urllib.request
 s3 = boto3.client("s3")
 
 EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
-
 CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
 
 def handler(event: dict, context):
@@ -408,18 +312,15 @@ def handler(event: dict, context):
   error_message = ""
   try:
     props = event["ResourceProperties"]
-    bucket = props["BucketName"]
     notification_configuration = props["NotificationConfiguration"]
-    request_type = event["RequestType"]
     managed = props.get('Managed', 'true').lower() == 'true'
     stack_id = event['StackId']
-
+    old = event.get("OldResourceProperties", {}).get("NotificationConfiguration", {})
     if managed:
-      config = handle_managed(request_type, notification_configuration)
+      config = handle_managed(event["RequestType"], notification_configuration)
     else:
-      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-    put_bucket_notification_configuration(bucket, config)
+      config = handle_unmanaged(props["BucketName"], stack_id, event["RequestType"], notification_configuration, old)
+    s3.put_bucket_notification_configuration(Bucket=props["BucketName"], NotificationConfiguration=config)
   except Exception as e:
     logging.exception("Failed to put bucket notification configuration")
     response_status = "FAILED"
@@ -432,15 +333,25 @@ def handle_managed(request_type, notification_configuration):
     return {}
   return notification_configuration
 
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-  external_notifications = find_external_notifications(bucket, stack_id)
+def handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):
+  def with_id(n):
+    n['Id'] = f"{stack_id}-{hash(json.dumps(n, sort_keys=True))}"
+    return n
+
+  external_notifications = {}
+  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)
+  for t in CONFIGURATION_TYPES:
+    if request_type == 'Update':
+        ids = [with_id(n) for n in old.get(t, [])]
+        old_incoming_ids = [n['Id'] for n in ids]
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'] in old_incoming_ids]
+    elif request_type == 'Create':
+        external_notifications[t] = [n for n in existing_notifications.get(t, [])]
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
   if request_type == 'Delete':
     return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}"
-    return notification
 
   notifications = {}
   for t in CONFIGURATION_TYPES:
@@ -454,23 +365,6 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
 
   return notifications
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
-
-  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
-    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
-
-  return external_notifications
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
 def submit_response(event: dict, context, response_status: str, error_message: str):
   response_body = json.dumps(
@@ -1370,6 +1264,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -1509,6 +1404,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -1609,7 +1505,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "02ccbe0bf964c07cdb1c1d0098b332ecfd8ab196dff49c85b00b20a8d5af4fde.zip",
+          "S3Key": "94a602e622af4d0e625ecdad521b4fc00754bb965ccbe8633f6477cc9c0eaa9e.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -2086,7 +1982,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ad1cb8ecdc6006a1831b36445eb5ca0df8d063949d07cff104eafa324984d70f.zip",
+          "S3Key": "7a3654dd34b9e3f81f340cea3327eb1e8089449881225e55e76fb86c87403b64.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -2314,7 +2210,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "449a55698cdd6ac3842655d436cc8a386fc42c86c58741e441bc5cc5590a5923.zip",
+          "S3Key": "305ae7e73e8ae5630d7c345f44903b9377db737cd4a7d28c43e4709f1e34a779.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -2740,7 +2636,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "42e5481334db6f6ed0625e21a674da88c232bc8f788184455b1edc515de9b4b9.zip",
+          "S3Key": "5fc37870326e0f818f6baac7c0d2ab25bf278030a366f3a365a3fad846aa2c23.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -2926,7 +2822,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -3406,7 +3302,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "7a3a43279f946675e59752fe6bf5cb89b421d96664c639b5a0fabbdf59e23136.zip",
+          "S3Key": "1ce0ff7a8d0ab6e2c2ac8e16a810e6bdf897676761a5c1cbf023448162e31b73.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -3920,7 +3816,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
+              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubInventoryCanary63D899BC",
@@ -4695,7 +4591,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f04ba22814378b8466f91e3a8db6160a484a76f3cf7d91c6725fb7177ec77c8e.zip",
+          "S3Key": "c1b6bedb8027cd2a990dc9b77338a34b6e1dc81393e2516cb676800e02a93b44.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -4846,14 +4742,14 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
+              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
                   "Arn",
                 ],
               },
-              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
+              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -4903,7 +4799,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f4483698d5312696341aaeccf359d9836720d67f9d5553b86a4ee6bd0c635b61.zip",
+          "S3Key": "2b597ca4b3eb67f1e54ceb41bdbd922882ca9737ad57215fedbb5879bfb25295.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -5217,7 +5113,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e8ddff7301daf0694aa4d12df2a10627efc2fc18f0dacb30ad493955272e004f.zip",
+          "S3Key": "a70b5eeec6325df94792a0411df08b30efdaf8b0cbe8dfefb078887988055576.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -5971,7 +5867,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a4ebd27b7ba05a5a0b6133a6e59b1f5283201bf4f0c0c40340230d3f609eb9f1.zip",
+          "S3Key": "d355e39fbde46b541ae05618d065eabb53246304a348db37b52c6a1a10746c05.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -6126,7 +6022,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "504074bbf13cfee39f9ac072b44a954168381a757092267f0c5bf44126528386.zip",
+          "S3Key": "7f3dd2716f8d559ccb45e6a633629be25a17a5744aa9dcca9ea1bc7e8cfde02d.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -6909,7 +6805,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:24f70a6614f629a87da185991a37c7324bf7402cac1bfa4524075905339b93c4",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:dc27a7aaac7f2c35613c3a91b0bd7625bfde6a16445d407df2afb2d3bdde6bbd",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -9501,7 +9397,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3394528aeaec623326ecf3958ca40ab21f55f0ae65b46c83730af555fa1f8431.zip",
+          "S3Key": "7013fb86ded703394df01e3530099e4d6479ba65d7c5be646916637be0c83789.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -9555,7 +9451,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "552c847e786c4be08ac2d2aca3a491c934cb983b457a8ae3acda6d319744efda.zip",
+          "S3Key": "97deb8e10c80613203e37a5c3cccd92e3f9920b25db443b90b4e4346624743ab.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -10260,7 +10156,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "fb11f706fbf6e083e228bb5d39e00181e441a872ab449f044137b4c0094d62a6.zip",
+          "S3Key": "0ca0e1ae3a496c18dcf10aee2734c0b04a469023e9d9dbfea6a3734cf8171ee1.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -10671,7 +10567,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "add634b64b5bbd67856c589813e46a21c94e1583d3bb965d70491bfbd68fc7a9.zip",
+          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -10878,7 +10774,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a88e0a66e9be8df7f6c5ca47f98760a34b7b5c2e8addc8da121a9bbd2ab34aaa.zip",
+          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -11310,7 +11206,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "15d4395b9337a5e923c03e264e882be4611c5555683b1793a83ec51bdfd6b146.zip",
+          "7d97da435dc15ac8f0a826e608c46b17cad2a9c22ae485c23203778c87be7b52.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -11721,7 +11617,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip",
+          "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip",
         },
         "Environment": {
           "Variables": {
@@ -11998,7 +11894,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip",
+          "S3Key": "b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -12012,7 +11908,7 @@ function handler(event) {
             ],
           ],
         },
-        "Handler": "__entrypoint__.handler",
+        "Handler": "index.handler",
         "MemorySize": 128,
         "Role": {
           "Fn::GetAtt": [
@@ -12020,7 +11916,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -12057,7 +11953,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
+          "S3Key": "4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35.zip",
         },
         "Handler": "index.handler",
         "Role": {
@@ -12066,15 +11962,8 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "DefaultCrNodeVersionMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -12146,7 +12035,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "099a28fa924a0244ca1bce918b8af8c3716234eebf3ee6238522948064856a8e.zip",
+          "S3Key": "aba08b0349438b83bcdf4c015b3e5bd4954d69572a53fff0e0434a240628f57b.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -12684,107 +12573,6 @@ function handler(event) {
 exports[`piggy-backing on an existing CodeArtifact domain 1`] = `
 {
   "Mappings": {
-    "DefaultCrNodeVersionMap": {
-      "af-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs16.x",
-      },
-      "me-central-1": {
-        "value": "nodejs16.x",
-      },
-      "me-south-1": {
-        "value": "nodejs16.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-2": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs14.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-west-2": {
-        "value": "nodejs16.x",
-      },
-    },
     "ServiceprincipalMap": {
       "af-south-1": {
         "states": "states.af-south-1.amazonaws.com",
@@ -12815,6 +12603,9 @@ exports[`piggy-backing on an existing CodeArtifact domain 1`] = `
       },
       "ap-southeast-3": {
         "states": "states.ap-southeast-3.amazonaws.com",
+      },
+      "ap-southeast-4": {
+        "states": "states.ap-southeast-4.amazonaws.com",
       },
       "ca-central-1": {
         "states": "states.ca-central-1.amazonaws.com",
@@ -12848,6 +12639,9 @@ exports[`piggy-backing on an existing CodeArtifact domain 1`] = `
       },
       "eu-west-3": {
         "states": "states.eu-west-3.amazonaws.com",
+      },
+      "il-central-1": {
+        "states": "states.il-central-1.amazonaws.com",
       },
       "me-central-1": {
         "states": "states.me-central-1.amazonaws.com",
@@ -13060,7 +12854,7 @@ exports[`piggy-backing on an existing CodeArtifact domain 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f9346b940b724b094a16ca051c017799995fa93df6da38a0539bf7c000fee50a.zip",
+          "S3Key": "ed6cd104ff5f101d06dae8cb2b87cc6e6d69b9a22055b467ea6cae10ff023023.zip",
         },
         "Handler": "index.handler",
         "Role": {
@@ -13069,15 +12863,7 @@ exports[`piggy-backing on an existing CodeArtifact domain 1`] = `
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "DefaultCrNodeVersionMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs18.x",
         "Timeout": 120,
       },
       "Type": "AWS::Lambda::Function",
@@ -13143,7 +12929,6 @@ import urllib.request
 s3 = boto3.client("s3")
 
 EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
-
 CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
 
 def handler(event: dict, context):
@@ -13151,18 +12936,15 @@ def handler(event: dict, context):
   error_message = ""
   try:
     props = event["ResourceProperties"]
-    bucket = props["BucketName"]
     notification_configuration = props["NotificationConfiguration"]
-    request_type = event["RequestType"]
     managed = props.get('Managed', 'true').lower() == 'true'
     stack_id = event['StackId']
-
+    old = event.get("OldResourceProperties", {}).get("NotificationConfiguration", {})
     if managed:
-      config = handle_managed(request_type, notification_configuration)
+      config = handle_managed(event["RequestType"], notification_configuration)
     else:
-      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-    put_bucket_notification_configuration(bucket, config)
+      config = handle_unmanaged(props["BucketName"], stack_id, event["RequestType"], notification_configuration, old)
+    s3.put_bucket_notification_configuration(Bucket=props["BucketName"], NotificationConfiguration=config)
   except Exception as e:
     logging.exception("Failed to put bucket notification configuration")
     response_status = "FAILED"
@@ -13175,15 +12957,25 @@ def handle_managed(request_type, notification_configuration):
     return {}
   return notification_configuration
 
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-  external_notifications = find_external_notifications(bucket, stack_id)
+def handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):
+  def with_id(n):
+    n['Id'] = f"{stack_id}-{hash(json.dumps(n, sort_keys=True))}"
+    return n
+
+  external_notifications = {}
+  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)
+  for t in CONFIGURATION_TYPES:
+    if request_type == 'Update':
+        ids = [with_id(n) for n in old.get(t, [])]
+        old_incoming_ids = [n['Id'] for n in ids]
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'] in old_incoming_ids]
+    elif request_type == 'Create':
+        external_notifications[t] = [n for n in existing_notifications.get(t, [])]
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
   if request_type == 'Delete':
     return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}"
-    return notification
 
   notifications = {}
   for t in CONFIGURATION_TYPES:
@@ -13197,23 +12989,6 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
 
   return notifications
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
-
-  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
-    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
-
-  return external_notifications
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
 def submit_response(event: dict, context, response_status: str, error_message: str):
   response_body = json.dumps(
@@ -14316,6 +14091,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -14455,6 +14231,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -14555,7 +14332,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "02ccbe0bf964c07cdb1c1d0098b332ecfd8ab196dff49c85b00b20a8d5af4fde.zip",
+          "S3Key": "94a602e622af4d0e625ecdad521b4fc00754bb965ccbe8633f6477cc9c0eaa9e.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -15032,7 +14809,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ad1cb8ecdc6006a1831b36445eb5ca0df8d063949d07cff104eafa324984d70f.zip",
+          "S3Key": "7a3654dd34b9e3f81f340cea3327eb1e8089449881225e55e76fb86c87403b64.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -15260,7 +15037,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "449a55698cdd6ac3842655d436cc8a386fc42c86c58741e441bc5cc5590a5923.zip",
+          "S3Key": "305ae7e73e8ae5630d7c345f44903b9377db737cd4a7d28c43e4709f1e34a779.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -15704,7 +15481,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "42e5481334db6f6ed0625e21a674da88c232bc8f788184455b1edc515de9b4b9.zip",
+          "S3Key": "5fc37870326e0f818f6baac7c0d2ab25bf278030a366f3a365a3fad846aa2c23.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -15890,7 +15667,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -16450,7 +16227,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "7a3a43279f946675e59752fe6bf5cb89b421d96664c639b5a0fabbdf59e23136.zip",
+          "S3Key": "1ce0ff7a8d0ab6e2c2ac8e16a810e6bdf897676761a5c1cbf023448162e31b73.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -16964,7 +16741,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
+              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubInventoryCanary63D899BC",
@@ -17739,7 +17516,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f04ba22814378b8466f91e3a8db6160a484a76f3cf7d91c6725fb7177ec77c8e.zip",
+          "S3Key": "c1b6bedb8027cd2a990dc9b77338a34b6e1dc81393e2516cb676800e02a93b44.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -17890,14 +17667,14 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
+              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
                   "Arn",
                 ],
               },
-              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
+              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -17947,7 +17724,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f4483698d5312696341aaeccf359d9836720d67f9d5553b86a4ee6bd0c635b61.zip",
+          "S3Key": "2b597ca4b3eb67f1e54ceb41bdbd922882ca9737ad57215fedbb5879bfb25295.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -18261,7 +18038,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e8ddff7301daf0694aa4d12df2a10627efc2fc18f0dacb30ad493955272e004f.zip",
+          "S3Key": "a70b5eeec6325df94792a0411df08b30efdaf8b0cbe8dfefb078887988055576.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -19015,7 +18792,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a4ebd27b7ba05a5a0b6133a6e59b1f5283201bf4f0c0c40340230d3f609eb9f1.zip",
+          "S3Key": "d355e39fbde46b541ae05618d065eabb53246304a348db37b52c6a1a10746c05.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -19170,7 +18947,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "504074bbf13cfee39f9ac072b44a954168381a757092267f0c5bf44126528386.zip",
+          "S3Key": "7f3dd2716f8d559ccb45e6a633629be25a17a5744aa9dcca9ea1bc7e8cfde02d.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -19980,7 +19757,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:24f70a6614f629a87da185991a37c7324bf7402cac1bfa4524075905339b93c4",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:dc27a7aaac7f2c35613c3a91b0bd7625bfde6a16445d407df2afb2d3bdde6bbd",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -22618,7 +22395,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3394528aeaec623326ecf3958ca40ab21f55f0ae65b46c83730af555fa1f8431.zip",
+          "S3Key": "7013fb86ded703394df01e3530099e4d6479ba65d7c5be646916637be0c83789.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -22672,7 +22449,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "552c847e786c4be08ac2d2aca3a491c934cb983b457a8ae3acda6d319744efda.zip",
+          "S3Key": "97deb8e10c80613203e37a5c3cccd92e3f9920b25db443b90b4e4346624743ab.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -23377,7 +23154,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "fb11f706fbf6e083e228bb5d39e00181e441a872ab449f044137b4c0094d62a6.zip",
+          "S3Key": "0ca0e1ae3a496c18dcf10aee2734c0b04a469023e9d9dbfea6a3734cf8171ee1.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -23788,7 +23565,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "add634b64b5bbd67856c589813e46a21c94e1583d3bb965d70491bfbd68fc7a9.zip",
+          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -23995,7 +23772,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a88e0a66e9be8df7f6c5ca47f98760a34b7b5c2e8addc8da121a9bbd2ab34aaa.zip",
+          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -24427,7 +24204,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "15d4395b9337a5e923c03e264e882be4611c5555683b1793a83ec51bdfd6b146.zip",
+          "7d97da435dc15ac8f0a826e608c46b17cad2a9c22ae485c23203778c87be7b52.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -24838,7 +24615,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip",
+          "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip",
         },
         "Environment": {
           "Variables": {
@@ -25115,7 +24892,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip",
+          "S3Key": "b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -25129,7 +24906,7 @@ function handler(event) {
             ],
           ],
         },
-        "Handler": "__entrypoint__.handler",
+        "Handler": "index.handler",
         "MemorySize": 128,
         "Role": {
           "Fn::GetAtt": [
@@ -25137,7 +24914,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -25174,7 +24951,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
+          "S3Key": "4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35.zip",
         },
         "Handler": "index.handler",
         "Role": {
@@ -25183,15 +24960,8 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "DefaultCrNodeVersionMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -25263,7 +25033,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "099a28fa924a0244ca1bce918b8af8c3716234eebf3ee6238522948064856a8e.zip",
+          "S3Key": "aba08b0349438b83bcdf4c015b3e5bd4954d69572a53fff0e0434a240628f57b.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -25801,107 +25571,6 @@ function handler(event) {
 exports[`with all internet access 1`] = `
 {
   "Mappings": {
-    "DefaultCrNodeVersionMap": {
-      "af-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs16.x",
-      },
-      "me-central-1": {
-        "value": "nodejs16.x",
-      },
-      "me-south-1": {
-        "value": "nodejs16.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-2": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs14.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-west-2": {
-        "value": "nodejs16.x",
-      },
-    },
     "ServiceprincipalMap": {
       "af-south-1": {
         "states": "states.af-south-1.amazonaws.com",
@@ -25932,6 +25601,9 @@ exports[`with all internet access 1`] = `
       },
       "ap-southeast-3": {
         "states": "states.ap-southeast-3.amazonaws.com",
+      },
+      "ap-southeast-4": {
+        "states": "states.ap-southeast-4.amazonaws.com",
       },
       "ca-central-1": {
         "states": "states.ca-central-1.amazonaws.com",
@@ -25965,6 +25637,9 @@ exports[`with all internet access 1`] = `
       },
       "eu-west-3": {
         "states": "states.eu-west-3.amazonaws.com",
+      },
+      "il-central-1": {
+        "states": "states.il-central-1.amazonaws.com",
       },
       "me-central-1": {
         "states": "states.me-central-1.amazonaws.com",
@@ -26198,7 +25873,6 @@ import urllib.request
 s3 = boto3.client("s3")
 
 EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
-
 CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
 
 def handler(event: dict, context):
@@ -26206,18 +25880,15 @@ def handler(event: dict, context):
   error_message = ""
   try:
     props = event["ResourceProperties"]
-    bucket = props["BucketName"]
     notification_configuration = props["NotificationConfiguration"]
-    request_type = event["RequestType"]
     managed = props.get('Managed', 'true').lower() == 'true'
     stack_id = event['StackId']
-
+    old = event.get("OldResourceProperties", {}).get("NotificationConfiguration", {})
     if managed:
-      config = handle_managed(request_type, notification_configuration)
+      config = handle_managed(event["RequestType"], notification_configuration)
     else:
-      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-    put_bucket_notification_configuration(bucket, config)
+      config = handle_unmanaged(props["BucketName"], stack_id, event["RequestType"], notification_configuration, old)
+    s3.put_bucket_notification_configuration(Bucket=props["BucketName"], NotificationConfiguration=config)
   except Exception as e:
     logging.exception("Failed to put bucket notification configuration")
     response_status = "FAILED"
@@ -26230,15 +25901,25 @@ def handle_managed(request_type, notification_configuration):
     return {}
   return notification_configuration
 
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-  external_notifications = find_external_notifications(bucket, stack_id)
+def handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):
+  def with_id(n):
+    n['Id'] = f"{stack_id}-{hash(json.dumps(n, sort_keys=True))}"
+    return n
+
+  external_notifications = {}
+  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)
+  for t in CONFIGURATION_TYPES:
+    if request_type == 'Update':
+        ids = [with_id(n) for n in old.get(t, [])]
+        old_incoming_ids = [n['Id'] for n in ids]
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'] in old_incoming_ids]
+    elif request_type == 'Create':
+        external_notifications[t] = [n for n in existing_notifications.get(t, [])]
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
   if request_type == 'Delete':
     return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}"
-    return notification
 
   notifications = {}
   for t in CONFIGURATION_TYPES:
@@ -26252,23 +25933,6 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
 
   return notifications
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
-
-  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
-    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
-
-  return external_notifications
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
 def submit_response(event: dict, context, response_status: str, error_message: str):
   response_body = json.dumps(
@@ -27168,6 +26832,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -27307,6 +26972,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -27407,7 +27073,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "02ccbe0bf964c07cdb1c1d0098b332ecfd8ab196dff49c85b00b20a8d5af4fde.zip",
+          "S3Key": "94a602e622af4d0e625ecdad521b4fc00754bb965ccbe8633f6477cc9c0eaa9e.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -27884,7 +27550,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ad1cb8ecdc6006a1831b36445eb5ca0df8d063949d07cff104eafa324984d70f.zip",
+          "S3Key": "7a3654dd34b9e3f81f340cea3327eb1e8089449881225e55e76fb86c87403b64.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -28112,7 +27778,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "449a55698cdd6ac3842655d436cc8a386fc42c86c58741e441bc5cc5590a5923.zip",
+          "S3Key": "305ae7e73e8ae5630d7c345f44903b9377db737cd4a7d28c43e4709f1e34a779.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -28538,7 +28204,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "42e5481334db6f6ed0625e21a674da88c232bc8f788184455b1edc515de9b4b9.zip",
+          "S3Key": "5fc37870326e0f818f6baac7c0d2ab25bf278030a366f3a365a3fad846aa2c23.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -28724,7 +28390,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -29204,7 +28870,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "7a3a43279f946675e59752fe6bf5cb89b421d96664c639b5a0fabbdf59e23136.zip",
+          "S3Key": "1ce0ff7a8d0ab6e2c2ac8e16a810e6bdf897676761a5c1cbf023448162e31b73.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -29718,7 +29384,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
+              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubInventoryCanary63D899BC",
@@ -30493,7 +30159,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f04ba22814378b8466f91e3a8db6160a484a76f3cf7d91c6725fb7177ec77c8e.zip",
+          "S3Key": "c1b6bedb8027cd2a990dc9b77338a34b6e1dc81393e2516cb676800e02a93b44.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -30644,14 +30310,14 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
+              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
                   "Arn",
                 ],
               },
-              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
+              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -30701,7 +30367,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f4483698d5312696341aaeccf359d9836720d67f9d5553b86a4ee6bd0c635b61.zip",
+          "S3Key": "2b597ca4b3eb67f1e54ceb41bdbd922882ca9737ad57215fedbb5879bfb25295.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -31015,7 +30681,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e8ddff7301daf0694aa4d12df2a10627efc2fc18f0dacb30ad493955272e004f.zip",
+          "S3Key": "a70b5eeec6325df94792a0411df08b30efdaf8b0cbe8dfefb078887988055576.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -31769,7 +31435,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a4ebd27b7ba05a5a0b6133a6e59b1f5283201bf4f0c0c40340230d3f609eb9f1.zip",
+          "S3Key": "d355e39fbde46b541ae05618d065eabb53246304a348db37b52c6a1a10746c05.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -31924,7 +31590,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "504074bbf13cfee39f9ac072b44a954168381a757092267f0c5bf44126528386.zip",
+          "S3Key": "7f3dd2716f8d559ccb45e6a633629be25a17a5744aa9dcca9ea1bc7e8cfde02d.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -32707,7 +32373,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:24f70a6614f629a87da185991a37c7324bf7402cac1bfa4524075905339b93c4",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:dc27a7aaac7f2c35613c3a91b0bd7625bfde6a16445d407df2afb2d3bdde6bbd",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -35299,7 +34965,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3394528aeaec623326ecf3958ca40ab21f55f0ae65b46c83730af555fa1f8431.zip",
+          "S3Key": "7013fb86ded703394df01e3530099e4d6479ba65d7c5be646916637be0c83789.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -35353,7 +35019,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "552c847e786c4be08ac2d2aca3a491c934cb983b457a8ae3acda6d319744efda.zip",
+          "S3Key": "97deb8e10c80613203e37a5c3cccd92e3f9920b25db443b90b4e4346624743ab.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -36058,7 +35724,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "fb11f706fbf6e083e228bb5d39e00181e441a872ab449f044137b4c0094d62a6.zip",
+          "S3Key": "0ca0e1ae3a496c18dcf10aee2734c0b04a469023e9d9dbfea6a3734cf8171ee1.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -36469,7 +36135,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "add634b64b5bbd67856c589813e46a21c94e1583d3bb965d70491bfbd68fc7a9.zip",
+          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -36676,7 +36342,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a88e0a66e9be8df7f6c5ca47f98760a34b7b5c2e8addc8da121a9bbd2ab34aaa.zip",
+          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -37108,7 +36774,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "15d4395b9337a5e923c03e264e882be4611c5555683b1793a83ec51bdfd6b146.zip",
+          "7d97da435dc15ac8f0a826e608c46b17cad2a9c22ae485c23203778c87be7b52.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -37519,7 +37185,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip",
+          "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip",
         },
         "Environment": {
           "Variables": {
@@ -37796,7 +37462,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip",
+          "S3Key": "b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -37810,7 +37476,7 @@ function handler(event) {
             ],
           ],
         },
-        "Handler": "__entrypoint__.handler",
+        "Handler": "index.handler",
         "MemorySize": 128,
         "Role": {
           "Fn::GetAtt": [
@@ -37818,7 +37484,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -37855,7 +37521,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
+          "S3Key": "4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35.zip",
         },
         "Handler": "index.handler",
         "Role": {
@@ -37864,15 +37530,8 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "DefaultCrNodeVersionMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -37944,7 +37603,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "099a28fa924a0244ca1bce918b8af8c3716234eebf3ee6238522948064856a8e.zip",
+          "S3Key": "aba08b0349438b83bcdf4c015b3e5bd4954d69572a53fff0e0434a240628f57b.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -38490,107 +38149,6 @@ exports[`with domain 1`] = `
         "zoneId": "Z3RFFRIM2A3IF5",
       },
     },
-    "DefaultCrNodeVersionMap": {
-      "af-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs16.x",
-      },
-      "me-central-1": {
-        "value": "nodejs16.x",
-      },
-      "me-south-1": {
-        "value": "nodejs16.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-2": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs14.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-west-2": {
-        "value": "nodejs16.x",
-      },
-    },
     "ServiceprincipalMap": {
       "af-south-1": {
         "states": "states.af-south-1.amazonaws.com",
@@ -38621,6 +38179,9 @@ exports[`with domain 1`] = `
       },
       "ap-southeast-3": {
         "states": "states.ap-southeast-3.amazonaws.com",
+      },
+      "ap-southeast-4": {
+        "states": "states.ap-southeast-4.amazonaws.com",
       },
       "ca-central-1": {
         "states": "states.ca-central-1.amazonaws.com",
@@ -38654,6 +38215,9 @@ exports[`with domain 1`] = `
       },
       "eu-west-3": {
         "states": "states.eu-west-3.amazonaws.com",
+      },
+      "il-central-1": {
+        "states": "states.il-central-1.amazonaws.com",
       },
       "me-central-1": {
         "states": "states.me-central-1.amazonaws.com",
@@ -38887,7 +38451,6 @@ import urllib.request
 s3 = boto3.client("s3")
 
 EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
-
 CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
 
 def handler(event: dict, context):
@@ -38895,18 +38458,15 @@ def handler(event: dict, context):
   error_message = ""
   try:
     props = event["ResourceProperties"]
-    bucket = props["BucketName"]
     notification_configuration = props["NotificationConfiguration"]
-    request_type = event["RequestType"]
     managed = props.get('Managed', 'true').lower() == 'true'
     stack_id = event['StackId']
-
+    old = event.get("OldResourceProperties", {}).get("NotificationConfiguration", {})
     if managed:
-      config = handle_managed(request_type, notification_configuration)
+      config = handle_managed(event["RequestType"], notification_configuration)
     else:
-      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-    put_bucket_notification_configuration(bucket, config)
+      config = handle_unmanaged(props["BucketName"], stack_id, event["RequestType"], notification_configuration, old)
+    s3.put_bucket_notification_configuration(Bucket=props["BucketName"], NotificationConfiguration=config)
   except Exception as e:
     logging.exception("Failed to put bucket notification configuration")
     response_status = "FAILED"
@@ -38919,15 +38479,25 @@ def handle_managed(request_type, notification_configuration):
     return {}
   return notification_configuration
 
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-  external_notifications = find_external_notifications(bucket, stack_id)
+def handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):
+  def with_id(n):
+    n['Id'] = f"{stack_id}-{hash(json.dumps(n, sort_keys=True))}"
+    return n
+
+  external_notifications = {}
+  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)
+  for t in CONFIGURATION_TYPES:
+    if request_type == 'Update':
+        ids = [with_id(n) for n in old.get(t, [])]
+        old_incoming_ids = [n['Id'] for n in ids]
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'] in old_incoming_ids]
+    elif request_type == 'Create':
+        external_notifications[t] = [n for n in existing_notifications.get(t, [])]
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
   if request_type == 'Delete':
     return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}"
-    return notification
 
   notifications = {}
   for t in CONFIGURATION_TYPES:
@@ -38941,23 +38511,6 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
 
   return notifications
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
-
-  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
-    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
-
-  return external_notifications
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
 def submit_response(event: dict, context, response_status: str, error_message: str):
   response_body = json.dumps(
@@ -39056,7 +38609,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "861509f9607aa6bb9fd7034fb10fe6f0c60d91dfd7f010b9ef666869dec9bbd9.zip",
+          "S3Key": "b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8.zip",
         },
         "Handler": "index.certificateRequestHandler",
         "Role": {
@@ -39065,15 +38618,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "DefaultCrNodeVersionMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -39997,6 +39542,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -40136,6 +39682,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -40236,7 +39783,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "02ccbe0bf964c07cdb1c1d0098b332ecfd8ab196dff49c85b00b20a8d5af4fde.zip",
+          "S3Key": "94a602e622af4d0e625ecdad521b4fc00754bb965ccbe8633f6477cc9c0eaa9e.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -40713,7 +40260,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ad1cb8ecdc6006a1831b36445eb5ca0df8d063949d07cff104eafa324984d70f.zip",
+          "S3Key": "7a3654dd34b9e3f81f340cea3327eb1e8089449881225e55e76fb86c87403b64.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -40928,7 +40475,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "449a55698cdd6ac3842655d436cc8a386fc42c86c58741e441bc5cc5590a5923.zip",
+          "S3Key": "305ae7e73e8ae5630d7c345f44903b9377db737cd4a7d28c43e4709f1e34a779.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -41354,7 +40901,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "42e5481334db6f6ed0625e21a674da88c232bc8f788184455b1edc515de9b4b9.zip",
+          "S3Key": "5fc37870326e0f818f6baac7c0d2ab25bf278030a366f3a365a3fad846aa2c23.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -41540,7 +41087,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -42020,7 +41567,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "7a3a43279f946675e59752fe6bf5cb89b421d96664c639b5a0fabbdf59e23136.zip",
+          "S3Key": "1ce0ff7a8d0ab6e2c2ac8e16a810e6bdf897676761a5c1cbf023448162e31b73.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -42534,7 +42081,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
+              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubInventoryCanary63D899BC",
@@ -43331,7 +42878,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f04ba22814378b8466f91e3a8db6160a484a76f3cf7d91c6725fb7177ec77c8e.zip",
+          "S3Key": "c1b6bedb8027cd2a990dc9b77338a34b6e1dc81393e2516cb676800e02a93b44.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -43482,14 +43029,14 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
+              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
                   "Arn",
                 ],
               },
-              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
+              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -43539,7 +43086,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f4483698d5312696341aaeccf359d9836720d67f9d5553b86a4ee6bd0c635b61.zip",
+          "S3Key": "2b597ca4b3eb67f1e54ceb41bdbd922882ca9737ad57215fedbb5879bfb25295.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -43853,7 +43400,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e8ddff7301daf0694aa4d12df2a10627efc2fc18f0dacb30ad493955272e004f.zip",
+          "S3Key": "a70b5eeec6325df94792a0411df08b30efdaf8b0cbe8dfefb078887988055576.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -44607,7 +44154,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a4ebd27b7ba05a5a0b6133a6e59b1f5283201bf4f0c0c40340230d3f609eb9f1.zip",
+          "S3Key": "d355e39fbde46b541ae05618d065eabb53246304a348db37b52c6a1a10746c05.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -44762,7 +44309,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "504074bbf13cfee39f9ac072b44a954168381a757092267f0c5bf44126528386.zip",
+          "S3Key": "7f3dd2716f8d559ccb45e6a633629be25a17a5744aa9dcca9ea1bc7e8cfde02d.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -45545,7 +45092,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:24f70a6614f629a87da185991a37c7324bf7402cac1bfa4524075905339b93c4",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:dc27a7aaac7f2c35613c3a91b0bd7625bfde6a16445d407df2afb2d3bdde6bbd",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -48137,7 +47684,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3394528aeaec623326ecf3958ca40ab21f55f0ae65b46c83730af555fa1f8431.zip",
+          "S3Key": "7013fb86ded703394df01e3530099e4d6479ba65d7c5be646916637be0c83789.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -48191,7 +47738,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "552c847e786c4be08ac2d2aca3a491c934cb983b457a8ae3acda6d319744efda.zip",
+          "S3Key": "97deb8e10c80613203e37a5c3cccd92e3f9920b25db443b90b4e4346624743ab.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -48883,7 +48430,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "fb11f706fbf6e083e228bb5d39e00181e441a872ab449f044137b4c0094d62a6.zip",
+          "S3Key": "0ca0e1ae3a496c18dcf10aee2734c0b04a469023e9d9dbfea6a3734cf8171ee1.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -49294,7 +48841,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "add634b64b5bbd67856c589813e46a21c94e1583d3bb965d70491bfbd68fc7a9.zip",
+          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -49501,7 +49048,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a88e0a66e9be8df7f6c5ca47f98760a34b7b5c2e8addc8da121a9bbd2ab34aaa.zip",
+          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -49985,7 +49532,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "15d4395b9337a5e923c03e264e882be4611c5555683b1793a83ec51bdfd6b146.zip",
+          "7d97da435dc15ac8f0a826e608c46b17cad2a9c22ae485c23203778c87be7b52.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -50291,7 +49838,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "fc70134aff371cceb48650ec10199e755095c68769e52218cfceea6e6f502267.zip",
+          "S3Key": "25b337b765f2aad8ffe338206b932857be4ee2dd5dc57e46bbef5cfccdd15674.zip",
         },
         "Description": "Monitors the days to expiry of the certificate used to serve my.construct.hub",
         "Environment": {
@@ -50594,7 +50141,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip",
+          "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip",
         },
         "Environment": {
           "Variables": {
@@ -50871,7 +50418,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip",
+          "S3Key": "b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -50885,7 +50432,7 @@ function handler(event) {
             ],
           ],
         },
-        "Handler": "__entrypoint__.handler",
+        "Handler": "index.handler",
         "MemorySize": 128,
         "Role": {
           "Fn::GetAtt": [
@@ -50893,7 +50440,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -50930,7 +50477,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
+          "S3Key": "4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35.zip",
         },
         "Handler": "index.handler",
         "Role": {
@@ -50939,15 +50486,8 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "DefaultCrNodeVersionMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -51019,7 +50559,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "099a28fa924a0244ca1bce918b8af8c3716234eebf3ee6238522948064856a8e.zip",
+          "S3Key": "aba08b0349438b83bcdf4c015b3e5bd4954d69572a53fff0e0434a240628f57b.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -51557,107 +51097,6 @@ function handler(event) {
 exports[`with limited internet access 1`] = `
 {
   "Mappings": {
-    "DefaultCrNodeVersionMap": {
-      "af-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs16.x",
-      },
-      "me-central-1": {
-        "value": "nodejs16.x",
-      },
-      "me-south-1": {
-        "value": "nodejs16.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-2": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs14.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-west-2": {
-        "value": "nodejs16.x",
-      },
-    },
     "ServiceprincipalMap": {
       "af-south-1": {
         "states": "states.af-south-1.amazonaws.com",
@@ -51688,6 +51127,9 @@ exports[`with limited internet access 1`] = `
       },
       "ap-southeast-3": {
         "states": "states.ap-southeast-3.amazonaws.com",
+      },
+      "ap-southeast-4": {
+        "states": "states.ap-southeast-4.amazonaws.com",
       },
       "ca-central-1": {
         "states": "states.ca-central-1.amazonaws.com",
@@ -51721,6 +51163,9 @@ exports[`with limited internet access 1`] = `
       },
       "eu-west-3": {
         "states": "states.eu-west-3.amazonaws.com",
+      },
+      "il-central-1": {
+        "states": "states.il-central-1.amazonaws.com",
       },
       "me-central-1": {
         "states": "states.me-central-1.amazonaws.com",
@@ -51933,7 +51378,7 @@ exports[`with limited internet access 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f9346b940b724b094a16ca051c017799995fa93df6da38a0539bf7c000fee50a.zip",
+          "S3Key": "ed6cd104ff5f101d06dae8cb2b87cc6e6d69b9a22055b467ea6cae10ff023023.zip",
         },
         "Handler": "index.handler",
         "Role": {
@@ -51942,15 +51387,7 @@ exports[`with limited internet access 1`] = `
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "DefaultCrNodeVersionMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs18.x",
         "Timeout": 120,
       },
       "Type": "AWS::Lambda::Function",
@@ -52039,7 +51476,6 @@ import urllib.request
 s3 = boto3.client("s3")
 
 EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
-
 CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
 
 def handler(event: dict, context):
@@ -52047,18 +51483,15 @@ def handler(event: dict, context):
   error_message = ""
   try:
     props = event["ResourceProperties"]
-    bucket = props["BucketName"]
     notification_configuration = props["NotificationConfiguration"]
-    request_type = event["RequestType"]
     managed = props.get('Managed', 'true').lower() == 'true'
     stack_id = event['StackId']
-
+    old = event.get("OldResourceProperties", {}).get("NotificationConfiguration", {})
     if managed:
-      config = handle_managed(request_type, notification_configuration)
+      config = handle_managed(event["RequestType"], notification_configuration)
     else:
-      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-    put_bucket_notification_configuration(bucket, config)
+      config = handle_unmanaged(props["BucketName"], stack_id, event["RequestType"], notification_configuration, old)
+    s3.put_bucket_notification_configuration(Bucket=props["BucketName"], NotificationConfiguration=config)
   except Exception as e:
     logging.exception("Failed to put bucket notification configuration")
     response_status = "FAILED"
@@ -52071,15 +51504,25 @@ def handle_managed(request_type, notification_configuration):
     return {}
   return notification_configuration
 
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-  external_notifications = find_external_notifications(bucket, stack_id)
+def handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):
+  def with_id(n):
+    n['Id'] = f"{stack_id}-{hash(json.dumps(n, sort_keys=True))}"
+    return n
+
+  external_notifications = {}
+  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)
+  for t in CONFIGURATION_TYPES:
+    if request_type == 'Update':
+        ids = [with_id(n) for n in old.get(t, [])]
+        old_incoming_ids = [n['Id'] for n in ids]
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'] in old_incoming_ids]
+    elif request_type == 'Create':
+        external_notifications[t] = [n for n in existing_notifications.get(t, [])]
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
   if request_type == 'Delete':
     return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}"
-    return notification
 
   notifications = {}
   for t in CONFIGURATION_TYPES:
@@ -52093,23 +51536,6 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
 
   return notifications
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
-
-  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
-    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
-
-  return external_notifications
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
 def submit_response(event: dict, context, response_status: str, error_message: str):
   response_body = json.dumps(
@@ -53009,6 +52435,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -53148,6 +52575,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -53248,7 +52676,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "02ccbe0bf964c07cdb1c1d0098b332ecfd8ab196dff49c85b00b20a8d5af4fde.zip",
+          "S3Key": "94a602e622af4d0e625ecdad521b4fc00754bb965ccbe8633f6477cc9c0eaa9e.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -53725,7 +53153,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ad1cb8ecdc6006a1831b36445eb5ca0df8d063949d07cff104eafa324984d70f.zip",
+          "S3Key": "7a3654dd34b9e3f81f340cea3327eb1e8089449881225e55e76fb86c87403b64.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -53953,7 +53381,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "449a55698cdd6ac3842655d436cc8a386fc42c86c58741e441bc5cc5590a5923.zip",
+          "S3Key": "305ae7e73e8ae5630d7c345f44903b9377db737cd4a7d28c43e4709f1e34a779.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -54379,7 +53807,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "42e5481334db6f6ed0625e21a674da88c232bc8f788184455b1edc515de9b4b9.zip",
+          "S3Key": "5fc37870326e0f818f6baac7c0d2ab25bf278030a366f3a365a3fad846aa2c23.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -54565,7 +53993,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -55171,7 +54599,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "7a3a43279f946675e59752fe6bf5cb89b421d96664c639b5a0fabbdf59e23136.zip",
+          "S3Key": "1ce0ff7a8d0ab6e2c2ac8e16a810e6bdf897676761a5c1cbf023448162e31b73.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -55685,7 +55113,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
+              "{"StartAt":"Process for 15 minutes.","States":{"Process for 15 minutes.":{"Next":"Remaining items to process?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubInventoryCanary63D899BC",
@@ -56460,7 +55888,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f04ba22814378b8466f91e3a8db6160a484a76f3cf7d91c6725fb7177ec77c8e.zip",
+          "S3Key": "c1b6bedb8027cd2a990dc9b77338a34b6e1dc81393e2516cb676800e02a93b44.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -56640,14 +56068,14 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
+              ""]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check whether catalog needs udpating":{"Next":"Is catalog update needed?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"",
               {
                 "Fn::GetAtt": [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
                   "Arn",
                 ],
               },
-              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
+              ""},"Is catalog update needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add to catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add to catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -56697,7 +56125,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f4483698d5312696341aaeccf359d9836720d67f9d5553b86a4ee6bd0c635b61.zip",
+          "S3Key": "2b597ca4b3eb67f1e54ceb41bdbd922882ca9737ad57215fedbb5879bfb25295.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -57011,7 +56439,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e8ddff7301daf0694aa4d12df2a10627efc2fc18f0dacb30ad493955272e004f.zip",
+          "S3Key": "a70b5eeec6325df94792a0411df08b30efdaf8b0cbe8dfefb078887988055576.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -57358,7 +56786,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a4ebd27b7ba05a5a0b6133a6e59b1f5283201bf4f0c0c40340230d3f609eb9f1.zip",
+          "S3Key": "d355e39fbde46b541ae05618d065eabb53246304a348db37b52c6a1a10746c05.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -57513,7 +56941,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "504074bbf13cfee39f9ac072b44a954168381a757092267f0c5bf44126528386.zip",
+          "S3Key": "7f3dd2716f8d559ccb45e6a633629be25a17a5744aa9dcca9ea1bc7e8cfde02d.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -58302,7 +57730,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:24f70a6614f629a87da185991a37c7324bf7402cac1bfa4524075905339b93c4",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:dc27a7aaac7f2c35613c3a91b0bd7625bfde6a16445d407df2afb2d3bdde6bbd",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -60956,7 +60384,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3394528aeaec623326ecf3958ca40ab21f55f0ae65b46c83730af555fa1f8431.zip",
+          "S3Key": "7013fb86ded703394df01e3530099e4d6479ba65d7c5be646916637be0c83789.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -61010,7 +60438,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "552c847e786c4be08ac2d2aca3a491c934cb983b457a8ae3acda6d319744efda.zip",
+          "S3Key": "97deb8e10c80613203e37a5c3cccd92e3f9920b25db443b90b4e4346624743ab.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -61715,7 +61143,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "fb11f706fbf6e083e228bb5d39e00181e441a872ab449f044137b4c0094d62a6.zip",
+          "S3Key": "0ca0e1ae3a496c18dcf10aee2734c0b04a469023e9d9dbfea6a3734cf8171ee1.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -62126,7 +61554,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "add634b64b5bbd67856c589813e46a21c94e1583d3bb965d70491bfbd68fc7a9.zip",
+          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -65193,7 +64621,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a88e0a66e9be8df7f6c5ca47f98760a34b7b5c2e8addc8da121a9bbd2ab34aaa.zip",
+          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -65625,7 +65053,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "15d4395b9337a5e923c03e264e882be4611c5555683b1793a83ec51bdfd6b146.zip",
+          "7d97da435dc15ac8f0a826e608c46b17cad2a9c22ae485c23203778c87be7b52.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -66569,7 +65997,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip",
+          "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip",
         },
         "Environment": {
           "Variables": {
@@ -66846,7 +66274,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip",
+          "S3Key": "b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -66860,7 +66288,7 @@ function handler(event) {
             ],
           ],
         },
-        "Handler": "__entrypoint__.handler",
+        "Handler": "index.handler",
         "MemorySize": 128,
         "Role": {
           "Fn::GetAtt": [
@@ -66868,7 +66296,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -66905,7 +66333,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
+          "S3Key": "4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35.zip",
         },
         "Handler": "index.handler",
         "Role": {
@@ -66914,15 +66342,8 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "DefaultCrNodeVersionMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -66994,7 +66415,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "099a28fa924a0244ca1bce918b8af8c3716234eebf3ee6238522948064856a8e.zip",
+          "S3Key": "aba08b0349438b83bcdf4c015b3e5bd4954d69572a53fff0e0434a240628f57b.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {

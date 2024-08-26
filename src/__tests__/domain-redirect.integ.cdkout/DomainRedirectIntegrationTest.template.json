@@ -106,16 +106,16 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "861509f9607aa6bb9fd7034fb10fe6f0c60d91dfd7f010b9ef666869dec9bbd9.zip"
+     "S3Key": "b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8.zip"
     },
+    "Handler": "index.certificateRequestHandler",
     "Role": {
      "Fn::GetAtt": [
       "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B",
       "Arn"
      ]
     },
-    "Handler": "index.certificateRequestHandler",
-    "Runtime": "nodejs16.x",
+    "Runtime": "nodejs18.x",
     "Timeout": 900
    },
    "DependsOn": [
@@ -124,7 +124,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/Resource",
-    "aws:asset:path": "asset.861509f9607aa6bb9fd7034fb10fe6f0c60d91dfd7f010b9ef666869dec9bbd9",
+    "aws:asset:path": "asset.b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -209,8 +209,6 @@
   "MyDomainRedirectARecordB42CD602": {
    "Type": "AWS::Route53::RecordSet",
    "Properties": {
-    "Name": "from.com.",
-    "Type": "A",
     "AliasTarget": {
      "DNSName": {
       "Fn::GetAtt": [
@@ -229,7 +227,9 @@
      }
     },
     "Comment": "Created by the AWS CDK",
-    "HostedZoneId": "AZ1234"
+    "HostedZoneId": "AZ1234",
+    "Name": "from.com.",
+    "Type": "A"
    },
    "Metadata": {
     "aws:cdk:path": "DomainRedirectIntegrationTest/MyDomainRedirect/ARecord/Resource"
@@ -238,8 +238,6 @@
   "MyDomainRedirectAaaaRecord9897C577": {
    "Type": "AWS::Route53::RecordSet",
    "Properties": {
-    "Name": "from.com.",
-    "Type": "AAAA",
     "AliasTarget": {
      "DNSName": {
       "Fn::GetAtt": [
@@ -258,7 +256,9 @@
      }
     },
     "Comment": "Created by the AWS CDK",
-    "HostedZoneId": "AZ1234"
+    "HostedZoneId": "AZ1234",
+    "Name": "from.com.",
+    "Type": "AAAA"
    },
    "Metadata": {
     "aws:cdk:path": "DomainRedirectIntegrationTest/MyDomainRedirect/AaaaRecord/Resource"

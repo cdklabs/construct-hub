@@ -30,6 +30,7 @@
      "Statement": [
       {
        "Action": [
+        "s3:PutBucketPolicy",
         "s3:GetBucket*",
         "s3:List*",
         "s3:DeleteObject*"
@@ -128,18 +129,18 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip"
+     "S3Key": "b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6.zip"
     },
     "Timeout": 900,
     "MemorySize": 128,
-    "Handler": "__entrypoint__.handler",
+    "Handler": "index.handler",
     "Role": {
      "Fn::GetAtt": [
       "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
       "Arn"
      ]
     },
-    "Runtime": "nodejs16.x",
+    "Runtime": "nodejs18.x",
     "Description": {
      "Fn::Join": [
       "",
@@ -158,7 +159,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
-    "aws:asset:path": "asset.350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89",
+    "aws:asset:path": "asset.b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6",
     "aws:asset:property": "Code"
    }
   },
@@ -383,13 +384,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip"
-    },
-    "Role": {
-     "Fn::GetAtt": [
-      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
-      "Arn"
-     ]
+     "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip"
     },
     "Environment": {
      "Variables": {
@@ -402,6 +397,12 @@
       "Ref": "MockDataAwsCliLayerE631E742"
      }
     ],
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      "Arn"
+     ]
+    },
     "Runtime": "python3.9",
     "Timeout": 900
    },
@@ -411,7 +412,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
-    "aws:asset:path": "asset.9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd",
+    "aws:asset:path": "asset.e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -531,10 +532,9 @@
   "MonitoringWatchfulTestDenyListPrunePruneHandlerDB8102B7ErrorsAlarm0390629D": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "ComparisonOperator": "GreaterThanThreshold",
-    "EvaluationPeriods": 3,
     "AlarmActions": [],
     "AlarmDescription": "Over 0 errors per minute",
+    "ComparisonOperator": "GreaterThanThreshold",
     "Dimensions": [
      {
       "Name": "FunctionName",
@@ -543,6 +543,7 @@
       }
      }
     ],
+    "EvaluationPeriods": 3,
     "MetricName": "Errors",
     "Namespace": "AWS/Lambda",
     "Period": 300,
@@ -556,10 +557,9 @@
   "MonitoringWatchfulTestDenyListPrunePruneHandlerDB8102B7ThrottlesAlarmA7473C59": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "ComparisonOperator": "GreaterThanThreshold",
-    "EvaluationPeriods": 3,
     "AlarmActions": [],
     "AlarmDescription": "Over 0 throttles per minute",
+    "ComparisonOperator": "GreaterThanThreshold",
     "Dimensions": [
      {
       "Name": "FunctionName",
@@ -568,6 +568,7 @@
       }
      }
     ],
+    "EvaluationPeriods": 3,
     "MetricName": "Throttles",
     "Namespace": "AWS/Lambda",
     "Period": 300,
@@ -581,10 +582,10 @@
   "MonitoringWatchfulTestDenyListPrunePruneHandlerDB8102B7DurationAlarm35FDCAC9": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "ComparisonOperator": "GreaterThanThreshold",
-    "EvaluationPeriods": 3,
     "AlarmActions": [],
     "AlarmDescription": "p99 latency >= 720s (80%)",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "EvaluationPeriods": 3,
     "Metrics": [
      {
       "Id": "m1",
@@ -617,10 +618,9 @@
   "MonitoringWatchfulTestDenyListPrunePruneQueueHandlerE748308EErrorsAlarmB31B15A4": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "ComparisonOperator": "GreaterThanThreshold",
-    "EvaluationPeriods": 3,
     "AlarmActions": [],
     "AlarmDescription": "Over 0 errors per minute",
+    "ComparisonOperator": "GreaterThanThreshold",
     "Dimensions": [
      {
       "Name": "FunctionName",
@@ -629,6 +629,7 @@
       }
      }
     ],
+    "EvaluationPeriods": 3,
     "MetricName": "Errors",
     "Namespace": "AWS/Lambda",
     "Period": 300,
@@ -642,10 +643,9 @@
   "MonitoringWatchfulTestDenyListPrunePruneQueueHandlerE748308EThrottlesAlarm2D33ECEB": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "ComparisonOperator": "GreaterThanThreshold",
-    "EvaluationPeriods": 3,
     "AlarmActions": [],
     "AlarmDescription": "Over 0 throttles per minute",
+    "ComparisonOperator": "GreaterThanThreshold",
     "Dimensions": [
      {
       "Name": "FunctionName",
@@ -654,6 +654,7 @@
       }
      }
     ],
+    "EvaluationPeriods": 3,
     "MetricName": "Throttles",
     "Namespace": "AWS/Lambda",
     "Period": 300,
@@ -667,10 +668,10 @@
   "MonitoringWatchfulTestDenyListPrunePruneQueueHandlerE748308EDurationAlarm1FFC9E9E": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "ComparisonOperator": "GreaterThanThreshold",
-    "EvaluationPeriods": 3,
     "AlarmActions": [],
     "AlarmDescription": "p99 latency >= 48s (80%)",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "EvaluationPeriods": 3,
     "Metrics": [
      {
       "Id": "m1",
@@ -740,9 +741,9 @@
   "OverviewDashboardOverviewDashboardlambdaServiceQuotaAA204E67": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
+    "AlarmDescription": "Lambda concurrent execution exceeded 70% of SERVICE_QUOTA\n\nRunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md\n\nRequest a service quota increase for lambda functions",
     "ComparisonOperator": "GreaterThanThreshold",
     "EvaluationPeriods": 5,
-    "AlarmDescription": "Lambda concurrent execution exceeded 70% of SERVICE_QUOTA\n\nRunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md\n\nRequest a service quota increase for lambda functions",
     "Metrics": [
      {
       "Expression": "mLambdaUsage / mLambdaQuota * 100",
@@ -856,6 +857,7 @@
       },
       {
        "Action": [
+        "s3:PutBucketPolicy",
         "s3:GetBucket*",
         "s3:List*",
         "s3:DeleteObject*"
@@ -1079,6 +1081,7 @@
       },
       {
        "Action": [
+        "s3:PutBucketPolicy",
         "s3:GetBucket*",
         "s3:List*",
         "s3:DeleteObject*"
@@ -1362,21 +1365,15 @@
   "DenyListPrunePruneHandler5F946B07": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "02ccbe0bf964c07cdb1c1d0098b332ecfd8ab196dff49c85b00b20a8d5af4fde.zip"
+     "S3Key": "94a602e622af4d0e625ecdad521b4fc00754bb965ccbe8633f6477cc9c0eaa9e.zip"
     },
-    "Role": {
-     "Fn::GetAtt": [
-      "DenyListPrunePruneHandlerServiceRole234C8EF9",
-      "Arn"
-     ]
-    },
-    "Architectures": [
-     "arm64"
-    ],
     "Description": "backend/deny-list/prune-handler.lambda.ts",
     "Environment": {
      "Variables": {
@@ -1400,6 +1397,12 @@
      }
     },
     "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "DenyListPrunePruneHandlerServiceRole234C8EF9",
+      "Arn"
+     ]
+    },
     "Runtime": "nodejs16.x",
     "Timeout": 900
    },
@@ -1409,7 +1412,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/Resource",
-    "aws:asset:path": "asset.02ccbe0bf964c07cdb1c1d0098b332ecfd8ab196dff49c85b00b20a8d5af4fde.bundle",
+    "aws:asset:path": "asset.94a602e622af4d0e625ecdad521b4fc00754bb965ccbe8633f6477cc9c0eaa9e.bundle",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1504,21 +1507,15 @@
   "DenyListPrunePruneQueueHandler087D6B50": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
      "S3Key": "2a51a5a459cb9e428c4bf5cc4d67b9f714c6e19d2bfb54d356feb44cbac46aa8.zip"
     },
-    "Role": {
-     "Fn::GetAtt": [
-      "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
-      "Arn"
-     ]
-    },
-    "Architectures": [
-     "arm64"
-    ],
     "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
     "Environment": {
      "Variables": {
@@ -1528,6 +1525,12 @@
      }
     },
     "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
+      "Arn"
+     ]
+    },
     "Runtime": "nodejs16.x",
     "Timeout": 60
    },
@@ -1545,14 +1548,14 @@
   "DenyListPrunePruneQueueHandlerSqsEventSourceTestDenyListPruneDeleteQueue888622B95BDFDCF8": {
    "Type": "AWS::Lambda::EventSourceMapping",
    "Properties": {
-    "FunctionName": {
-     "Ref": "DenyListPrunePruneQueueHandler087D6B50"
-    },
     "EventSourceArn": {
      "Fn::GetAtt": [
       "DenyListPruneDeleteQueueF9D9EBE3",
       "Arn"
      ]
+    },
+    "FunctionName": {
+     "Ref": "DenyListPrunePruneQueueHandler087D6B50"
     }
    },
    "Metadata": {
@@ -1665,7 +1668,7 @@
    "Properties": {
     "Description": "AWS CloudFormation handler for \"Custom::S3BucketNotifications\" resources (@aws-cdk/aws-s3)",
     "Code": {
-     "ZipFile": "import boto3  # type: ignore\nimport json\nimport logging\nimport urllib.request\n\ns3 = boto3.client(\"s3\")\n\nEVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'\n\nCONFIGURATION_TYPES = [\"TopicConfigurations\", \"QueueConfigurations\", \"LambdaFunctionConfigurations\"]\n\ndef handler(event: dict, context):\n  response_status = \"SUCCESS\"\n  error_message = \"\"\n  try:\n    props = event[\"ResourceProperties\"]\n    bucket = props[\"BucketName\"]\n    notification_configuration = props[\"NotificationConfiguration\"]\n    request_type = event[\"RequestType\"]\n    managed = props.get('Managed', 'true').lower() == 'true'\n    stack_id = event['StackId']\n\n    if managed:\n      config = handle_managed(request_type, notification_configuration)\n    else:\n      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)\n\n    put_bucket_notification_configuration(bucket, config)\n  except Exception as e:\n    logging.exception(\"Failed to put bucket notification configuration\")\n    response_status = \"FAILED\"\n    error_message = f\"Error: {str(e)}. \"\n  finally:\n    submit_response(event, context, response_status, error_message)\n\ndef handle_managed(request_type, notification_configuration):\n  if request_type == 'Delete':\n    return {}\n  return notification_configuration\n\ndef handle_unmanaged(bucket, stack_id, request_type, notification_configuration):\n  external_notifications = find_external_notifications(bucket, stack_id)\n\n  if request_type == 'Delete':\n    return external_notifications\n\n  def with_id(notification):\n    notification['Id'] = f\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\"\n    return notification\n\n  notifications = {}\n  for t in CONFIGURATION_TYPES:\n    external = external_notifications.get(t, [])\n    incoming = [with_id(n) for n in notification_configuration.get(t, [])]\n    notifications[t] = external + incoming\n\n  if EVENTBRIDGE_CONFIGURATION in notification_configuration:\n    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]\n  elif EVENTBRIDGE_CONFIGURATION in external_notifications:\n    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]\n\n  return notifications\n\ndef find_external_notifications(bucket, stack_id):\n  existing_notifications = get_bucket_notification_configuration(bucket)\n  external_notifications = {}\n  for t in CONFIGURATION_TYPES:\n    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\"{stack_id}-\")]\n\n  if EVENTBRIDGE_CONFIGURATION in existing_notifications:\n    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]\n\n  return external_notifications\n\ndef get_bucket_notification_configuration(bucket):\n  return s3.get_bucket_notification_configuration(Bucket=bucket)\n\ndef put_bucket_notification_configuration(bucket, notification_configuration):\n  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)\n\ndef submit_response(event: dict, context, response_status: str, error_message: str):\n  response_body = json.dumps(\n    {\n      \"Status\": response_status,\n      \"Reason\": f\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\",\n      \"PhysicalResourceId\": event.get(\"PhysicalResourceId\") or event[\"LogicalResourceId\"],\n      \"StackId\": event[\"StackId\"],\n      \"RequestId\": event[\"RequestId\"],\n      \"LogicalResourceId\": event[\"LogicalResourceId\"],\n      \"NoEcho\": False,\n    }\n  ).encode(\"utf-8\")\n  headers = {\"content-type\": \"\", \"content-length\": str(len(response_body))}\n  try:\n    req = urllib.request.Request(url=event[\"ResponseURL\"], headers=headers, data=response_body, method=\"PUT\")\n    with urllib.request.urlopen(req) as response:\n      print(response.read().decode(\"utf-8\"))\n    print(\"Status code: \" + response.reason)\n  except Exception as e:\n      print(\"send(..) failed executing request.urlopen(..): \" + str(e))\n"
+     "ZipFile": "import boto3  # type: ignore\nimport json\nimport logging\nimport urllib.request\n\ns3 = boto3.client(\"s3\")\n\nEVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'\nCONFIGURATION_TYPES = [\"TopicConfigurations\", \"QueueConfigurations\", \"LambdaFunctionConfigurations\"]\n\ndef handler(event: dict, context):\n  response_status = \"SUCCESS\"\n  error_message = \"\"\n  try:\n    props = event[\"ResourceProperties\"]\n    notification_configuration = props[\"NotificationConfiguration\"]\n    managed = props.get('Managed', 'true').lower() == 'true'\n    stack_id = event['StackId']\n    old = event.get(\"OldResourceProperties\", {}).get(\"NotificationConfiguration\", {})\n    if managed:\n      config = handle_managed(event[\"RequestType\"], notification_configuration)\n    else:\n      config = handle_unmanaged(props[\"BucketName\"], stack_id, event[\"RequestType\"], notification_configuration, old)\n    s3.put_bucket_notification_configuration(Bucket=props[\"BucketName\"], NotificationConfiguration=config)\n  except Exception as e:\n    logging.exception(\"Failed to put bucket notification configuration\")\n    response_status = \"FAILED\"\n    error_message = f\"Error: {str(e)}. \"\n  finally:\n    submit_response(event, context, response_status, error_message)\n\ndef handle_managed(request_type, notification_configuration):\n  if request_type == 'Delete':\n    return {}\n  return notification_configuration\n\ndef handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):\n  def with_id(n):\n    n['Id'] = f\"{stack_id}-{hash(json.dumps(n, sort_keys=True))}\"\n    return n\n\n  external_notifications = {}\n  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)\n  for t in CONFIGURATION_TYPES:\n    if request_type == 'Update':\n        ids = [with_id(n) for n in old.get(t, [])]\n        old_incoming_ids = [n['Id'] for n in ids]\n        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'] in old_incoming_ids]\n    elif request_type == 'Create':\n        external_notifications[t] = [n for n in existing_notifications.get(t, [])]\n  if EVENTBRIDGE_CONFIGURATION in existing_notifications:\n    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]\n\n  if request_type == 'Delete':\n    return external_notifications\n\n  notifications = {}\n  for t in CONFIGURATION_TYPES:\n    external = external_notifications.get(t, [])\n    incoming = [with_id(n) for n in notification_configuration.get(t, [])]\n    notifications[t] = external + incoming\n\n  if EVENTBRIDGE_CONFIGURATION in notification_configuration:\n    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]\n  elif EVENTBRIDGE_CONFIGURATION in external_notifications:\n    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]\n\n  return notifications\n\ndef submit_response(event: dict, context, response_status: str, error_message: str):\n  response_body = json.dumps(\n    {\n      \"Status\": response_status,\n      \"Reason\": f\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\",\n      \"PhysicalResourceId\": event.get(\"PhysicalResourceId\") or event[\"LogicalResourceId\"],\n      \"StackId\": event[\"StackId\"],\n      \"RequestId\": event[\"RequestId\"],\n      \"LogicalResourceId\": event[\"LogicalResourceId\"],\n      \"NoEcho\": False,\n    }\n  ).encode(\"utf-8\")\n  headers = {\"content-type\": \"\", \"content-length\": str(len(response_body))}\n  try:\n    req = urllib.request.Request(url=event[\"ResponseURL\"], headers=headers, data=response_body, method=\"PUT\")\n    with urllib.request.urlopen(req) as response:\n      print(response.read().decode(\"utf-8\"))\n    print(\"Status code: \" + response.reason)\n  except Exception as e:\n      print(\"send(..) failed executing request.urlopen(..): \" + str(e))\n"
     },
     "Handler": "index.handler",
     "Role": {
@@ -1722,23 +1725,23 @@
   "CatalogBuilderMock263D4D67": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
      "S3Key": "a2b6fc284e07f2948c5e5664c1dfcff68ed9bbaef106822e51b3ffe723fce733.zip"
     },
+    "Description": "__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
+    "Handler": "index.handler",
     "Role": {
      "Fn::GetAtt": [
       "CatalogBuilderMockServiceRole8558CA02",
       "Arn"
      ]
     },
-    "Architectures": [
-     "arm64"
-    ],
-    "Description": "__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
-    "Handler": "index.handler",
     "Runtime": "nodejs16.x"
    },
    "DependsOn": [
@@ -1837,21 +1840,15 @@
   "ClientTestBE4CEC14": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "1d18706a63f5406b1575c24283416022a85d16e02f0213504b7128b44ceadd98.zip"
+     "S3Key": "78d4a9d6f6eb573019514d8a64fd5682894b0743b3c475d54615ebc03d5894d8.zip"
     },
-    "Role": {
-     "Fn::GetAtt": [
-      "ClientTestServiceRole4F7802CF",
-      "Arn"
-     ]
-    },
-    "Architectures": [
-     "arm64"
-    ],
     "Description": "__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts",
     "Environment": {
      "Variables": {
@@ -1866,6 +1863,12 @@
      }
     },
     "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ClientTestServiceRole4F7802CF",
+      "Arn"
+     ]
+    },
     "Runtime": "nodejs16.x"
    },
    "DependsOn": [
@@ -1874,7 +1877,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/ClientTest/Resource",
-    "aws:asset:path": "asset.1d18706a63f5406b1575c24283416022a85d16e02f0213504b7128b44ceadd98.bundle",
+    "aws:asset:path": "asset.78d4a9d6f6eb573019514d8a64fd5682894b0743b3c475d54615ebc03d5894d8.bundle",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1889,10 +1892,11 @@
      ]
     },
     "HandlerArn": {
-     "Ref": "ClientTestCurrentVersionAB7E7F6525b05a9a20583a6bcdd2567b1db345c1"
+     "Ref": "ClientTestCurrentVersionAB7E7F651f59a379865a8a1a4c044527ae896ebc"
     },
     "InvocationType": "RequestResponse",
-    "Timeout": "120000"
+    "Timeout": "120000",
+    "ExecuteOnHandlerChange": true
    },
    "DependsOn": [
     "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
@@ -1922,7 +1926,7 @@
     "aws:cdk:path": "TestDenyList/ClientTest/Trigger/Default/Default"
    }
   },
-  "ClientTestCurrentVersionAB7E7F6525b05a9a20583a6bcdd2567b1db345c1": {
+  "ClientTestCurrentVersionAB7E7F651f59a379865a8a1a4c044527ae896ebc": {
    "Type": "AWS::Lambda::Version",
    "Properties": {
     "FunctionName": {
@@ -2079,7 +2083,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "e8adfc80603cbf0b8f56fd639b6444aeb86502537f92274026a04ae0d0d2574f.zip"
+     "S3Key": "ac4a1bd8c7c7879385a212db2c46b2cb8f9e23b91c993d826d478bff7dbc0af3.zip"
     },
     "Timeout": 900,
     "MemorySize": 128,
@@ -2090,14 +2094,14 @@
       "Arn"
      ]
     },
-    "Runtime": "nodejs16.x"
+    "Runtime": "nodejs18.x"
    },
    "DependsOn": [
     "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A"
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler",
-    "aws:asset:path": "asset.e8adfc80603cbf0b8f56fd639b6444aeb86502537f92274026a04ae0d0d2574f",
+    "aws:asset:path": "asset.ac4a1bd8c7c7879385a212db2c46b2cb8f9e23b91c993d826d478bff7dbc0af3",
     "aws:asset:property": "Code"
    }
   },
@@ -2187,21 +2191,15 @@
   "PruneTest66C7D9FC": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
      "S3Key": "0371bf938ff2cb7d107f016044b2dd982a9a51c34445cf560faae19362254ebd.zip"
     },
-    "Role": {
-     "Fn::GetAtt": [
-      "PruneTestServiceRole91D2E3A2",
-      "Arn"
-     ]
-    },
-    "Architectures": [
-     "arm64"
-    ],
     "Description": "__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts",
     "Environment": {
      "Variables": {
@@ -2213,6 +2211,12 @@
      }
     },
     "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "PruneTestServiceRole91D2E3A2",
+      "Arn"
+     ]
+    },
     "Runtime": "nodejs16.x",
     "Timeout": 300
    },
@@ -2240,7 +2244,8 @@
      "Ref": "PruneTestCurrentVersion332993F8be5c5432c58b0acf3b95e5e334e6715e"
     },
     "InvocationType": "RequestResponse",
-    "Timeout": "120000"
+    "Timeout": "120000",
+    "ExecuteOnHandlerChange": true
    },
    "DependsOn": [
     "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
@@ -2339,109 +2344,6 @@
    },
    "Metadata": {
     "aws:cdk:path": "TestDenyList/PruneTest/Policy/Resource"
-   }
-  }
- },
- "Mappings": {
-  "DefaultCrNodeVersionMap": {
-   "af-south-1": {
-    "value": "nodejs16.x"
-   },
-   "ap-east-1": {
-    "value": "nodejs16.x"
-   },
-   "ap-northeast-1": {
-    "value": "nodejs16.x"
-   },
-   "ap-northeast-2": {
-    "value": "nodejs16.x"
-   },
-   "ap-northeast-3": {
-    "value": "nodejs16.x"
-   },
-   "ap-south-1": {
-    "value": "nodejs16.x"
-   },
-   "ap-south-2": {
-    "value": "nodejs16.x"
-   },
-   "ap-southeast-1": {
-    "value": "nodejs16.x"
-   },
-   "ap-southeast-2": {
-    "value": "nodejs16.x"
-   },
-   "ap-southeast-3": {
-    "value": "nodejs16.x"
-   },
-   "ca-central-1": {
-    "value": "nodejs16.x"
-   },
-   "cn-north-1": {
-    "value": "nodejs16.x"
-   },
-   "cn-northwest-1": {
-    "value": "nodejs16.x"
-   },
-   "eu-central-1": {
-    "value": "nodejs16.x"
-   },
-   "eu-central-2": {
-    "value": "nodejs16.x"
-   },
-   "eu-north-1": {
-    "value": "nodejs16.x"
-   },
-   "eu-south-1": {
-    "value": "nodejs16.x"
-   },
-   "eu-south-2": {
-    "value": "nodejs16.x"
-   },
-   "eu-west-1": {
-    "value": "nodejs16.x"
-   },
-   "eu-west-2": {
-    "value": "nodejs16.x"
-   },
-   "eu-west-3": {
-    "value": "nodejs16.x"
-   },
-   "me-central-1": {
-    "value": "nodejs16.x"
-   },
-   "me-south-1": {
-    "value": "nodejs16.x"
-   },
-   "sa-east-1": {
-    "value": "nodejs16.x"
-   },
-   "us-east-1": {
-    "value": "nodejs16.x"
-   },
-   "us-east-2": {
-    "value": "nodejs16.x"
-   },
-   "us-gov-east-1": {
-    "value": "nodejs16.x"
-   },
-   "us-gov-west-1": {
-    "value": "nodejs16.x"
-   },
-   "us-iso-east-1": {
-    "value": "nodejs14.x"
-   },
-   "us-iso-west-1": {
-    "value": "nodejs14.x"
-   },
-   "us-isob-east-1": {
-    "value": "nodejs14.x"
-   },
-   "us-west-1": {
-    "value": "nodejs16.x"
-   },
-   "us-west-2": {
-    "value": "nodejs16.x"
    }
   }
  },
