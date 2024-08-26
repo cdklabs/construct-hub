@@ -379,8 +379,6 @@ export class Transliterator extends Construct {
             // PLACEHOLDER: Set this to something non-empty to enable lsof running...
             { name: 'RUN_LSOF_ON_HEARTBEAT', value: '' },
           ],
-          memoryLimit: 9216,
-          cpu: 4096,
         },
       ],
       integrationPattern: IntegrationPattern.WAIT_FOR_TASK_TOKEN,
