@@ -33,14 +33,14 @@
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
         "RELEASE_TAG_PREFIX": "",
-        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep '^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+'"
+        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\""
       },
       "steps": [
         {
           "builtin": "release/bump-version"
         }
       ],
-      "condition": "! git log --oneline -1 | grep -q \"chore(release):\""
+      "condition": "git log --oneline -1 | grep -qv \"chore(release):\""
     },
     "bundle": {
       "name": "bundle",
@@ -1027,7 +1027,12 @@
       "description": "Creates the distribution package",
       "steps": [
         {
-          "exec": "if [ ! -z ${CI} ]; then rsync -a . .repo --exclude .git --exclude node_modules && rm -rf dist && mv .repo dist; else npx projen package-all; fi"
+          "exec": "rsync -a . .repo --exclude .git --exclude node_modules && rm -rf dist && mv .repo dist",
+          "condition": "node -e \"if (!process.env.CI) process.exit(1)\""
+        },
+        {
+          "spawn": "package-all",
+          "condition": "node -e \"if (process.env.CI) process.exit(1)\""
         }
       ]
     },
@@ -1107,7 +1112,7 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "jest --passWithNoTests --coverageProvider=v8 --updateSnapshot",
+          "exec": "jest --passWithNoTests --updateSnapshot",
           "receiveArgs": true
         },
         {
@@ -1142,7 +1147,7 @@
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
         "RELEASE_TAG_PREFIX": "",
-        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep '^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+'"
+        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\""
       },
       "steps": [
         {
@@ -1194,7 +1199,7 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev --filter=@aws-cdk/aws-servicecatalogappregistry-alpha,@aws-sdk/client-sfn,@jsii/spec,@octokit/rest,@types/aws-lambda,@types/changelog-filename-regex,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/streamx,@types/tar-stream,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk,aws-sdk-mock,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,cdklabs-projen-project-types,changelog-filename-regex,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,jsii-rosetta,jsii,JSONStream,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,projen,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,typescript,uuid,yaml,@aws-cdk/integ-runner,@aws-cdk/integ-tests-alpha"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev --filter=@aws-sdk/client-sfn,@jsii/spec,@octokit/rest,@types/aws-lambda,@types/changelog-filename-regex,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/streamx,@types/tar-stream,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk,aws-sdk-mock,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,cdklabs-projen-project-types,changelog-filename-regex,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,jsii-rosetta,JSONStream,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,projen,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,typescript,uuid,yaml"
         },
         {
           "exec": "yarn install --check-files"
