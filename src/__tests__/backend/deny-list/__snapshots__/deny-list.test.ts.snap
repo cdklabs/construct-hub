@@ -2,109 +2,6 @@
 
 exports[`defaults - empty deny list 1`] = `
 {
-  "Mappings": {
-    "DefaultCrNodeVersionMap": {
-      "af-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs16.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs16.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs16.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs16.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs16.x",
-      },
-      "me-central-1": {
-        "value": "nodejs16.x",
-      },
-      "me-south-1": {
-        "value": "nodejs16.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-east-2": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs16.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs14.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs14.x",
-      },
-      "us-west-1": {
-        "value": "nodejs16.x",
-      },
-      "us-west-2": {
-        "value": "nodejs16.x",
-      },
-    },
-  },
   "Outputs": {
     "DenyListSnapshotCommand31529C83": {
       "Description": "Snapshot Default/DenyList/Bucket",
@@ -165,7 +62,6 @@ import urllib.request
 s3 = boto3.client("s3")
 
 EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
-
 CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
 
 def handler(event: dict, context):
@@ -173,18 +69,15 @@ def handler(event: dict, context):
   error_message = ""
   try:
     props = event["ResourceProperties"]
-    bucket = props["BucketName"]
     notification_configuration = props["NotificationConfiguration"]
-    request_type = event["RequestType"]
     managed = props.get('Managed', 'true').lower() == 'true'
     stack_id = event['StackId']
-
+    old = event.get("OldResourceProperties", {}).get("NotificationConfiguration", {})
     if managed:
-      config = handle_managed(request_type, notification_configuration)
+      config = handle_managed(event["RequestType"], notification_configuration)
     else:
-      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-    put_bucket_notification_configuration(bucket, config)
+      config = handle_unmanaged(props["BucketName"], stack_id, event["RequestType"], notification_configuration, old)
+    s3.put_bucket_notification_configuration(Bucket=props["BucketName"], NotificationConfiguration=config)
   except Exception as e:
     logging.exception("Failed to put bucket notification configuration")
     response_status = "FAILED"
@@ -197,15 +90,25 @@ def handle_managed(request_type, notification_configuration):
     return {}
   return notification_configuration
 
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-  external_notifications = find_external_notifications(bucket, stack_id)
+def handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):
+  def with_id(n):
+    n['Id'] = f"{stack_id}-{hash(json.dumps(n, sort_keys=True))}"
+    return n
+
+  external_notifications = {}
+  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)
+  for t in CONFIGURATION_TYPES:
+    if request_type == 'Update':
+        ids = [with_id(n) for n in old.get(t, [])]
+        old_incoming_ids = [n['Id'] for n in ids]
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'] in old_incoming_ids]
+    elif request_type == 'Create':
+        external_notifications[t] = [n for n in existing_notifications.get(t, [])]
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
   if request_type == 'Delete':
     return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}"
-    return notification
 
   notifications = {}
   for t in CONFIGURATION_TYPES:
@@ -219,23 +122,6 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
 
   return notifications
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
-
-  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
-    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
-
-  return external_notifications
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
 def submit_response(event: dict, context, response_status: str, error_message: str):
   response_body = json.dumps(
@@ -391,7 +277,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip",
+          "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip",
         },
         "Environment": {
           "Variables": {
@@ -549,7 +435,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip",
+          "S3Key": "b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -563,7 +449,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             ],
           ],
         },
-        "Handler": "__entrypoint__.handler",
+        "Handler": "index.handler",
         "MemorySize": 128,
         "Role": {
           "Fn::GetAtt": [
@@ -571,7 +457,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -805,6 +691,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -944,6 +831,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             {
               "Action": [
+                "s3:PutBucketPolicy",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -1044,7 +932,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "02ccbe0bf964c07cdb1c1d0098b332ecfd8ab196dff49c85b00b20a8d5af4fde.zip",
+          "S3Key": "94a602e622af4d0e625ecdad521b4fc00754bb965ccbe8633f6477cc9c0eaa9e.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {

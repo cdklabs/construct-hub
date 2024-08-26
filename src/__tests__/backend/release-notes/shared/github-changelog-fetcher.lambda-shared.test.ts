@@ -22,7 +22,7 @@ describe('github-changelog-fetcher', () => {
     const requestHandler = jest.fn().mockResolvedValue({
       data: { resources: { core: rateLimitResponseCore } },
     });
-    mockedOctoKit.prototype.rest = {
+    (mockedOctoKit.prototype as any).rest = {
       rateLimit: {
         get: requestHandler,
       },

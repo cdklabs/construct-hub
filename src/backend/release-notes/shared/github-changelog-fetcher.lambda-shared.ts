@@ -1,6 +1,8 @@
 import { Octokit } from '@octokit/rest';
-import * as changelogFilenameRegex from 'changelog-filename-regex';
 import getReleaseNotesMd from './md-changelog-parser.lambda-shared.js';
+
+const CHANGELOG_FILE_REGEX =
+  /^(?:(?:update|change|release)(?:s|[ \-_]*(?:logs?|histor(?:y|ies)))|histor(?:y|ies)|release[ \-_]*notes?)(?:\.[\da-z]+)?$/i;
 
 export async function getReleaseNotesFromAllReleases(
   octokit: Octokit,
@@ -67,7 +69,7 @@ export async function getChangelogFileFromGitHub(
         (entry) =>
           entry?.type === 'blob' &&
           entry.path &&
-          changelogFilenameRegex.test(entry.path)
+          CHANGELOG_FILE_REGEX.test(entry.path)
       )
       .filter((e) => {
         return (
