@@ -164,6 +164,15 @@ export function notSupportedKeySuffix(
 }
 
 /**
+ * The key suffix for a not supported marker by language and submodule.
+ */
+export function transliterationErrorKeySuffix(
+  lang?: DocumentationLanguage | '*'
+) {
+  return `${docsKeySuffix(lang)}${TRANSLITERATION_ERROR}`;
+}
+
+/**
  * Key suffix for beacon files when a particular feature is not supported for
  * the particular package (i.e: Python docs for a package that does not have a
  * Python target configured).
@@ -175,6 +184,12 @@ export const NOT_SUPPORTED_SUFFIX = '.not-supported';
  * and we cannot generate docs from it.
  */
 export const CORRUPT_ASSEMBLY_SUFFIX = '.corruptassembly';
+
+/**
+ * Key suffix for beacon files when the transliteration for a particular language
+ * target has failed for a package.
+ */
+export const TRANSLITERATION_ERROR = '.transliteration-failed';
 
 /**
  * Key suffix for a beacon file when a package cannot be installed.

@@ -271,6 +271,7 @@ export function handler(
                   )
                 );
               } catch (e) {
+                console.error(e);
                 if (e instanceof docgen.LanguageNotSupportedError) {
                   markPackage(
                     e,
@@ -319,10 +320,23 @@ export function handler(
             }
           }
         );
-        const label = `Generating documentation for ${packageFqn} in ${language}`;
-        console.time(label);
-        await generateDocs(language);
-        console.timeEnd(label);
+        try {
+          const label = `Generating documentation for ${packageFqn} in ${language}`;
+          console.time(label);
+          await generateDocs(language);
+          console.timeEnd(label);
+        } catch (error) {
+          // transliteration failure will stop the whole language, not just a submodule
+          if (error instanceof docgen.TransliterationError) {
+            markPackage(
+              error,
+              constants.transliterationErrorKeySuffix(language)
+            );
+            unprocessable = true;
+          } else {
+            throw error;
+          }
+        }
       }
     } catch (error) {
       if (error instanceof docgen.UnInstallablePackageError) {
