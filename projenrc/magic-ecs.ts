@@ -148,7 +148,8 @@ function newEcsTask(project: TypeScriptProject, entrypoint: string) {
   main.line();
 
   main.open('async function main(): Promise<void> {');
-  main.line('const heartbeat = setInterval(sendHeartbeat, 180_000);'); // Heartbeat is only expected every 10min
+  main.line('// Heartbeat is expected every 5min');
+  main.line('const heartbeat = setInterval(sendHeartbeat, 90_000);');
   main.line('try {');
   // Deserialize the input, which ECS provides as a sequence of JSON objects. We skip the first 2 values (argv[0] is the
   // node binary, and argv[1] is this JS file).

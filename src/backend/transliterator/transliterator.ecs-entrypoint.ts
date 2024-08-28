@@ -39,7 +39,8 @@ function sendHeartbeat(): void {
 }
 
 async function main(): Promise<void> {
-  const heartbeat = setInterval(sendHeartbeat, 180_000);
+  // Heartbeat is expected every 5min
+  const heartbeat = setInterval(sendHeartbeat, 90_000);
   try {
     const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));
 

@@ -335,7 +335,8 @@ export class Orchestration extends Construct {
           .otherwise(new Succeed(this, 'Done'))
       );
 
-    const transliteratorTimeout = Duration.hours(2);
+    // aws-cdk-lib is one of the biggest libs and runs in ~8min
+    const transliteratorTimeout = Duration.hours(1);
 
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
@@ -380,7 +381,7 @@ export class Orchestration extends Construct {
             // cases the first heartbeat may take a while to come back due to
             // the time it takes to provision the task in the cluster, so we
             // give a more generous buffer here.
-            heartbeat: Duration.minutes(10),
+            heartbeat: Duration.minutes(5),
           })
           // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
           .addRetry({
@@ -407,7 +408,9 @@ export class Orchestration extends Construct {
             errors: ['States.Timeout'], // The task has stopped responding, or is just taking a long time to provision
             // To compensate we'll give more retries and pause between them in
             // case it's just a transient issue.
-            maxAttempts: 5,
+            backoffRate: 2,
+            interval: Duration.seconds(30),
+            maxAttempts: 3,
           })
           .addRetry({ maxAttempts: 3 })
           .addCatch(ignore, { errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME] })
