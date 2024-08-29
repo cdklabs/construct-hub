@@ -322,7 +322,9 @@ export class WebApp extends Construct {
       distribution: this.distribution,
       prune: false,
       sources: [s3deploy.Source.asset(webappDir)],
-      cacheControl: CacheStrategy.default().toArray(),
+      cacheControl: CacheStrategy.default()
+        .toArray()
+        .map(s3deploy.CacheControl.fromString),
     });
 
     // Generate config.json to customize frontend behavior
@@ -363,7 +365,9 @@ export class WebApp extends Construct {
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
-      cacheControl: CacheStrategy.default().toArray(),
+      cacheControl: CacheStrategy.default()
+        .toArray()
+        .map(s3deploy.CacheControl.fromString),
     });
 
     new CfnOutput(this, 'DomainName', {
