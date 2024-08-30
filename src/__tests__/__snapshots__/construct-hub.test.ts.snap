@@ -1982,7 +1982,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "adc968265edfc49e5f153ec2f04b9ab181f039f99c730ada3b42d3699e689488.zip",
+          "S3Key": "b3920e9d711ceea73db8f90e0463707c1b628786ee1159f1e061edd9f5b8fad6.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -2210,7 +2210,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "af987f9430783f68b7d6f0b8fae90dda93e0ce2e0a9f79d4254bab88bf5a5e16.zip",
+          "S3Key": "73f555c1687cfc39f88b7c7cbfa4cf42f9a9a8f8ae51aba57c67b39c1c9660de.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -4716,7 +4716,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"MaxAttempts":5},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":7200,"HeartbeatSeconds":600,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
+              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"IntervalSeconds":30,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -4799,7 +4799,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "21a9e4e9eef44a3ea3e5bb0b325435b9e6f594f80ee6531a594cf3a71bb7ffc0.zip",
+          "S3Key": "e10e535c1da4def8f4ab158b682f3e0dc3ec931a1908ae52b0d98417d97fdc31.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -5131,7 +5131,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "CLUSTER_NAME": {
               "Ref": "ConstructHubOrchestrationCluster3D6F0081",
             },
-            "TIMEOUT_MILLIS": "7800000",
+            "TIMEOUT_MILLIS": "4200000",
           },
         },
         "Handler": "index.handler",
@@ -6805,7 +6805,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:3821e3a8525b6f4f82feb538a4d0bf49df909c998ee7bfd92c687df22fc10e2c",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:1d2e836747551b0b8349adccc8339ed8d7e0d346de2aaf0b5780148ff197ee65",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -6820,13 +6820,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               },
             },
             "Name": "Resource",
-            "Ulimits": [
-              {
-                "HardLimit": 65535,
-                "Name": "nofile",
-                "SoftLimit": 16384,
-              },
-            ],
           },
         ],
         "Cpu": "4096",
@@ -10567,7 +10560,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
+          "S3Key": "479b7c2c78a5d25b70aabd2288e82a1e652419bd69bf0b1e4c2875c1d63390ff.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -10774,7 +10767,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
+          "S3Key": "d8a3151860146db8454dd22015490c387b05cf78f4bcfebd6979bdc8caa4f0b6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -14809,7 +14802,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "adc968265edfc49e5f153ec2f04b9ab181f039f99c730ada3b42d3699e689488.zip",
+          "S3Key": "b3920e9d711ceea73db8f90e0463707c1b628786ee1159f1e061edd9f5b8fad6.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -15037,7 +15030,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "af987f9430783f68b7d6f0b8fae90dda93e0ce2e0a9f79d4254bab88bf5a5e16.zip",
+          "S3Key": "73f555c1687cfc39f88b7c7cbfa4cf42f9a9a8f8ae51aba57c67b39c1c9660de.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -17641,7 +17634,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"MaxAttempts":5},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":7200,"HeartbeatSeconds":600,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
+              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"IntervalSeconds":30,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -17724,7 +17717,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "21a9e4e9eef44a3ea3e5bb0b325435b9e6f594f80ee6531a594cf3a71bb7ffc0.zip",
+          "S3Key": "e10e535c1da4def8f4ab158b682f3e0dc3ec931a1908ae52b0d98417d97fdc31.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -18056,7 +18049,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "CLUSTER_NAME": {
               "Ref": "ConstructHubOrchestrationCluster3D6F0081",
             },
-            "TIMEOUT_MILLIS": "7800000",
+            "TIMEOUT_MILLIS": "4200000",
           },
         },
         "Handler": "index.handler",
@@ -19757,7 +19750,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:3821e3a8525b6f4f82feb538a4d0bf49df909c998ee7bfd92c687df22fc10e2c",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:1d2e836747551b0b8349adccc8339ed8d7e0d346de2aaf0b5780148ff197ee65",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -19772,13 +19765,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               },
             },
             "Name": "Resource",
-            "Ulimits": [
-              {
-                "HardLimit": 65535,
-                "Name": "nofile",
-                "SoftLimit": 16384,
-              },
-            ],
           },
         ],
         "Cpu": "4096",
@@ -23565,7 +23551,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
+          "S3Key": "479b7c2c78a5d25b70aabd2288e82a1e652419bd69bf0b1e4c2875c1d63390ff.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -23772,7 +23758,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
+          "S3Key": "d8a3151860146db8454dd22015490c387b05cf78f4bcfebd6979bdc8caa4f0b6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -27550,7 +27536,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "adc968265edfc49e5f153ec2f04b9ab181f039f99c730ada3b42d3699e689488.zip",
+          "S3Key": "b3920e9d711ceea73db8f90e0463707c1b628786ee1159f1e061edd9f5b8fad6.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -27778,7 +27764,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "af987f9430783f68b7d6f0b8fae90dda93e0ce2e0a9f79d4254bab88bf5a5e16.zip",
+          "S3Key": "73f555c1687cfc39f88b7c7cbfa4cf42f9a9a8f8ae51aba57c67b39c1c9660de.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -30284,7 +30270,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"MaxAttempts":5},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":7200,"HeartbeatSeconds":600,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
+              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"IntervalSeconds":30,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -30367,7 +30353,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "21a9e4e9eef44a3ea3e5bb0b325435b9e6f594f80ee6531a594cf3a71bb7ffc0.zip",
+          "S3Key": "e10e535c1da4def8f4ab158b682f3e0dc3ec931a1908ae52b0d98417d97fdc31.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -30699,7 +30685,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "CLUSTER_NAME": {
               "Ref": "ConstructHubOrchestrationCluster3D6F0081",
             },
-            "TIMEOUT_MILLIS": "7800000",
+            "TIMEOUT_MILLIS": "4200000",
           },
         },
         "Handler": "index.handler",
@@ -32373,7 +32359,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:3821e3a8525b6f4f82feb538a4d0bf49df909c998ee7bfd92c687df22fc10e2c",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:1d2e836747551b0b8349adccc8339ed8d7e0d346de2aaf0b5780148ff197ee65",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -32388,13 +32374,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               },
             },
             "Name": "Resource",
-            "Ulimits": [
-              {
-                "HardLimit": 65535,
-                "Name": "nofile",
-                "SoftLimit": 16384,
-              },
-            ],
           },
         ],
         "Cpu": "4096",
@@ -36135,7 +36114,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
+          "S3Key": "479b7c2c78a5d25b70aabd2288e82a1e652419bd69bf0b1e4c2875c1d63390ff.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -36342,7 +36321,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
+          "S3Key": "d8a3151860146db8454dd22015490c387b05cf78f4bcfebd6979bdc8caa4f0b6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -40260,7 +40239,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "adc968265edfc49e5f153ec2f04b9ab181f039f99c730ada3b42d3699e689488.zip",
+          "S3Key": "b3920e9d711ceea73db8f90e0463707c1b628786ee1159f1e061edd9f5b8fad6.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -40475,7 +40454,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "af987f9430783f68b7d6f0b8fae90dda93e0ce2e0a9f79d4254bab88bf5a5e16.zip",
+          "S3Key": "73f555c1687cfc39f88b7c7cbfa4cf42f9a9a8f8ae51aba57c67b39c1c9660de.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -43003,7 +42982,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"MaxAttempts":5},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":7200,"HeartbeatSeconds":600,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
+              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"IntervalSeconds":30,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -43086,7 +43065,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "21a9e4e9eef44a3ea3e5bb0b325435b9e6f594f80ee6531a594cf3a71bb7ffc0.zip",
+          "S3Key": "e10e535c1da4def8f4ab158b682f3e0dc3ec931a1908ae52b0d98417d97fdc31.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -43418,7 +43397,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "CLUSTER_NAME": {
               "Ref": "ConstructHubOrchestrationCluster3D6F0081",
             },
-            "TIMEOUT_MILLIS": "7800000",
+            "TIMEOUT_MILLIS": "4200000",
           },
         },
         "Handler": "index.handler",
@@ -45092,7 +45071,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:3821e3a8525b6f4f82feb538a4d0bf49df909c998ee7bfd92c687df22fc10e2c",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:1d2e836747551b0b8349adccc8339ed8d7e0d346de2aaf0b5780148ff197ee65",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -45107,13 +45086,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               },
             },
             "Name": "Resource",
-            "Ulimits": [
-              {
-                "HardLimit": 65535,
-                "Name": "nofile",
-                "SoftLimit": 16384,
-              },
-            ],
           },
         ],
         "Cpu": "4096",
@@ -48841,7 +48813,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
+          "S3Key": "479b7c2c78a5d25b70aabd2288e82a1e652419bd69bf0b1e4c2875c1d63390ff.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -49048,7 +49020,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
+          "S3Key": "d8a3151860146db8454dd22015490c387b05cf78f4bcfebd6979bdc8caa4f0b6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -53153,7 +53125,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "adc968265edfc49e5f153ec2f04b9ab181f039f99c730ada3b42d3699e689488.zip",
+          "S3Key": "b3920e9d711ceea73db8f90e0463707c1b628786ee1159f1e061edd9f5b8fad6.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -53381,7 +53353,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "af987f9430783f68b7d6f0b8fae90dda93e0ce2e0a9f79d4254bab88bf5a5e16.zip",
+          "S3Key": "73f555c1687cfc39f88b7c7cbfa4cf42f9a9a8f8ae51aba57c67b39c1c9660de.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -56014,7 +55986,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"MaxAttempts":5},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":7200,"HeartbeatSeconds":600,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
+              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"IntervalSeconds":30,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -56125,7 +56097,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "21a9e4e9eef44a3ea3e5bb0b325435b9e6f594f80ee6531a594cf3a71bb7ffc0.zip",
+          "S3Key": "e10e535c1da4def8f4ab158b682f3e0dc3ec931a1908ae52b0d98417d97fdc31.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -56457,7 +56429,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "CLUSTER_NAME": {
               "Ref": "ConstructHubOrchestrationCluster3D6F0081",
             },
-            "TIMEOUT_MILLIS": "7800000",
+            "TIMEOUT_MILLIS": "4200000",
           },
         },
         "Handler": "index.handler",
@@ -57730,7 +57702,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:3821e3a8525b6f4f82feb538a4d0bf49df909c998ee7bfd92c687df22fc10e2c",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:1d2e836747551b0b8349adccc8339ed8d7e0d346de2aaf0b5780148ff197ee65",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -57745,13 +57717,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               },
             },
             "Name": "Resource",
-            "Ulimits": [
-              {
-                "HardLimit": 65535,
-                "Name": "nofile",
-                "SoftLimit": 16384,
-              },
-            ],
           },
         ],
         "Cpu": "4096",
@@ -61554,7 +61519,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3a1d523580b07c48ca9cc9edd3dd28570fab0ec1376a3e6db55f4b75aab17341.zip",
+          "S3Key": "479b7c2c78a5d25b70aabd2288e82a1e652419bd69bf0b1e4c2875c1d63390ff.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -64621,7 +64586,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e2f17dcafbec902a3e51708aad2e14c0bc320bb8574f23ea3815be8ba9c1518e.zip",
+          "S3Key": "d8a3151860146db8454dd22015490c387b05cf78f4bcfebd6979bdc8caa4f0b6.zip",
         },
         "Description": {
           "Fn::Join": [

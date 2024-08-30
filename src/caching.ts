@@ -1,5 +1,8 @@
-import { CacheControl } from 'aws-cdk-lib/aws-s3-deployment';
-import { Duration } from 'aws-cdk-lib/core';
+// This file MUST NOT import anything from aws-cdk-lib
+// If you do, it will cause aws-cdk-lib to be bundled into the lambda handlers.
+// Bundling aws-cdk-lib, will make them 30mb+ of size,
+// and could potentially break the handler due to importing dodgy transitive dependencies.
+// Yes this has happened before.
 
 /**
  * Caching policies for serving data for the Construct Hub web app.
@@ -10,21 +13,21 @@ export class CacheStrategy {
    */
   public static default() {
     return new CacheStrategy([
-      CacheControl.setPublic(),
-      CacheControl.maxAge(Duration.minutes(5)),
-      CacheControl.mustRevalidate(),
-      CacheControl.sMaxAge(Duration.minutes(1)),
-      CacheControl.proxyRevalidate(),
+      'public',
+      'max-age=300',
+      'must-revalidate',
+      's-maxage=60',
+      'proxy-revalidate',
     ]);
   }
 
-  private constructor(private readonly cacheControl: CacheControl[]) {}
+  private constructor(private readonly cacheControl: string[]) {}
 
-  public toString() {
-    return this.cacheControl.map((c) => c.value).join(', ');
+  public toString(): string {
+    return this.cacheControl.join(', ');
   }
 
-  public toArray() {
+  public toArray(): string[] {
     return this.cacheControl;
   }
 }

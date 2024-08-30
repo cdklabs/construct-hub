@@ -13,7 +13,6 @@ import {
   ICluster,
   LogDrivers,
   OperatingSystemFamily,
-  UlimitName,
 } from 'aws-cdk-lib/aws-ecs';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -174,16 +173,26 @@ export class Transliterator extends Construct {
         },
       }),
     });
-    // Encountered an error of "EMFILE: too many open files" in ECS.
-    // Default nofile ulimit is 1024/4096.
-    //
-    // For ECS ulimit documentation see: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_Ulimit.html
-    // For construct hub tracking issue see: https://github.com/cdklabs/construct-hub/issues/982
-    this.containerDefinition.addUlimits({
-      name: UlimitName.NOFILE, // file descriptors
-      softLimit: 16_384,
-      hardLimit: 65_535,
-    });
+
+    /**
+     * Construct hub tracking issue: https://github.com/cdklabs/construct-hub/issues/982
+     *
+     * Encountered one of these errors in ECS:
+     *  - EMFILE: too many open files
+     *  - Error: getaddrinfo EBUSY states.us-east-1.amazonaws.com
+     *
+     * This issue occurs because the container is running out of file descriptors, to read files or make network requests.
+     * Normally this limit is configured via the `ulimit` setting. However on AWS Fargate a much lower limit applies.
+     * For ECS ulimit documentation see: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_Ulimit.html
+     *
+     * We currently don't believe a specific ulimit configuration is needed, the defaults (which are the max) should work.
+     * For references, here is the previously used config.
+     */
+    // this.containerDefinition.addUlimits({
+    //   name: UlimitName.NOFILE, // file descriptors
+    //   softLimit: 16_384,
+    //   hardLimit: 65_535,
+    // });
 
     repository?.grantReadFromRepository(this.taskDefinition.taskRole);
 
