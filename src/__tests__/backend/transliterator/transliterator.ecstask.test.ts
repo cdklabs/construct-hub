@@ -19,7 +19,10 @@ import type { TransliteratorInput } from '../../../backend/payload-schema';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 import { DocumentationLanguage } from '../../../backend/shared/language';
-import { handler } from '../../../backend/transliterator/transliterator.ecstask';
+import {
+  transliterate,
+  handler,
+} from '../../../backend/transliterator/transliterator.ecstask';
 import { writeFile } from '../../../backend/transliterator/util';
 
 // looks like we are just over the default limit now
@@ -150,7 +153,7 @@ describe('VPC Endpoints', () => {
       )
     );
 
-    const { created } = await handler(event);
+    const { created } = await transliterate(event);
     for (const lang of DocumentationLanguage.ALL) {
       const suffix =
         lang === DocumentationLanguage.PYTHON ||
@@ -213,7 +216,7 @@ test('uninstallable package marker is uploaded', async () => {
 
   mockPutRequest('/uninstallable');
 
-  const { created } = await handler(event);
+  const { created } = await transliterate(event);
   expect(created.length).toEqual(1);
   expect(created[0]).toEqual(
     `data/${packageName}/v${packageVersion}/uninstallable`
@@ -261,7 +264,7 @@ test('corrupt assembly marker is uploaded for the necessary languages', async ()
 
   mockPutRequest(constants.CORRUPT_ASSEMBLY_SUFFIX);
 
-  const { created } = await handler(event);
+  const { created } = await transliterate(event);
   expect(created.length).toEqual(4);
   expect(created[0]).toEqual(
     `data/${packageName}/v${packageVersion}/docs-typescript.json${constants.CORRUPT_ASSEMBLY_SUFFIX}`
@@ -326,7 +329,7 @@ test('corrupt assembly and uninstallable markers are deleted', async () => {
     constants.UNINSTALLABLE_PACKAGE_SUFFIX
   );
 
-  const { created, deleted } = await handler(event);
+  const { created, deleted } = await transliterate(event);
   expect(created.length).toEqual(2);
   expect(deleted.length).toEqual(2);
   expect(created[0]).toEqual(
@@ -381,7 +384,7 @@ test('uploads a file per language (scoped package)', async () => {
   // mock the file uploads
   mockPutRequest('/docs-typescript.json', '/docs-typescript.md');
 
-  const { created } = await handler(event);
+  const { created } = await transliterate(event);
   expect(created.length).toEqual(2);
   expect(created[0]).toEqual(
     `data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.json`
@@ -442,7 +445,7 @@ test('uploads a file per submodule (unscoped package)', async () => {
     '/docs-sub2.nested-typescript.json'
   );
 
-  const { created } = await handler(event);
+  const { created } = await transliterate(event);
 
   expect(created).toEqual([
     `data/${packageName}/v${packageVersion}/docs-typescript.json`,
@@ -457,7 +460,7 @@ test('uploads a file per submodule (unscoped package)', async () => {
 });
 
 test.each([true, false])(
-  'will not translate more submodules than fit in a response: %p',
+  'will not return a response that is too large: %p',
   async (explicitLanguages) => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const forPackage = require('jsii-docgen').Documentation
@@ -505,13 +508,11 @@ test.each([true, false])(
     const writtenKeys = mockPutRequestCollectAll();
 
     // WHEN
-    const { created } = await handler(event);
+    const result = await handler(event);
 
     // THEN: We didn't write and return all of the requested submodules
     console.log('Uploaded', writtenKeys);
-    expect(JSON.stringify({ created }).length).toBeLessThan(260_000);
-    expect(writtenKeys.length).toBeLessThan(3000);
-    expect(created.length).toEqual(writtenKeys.length);
+    expect(JSON.stringify(result).length).toBeLessThan(260_000);
   }
 );
 
@@ -570,7 +571,7 @@ describe('markers for un-supported languages', () => {
       `/docs-sub2-python.json${constants.NOT_SUPPORTED_SUFFIX}`
     );
 
-    const { created } = await handler(event);
+    const { created } = await transliterate(event);
 
     expect(created).toEqual([
       `data/${packageName}/v${packageVersion}/docs-python.json${constants.NOT_SUPPORTED_SUFFIX}`,

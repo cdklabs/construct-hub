@@ -4,7 +4,7 @@ import { App, Duration, Stack } from 'aws-cdk-lib';
 import { Cluster } from 'aws-cdk-lib/aws-ecs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { Pass, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
+import { JsonPath, Pass, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Transliterator } from '../lib/backend/transliterator';
 import { Monitoring } from '../lib/monitoring';
 
@@ -46,7 +46,7 @@ const definition = new Pass(stack, 'Track Execution Infos', {
     transliterator.createEcsRunTask(stack, 'Generate docs', {
       cluster,
       inputPath: '$.docGen.command',
-      resultPath: '$.docGenOutput',
+      resultPath: JsonPath.DISCARD,
     })
   );
 
