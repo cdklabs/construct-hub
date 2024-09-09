@@ -55,6 +55,7 @@ const project = new CdklabsConstructLibrary({
     'aws-xray-sdk-core',
     'case',
     'cdk-dia',
+    'chalk',
     'esbuild',
     'feed',
     'fs-extra',
