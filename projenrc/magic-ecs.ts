@@ -238,7 +238,7 @@ function newEcsTask(project: TypeScriptProject, entrypoint: string) {
     `ENV NODE_OPTIONS="--stack-trace-limit=100 --max-old-space-size=${
       // don't use up the entire container memory
       memoryLimit - 512
-    }"`
+    } --enable-source-maps"`
   );
   df.line();
   df.line(`ENTRYPOINT ["/usr/bin/env", "node", "/bundle/${dockerEntry}"]`);
