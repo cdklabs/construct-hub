@@ -1,3 +1,5 @@
+import { ECSClient } from '@aws-sdk/client-ecs';
+import { S3Client } from '@aws-sdk/client-s3';
 import * as _AWS from 'aws-sdk';
 import * as AWSXRay from 'aws-xray-sdk-core';
 
@@ -5,6 +7,11 @@ import * as AWSXRay from 'aws-xray-sdk-core';
 AWSXRay.setContextMissingStrategy(() => {});
 
 const AWS = AWSXRay.captureAWS(_AWS);
+
+export const s3Client: S3Client = AWSXRay.captureAWSv3Client(new S3Client({}));
+export const ecsClient: ECSClient = AWSXRay.captureAWSv3Client(
+  new ECSClient({})
+);
 
 let _ecs: AWS.ECS | undefined;
 let _s3: AWS.S3 | undefined;
