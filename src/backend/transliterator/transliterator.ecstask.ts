@@ -540,7 +540,7 @@ interface S3Object {
  */
 async function retry<A>(cb: () => Promise<A>): Promise<A> {
   const deadline = Date.now() + 30_000; // Half a minute minute
-  let sleepMs = 10;
+  let sleepMs = 20;
   while (true) {
     try {
       return await cb();
@@ -557,7 +557,13 @@ async function retry<A>(cb: () => Promise<A>): Promise<A> {
 
 function isRetryableError(e: any) {
   // Prepare for AWS SDK v3 already
-  return e.code === 'SlowDown' || e.name === 'SlowDown';
+  return (
+    e.code === 'SlowDown' ||
+    e.name === 'SlowDown' ||
+    e.code === 503 ||
+    e.statusCode === 503 ||
+    e.retryable === true
+  );
 }
 
 function sleep(ms: number): Promise<void> {
