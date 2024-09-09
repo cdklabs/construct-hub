@@ -1,6 +1,7 @@
 import { basename, dirname, posix } from 'path';
 import { Instance as Chalk } from 'chalk';
 import * as esbuild from 'esbuild';
+import { ECS_TASK_NODE_VERSION } from './magic-ecs';
 
 const chalk = new Chalk({
   level: process.env.NO_COLOR ? 0 : 1,
@@ -24,7 +25,7 @@ async function main(args: string[]) {
     entryPoints: [entrypoint],
     outfile,
     sourcemap: true,
-    target: 'node18',
+    target: `node${ECS_TASK_NODE_VERSION}`,
     platform: 'node',
     metafile: true,
 
