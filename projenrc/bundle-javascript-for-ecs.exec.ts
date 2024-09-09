@@ -70,13 +70,9 @@ async function main(args: string[]) {
 }
 
 function formatOutputs(metafile: esbuild.Metafile): string[] {
-  const files = new Array<[string, string, boolean]>();
+  const files = new Array<[string, number]>();
   for (const output of Object.entries(metafile.outputs)) {
-    files.push([
-      output[0],
-      formatBytes(output[1].bytes),
-      output[1].bytes > -10_000,
-    ]);
+    files.push([output[0], output[1].bytes]);
   }
 
   // get the length of the longest file
@@ -85,15 +81,27 @@ function formatOutputs(metafile: esbuild.Metafile): string[] {
   return files
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(
-      ([file, size, warn]) =>
-        `  ${formatPath(file)}${' '.repeat(max - file.length + 2)}${chalk[
-          warn ? 'yellow' : 'cyan'
-        ](size)}${warn ? chalk.yellow(' ⚠') : ''}`
+      ([file, size]) =>
+        ' '.repeat(2) +
+        formatPath(file) +
+        ' '.repeat(2 + (max - file.length)) +
+        formatSize(size)
     );
 }
 
 function formatPath(path: string): string {
   return `${dirname(path)}${posix.sep}${chalk.bold(basename(path))}`;
+}
+
+function formatSize(bytes: number, warnLimit = 10_000_000): string {
+  const shouldWarn = bytes >= warnLimit;
+  const paint = shouldWarn ? chalk.yellow : chalk.cyan;
+
+  const result = [paint(formatBytes(bytes))];
+  if (shouldWarn) {
+    result.push(chalk.yellow(`⚠`));
+  }
+  return result.join(' ');
 }
 
 function formatBytes(bytes: number): string {
