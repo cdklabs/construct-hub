@@ -7,6 +7,7 @@ import { discoverEcsTasks } from './projenrc/magic-ecs';
 import { discoverLambdas } from './projenrc/magic-lambda';
 import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
 import { addVpcAllowListManagement } from './projenrc/vps-allow-list';
+import { javascript } from 'projen';
 
 const cdkVersion = '2.120.0';
 const peerDeps = [
@@ -65,6 +66,7 @@ const project = new CdklabsConstructLibrary({
     'streamx',
     'streamcount',
     'tar-stream',
+    'ts-jest',
     'uuid',
     'yaml',
     'nock',
@@ -153,6 +155,9 @@ const project = new CdklabsConstructLibrary({
       moduleNameMapper: {
         '../package.json': '<rootDir>/__mocks__/package.json',
       },
+      transform: {
+        '^.+\\.ts$': new javascript.Transform('ts-jest'),
+      },
     },
   },
   prettier: true,
@@ -216,6 +221,8 @@ project.gitignore.addPatterns('/website'); // <-- don't commit
 
 project.gitignore.exclude('.vscode/');
 project.gitignore.exclude('**/.DS_Store');
+
+project.jest?.addTestMatch('<rootDir>/(test|src)/**/*(*.)@(spec|test).ts?(x)');
 
 addVpcAllowListManagement(project);
 addDevApp(project);
