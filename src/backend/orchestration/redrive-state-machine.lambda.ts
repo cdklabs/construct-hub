@@ -24,7 +24,6 @@ export async function handler(event: unknown, context: Context): Promise<void> {
           $TaskExecution: undefined,
           catalogNeedsUpdating: undefined,
           docGen: undefined,
-          docGenOutput: undefined,
           _error: undefined,
           error: undefined,
           // Add the redrive information

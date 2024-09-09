@@ -371,9 +371,11 @@ export class Orchestration extends Construct {
           .createEcsRunTask(this, 'Generate docs', {
             cluster: this.ecsCluster,
             inputPath: '$.docGen.command',
-            resultPath: '$.docGenOutput',
+            // the output from the transliterator task is not used
+            // we just need to know if it succeeded
+            resultPath: JsonPath.DISCARD,
             // aws-cdk-lib succeeds in roughly 1 hour, so this should give us
-            // enough of a buffer and prorably account for all other libraries out there.
+            // enough of a buffer and probably account for all other libraries out there.
             timeout: transliteratorTimeout,
             vpcSubnets: props.vpcSubnets,
             securityGroups: props.vpcSecurityGroups,

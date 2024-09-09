@@ -1,23 +1,60 @@
 import * as path from 'path';
 import { ExpectedResult, IntegTest } from '@aws-cdk/integ-tests-alpha';
-import { App, Duration, Stack } from 'aws-cdk-lib';
+import { App, ArnFormat, Duration, Stack } from 'aws-cdk-lib';
 import { Cluster } from 'aws-cdk-lib/aws-ecs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { Pass, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
+import { JsonPath, Pass, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Transliterator } from '../lib/backend/transliterator';
-import { Monitoring } from '../lib/monitoring';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 const app = new App();
-const stack = new Stack(app, 'Stack');
+const stack = new Stack(app, 'TransliteratorEcsTaskInteg');
 
 const bucket = new Bucket(stack, 'Bucket');
-const monitoring = new Monitoring(stack, 'Monitoring');
-const cluster = new Cluster(stack, 'Cluster');
+const cluster = new Cluster(stack, 'Cluster', {
+  enableFargateCapacityProviders: true,
+  vpc: new Vpc(stack, 'Vpc', {
+    maxAzs: 2,
+    restrictDefaultSecurityGroup: false,
+  })
+});
 const transliterator = new Transliterator(stack, 'Transliterator', {
   bucket,
-  monitoring,
+  monitoring: {
+    addHighSeverityAlarm: () => {},
+    addLowSeverityAlarm: () => {}
+  },
 });
+
+// ecr permissions copied from code in transliterator/index.ts
+transliterator.taskDefinition.addToExecutionRolePolicy(
+  new PolicyStatement({
+    effect: Effect.ALLOW,
+    actions: ['ecr:GetAuthorizationToken'],
+    resources: ['*'], // Action does not support resource scoping
+  })
+)
+transliterator.taskDefinition.addToExecutionRolePolicy(
+  new PolicyStatement({
+    effect: Effect.ALLOW,
+    actions: [
+      'ecr:BatchCheckLayerAvailability',
+      'ecr:GetDownloadUrlForLayer',
+      'ecr:BatchGetImage',
+    ],
+    // We cannot get the ECR repository info from an asset... So scoping down to same-account repositories instead...
+    resources: [
+      stack.formatArn({
+        service: 'ecr',
+        resource: 'repository',
+        arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+        resourceName: '*',
+      }),
+    ],
+  })  
+);
 
 const source = Source.asset(path.join(__dirname, 'fixtures/tests'));
 new BucketDeployment(stack, 'BucketDeployment', {
@@ -46,13 +83,15 @@ const definition = new Pass(stack, 'Track Execution Infos', {
     transliterator.createEcsRunTask(stack, 'Generate docs', {
       cluster,
       inputPath: '$.docGen.command',
-      resultPath: '$.docGenOutput',
+      resultPath: JsonPath.DISCARD,
+      timeout: Duration.minutes(5),
     })
   );
 
 const stateMachine = new StateMachine(stack, 'StateMachine', {
   definition,
 });
+transliterator.taskDefinition.grantRun(stateMachine);
 
 const event = {
   bucket: bucket.bucketName,

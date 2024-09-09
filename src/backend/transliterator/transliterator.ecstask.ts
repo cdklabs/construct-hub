@@ -38,12 +38,36 @@ const S3_SEMAPHORE = new Sema(
  * @param event   an S3 event payload
  * @param context a Lambda execution context
  *
- * @returns nothing
+ * @returns counts of created and deleted entries
  */
-export function handler(
+export async function handler(
+  event: TransliteratorInput
+): Promise<{ created_count: number; deleted_count: number }> {
+  console.log('Event:', JSON.stringify(event, null, 2));
+  const result = await transliterate(event);
+  console.log('Transliteration result:', JSON.stringify(result, null, 2));
+
+  // We discard the result in favor of simple counts.
+  // The lists of entries are not actually used by the calling step function
+  // and are generally too large for the step function execution to handle.
+  return {
+    created_count: result.created.length,
+    deleted_count: result.deleted.length,
+  };
+}
+
+/**
+ * Function that does the actual transliteration.
+ * Also used in unit tests that can assert on the returned lists of entries.
+ *
+ * @param event   an S3 event payload
+ * @param context a Lambda execution context
+ *
+ * @returns a list of all created and deleted entries
+ */
+export function transliterate(
   event: TransliteratorInput
 ): Promise<{ created: string[]; deleted: string[] }> {
-  console.log('Event:', JSON.stringify(event));
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
   // and that'll bail out on EROFS if that fails.
@@ -112,8 +136,6 @@ export function handler(
     console.log(
       `Assembly ${assembly.name} has ${submoduleFqns.length} submodules.`
     );
-
-    restrictSubmoduleCountToReturnable(event, submoduleFqns);
 
     console.log(`Fetching package: ${event.package.key}`);
     const tarballExists = await aws.s3ObjectExists(
@@ -378,7 +400,7 @@ export function handler(
       error.name = constants.UNPROCESSABLE_PACKAGE_ERROR_NAME;
     }
 
-    // output must be compressed to satisfy 262,144 byte limit of SendTaskSuccess command
+    // make entries more readable
     const s3OKey = (s3Obj: S3Object) => s3Obj.key;
     return { created: created.map(s3OKey), deleted: deleted.map(s3OKey) };
   });
@@ -511,70 +533,6 @@ interface S3Object {
   readonly bucket: string;
   readonly key: string;
   readonly versionId?: string;
-}
-
-/**
- * This script returns all files uploaded as a result of translation.
- *
- * It is (2 files for every language) for the (assembly + each submodule).
- *
- * This may exceed the maximum size of the Step Functions return value when
- * there are very many submodules, such as a pathological case of
- * `@dschmidt/google-provider@0.0.1` has (there are more than 600 submodules,
- * probably because of a configuration mistake).
- *
- * We could deal with this by changing the protocol (large scale changes and
- * many tests necessary). Given that it's probably an accident, we'll just limit
- * how many submodules we will translate.
- *
- * We could hardcode to a fixed number, but that could still blow up given long
- * enough names. So instead we'll estimate the payload size added by each submodule
- * and use that to cap.
- */
-function restrictSubmoduleCountToReturnable(
-  event: TransliteratorInput,
-  submodules: string[]
-) {
-  const MAX_PAYLOAD = 250_000; // A little less than the actual size to catch extra separators
-
-  let cumSize = estimateSize(undefined); // Assembly level docs
-  for (let i = 0; i < submodules.length; i++) {
-    cumSize += estimateSize(submodules[i]);
-    if (cumSize > MAX_PAYLOAD) {
-      // submodule 'i' doesn't fit anymore
-      console.log(
-        `Not all submodules fit in response. Documenting only ${i} out of ${submodules.length} submodules`
-      );
-      submodules.splice(i, submodules.length - i);
-      return;
-    }
-  }
-
-  /**
-   * Estimate the size added to the return array by adding this submodule
-   */
-  function estimateSize(submodule: string | undefined) {
-    const quotesAndComma = 3;
-    const statusExt = Math.max(
-      constants.NOT_SUPPORTED_SUFFIX.length,
-      constants.CORRUPT_ASSEMBLY_SUFFIX.length
-    );
-
-    return (
-      DocumentationLanguage.ALL
-        // A .json and .md file plus their quotes and a comma plus potentially the 'not-supported'/'corruptassembly' extensions
-        .map(
-          (l) =>
-            formatArtifactKey(event.assembly, l, submodule, 'json').length +
-            statusExt +
-            quotesAndComma +
-            formatArtifactKey(event.assembly, l, submodule, 'md').length +
-            statusExt +
-            quotesAndComma
-        )
-        .reduce((x, a) => x + a, 0)
-    );
-  }
 }
 
 /**

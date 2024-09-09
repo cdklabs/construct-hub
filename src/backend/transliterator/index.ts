@@ -29,7 +29,7 @@ import {
 import { Construct } from 'constructs';
 import { Transliterator as Container, MEMORY_LIMIT } from './transliterator';
 import { Repository } from '../../codeartifact/repository';
-import { Monitoring } from '../../monitoring';
+import { IMonitoring } from '../../monitoring/api';
 import * as s3 from '../../s3';
 import * as constants from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
@@ -48,7 +48,7 @@ export interface TransliteratorProps {
   /**
    * The monitoring handler to register alarms with.
    */
-  readonly monitoring: Monitoring;
+  readonly monitoring: IMonitoring;
 
   /**
    * VPC endpoints to use for interacting with CodeArtifact and S3.
