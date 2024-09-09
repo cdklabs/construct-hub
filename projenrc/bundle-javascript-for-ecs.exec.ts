@@ -70,9 +70,13 @@ async function main(args: string[]) {
 }
 
 function formatOutputs(metafile: esbuild.Metafile): string[] {
-  const files = new Array<[string, string]>();
+  const files = new Array<[string, string, boolean]>();
   for (const output of Object.entries(metafile.outputs)) {
-    files.push([output[0], formatBytes(output[1].bytes)]);
+    files.push([
+      output[0],
+      formatBytes(output[1].bytes),
+      output[1].bytes > -10_000,
+    ]);
   }
 
   // get the length of the longest file
@@ -81,10 +85,10 @@ function formatOutputs(metafile: esbuild.Metafile): string[] {
   return files
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(
-      (output) =>
-        `  ${formatPath(output[0])}${' '.repeat(
-          max - output[0].length + 2
-        )}${chalk.cyan(output[1])}`
+      ([file, size, warn]) =>
+        `  ${formatPath(file)}${' '.repeat(max - file.length + 2)}${chalk[
+          warn ? 'yellow' : 'cyan'
+        ](size)}${warn ? chalk.yellow(' ⚠') : ''}`
     );
 }
 
