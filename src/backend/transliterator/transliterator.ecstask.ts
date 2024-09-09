@@ -421,7 +421,7 @@ async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
   }
 }
 
-function uploadFile(
+async function uploadFile(
   bucket: string,
   key: string,
   sourceVersionId?: string,
@@ -434,37 +434,48 @@ function uploadFile(
     ? 'application/json; charset=UTF-8'
     : 'application/octet-stream';
 
-  const token = S3_SEMAPHORE.acquire();
-  return retry(() =>
-    aws
-      .s3()
-      .putObject({
-        Bucket: bucket,
-        Key: key,
-        Body: body,
-        // We may not import anything that uses 'aws-cdk-lib' here
-        CacheControl:
-          'public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate',
-        ContentEncoding: contentEncoding,
-        ContentType: contentType,
-        Metadata: {
-          'Origin-Version-Id': sourceVersionId ?? 'N/A',
-        },
-      })
-      .promise()
-  ).finally(() => S3_SEMAPHORE.release(token));
+  await S3_SEMAPHORE.acquire();
+  try {
+    console.log(S3_SEMAPHORE.nrWaiting() + ' S3 calls are waiting');
+    return await retry(() =>
+      aws
+        .s3()
+        .putObject({
+          Bucket: bucket,
+          Key: key,
+          Body: body,
+          // We may not import anything that uses 'aws-cdk-lib' here
+          CacheControl:
+            'public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate',
+          ContentEncoding: contentEncoding,
+          ContentType: contentType,
+          Metadata: {
+            'Origin-Version-Id': sourceVersionId ?? 'N/A',
+          },
+        })
+        .promise()
+    );
+  } finally {
+    S3_SEMAPHORE.release();
+  }
 }
 
-function deleteFile(bucket: string, key: string) {
-  return retry(() =>
-    aws
-      .s3()
-      .deleteObject({
-        Bucket: bucket,
-        Key: key,
-      })
-      .promise()
-  );
+async function deleteFile(bucket: string, key: string) {
+  await S3_SEMAPHORE.acquire();
+  try {
+    console.log(S3_SEMAPHORE.nrWaiting() + ' S3 calls are waiting');
+    return await retry(() =>
+      aws
+        .s3()
+        .deleteObject({
+          Bucket: bucket,
+          Key: key,
+        })
+        .promise()
+    );
+  } finally {
+    S3_SEMAPHORE.release();
+  }
 }
 
 function anchorFormatter(type: JsiiEntity) {
@@ -539,13 +550,19 @@ interface S3Object {
  * Retry a function a number of times if it happens to get throttled
  */
 async function retry<A>(cb: () => Promise<A>): Promise<A> {
-  const deadline = Date.now() + 30_000; // Half a minute minute
+  const deadline = Date.now() + 60_000; // one minute
   let sleepMs = 20;
   while (true) {
     try {
       return await cb();
     } catch (e) {
-      if (!isRetryableError(e) || Date.now() >= deadline) {
+      if (!isRetryableError(e)) {
+        console.log(`Error is not retryable`);
+        throw e;
+      }
+
+      if (Date.now() >= deadline) {
+        console.log(`Retry wait time reached limit: ${sleepMs}`);
         throw e;
       }
 
