@@ -175,6 +175,7 @@
     "streamcount": "^1.0.1",
     "streamx": "^2.20.0",
     "tar-stream": "^3.1.7",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "5.4.x",
     "uuid": "^9.0.1",
@@ -213,9 +214,13 @@
     "moduleNameMapper": {
       "../package.json": "<rootDir>/__mocks__/package.json"
     },
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
     "testMatch": [
       "<rootDir>/@(lib/__tests__)/**/*(*.)@(spec|test).js?(x)",
       "<rootDir>/@(lib/__tests__)/**/__tests__/**/*.js?(x)",
+      "<rootDir>/(test|src)/**/*(*.)@(spec|test).ts?(x)",
       "<rootDir>/@(projenrc)/**/*(*.)@(spec|test).ts?(x)",
       "<rootDir>/@(projenrc)/**/__tests__/**/*.ts?(x)"
     ],
