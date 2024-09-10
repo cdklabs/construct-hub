@@ -2,8 +2,14 @@ import { randomBytes } from 'crypto';
 import { PassThrough } from 'stream';
 import * as zip from 'zlib';
 
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import * as AWS from 'aws-sdk';
 import { AWSError } from 'aws-sdk';
+import { mockClient } from 'aws-sdk-client-mock';
 import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
 
@@ -16,6 +22,7 @@ import {
 import { CatalogBuilderInput } from '../../../backend/payload-schema';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
+import { stringToStream } from '../../streams';
 
 let mockBucketName: string | undefined;
 
@@ -34,7 +41,7 @@ const MOCK_DENY_LIST_MAP: DenyListMap = {
 };
 
 beforeEach((done) => {
-  process.env.BUCKET_NAME = mockBucketName = randomBytes(16).toString('base64');
+  process.env.BUCKET_NAME = mockBucketName = randomBytes(18).toString('base64');
   process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
   process.env[ENV_DENY_LIST_OBJECT_KEY] = MOCK_DENY_LIST_OBJECT;
 
@@ -168,11 +175,13 @@ test('initial build', () => {
       if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
         return cb(null, {});
       }
+
       class NotFound extends Error implements AWSError {
         public code = 'NotFound';
         public message = 'Not Found';
         public time = new Date();
       }
+
       return cb(new NotFound());
     }
   );
@@ -339,11 +348,13 @@ test('rebuild (with continuation)', async () => {
       if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
         return cb(null, {});
       }
+
       class NotFound extends Error implements AWSError {
         public code = 'NotFound';
         public message = 'Not Found';
         public time = new Date();
       }
+
       return cb(new NotFound());
     }
   );
@@ -780,67 +791,55 @@ describe('incremental build', () => {
 
   test('ignored denied list package', () => {
     // GIVEN
-    AWSMock.mock(
-      'S3',
-      'getObject',
-      (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-        const denyListResponse = tryMockDenyList(req);
-        if (denyListResponse) {
-          return cb(null, denyListResponse);
-        }
+    const s3Mock = mockClient(S3Client);
 
-        try {
-          expect(req.Bucket).toBe(mockBucketName);
-        } catch (e) {
-          return cb(e as any);
-        }
-
-        if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-          return cb(null, { Body: JSON.stringify(npmMetadata) });
-        }
-
-        const matches = new RegExp(
-          `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
-        ).exec(req.Key);
-        if (matches != null) {
-          mockNpmPackage(matches[1], matches[2]).then(
-            (pack) => cb(null, { Body: pack }),
-            cb
-          );
-        } else if (req.Key === constants.CATALOG_KEY) {
-          return cb(null, {
-            Body: JSON.stringify(initialCatalog, null, 2),
-          });
-        } else {
-          return cb(new NoSuchKeyError());
-        }
+    s3Mock.on(GetObjectCommand).callsFake((req) => {
+      const denyListResponse = tryMockDenyList(req);
+      if (denyListResponse) {
+        return denyListResponse;
       }
-    );
+
+      expect(req.Bucket).toBe(mockBucketName);
+
+      if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
+        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+      }
+
+      const matches = new RegExp(
+        `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
+      ).exec(req.Key);
+
+      if (matches != null) {
+        return mockNpmPackage(matches[1], matches[2]).then((pack) => ({
+          // TODO this is probably wrong. pack is a Buffer
+          Body: pack,
+        }));
+      } else if (req.Key === constants.CATALOG_KEY) {
+        return {
+          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
+        };
+      } else {
+        throw new NoSuchKeyError();
+      }
+    });
 
     const event: CatalogBuilderInput = {
       package: {
         key: `${constants.STORAGE_KEY_PREFIX}@foo/blocked/v1.1.0${constants.PACKAGE_KEY_SUFFIX}`,
       },
     };
-    const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
-    AWSMock.mock(
-      'S3',
-      'putObject',
-      (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-        try {
-          expect(req.Bucket).toBe(mockBucketName);
-          expect(req.Key).toBe(constants.CATALOG_KEY);
-          expect(req.ContentType).toBe('application/json');
-          expect(req.Metadata).toHaveProperty('Package-Count', '3');
-          const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-          expect(body.packages).toEqual(initialPackages);
-          expect(Date.parse(body.updatedAt)).toBeDefined();
-        } catch (e) {
-          return cb(e as any);
-        }
-        return cb(null, mockPutObjectResult);
-      }
-    );
+
+    s3Mock.on(PutObjectCommand).callsFake((req) => {
+      expect(req.Bucket).toBe(mockBucketName);
+      expect(req.Key).toBe(constants.CATALOG_KEY);
+      expect(req.ContentType).toBe('application/json');
+      expect(req.Metadata).toHaveProperty('Package-Count', '3');
+      const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+      expect(body.packages).toEqual(initialPackages);
+      expect(Date.parse(body.updatedAt)).toBeDefined();
+
+      return {};
+    });
 
     // WHEN
     const result = handler(event, {
@@ -848,7 +847,7 @@ describe('incremental build', () => {
     } as any);
 
     // THEN
-    return expect(result).resolves.toBe(mockPutObjectResult);
+    return expect(result).resolves.toStrictEqual({});
   });
 });
 
@@ -907,7 +906,7 @@ function tryMockDenyList(req: AWS.S3.GetObjectRequest) {
     req.Bucket === MOCK_DENY_LIST_BUCKET &&
     req.Key === MOCK_DENY_LIST_OBJECT
   ) {
-    return { Body: JSON.stringify(MOCK_DENY_LIST_MAP) };
+    return { Body: stringToStream(JSON.stringify(MOCK_DENY_LIST_MAP)) };
   } else {
     return undefined;
   }

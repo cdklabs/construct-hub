@@ -1,8 +1,13 @@
 import { gunzip } from 'zlib';
 
+import {
+  GetObjectCommand,
+  GetObjectCommandOutput,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
-import { AWSError, S3 } from 'aws-sdk';
+import { S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
 import { CatalogModel, PackageInfo } from '.';
@@ -35,22 +40,13 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   const denyList = await DenyListClient.newClient();
 
   console.log('Loading existing catalog (if present)...');
-
-  const data = await aws
-    .s3()
-    .getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY })
-    .promise()
-    .catch((err: AWSError) =>
-      err.code !== 'NoSuchKey'
-        ? Promise.reject(err)
-        : Promise.resolve({
-            /* no data */
-          } as S3.GetObjectOutput)
-    );
+  const data = await getCatalog(BUCKET_NAME);
 
   if (data.Body) {
     console.log('Catalog found. Loading...');
-    const catalog: CatalogModel = JSON.parse(data.Body.toString('utf-8'));
+    const catalog: CatalogModel = JSON.parse(
+      await data.Body.transformToString()
+    );
     for (const info of catalog.packages) {
       const denyRule = denyList.lookup(info.name, info.version);
       if (denyRule != null) {
@@ -171,10 +167,8 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     }
   }
 
-  // Upload the result to S3 and exit.
-  const result = await aws
-    .s3()
-    .putObject({
+  const result = await aws.s3Client.send(
+    new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: constants.CATALOG_KEY,
       Body: JSON.stringify(catalog, null, 2),
@@ -187,7 +181,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
         'Package-Count': `${catalog.packages.length}`,
       },
     })
-    .promise();
+  );
 
   if (nextStartAfter != null) {
     console.log(`Will continue from ${nextStartAfter} in new invocation...`);
@@ -378,4 +372,20 @@ async function appendPackage(
     name: pkgMetadata.name,
     version: pkgMetadata.version,
   });
+}
+
+async function getCatalog(bucketName: string): Promise<GetObjectCommandOutput> {
+  try {
+    return await aws.s3Client.send(
+      new GetObjectCommand({
+        Bucket: bucketName,
+        Key: constants.CATALOG_KEY,
+      })
+    );
+  } catch (e: any) {
+    if (e.code !== 'NoSuchKey') throw e;
+    return {
+      /* no data */
+    } as GetObjectCommandOutput;
+  }
 }
