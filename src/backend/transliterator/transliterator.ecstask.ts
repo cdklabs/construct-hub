@@ -6,6 +6,7 @@ import {
   DeleteObjectCommand,
   DeleteObjectCommandOutput,
   GetObjectCommand,
+  NotFound,
   PutObjectCommand,
   PutObjectCommandOutput,
   S3Client,
@@ -163,7 +164,7 @@ export function transliterate(
 
       await writeFile(tarball, tarballResponse.Body!);
     } catch (error: any) {
-      if (error.code === 'NotFound') {
+      if (error instanceof NotFound || error.name === 'NotFound') {
         throw new Error(
           `Tarball does not exist at key ${event.package.key} in bucket ${event.bucket}.`
         );
@@ -193,7 +194,7 @@ export function transliterate(
         const deletion = await deleteFile(event.bucket, key);
         deletions.set(key, Promise.resolve(deletion));
       } catch (error: any) {
-        if (error.code === 'NotFound') {
+        if (error instanceof NotFound || error.name === 'NotFound') {
           return;
         }
         deletions.set(key, Promise.reject(error));
@@ -443,7 +444,7 @@ async function uploadFile(
   sourceVersionId?: string,
   body?: StreamingBlobPayloadInputTypes,
   contentEncoding?: 'gzip'
-) {
+): Promise<PutObjectCommandOutput> {
   const contentType = key.endsWith('.md')
     ? 'text/markdown; charset=UTF-8'
     : key.endsWith('.json')
@@ -473,7 +474,10 @@ async function uploadFile(
   }
 }
 
-async function deleteFile(bucket: string, key: string) {
+async function deleteFile(
+  bucket: string,
+  key: string
+): Promise<DeleteObjectCommandOutput> {
   await S3_SEMAPHORE.acquire();
   try {
     logSemaphoreQueue('deleteFile');
