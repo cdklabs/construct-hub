@@ -2,21 +2,21 @@ import type * as child_process from 'child_process';
 import { randomBytes } from 'crypto';
 
 import { EventEmitter } from 'stream';
-import * as AWS from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
+import {
+  CodeartifactClient,
+  GetAuthorizationTokenCommand,
+} from '@aws-sdk/client-codeartifact';
+import { mockClient } from 'aws-sdk-client-mock';
+import 'aws-sdk-client-mock-jest';
 
 import { logInWithCodeArtifact } from '../../../backend/shared/code-artifact.lambda-shared';
 
 jest.mock('child_process');
 
-beforeEach((done) => {
-  AWSMock.setSDKInstance(AWS);
-  done();
-});
+const codeArtifactMock = mockClient(CodeartifactClient);
 
-afterEach((done) => {
-  AWSMock.restore();
-  done();
+beforeEach(() => {
+  codeArtifactMock.reset();
 });
 
 test('logInWithCodeArtifact', async () => {
@@ -28,23 +28,9 @@ test('logInWithCodeArtifact', async () => {
   const apiEndpoint = 'https://fake.codeartifact.api.endpoint';
 
   const authorizationToken = randomBytes(64).toString('base64');
-  AWSMock.mock(
-    'CodeArtifact',
-    'getAuthorizationToken',
-    (
-      param: AWS.CodeArtifact.GetAuthorizationTokenRequest,
-      cb: Response<AWS.CodeArtifact.GetAuthorizationTokenResult>
-    ) => {
-      try {
-        expect(param.domain).toBe(domain);
-        expect(param.domainOwner).toBe(domainOwner);
-        expect(param.durationSeconds).toBe(0);
-      } catch (e: any) {
-        return cb(e);
-      }
-      cb(null, { authorizationToken });
-    }
-  );
+  codeArtifactMock.on(GetAuthorizationTokenCommand).resolves({
+    authorizationToken,
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockSpawn = require('child_process').spawn as jest.MockedFunction<
@@ -83,11 +69,18 @@ test('logInWithCodeArtifact', async () => {
   // THEN
   await expect(
     logInWithCodeArtifact({ endpoint, domain, domainOwner, apiEndpoint })
-  ).resolves.not.toThrowError();
-  expect(Array.from(configToSet)).toEqual([]); // All config was set as expected.
-});
+  ).resolves.not.toThrow();
 
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
+  expect(Array.from(configToSet)).toEqual([]); // All config was set as expected.
+  expect(codeArtifactMock).toHaveReceivedCommandWith(
+    GetAuthorizationTokenCommand,
+    {
+      domain,
+      domainOwner,
+      durationSeconds: 0,
+    }
+  );
+});
 
 class MockChildProcess
   extends EventEmitter

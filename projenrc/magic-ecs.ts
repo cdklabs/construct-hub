@@ -1,9 +1,10 @@
 import { basename, dirname, join, relative } from 'path';
-import Case from 'case';
+import * as Case from 'case';
 import * as glob from 'glob';
 import { SourceCode } from 'projen';
 import { TypeScriptProject } from 'projen/lib/typescript';
 
+export const ECS_TASK_NODE_VERSION = '20';
 const BUNDLE_DIR_ENV = 'BUNDLE_DIR';
 const ECS_TASK_MEMORY_LIMIT_DEFINITIONS: { [key: string]: number } = {
   'backend/transliterator/transliterator.ecstask.ts': 8192,
@@ -208,22 +209,25 @@ function newEcsTask(project: TypeScriptProject, entrypoint: string) {
 
   const df = new SourceCode(project, dockerfile);
   df.line(`# ${df.marker}`);
-  // Based off amazonlinux:2 for... reasons. (Do not change!)
-  df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
+  // Based off amazonlinux:2023 for... reasons. Slim node images don't work here.
+  df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2023');
   df.line();
   // Install node the regular way...
   df.line(
-    'RUN yum install https://rpm.nodesource.com/pub_16.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y \\'
+    `RUN yum install https://rpm.nodesource.com/pub_${ECS_TASK_NODE_VERSION}.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y \\`
   );
+  df.line('    && yum install nodejs -y \\');
+  // @see https://github.com/nodesource/distributions/blob/e42782301931c357cec2a09e1246d7849e084345/scripts/rpm/setup_22.x#L75-L76
   df.line(
-    ' && yum install nodejs -y --setopt=nodesource-nodejs.module_hotfixes=1 \\'
+    '    --setopt=nodesource-nodejs.gpgkey=https://rpm.nodesource.com/gpgkey/ns-operations-public.key \\'
   );
-  df.line(' && yum update -y \\');
-  df.line(' && yum upgrade -y \\');
-  df.line(' && yum install -y git lsof nodejs \\');
+  df.line('    --setopt=nodesource-nodejs.module_hotfixes=1 \\');
+  df.line('    && yum update -y \\');
+  df.line('    && yum upgrade -y \\');
+  df.line('    && yum install -y git lsof nodejs \\');
   // Clean up the yum cache in the interest of image size
-  df.line(' && yum clean all \\');
-  df.line(' && rm -rf /var/cache/yum');
+  df.line('    && yum clean all \\');
+  df.line('    && rm -rf /var/cache/yum');
   df.line();
   df.line('COPY . /bundle');
   df.line();
@@ -290,7 +294,7 @@ export function discoverEcsTasks(project: TypeScriptProject) {
       ...entrypoints.map((file) =>
         file.replace('ecstask.ts', 'ecs-entrypoint.ts')
       ),
-      '--target="node18"',
+      `--target="node${ECS_TASK_NODE_VERSION}"`,
       '--platform="node"',
       `--outbase="${project.srcdir}"`,
       `--outdir="${project.libdir}"`,

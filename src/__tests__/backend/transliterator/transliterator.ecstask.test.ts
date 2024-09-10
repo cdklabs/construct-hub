@@ -1,8 +1,15 @@
+import { Readable } from 'node:stream';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  NotFound,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import * as spec from '@jsii/spec';
+import { sdkStreamMixin } from '@smithy/util-stream';
 
-import * as AWS from 'aws-sdk';
-import type { AWSError } from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
+import { mockClient } from 'aws-sdk-client-mock';
 import {
   LanguageNotSupportedError,
   UnInstallablePackageError,
@@ -16,7 +23,6 @@ import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render'
 import { Documentation } from 'jsii-docgen/lib/docgen/view/documentation';
 
 import type { TransliteratorInput } from '../../../backend/payload-schema';
-import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 import { DocumentationLanguage } from '../../../backend/shared/language';
 import {
@@ -42,17 +48,10 @@ mockWriteFile.mockImplementation(async (filePath: string) => {
   return Promise.resolve();
 });
 
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
+const mockS3 = mockClient(S3Client);
 
-beforeEach((done) => {
-  AWSMock.setSDKInstance(AWS);
-  done();
-});
-
-afterEach((done) => {
-  AWSMock.restore();
-  reset();
-  done();
+beforeEach(() => {
+  mockS3.reset();
 });
 
 describe('VPC Endpoints', () => {
@@ -125,11 +124,11 @@ describe('VPC Endpoints', () => {
       targets: { python: {} },
     } as any;
 
-    // mock the s3ObjectExists call
-    mockHeadRequest('package.tgz');
-
     // mock the assembly and tarball requests
     mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+    // nothing to delete
+    mockDeleteRequest();
 
     // mock the file uploads
     mockPutRequest(
@@ -208,11 +207,11 @@ test('uninstallable package marker is uploaded', async () => {
     targets: { python: {} },
   } as any;
 
-  // mock the s3ObjectExists call
-  mockHeadRequest('package.tgz');
-
   // mock the assembly and tarball requests
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+  // nothing to delete
+  mockDeleteRequest();
 
   mockPutRequest('/uninstallable');
 
@@ -256,11 +255,11 @@ test('corrupt assembly marker is uploaded for the necessary languages', async ()
 
   const assembly: spec.Assembly = {} as any;
 
-  // mock the s3ObjectExists call
-  mockHeadRequest('package.tgz');
-
   // mock the assembly and tarball requests
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+  // nothing to delete
+  mockDeleteRequest();
 
   mockPutRequest(constants.CORRUPT_ASSEMBLY_SUFFIX);
 
@@ -312,13 +311,6 @@ test('corrupt assembly and uninstallable markers are deleted', async () => {
   };
 
   const assembly: spec.Assembly = {} as any;
-
-  // mock the s3ObjectExists call
-  mockHeadRequest(
-    'package.tgz',
-    constants.CORRUPT_ASSEMBLY_SUFFIX,
-    constants.UNINSTALLABLE_PACKAGE_SUFFIX
-  );
 
   // mock the assembly and tarball requests
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
@@ -375,11 +367,11 @@ test('uploads a file per language (scoped package)', async () => {
     targets: { python: {} },
   } as any;
 
-  // mock the s3ObjectExists call
-  mockHeadRequest('package.tgz');
-
   // mock the assembly and tarball requests
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+  // nothing to delete
+  mockDeleteRequest();
 
   // mock the file uploads
   mockPutRequest('/docs-typescript.json', '/docs-typescript.md');
@@ -427,11 +419,11 @@ test('uploads a file per submodule (unscoped package)', async () => {
     },
   } as any;
 
-  // mock the s3ObjectExists call
-  mockHeadRequest('package.tgz');
-
   // mock the assembly and tarball requests
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+  // nothing to delete
+  mockDeleteRequest();
 
   // mock the file uploads
   mockPutRequest(
@@ -498,14 +490,14 @@ test.each([true, false])(
       ),
     } as any;
 
-    // mock the s3ObjectExists call
-    mockHeadRequest('package.tgz');
-
     // mock the assembly and tarball requests
     mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
     // mock the file uploads
     const writtenKeys = mockPutRequestCollectAll();
+
+    // nothing to delete
+    mockDeleteRequest();
 
     // WHEN
     const result = await handler(event);
@@ -555,9 +547,6 @@ describe('markers for un-supported languages', () => {
       submodules: { 'package-name.sub1': {}, 'package-name.sub2': {} },
     } as any;
 
-    // mock the s3ObjectExists call
-    mockHeadRequest('package.tgz');
-
     // mock the assembly and tarball requests
     mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
@@ -570,6 +559,9 @@ describe('markers for un-supported languages', () => {
       `/docs-sub1-python.json${constants.NOT_SUPPORTED_SUFFIX}`,
       `/docs-sub2-python.json${constants.NOT_SUPPORTED_SUFFIX}`
     );
+
+    // nothing to delete
+    mockDeleteRequest();
 
     const { created } = await transliterate(event);
 
@@ -594,97 +586,60 @@ class MockDocumentation {
 }
 
 function mockFetchRequests(assembly: spec.Assembly, tarball: Buffer) {
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (
-      request: AWS.S3.GetObjectRequest,
-      callback: Response<AWS.S3.GetObjectOutput>
-    ) => {
-      if (request.Key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
-        callback(null, {
-          Body: JSON.stringify(assembly),
-        });
-      } else if (request.Key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
-        callback(null, {
-          Body: JSON.stringify(tarball),
-        });
-      } else {
-        throw new Error(`Unexpected GET request: ${request.Key}`);
-      }
+  mockS3.on(GetObjectCommand).callsFake((request) => {
+    if (request.Key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
+      const stream = new Readable();
+      stream.push(JSON.stringify(assembly));
+      stream.push(null);
+      return {
+        Body: sdkStreamMixin(stream),
+      };
+    } else if (request.Key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
+      const stream = new Readable();
+      stream.push(tarball);
+      stream.push(null);
+      return {
+        Body: sdkStreamMixin(stream),
+      };
+    } else {
+      throw new NotFound({
+        message: `NotFound GET request: ${request.Key}`,
+        $metadata: {},
+      });
     }
-  );
-}
-
-function mockHeadRequest(...suffixes: string[]) {
-  AWSMock.mock(
-    'S3',
-    'headObject',
-    (
-      request: AWS.S3.HeadObjectRequest,
-      cb: Response<AWS.S3.HeadObjectOutput>
-    ) => {
-      if (suffixes.filter((s) => request.Key.endsWith(s)).length > 0) {
-        return cb(null, {});
-      }
-      class NotFound extends Error implements AWSError {
-        public code = 'NotFound';
-        public message = 'Not Found';
-        public time = new Date();
-      }
-      return cb(new NotFound());
-    }
-  );
+  });
 }
 
 function mockPutRequest(...suffixes: string[]) {
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (
-      request: AWS.S3.PutObjectRequest,
-      callback: Response<AWS.S3.PutObjectOutput>
-    ) => {
-      if (suffixes.filter((s) => request.Key.endsWith(s)).length > 0) {
-        callback(null, { VersionId: `versionId-${request.Key}` });
-      } else {
-        throw new Error(`Unexpected PUT request: ${request.Key}`);
-      }
+  mockS3.on(PutObjectCommand).callsFake((request) => {
+    if (suffixes.filter((s) => request.Key.endsWith(s)).length > 0) {
+      return { VersionId: `versionId-${request.Key}` };
+    } else {
+      throw new Error(`Unexpected PUT request: ${request.Key}`);
     }
-  );
+  });
 }
 
 function mockPutRequestCollectAll() {
   const ret = new Array();
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (
-      request: AWS.S3.PutObjectRequest,
-      callback: Response<AWS.S3.PutObjectOutput>
-    ) => {
-      ret.push(request.Key);
-      callback(null, { VersionId: `versionId-${request.Key}` });
-    }
-  );
+  mockS3.on(PutObjectCommand).callsFake((request) => {
+    ret.push(request.Key);
+    return { VersionId: `versionId-${request.Key}` };
+  });
   return ret;
 }
 
 function mockDeleteRequest(...suffixes: string[]) {
-  AWSMock.mock(
-    'S3',
-    'deleteObject',
-    (
-      request: AWS.S3.DeleteObjectRequest,
-      callback: Response<AWS.S3.DeleteObjectOutput>
-    ) => {
-      if (suffixes.filter((s) => request.Key.endsWith(s)).length > 0) {
-        callback(null, { VersionId: `versionId-${request.Key}` });
-      } else {
-        throw new Error(`Unexpected PUT request: ${request.Key}`);
-      }
+  mockS3.on(DeleteObjectCommand).callsFake((request) => {
+    if (suffixes.filter((s) => request.Key.endsWith(s)).length > 0) {
+      return { VersionId: `versionId-${request.Key}` };
+    } else {
+      throw new NotFound({
+        message: `NotFound DELETE request: ${request.Key}`,
+        $metadata: {},
+      });
     }
-  );
+  });
 }
 
 function range(n: number): number[] {

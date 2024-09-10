@@ -1,7 +1,11 @@
+import { rmSync } from 'node:fs';
+import * as fs from 'node:fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { CodeArtifact } from 'aws-sdk';
-import { mkdtemp, remove, writeFile } from 'fs-extra';
+import {
+  CodeartifactClient,
+  GetAuthorizationTokenCommand,
+} from '@aws-sdk/client-codeartifact';
 import { shellOut, shellOutWithOutput } from './shell-out.lambda-shared';
 
 export interface CodeArtifactProps {
@@ -40,15 +44,15 @@ export async function logInWithCodeArtifact({
   // Remove the protocol part of the endpoint URL, keeping the rest intact.
   const protoRelativeEndpoint = endpoint.replace(/^[^:]+:/, '');
 
-  const { authorizationToken } = await new CodeArtifact({
+  const { authorizationToken } = await new CodeartifactClient({
     endpoint: apiEndpoint,
-  })
-    .getAuthorizationToken({
+  }).send(
+    new GetAuthorizationTokenCommand({
       domain,
       domainOwner,
       durationSeconds: 0, // Expires at the same time as the temporary credentials in use.
     })
-    .promise();
+  );
 
   await shellOut('npm', 'config', 'set', `registry=${endpoint}`);
   await shellOut(
@@ -69,20 +73,20 @@ export async function logInWithCodeArtifact({
  * Publishes the provided tarball to the specified CodeArtifact repository.
  *
  * @param tarball a Buffer containing the tarball for the published package.
- * @param opts    the informations about the CodeArtifact repository.
+ * @param opts    the information about the CodeArtifact repository.
  */
 export async function codeArtifactPublishPackage(
   tarball: Buffer,
   opts: CodeArtifactProps
 ) {
   // Working in a temporary directory, so we can log into CodeArtifact and not leave traces.
-  const cwd = await mkdtemp(join(tmpdir(), 'npm-publish-'));
+  const cwd = await fs.mkdtemp(join(tmpdir(), 'npm-publish-'));
   const oldHome = process.env.HOME;
   try {
     process.env.HOME = cwd;
     await logInWithCodeArtifact(opts);
     const tarballPath = join(cwd, 'tarball.tgz');
-    await writeFile(tarballPath, tarball);
+    await fs.writeFile(tarballPath, tarball);
     const { exitCode, signal, stdout } = await shellOutWithOutput(
       'npm',
       'publish',
@@ -110,6 +114,6 @@ export async function codeArtifactPublishPackage(
   } finally {
     // Restore the previous environment, and remove temporary directory
     process.env.HOME = oldHome;
-    await remove(cwd);
+    rmSync(cwd, { recursive: true, force: true });
   }
 }
