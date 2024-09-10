@@ -1,18 +1,24 @@
+import { rmSync } from 'node:fs';
+import * as fs from 'node:fs/promises';
 import * as os from 'os';
 import * as path from 'path';
+import {
+  DeleteObjectCommand,
+  DeleteObjectCommandOutput,
+  GetObjectCommand,
+  NotFound,
+  PutObjectCommand,
+  PutObjectCommandOutput,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { Assembly } from '@jsii/spec';
+import { StreamingBlobPayloadInputTypes } from '@smithy/types';
 import { Sema } from 'async-sema';
 import { metricScope, Unit } from 'aws-embedded-metrics';
-import type { PromiseResult } from 'aws-sdk/lib/request';
-import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
-
-import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render';
-import { JsiiEntity } from 'jsii-docgen/lib/docgen/schema';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { writeFile } from './util';
 import type { S3ObjectVersion, TransliteratorInput } from '../payload-schema';
-import * as aws from '../shared/aws.lambda-shared';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
 import { compressContent } from '../shared/compress-content.lambda-shared';
 import * as constants from '../shared/constants';
@@ -28,6 +34,12 @@ const ASSEMBLY_KEY_REGEX = new RegExp(
 const S3_SEMAPHORE = new Sema(
   parseInt(process.env.MAX_CONCURRENT_S3_REQUESTS ?? '16', 10)
 );
+
+const S3_CLIENT = new S3Client({
+  // https://docs.aws.amazon.com/sdkref/latest/guide/feature-retry-behavior.html#standardvsadaptive
+  // This works because S3 throttles requests based on prefix
+  retryMode: 'ADAPTIVE',
+});
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -94,7 +106,7 @@ export function transliterate(
     const npmCacheDir = process.env.NPM_CACHE;
     if (npmCacheDir) {
       // Create it if it does not exist yet...
-      await fs.mkdirp(npmCacheDir);
+      await fs.mkdir(npmCacheDir, { recursive: true });
       console.log(`Using shared NPM cache at: ${npmCacheDir}`);
       await shellOut('npm', 'config', 'set', `cache=${npmCacheDir}`);
     }
@@ -117,11 +129,9 @@ export function transliterate(
     console.log(`Source Version: ${event.assembly.versionId}`);
 
     console.log(`Fetching assembly: ${event.assembly.key}`);
-    const assemblyResponse = await retry(() =>
-      aws
-        .s3()
-        .getObject({ Bucket: event.bucket, Key: event.assembly.key })
-        .promise()
+
+    const assemblyResponse = await S3_CLIENT.send(
+      new GetObjectCommand({ Bucket: event.bucket, Key: event.assembly.key })
     );
     if (!assemblyResponse.Body) {
       throw new Error(
@@ -129,40 +139,41 @@ export function transliterate(
       );
     }
 
-    const assembly = JSON.parse(
-      assemblyResponse.Body.toString('utf-8')
-    ) as Assembly;
+    const assembly = (await assemblyResponse.Body.transformToString(
+      'utf-8'
+    ).then(JSON.parse)) as Assembly;
     const submoduleFqns = Object.keys(assembly.submodules ?? {});
     console.log(
       `Assembly ${assembly.name} has ${submoduleFqns.length} submodules.`
     );
 
     console.log(`Fetching package: ${event.package.key}`);
-    const tarballExists = await aws.s3ObjectExists(
-      event.bucket,
-      event.package.key
-    );
-    if (!tarballExists) {
-      throw new Error(
-        `Tarball does not exist at key ${event.package.key} in bucket ${event.bucket}.`
-      );
-    }
-    const readStream = aws
-      .s3()
-      .getObject({ Bucket: event.bucket, Key: event.package.key })
-      .createReadStream();
-    const tmpdir = fs.mkdtempSync(path.join(os.tmpdir(), 'packages-'));
-    const tarball = path.join(tmpdir, 'package.tgz');
-    await writeFile(tarball, readStream);
 
-    const uploads = new Map<
-      string,
-      Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>
-    >();
-    const deletions = new Map<
-      string,
-      Promise<PromiseResult<AWS.S3.DeleteObjectOutput, AWS.AWSError>>
-    >();
+    const tmpdir = await fs.mkdtemp(path.join(os.tmpdir(), 'packages-'));
+    const tarball = path.join(tmpdir, 'package.tgz');
+
+    try {
+      const tarballResponse = await S3_CLIENT.send(
+        new GetObjectCommand({ Bucket: event.bucket, Key: event.package.key })
+      );
+      if (!tarballResponse.Body) {
+        throw new Error(
+          `Tarball has no body at key ${event.package.key} in bucket ${event.bucket}.`
+        );
+      }
+
+      await writeFile(tarball, tarballResponse.Body!);
+    } catch (error: any) {
+      if (error instanceof NotFound || error.name === 'NotFound') {
+        throw new Error(
+          `Tarball does not exist at key ${event.package.key} in bucket ${event.bucket}.`
+        );
+      }
+      throw error;
+    }
+
+    const uploads = new Map<string, Promise<PutObjectCommandOutput>>();
+    const deletions = new Map<string, Promise<DeleteObjectCommandOutput>>();
 
     let unprocessable: boolean = false;
 
@@ -179,12 +190,15 @@ export function transliterate(
 
     async function unmarkPackage(marker: string) {
       const key = event.assembly.key.replace(/\/[^/]+$/, marker);
-      const marked = await aws.s3ObjectExists(event.bucket, key);
-      if (!marked) {
-        return;
+      try {
+        const deletion = await deleteFile(event.bucket, key);
+        deletions.set(key, Promise.resolve(deletion));
+      } catch (error: any) {
+        if (error instanceof NotFound || error.name === 'NotFound') {
+          return;
+        }
+        deletions.set(key, Promise.reject(error));
       }
-      const deletion = deleteFile(event.bucket, key);
-      deletions.set(key, deletion);
     }
 
     console.log(`Generating documentation for ${packageFqn}...`);
@@ -250,10 +264,13 @@ export function transliterate(
                 );
                 uploads.set(jsonKey, jsonUpload);
 
-                const markdown = MarkdownRenderer.fromSchema(json.content, {
-                  anchorFormatter,
-                  linkFormatter: linkFormatter(docgenLang),
-                });
+                const markdown = docgen.MarkdownRenderer.fromSchema(
+                  json.content,
+                  {
+                    anchorFormatter,
+                    linkFormatter: linkFormatter(docgenLang),
+                  }
+                );
 
                 const page = Buffer.from(markdown.render());
                 metrics.putMetric(
@@ -416,29 +433,29 @@ async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
     return await cb();
   } finally {
     process.env.HOME = oldHome;
-    await fs.remove(fakeHome);
+    rmSync(fakeHome, { recursive: true, force: true });
     console.log(`Cleaned-up temporary $HOME directory: ${fakeHome}`);
   }
 }
 
-function uploadFile(
+async function uploadFile(
   bucket: string,
   key: string,
   sourceVersionId?: string,
-  body?: AWS.S3.Body,
+  body?: StreamingBlobPayloadInputTypes,
   contentEncoding?: 'gzip'
-) {
+): Promise<PutObjectCommandOutput> {
   const contentType = key.endsWith('.md')
     ? 'text/markdown; charset=UTF-8'
     : key.endsWith('.json')
     ? 'application/json; charset=UTF-8'
     : 'application/octet-stream';
 
-  const token = S3_SEMAPHORE.acquire();
-  return retry(() =>
-    aws
-      .s3()
-      .putObject({
+  await S3_SEMAPHORE.acquire();
+  try {
+    logSemaphoreQueue('uploadFile');
+    return await S3_CLIENT.send(
+      new PutObjectCommand({
         Bucket: bucket,
         Key: key,
         Body: body,
@@ -451,23 +468,37 @@ function uploadFile(
           'Origin-Version-Id': sourceVersionId ?? 'N/A',
         },
       })
-      .promise()
-  ).finally(() => S3_SEMAPHORE.release(token));
+    );
+  } finally {
+    S3_SEMAPHORE.release();
+  }
 }
 
-function deleteFile(bucket: string, key: string) {
-  return retry(() =>
-    aws
-      .s3()
-      .deleteObject({
+async function deleteFile(
+  bucket: string,
+  key: string
+): Promise<DeleteObjectCommandOutput> {
+  await S3_SEMAPHORE.acquire();
+  try {
+    logSemaphoreQueue('deleteFile');
+    return await S3_CLIENT.send(
+      new DeleteObjectCommand({
         Bucket: bucket,
         Key: key,
       })
-      .promise()
-  );
+    );
+  } finally {
+    S3_SEMAPHORE.release();
+  }
 }
 
-function anchorFormatter(type: JsiiEntity) {
+function logSemaphoreQueue(source: string) {
+  if (S3_SEMAPHORE.nrWaiting() >= 1) {
+    console.log(`${source}: ${S3_SEMAPHORE.nrWaiting()} S3 calls are waiting`);
+  }
+}
+
+function anchorFormatter(type: docgen.JsiiEntity) {
   const name = getAssemblyRelativeName(type); // BucketProps.Initializer.parameter.accessControl
   const [base, ...rest] = name.split('.');
   if (rest.length > 0) {
@@ -490,7 +521,7 @@ function formatArtifactKey(
 }
 
 function linkFormatter(lang: docgen.Language) {
-  const formatter = (type: JsiiEntity) => {
+  const formatter = (type: docgen.JsiiEntity) => {
     const name = getAssemblyRelativeName(type); // BucketProps.Initializer.parameter.accessControl
     const [baseName, ...rest] = name.split('.');
     const hash = '#' + rest.join('.'); // #Initializer.parameter.accessControl
@@ -505,7 +536,7 @@ function linkFormatter(lang: docgen.Language) {
  * Converts a type's id to an assembly-relative version, e.g.:
  * `aws-cdk-lib.aws_s3.Bucket.parameter.accessControl` => `Bucket.parameter.accessControl`
  */
-function getAssemblyRelativeName(type: JsiiEntity): string {
+function getAssemblyRelativeName(type: docgen.JsiiEntity): string {
   let name = type.id;
   if (!name.startsWith(type.packageName)) {
     throw new Error(
@@ -533,39 +564,4 @@ interface S3Object {
   readonly bucket: string;
   readonly key: string;
   readonly versionId?: string;
-}
-
-/**
- * Retry a function a number of times if it happens to get throttled
- */
-async function retry<A>(cb: () => Promise<A>): Promise<A> {
-  const deadline = Date.now() + 30_000; // Half a minute minute
-  let sleepMs = 20;
-  while (true) {
-    try {
-      return await cb();
-    } catch (e) {
-      if (!isRetryableError(e) || Date.now() >= deadline) {
-        throw e;
-      }
-
-      await sleep(Math.floor(Math.random() * sleepMs));
-      sleepMs *= 2;
-    }
-  }
-}
-
-function isRetryableError(e: any) {
-  // Prepare for AWS SDK v3 already
-  return (
-    e.code === 'SlowDown' ||
-    e.name === 'SlowDown' ||
-    e.code === 503 ||
-    e.statusCode === 503 ||
-    e.retryable === true
-  );
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise<void>((ok) => setTimeout(ok, ms));
 }
