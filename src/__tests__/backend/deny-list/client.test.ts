@@ -1,6 +1,4 @@
-import { Readable } from 'stream';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { sdkStreamMixin } from '@smithy/util-stream';
 import * as AWS from 'aws-sdk';
 import { mockClient } from 'aws-sdk-client-mock';
 import * as AWSMock from 'aws-sdk-mock';
@@ -11,6 +9,7 @@ import {
   ENV_DENY_LIST_OBJECT_KEY,
 } from '../../../backend/deny-list/constants';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
+import { stringToStream } from '../../streams';
 
 const sample: Record<string, DenyListRule> = {
   'foo/v1.2.3': {
@@ -89,10 +88,11 @@ test('s3 object is not a valid json', async () => {
 });
 
 describe('lookup', () => {
-  const s3Mock = mockClient(S3Client);
+  let s3Mock: any;
   let client: DenyListClient;
 
   beforeEach(async () => {
+    s3Mock = mockClient(S3Client);
     s3Mock.on(GetObjectCommand).resolves({
       Body: stringToStream(JSON.stringify(sample)),
     });
@@ -129,10 +129,3 @@ describe('lookup', () => {
     expect(client.lookup('foo', '4.4.4')).toBeUndefined();
   });
 });
-
-function stringToStream(s: string): any {
-  const stream = new Readable();
-  stream.push(s);
-  stream.push(null);
-  return sdkStreamMixin(stream);
-}
