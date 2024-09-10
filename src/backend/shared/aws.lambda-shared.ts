@@ -8,8 +8,8 @@ AWSXRay.setContextMissingStrategy(() => {});
 
 const AWS = AWSXRay.captureAWS(_AWS);
 
-export const s3Client: S3Client = AWSXRay.captureAWSv3Client(new S3Client({}));
-export const ecsClient: ECSClient = AWSXRay.captureAWSv3Client(
+export const S3_CLIENT: S3Client = AWSXRay.captureAWSv3Client(new S3Client({}));
+export const ECS_CLIENT: ECSClient = AWSXRay.captureAWSv3Client(
   new ECSClient({})
 );
 
@@ -42,7 +42,7 @@ export async function s3ObjectExists(
   key: string
 ): Promise<boolean> {
   try {
-    await s3Client.send(
+    await S3_CLIENT.send(
       new HeadObjectCommand({
         Bucket: bucket,
         Key: key,

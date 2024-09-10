@@ -4,7 +4,7 @@ import {
   ENV_DENY_LIST_BUCKET_NAME,
   ENV_DENY_LIST_OBJECT_KEY,
 } from './constants';
-import { s3Client } from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 /**
@@ -29,7 +29,7 @@ export class DenyListClient {
   private constructor() {
     this.bucketName = requireEnv(ENV_DENY_LIST_BUCKET_NAME);
     this.objectKey = requireEnv(ENV_DENY_LIST_OBJECT_KEY);
-    this.s3Client = s3Client;
+    this.s3Client = S3_CLIENT;
   }
 
   /**

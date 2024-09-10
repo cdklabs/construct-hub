@@ -17,7 +17,7 @@ import { CacheStrategy } from '../../caching';
 import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
-import { s3Client } from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 
@@ -169,7 +169,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     }
   }
 
-  const result = await aws.s3Client.send(
+  const result = await aws.S3_CLIENT.send(
     new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: constants.CATALOG_KEY,
@@ -232,7 +232,7 @@ async function* relevantObjects(bucket: string, startAfter?: string) {
   };
 
   do {
-    const result = await s3Client.send(new ListObjectsV2Command(request));
+    const result = await S3_CLIENT.send(new ListObjectsV2Command(request));
     for (const object of result.Contents ?? []) {
       if (!object.Key?.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
         continue;
@@ -308,14 +308,14 @@ async function appendPackage(
   console.log(`Registering ${packageName}@${version}`);
 
   // Donwload the tarball to inspect the `package.json` data therein.
-  const pkg = await aws.s3Client.send(
+  const pkg = await aws.S3_CLIENT.send(
     new GetObjectCommand({ Bucket: bucketName, Key: pkgKey })
   );
   const metadataKey = pkgKey.replace(
     constants.PACKAGE_KEY_SUFFIX,
     constants.METADATA_KEY_SUFFIX
   );
-  const metadataResponse = await aws.s3Client.send(
+  const metadataResponse = await aws.S3_CLIENT.send(
     new GetObjectCommand({ Bucket: bucketName, Key: metadataKey })
   );
   const manifest = await new Promise<Buffer>((ok, ko) => {
@@ -377,7 +377,7 @@ async function appendPackage(
 
 async function getCatalog(bucketName: string): Promise<GetObjectCommandOutput> {
   try {
-    return await aws.s3Client.send(
+    return await aws.S3_CLIENT.send(
       new GetObjectCommand({
         Bucket: bucketName,
         Key: constants.CATALOG_KEY,
