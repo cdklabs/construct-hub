@@ -50,7 +50,7 @@ export async function s3ObjectExists(
     );
     return true;
   } catch (cause: any) {
-    if (cause.code === 'NotFound') {
+    if (cause instanceof NotFound || cause.name === 'NotFound') {
       return false;
     }
     throw cause;
