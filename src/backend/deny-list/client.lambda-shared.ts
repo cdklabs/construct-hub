@@ -1,4 +1,9 @@
-import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  NoSuchBucket,
+  NoSuchKey,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { DenyListMap, DenyListRule } from './api';
 import {
   ENV_DENY_LIST_BUCKET_NAME,
@@ -77,7 +82,12 @@ export class DenyListClient {
 
       this._map = data;
     } catch (e: any) {
-      if (e.code === 'NoSuchKey' || e.code === 'NoSuchBucket') {
+      if (
+        e.name === 'NoSuchKey' ||
+        e.name === 'NoSuchBucket' ||
+        e instanceof NoSuchKey ||
+        e instanceof NoSuchBucket
+      ) {
         return;
       }
 

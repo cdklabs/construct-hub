@@ -1,4 +1,9 @@
-import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  NoSuchBucket,
+  NoSuchKey,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import * as AWS from 'aws-sdk';
 import { mockClient } from 'aws-sdk-client-mock';
 import * as AWSMock from 'aws-sdk-mock';
@@ -39,9 +44,14 @@ afterEach(() => {
 test('s3 object not found error', async () => {
   const s3Mock = mockClient(S3Client);
 
-  const err = new Error('NoSuchKey');
-  (err as any).code = 'NoSuchKey';
-  s3Mock.on(GetObjectCommand).rejects(err);
+  s3Mock.on(GetObjectCommand).rejects(
+    new NoSuchKey({
+      message: 'The specified key does not exist.',
+      $metadata: {
+        httpStatusCode: 404,
+      },
+    })
+  );
 
   const client = await DenyListClient.newClient();
   expect(client.lookup('foo', '1.2.3')).toBeUndefined();
@@ -50,9 +60,14 @@ test('s3 object not found error', async () => {
 test('s3 bucket not found error', async () => {
   const s3Mock = mockClient(S3Client);
 
-  const err = new Error('NoSuchBucket');
-  (err as any).code = 'NoSuchBucket';
-  s3Mock.on(GetObjectCommand).rejects(err);
+  s3Mock.on(GetObjectCommand).rejects(
+    new NoSuchBucket({
+      message: 'The specified bucket does not exist.',
+      $metadata: {
+        httpStatusCode: 404,
+      },
+    })
+  );
 
   const client = await DenyListClient.newClient();
   expect(client.lookup('foo', '1.2.3')).toBeUndefined();

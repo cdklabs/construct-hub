@@ -1,5 +1,6 @@
 import { gunzip } from 'zlib';
 
+import { InvokeCommand } from '@aws-sdk/client-lambda';
 import {
   GetObjectCommand,
   GetObjectCommandOutput,
@@ -193,23 +194,21 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     };
     // We start it asynchronously, as this function has a provisionned
     // concurrency of 1 (so a synchronous attempt would always be throttled).
-    await aws
-      .lambda()
-      .invokeAsync({
+    await aws.LAMBDA_CLIENT.send(
+      new InvokeCommand({
         FunctionName: context.functionName,
-        InvokeArgs: JSON.stringify(nextEvent, null, 2),
+        Payload: JSON.stringify(nextEvent, null, 2),
       })
-      .promise();
+    );
   } else {
     if (process.env.FEED_BUILDER_FUNCTION_NAME) {
       // Catalog is updated. Update the RSS/ATOM feed
-      await aws
-        .lambda()
-        .invokeAsync({
+      await aws.LAMBDA_CLIENT.send(
+        new InvokeCommand({
           FunctionName: process.env.FEED_BUILDER_FUNCTION_NAME,
-          InvokeArgs: JSON.stringify({}),
+          Payload: JSON.stringify({}),
         })
-        .promise();
+      );
     }
   }
 

@@ -2,17 +2,16 @@ import { randomBytes } from 'crypto';
 import { PassThrough } from 'stream';
 import * as zip from 'zlib';
 
+import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import {
   GetObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
+  NotFound,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import * as AWS from 'aws-sdk';
-import { AWSError } from 'aws-sdk';
 import { mockClient } from 'aws-sdk-client-mock';
-import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
 
 import { CatalogModel, DenyListMap } from '../../../backend';
@@ -22,7 +21,6 @@ import {
   ENV_DENY_LIST_OBJECT_KEY,
 } from '../../../backend/deny-list/constants';
 import { CatalogBuilderInput } from '../../../backend/payload-schema';
-import * as aws from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 import { stringToStream } from '../../streams';
 
@@ -47,13 +45,10 @@ beforeEach((done) => {
   process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
   process.env[ENV_DENY_LIST_OBJECT_KEY] = MOCK_DENY_LIST_OBJECT;
 
-  AWSMock.setSDKInstance(AWS);
   done();
 });
 
 afterEach((done) => {
-  AWSMock.restore();
-  aws.reset();
   process.env.BUCKET_NAME = mockBucketName = undefined;
   delete process.env[ENV_DENY_LIST_BUCKET_NAME];
   delete process.env[ENV_DENY_LIST_OBJECT_KEY];
@@ -154,13 +149,10 @@ test('initial build', () => {
       return {};
     }
 
-    class NotFound extends Error implements AWSError {
-      public code = 'NotFound';
-      public message = 'Not Found';
-      public time = new Date();
-    }
-
-    throw new NotFound();
+    throw new NotFound({
+      message: 'Not Found',
+      $metadata: {},
+    });
   });
 
   s3Mock.on(PutObjectCommand).callsFake((req) => {
@@ -299,13 +291,10 @@ test('rebuild (with continuation)', async () => {
       return {};
     }
 
-    class NotFound extends Error implements AWSError {
-      public code = 'NotFound';
-      public message = 'Not Found';
-      public time = new Date();
-    }
-
-    throw new NotFound();
+    throw new NotFound({
+      message: 'Not Found',
+      $metadata: {},
+    });
   });
 
   s3Mock.on(PutObjectCommand).callsFake((req) => {
@@ -335,27 +324,17 @@ test('rebuild (with continuation)', async () => {
 
   let invokeDone = false;
   const mockFunctionName = 'fake-function-name';
-  AWSMock.mock(
-    'Lambda',
-    'invokeAsync',
-    (
-      req: AWS.Lambda.InvokeAsyncRequest,
-      cb: Response<AWS.Lambda.InvokeAsyncResponse>
-    ) => {
-      try {
-        expect(req.FunctionName).toBe(mockFunctionName);
-        expect(JSON.parse(req.InvokeArgs!.toString('utf8'))).toEqual({
-          startAfter: mockFirstPage.find(({ Key }) =>
-            Key!.endsWith(constants.PACKAGE_KEY_SUFFIX)
-          )!.Key,
-        });
-        invokeDone = true;
-        return cb(null, { Status: 202 });
-      } catch (e) {
-        return cb(e as any);
-      }
-    }
-  );
+  const lambdaMock = mockClient(LambdaClient);
+  lambdaMock.on(InvokeCommand).callsFake((req) => {
+    expect(req.FunctionName).toBe(mockFunctionName);
+    expect(JSON.parse(req.Payload.toString('utf8'))).toEqual({
+      startAfter: mockFirstPage.find(({ Key }) =>
+        Key!.endsWith(constants.PACKAGE_KEY_SUFFIX)
+      )!.Key,
+    });
+    invokeDone = true;
+    return { Status: 202 };
+  });
 
   // WHEN
   const result = handler(
@@ -730,8 +709,6 @@ describe('incremental build', () => {
     return expect(result).resolves.toStrictEqual({});
   });
 });
-
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 class NoSuchKeyError extends Error implements AWS.AWSError {
   public code = 'NoSuchKey';
