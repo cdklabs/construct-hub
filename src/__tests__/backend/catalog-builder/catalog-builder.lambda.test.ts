@@ -7,6 +7,7 @@ import {
   GetObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
+  NoSuchKey,
   NotFound,
   PutObjectCommand,
   S3Client,
@@ -78,7 +79,10 @@ test('initial build', () => {
         Body: pack,
       }));
     } else {
-      throw new NoSuchKeyError();
+      throw new NoSuchKey({
+        message: 'Not Found',
+        $metadata: {},
+      });
     }
   });
 
@@ -250,7 +254,10 @@ test('rebuild (with continuation)', async () => {
         Body: pack,
       }));
     } else {
-      throw new NoSuchKeyError();
+      throw new NoSuchKey({
+        message: 'Not Found',
+        $metadata: {},
+      });
     }
   });
 
@@ -424,7 +431,10 @@ describe('incremental build', () => {
           Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
-        throw new NoSuchKeyError();
+        throw new NoSuchKey({
+          message: 'Not Found',
+          $metadata: {},
+        });
       }
     });
 
@@ -494,7 +504,10 @@ describe('incremental build', () => {
           Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
-        throw new NoSuchKeyError();
+        throw new NoSuchKey({
+          message: 'Not Found',
+          $metadata: {},
+        });
       }
     });
 
@@ -560,7 +573,10 @@ describe('incremental build', () => {
           Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
-        throw new NoSuchKeyError();
+        throw new NoSuchKey({
+          message: 'Not Found',
+          $metadata: {},
+        });
       }
     });
 
@@ -618,7 +634,10 @@ describe('incremental build', () => {
           Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
-        throw new NoSuchKeyError();
+        throw new NoSuchKey({
+          message: 'Not Found',
+          $metadata: {},
+        });
       }
     });
 
@@ -678,7 +697,10 @@ describe('incremental build', () => {
           Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
-        throw new NoSuchKeyError();
+        throw new NoSuchKey({
+          message: 'Not Found',
+          $metadata: {},
+        });
       }
     });
 
@@ -709,21 +731,6 @@ describe('incremental build', () => {
     return expect(result).resolves.toStrictEqual({});
   });
 });
-
-class NoSuchKeyError extends Error implements AWS.AWSError {
-  public code = 'NoSuchKey';
-  public time = new Date();
-
-  public retryable?: boolean | undefined;
-  public statusCode?: number | undefined;
-  public hostname?: string | undefined;
-  public region?: string | undefined;
-  public retryDelay?: number | undefined;
-  public requestId?: string | undefined;
-  public extendedRequestId?: string | undefined;
-  public cfId?: string | undefined;
-  public originalError?: Error | undefined;
-}
 
 function mockNpmPackage(name: string, version: string) {
   const packageJson = {

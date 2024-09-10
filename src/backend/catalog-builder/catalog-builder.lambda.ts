@@ -6,6 +6,7 @@ import {
   GetObjectCommandOutput,
   ListObjectsV2Command,
   ListObjectsV2CommandInput,
+  NoSuchKey,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
@@ -383,9 +384,11 @@ async function getCatalog(bucketName: string): Promise<GetObjectCommandOutput> {
       })
     );
   } catch (e: any) {
-    if (e.code !== 'NoSuchKey') throw e;
-    return {
-      /* no data */
-    } as GetObjectCommandOutput;
+    if (e instanceof NoSuchKey || e.name === 'NoSuchKey') {
+      return {
+        /* no data */
+      } as GetObjectCommandOutput;
+    }
+    throw e;
   }
 }
