@@ -3,11 +3,12 @@ import { gunzip } from 'zlib';
 import {
   GetObjectCommand,
   GetObjectCommandOutput,
+  ListObjectsV2Command,
+  ListObjectsV2CommandInput,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
 import { CatalogModel, PackageInfo } from '.';
@@ -16,6 +17,7 @@ import { CacheStrategy } from '../../caching';
 import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
+import { s3Client } from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 
@@ -223,13 +225,14 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
  * @param startAfter the key to start reading from, if provided.
  */
 async function* relevantObjects(bucket: string, startAfter?: string) {
-  const request: S3.ListObjectsV2Request = {
+  const request: ListObjectsV2CommandInput = {
     Bucket: bucket,
     Prefix: constants.STORAGE_KEY_PREFIX,
     StartAfter: startAfter,
   };
+
   do {
-    const result = await aws.s3().listObjectsV2(request).promise();
+    const result = await s3Client.send(new ListObjectsV2Command(request));
     for (const object of result.Contents ?? []) {
       if (!object.Key?.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
         continue;
@@ -305,18 +308,16 @@ async function appendPackage(
   console.log(`Registering ${packageName}@${version}`);
 
   // Donwload the tarball to inspect the `package.json` data therein.
-  const pkg = await aws
-    .s3()
-    .getObject({ Bucket: bucketName, Key: pkgKey })
-    .promise();
+  const pkg = await aws.s3Client.send(
+    new GetObjectCommand({ Bucket: bucketName, Key: pkgKey })
+  );
   const metadataKey = pkgKey.replace(
     constants.PACKAGE_KEY_SUFFIX,
     constants.METADATA_KEY_SUFFIX
   );
-  const metadataResponse = await aws
-    .s3()
-    .getObject({ Bucket: bucketName, Key: metadataKey })
-    .promise();
+  const metadataResponse = await aws.s3Client.send(
+    new GetObjectCommand({ Bucket: bucketName, Key: metadataKey })
+  );
   const manifest = await new Promise<Buffer>((ok, ko) => {
     gunzip(Buffer.from(pkg.Body! as any), (err, tar) => {
       if (err) {
@@ -355,7 +356,7 @@ async function appendPackage(
   // Add the PackageInfo into the working set
   const pkgMetadata = JSON.parse(manifest.toString('utf-8'));
   const npmMetadata = JSON.parse(
-    metadataResponse?.Body?.toString('utf-8') ?? '{}'
+    (await metadataResponse?.Body?.transformToString()) ?? ''
   );
   const major = new SemVer(pkgMetadata.version).major;
   if (!packages.has(pkgMetadata.name)) {

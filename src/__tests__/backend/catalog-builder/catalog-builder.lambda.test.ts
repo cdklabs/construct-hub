@@ -4,6 +4,8 @@ import * as zip from 'zlib';
 
 import {
   GetObjectCommand,
+  HeadObjectCommand,
+  ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -61,38 +63,30 @@ afterEach((done) => {
 test('initial build', () => {
   // GIVEN
   const npmMetadata = { date: 'Thu, 17 Jun 2021 01:52:04 GMT' };
-
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      const denyListResponse = tryMockDenyList(req);
-      if (denyListResponse) {
-        return cb(null, denyListResponse);
-      }
-
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-      } catch (e) {
-        return cb(e as any);
-      }
-
-      if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return cb(null, { Body: JSON.stringify(npmMetadata) });
-      }
-      const matches = new RegExp(
-        `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
-      ).exec(req.Key);
-      if (matches != null) {
-        mockNpmPackage(matches[1], matches[2]).then(
-          (pack) => cb(null, { Body: pack }),
-          cb
-        );
-      } else {
-        return cb(new NoSuchKeyError());
-      }
+  const s3Mock = mockClient(S3Client);
+  s3Mock.on(GetObjectCommand).callsFake((req) => {
+    const denyListResponse = tryMockDenyList(req);
+    if (denyListResponse) {
+      return denyListResponse;
     }
-  );
+
+    expect(req.Bucket).toBe(mockBucketName);
+
+    if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
+      return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+    }
+    const matches = new RegExp(
+      `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
+    ).exec(req.Key);
+    if (matches != null) {
+      return mockNpmPackage(matches[1], matches[2]).then((pack) => ({
+        Body: pack,
+      }));
+    } else {
+      throw new NoSuchKeyError();
+    }
+  });
+
   // this is the suffix that triggers the catalog builder.
   const docsSuffix = constants.DOCS_KEY_SUFFIX_TYPESCRIPT;
   const mockFirstPage: AWS.S3.ObjectList = [
@@ -138,97 +132,72 @@ test('initial build', () => {
     },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v0.0.0-pre${docsSuffix}` },
   ];
-  AWSMock.mock(
-    'S3',
-    'listObjectsV2',
-    (
-      req: AWS.S3.ListObjectsV2Request,
-      cb: Response<AWS.S3.ListObjectsV2Output>
-    ) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
-      } catch (e) {
-        return cb(e as any);
-      }
-      if (req.ContinuationToken == null) {
-        return cb(null, {
-          Contents: mockFirstPage,
-          NextContinuationToken: 'next',
-        });
-      }
-      try {
-        expect(req.ContinuationToken).toBe('next');
-      } catch (e) {
-        return cb(e as any);
-      }
-      return cb(null, { Contents: mockSecondPage });
-    }
-  );
-  AWSMock.mock(
-    'S3',
-    'headObject',
-    (req: AWS.S3.HeadObjectRequest, cb: Response<AWS.S3.HeadObjectOutput>) => {
-      const existingKeys = new Set(
-        [...mockFirstPage, ...mockSecondPage].map((obj) => obj.Key!)
-      );
-      if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
-        return cb(null, {});
-      }
 
-      class NotFound extends Error implements AWSError {
-        public code = 'NotFound';
-        public message = 'Not Found';
-        public time = new Date();
-      }
+  s3Mock.on(ListObjectsV2Command).callsFake((req) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
+    if (req.ContinuationToken == null) {
+      return {
+        Contents: mockFirstPage,
+        NextContinuationToken: 'next',
+      };
+    }
+    expect(req.ContinuationToken).toBe('next');
+    return { Contents: mockSecondPage };
+  });
 
-      return cb(new NotFound());
+  s3Mock.on(HeadObjectCommand).callsFake((req) => {
+    const existingKeys = new Set(
+      [...mockFirstPage, ...mockSecondPage].map((obj) => obj.Key!)
+    );
+    if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
+      return {};
     }
-  );
-  const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Key).toBe(constants.CATALOG_KEY);
-        expect(req.ContentType).toBe('application/json');
-        expect(req.Metadata).toHaveProperty('Package-Count', '3');
-        const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-        expect(body.packages).toEqual([
-          {
-            description: 'Package @scope/package, version 1.2.3',
-            languages: { foo: 'bar' },
-            major: 1,
-            metadata: npmMetadata,
-            name: '@scope/package',
-            version: '1.2.3',
-          },
-          {
-            description: 'Package name, version 1.2.3',
-            languages: { foo: 'bar' },
-            major: 1,
-            metadata: npmMetadata,
-            name: 'name',
-            version: '1.2.3',
-          },
-          {
-            description: 'Package name, version 2.0.0-pre',
-            languages: { foo: 'bar' },
-            major: 2,
-            metadata: npmMetadata,
-            name: 'name',
-            version: '2.0.0-pre',
-          },
-        ]);
-        expect(Date.parse(body.updatedAt)).toBeDefined();
-      } catch (e) {
-        return cb(e as any);
-      }
-      return cb(null, mockPutObjectResult);
+
+    class NotFound extends Error implements AWSError {
+      public code = 'NotFound';
+      public message = 'Not Found';
+      public time = new Date();
     }
-  );
+
+    throw new NotFound();
+  });
+
+  s3Mock.on(PutObjectCommand).callsFake((req) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Key).toBe(constants.CATALOG_KEY);
+    expect(req.ContentType).toBe('application/json');
+    expect(req.Metadata).toHaveProperty('Package-Count', '3');
+    const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+    expect(body.packages).toEqual([
+      {
+        description: 'Package @scope/package, version 1.2.3',
+        languages: { foo: 'bar' },
+        major: 1,
+        metadata: npmMetadata,
+        name: '@scope/package',
+        version: '1.2.3',
+      },
+      {
+        description: 'Package name, version 1.2.3',
+        languages: { foo: 'bar' },
+        major: 1,
+        metadata: npmMetadata,
+        name: 'name',
+        version: '1.2.3',
+      },
+      {
+        description: 'Package name, version 2.0.0-pre',
+        languages: { foo: 'bar' },
+        major: 2,
+        metadata: npmMetadata,
+        name: 'name',
+        version: '2.0.0-pre',
+      },
+    ]);
+    expect(Date.parse(body.updatedAt)).toBeDefined();
+    return {};
+  });
 
   // WHEN
   const result = handler(
@@ -242,7 +211,7 @@ test('initial build', () => {
   );
 
   // THEN
-  return expect(result).resolves.toBe(mockPutObjectResult);
+  return expect(result).resolves.toStrictEqual({});
 });
 
 test('rebuild (with continuation)', async () => {
@@ -265,41 +234,69 @@ test('rebuild (with continuation)', async () => {
     updated: new Date(0).toISOString(),
   };
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      const denyListResponse = tryMockDenyList(req);
-      if (denyListResponse) {
-        return cb(null, denyListResponse);
-      }
-
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-      } catch (e) {
-        return cb(e as any);
-      }
-
-      if (req.Key === constants.CATALOG_KEY) {
-        return cb(null, { Body: JSON.stringify(mockCatalog) });
-      }
-
-      if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return cb(null, { Body: JSON.stringify(npmMetadata) });
-      }
-      const matches = new RegExp(
-        `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
-      ).exec(req.Key);
-      if (matches != null) {
-        mockNpmPackage(matches[1], matches[2]).then(
-          (pack) => cb(null, { Body: pack }),
-          cb
-        );
-      } else {
-        return cb(new NoSuchKeyError());
-      }
+  const s3Mock = mockClient(S3Client);
+  s3Mock.on(GetObjectCommand).callsFake((req) => {
+    const denyListResponse = tryMockDenyList(req);
+    if (denyListResponse) {
+      return denyListResponse;
     }
-  );
+
+    expect(req.Bucket).toBe(mockBucketName);
+
+    if (req.Key === constants.CATALOG_KEY) {
+      return { Body: stringToStream(JSON.stringify(mockCatalog)) };
+    }
+
+    if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
+      return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+    }
+    const matches = new RegExp(
+      `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
+    ).exec(req.Key);
+    if (matches != null) {
+      return mockNpmPackage(matches[1], matches[2]).then((pack) => ({
+        Body: pack,
+      }));
+    } else {
+      throw new NoSuchKeyError();
+    }
+  });
+
+  // AWSMock.mock(
+  //   'S3',
+  //   'getObject',
+  //   (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+  //     const denyListResponse = tryMockDenyList(req);
+  //     if (denyListResponse) {
+  //       return cb(null, denyListResponse);
+  //     }
+  //
+  //     try {
+  //       expect(req.Bucket).toBe(mockBucketName);
+  //     } catch (e) {
+  //       return cb(e as any);
+  //     }
+  //
+  //     if (req.Key === constants.CATALOG_KEY) {
+  //       return cb(null, { Body: JSON.stringify(mockCatalog) });
+  //     }
+  //
+  //     if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
+  //       return cb(null, { Body: JSON.stringify(npmMetadata) });
+  //     }
+  //     const matches = new RegExp(
+  //       `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
+  //     ).exec(req.Key);
+  //     if (matches != null) {
+  //       mockNpmPackage(matches[1], matches[2]).then(
+  //         (pack) => cb(null, { Body: pack }),
+  //         cb
+  //       );
+  //     } else {
+  //       return cb(new NoSuchKeyError());
+  //     }
+  //   }
+  // );
   // this is the suffix that triggers the catalog builder.
   const docsSuffix = constants.DOCS_KEY_SUFFIX_TYPESCRIPT;
   const mockFirstPage: AWS.S3.ObjectList = [
@@ -320,77 +317,129 @@ test('rebuild (with continuation)', async () => {
     },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${docsSuffix}` },
   ];
-  AWSMock.mock(
-    'S3',
-    'listObjectsV2',
-    (
-      req: AWS.S3.ListObjectsV2Request,
-      cb: Response<AWS.S3.ListObjectsV2Output>
-    ) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
-        expect(req.ContinuationToken).toBeUndefined();
-        return cb(null, {
-          Contents: mockFirstPage,
-          NextContinuationToken: 'next',
-        });
-      } catch (e) {
-        return cb(e as any);
-      }
-    }
-  );
-  AWSMock.mock(
-    'S3',
-    'headObject',
-    (req: AWS.S3.HeadObjectRequest, cb: Response<AWS.S3.HeadObjectOutput>) => {
-      const existingKeys = new Set(mockFirstPage.map((obj) => obj.Key!));
-      if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
-        return cb(null, {});
-      }
 
-      class NotFound extends Error implements AWSError {
-        public code = 'NotFound';
-        public message = 'Not Found';
-        public time = new Date();
-      }
+  s3Mock.on(ListObjectsV2Command).callsFake((req) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
+    expect(req.ContinuationToken).toBeUndefined();
+    return {
+      Contents: mockFirstPage,
+      NextContinuationToken: 'next',
+    };
+  });
 
-      return cb(new NotFound());
+  // AWSMock.mock(
+  //   'S3',
+  //   'listObjectsV2',
+  //   (
+  //     req: AWS.S3.ListObjectsV2Request,
+  //     cb: Response<AWS.S3.ListObjectsV2Output>
+  //   ) => {
+  //     try {
+  //       expect(req.Bucket).toBe(mockBucketName);
+  //       expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
+  //       expect(req.ContinuationToken).toBeUndefined();
+  //       return cb(null, {
+  //         Contents: mockFirstPage,
+  //         NextContinuationToken: 'next',
+  //       });
+  //     } catch (e) {
+  //       return cb(e as any);
+  //     }
+  //   }
+  // );
+
+  s3Mock.on(HeadObjectCommand).callsFake((req) => {
+    const existingKeys = new Set(mockFirstPage.map((obj) => obj.Key!));
+    if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
+      return {};
     }
-  );
-  const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Key).toBe(constants.CATALOG_KEY);
-        expect(req.ContentType).toBe('application/json');
-        expect(req.Metadata).toHaveProperty('Package-Count', '2');
-        const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-        expect(body.packages).toEqual([
-          // The existing catalog should __NOT__ get truncated.
-          ...mockCatalog.packages.map((pkg) => ({
-            ...pkg,
-            time: pkg.time.toISOString(),
-          })),
-          {
-            description: 'Package @scope/package, version 1.2.3',
-            languages: { foo: 'bar' },
-            major: 1,
-            metadata: npmMetadata,
-            name: '@scope/package',
-            version: '1.2.3',
-          },
-        ]);
-        expect(Date.parse(body.updatedAt)).toBeDefined();
-      } catch (e) {
-        return cb(e as any);
-      }
-      return cb(null, mockPutObjectResult);
+
+    class NotFound extends Error implements AWSError {
+      public code = 'NotFound';
+      public message = 'Not Found';
+      public time = new Date();
     }
-  );
+
+    throw new NotFound();
+  });
+  // AWSMock.mock(
+  //   'S3',
+  //   'headObject',
+  //   (req: AWS.S3.HeadObjectRequest, cb: Response<AWS.S3.HeadObjectOutput>) => {
+  //     const existingKeys = new Set(mockFirstPage.map((obj) => obj.Key!));
+  //     if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
+  //       return cb(null, {});
+  //     }
+  //
+  //     class NotFound extends Error implements AWSError {
+  //       public code = 'NotFound';
+  //       public message = 'Not Found';
+  //       public time = new Date();
+  //     }
+  //
+  //     return cb(new NotFound());
+  //   }
+  // );
+
+  s3Mock.on(PutObjectCommand).callsFake((req) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Key).toBe(constants.CATALOG_KEY);
+    expect(req.ContentType).toBe('application/json');
+    expect(req.Metadata).toHaveProperty('Package-Count', '2');
+    const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+    expect(body.packages).toEqual([
+      // The existing catalog should __NOT__ get truncated.
+      ...mockCatalog.packages.map((pkg) => ({
+        ...pkg,
+        time: pkg.time.toISOString(),
+      })),
+      {
+        description: 'Package @scope/package, version 1.2.3',
+        languages: { foo: 'bar' },
+        major: 1,
+        metadata: npmMetadata,
+        name: '@scope/package',
+        version: '1.2.3',
+      },
+    ]);
+    expect(Date.parse(body.updatedAt)).toBeDefined();
+    return {};
+  });
+
+  // const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
+  // AWSMock.mock(
+  //   'S3',
+  //   'putObject',
+  //   (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+  //     try {
+  //       expect(req.Bucket).toBe(mockBucketName);
+  //       expect(req.Key).toBe(constants.CATALOG_KEY);
+  //       expect(req.ContentType).toBe('application/json');
+  //       expect(req.Metadata).toHaveProperty('Package-Count', '2');
+  //       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+  //       expect(body.packages).toEqual([
+  //         // The existing catalog should __NOT__ get truncated.
+  //         ...mockCatalog.packages.map((pkg) => ({
+  //           ...pkg,
+  //           time: pkg.time.toISOString(),
+  //         })),
+  //         {
+  //           description: 'Package @scope/package, version 1.2.3',
+  //           languages: { foo: 'bar' },
+  //           major: 1,
+  //           metadata: npmMetadata,
+  //           name: '@scope/package',
+  //           version: '1.2.3',
+  //         },
+  //       ]);
+  //       expect(Date.parse(body.updatedAt)).toBeDefined();
+  //     } catch (e) {
+  //       return cb(e as any);
+  //     }
+  //     return cb(null, mockPutObjectResult);
+  //   }
+  // );
 
   let invokeDone = false;
   const mockFunctionName = 'fake-function-name';
@@ -426,7 +475,7 @@ test('rebuild (with continuation)', async () => {
   );
 
   // THEN
-  await expect(result).resolves.toBe(mockPutObjectResult);
+  await expect(result).resolves.toStrictEqual({});
   expect(invokeDone).toBeTruthy();
 });
 
