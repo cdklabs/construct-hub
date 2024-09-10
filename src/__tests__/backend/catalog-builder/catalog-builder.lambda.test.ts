@@ -692,7 +692,6 @@ describe('incremental build', () => {
 
       if (matches != null) {
         return mockNpmPackage(matches[1], matches[2]).then((pack) => ({
-          // TODO this is probably wrong. pack is a Buffer
           Body: pack,
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
