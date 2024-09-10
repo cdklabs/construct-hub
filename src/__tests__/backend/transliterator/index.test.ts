@@ -59,6 +59,14 @@ test('CodeArtifact repository', () => {
           { Name: 'HEADER_SPAN', Value: 'true' },
           { Name: 'AWS_EMF_ENVIRONMENT', Value: 'Local' },
           {
+            Name: 'MAX_CONCURRENT_S3_REQUESTS',
+            Value: '16',
+          },
+          {
+            Name: 'MAX_RETRIES_S3_REQUESTS',
+            Value: '12',
+          },
+          {
             Name: 'CODE_ARTIFACT_DOMAIN_NAME',
             Value: codeArtifact.repositoryDomainName,
           },
@@ -139,6 +147,14 @@ test('VPC Endpoints', () => {
           { Name: 'HEADER_SPAN', Value: 'true' },
           { Name: 'AWS_EMF_ENVIRONMENT', Value: 'Local' },
           {
+            Name: 'MAX_CONCURRENT_S3_REQUESTS',
+            Value: '16',
+          },
+          {
+            Name: 'MAX_RETRIES_S3_REQUESTS',
+            Value: '12',
+          },
+          {
             Name: 'CODE_ARTIFACT_API_ENDPOINT',
             Value: Fn.select(
               1,
@@ -214,6 +230,14 @@ test('VPC Endpoints and CodeArtifact repository', () => {
         Environment: stack.resolve([
           { Name: 'HEADER_SPAN', Value: 'true' },
           { Name: 'AWS_EMF_ENVIRONMENT', Value: 'Local' },
+          {
+            Name: 'MAX_CONCURRENT_S3_REQUESTS',
+            Value: '16',
+          },
+          {
+            Name: 'MAX_RETRIES_S3_REQUESTS',
+            Value: '12',
+          },
           {
             Name: 'CODE_ARTIFACT_API_ENDPOINT',
             Value: Fn.select(

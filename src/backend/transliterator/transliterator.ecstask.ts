@@ -13,6 +13,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { Assembly } from '@jsii/spec';
 import { StreamingBlobPayloadInputTypes } from '@smithy/types';
+import { AdaptiveRetryStrategy } from '@smithy/util-retry';
 import { Sema } from 'async-sema';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import * as docgen from 'jsii-docgen';
@@ -35,10 +36,16 @@ const S3_SEMAPHORE = new Sema(
   parseInt(process.env.MAX_CONCURRENT_S3_REQUESTS ?? '16', 10)
 );
 
+const MAX_RETRIES_S3_REQUESTS = parseInt(
+  process.env.MAX_RETRIES_S3_REQUESTS ?? '12',
+  10
+);
 const S3_CLIENT = new S3Client({
   // https://docs.aws.amazon.com/sdkref/latest/guide/feature-retry-behavior.html#standardvsadaptive
   // This works because S3 throttles requests based on prefix
-  retryMode: 'ADAPTIVE',
+  retryStrategy: new AdaptiveRetryStrategy(
+    async () => MAX_RETRIES_S3_REQUESTS /* maxAttempts */
+  ),
 });
 
 /**
