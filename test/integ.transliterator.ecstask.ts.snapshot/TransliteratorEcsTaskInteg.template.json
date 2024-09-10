@@ -1481,11 +1481,19 @@
        {
         "Name": "AWS_EMF_ENVIRONMENT",
         "Value": "Local"
+       },
+       {
+        "Name": "MAX_CONCURRENT_S3_REQUESTS",
+        "Value": "16"
+       },
+       {
+        "Name": "MAX_RETRIES_S3_REQUESTS",
+        "Value": "12"
        }
       ],
       "Essential": true,
       "Image": {
-       "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}:163c30075527137d291e3aef3865f2d7fabc82baf8e77bfcba58e32d2ce57564"
+       "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}:94f2518f19be80aed25d2146b42522cce8c3b71210c12d3f8b9eeef608433e8b"
       },
       "LogConfiguration": {
        "LogDriver": "awslogs",
