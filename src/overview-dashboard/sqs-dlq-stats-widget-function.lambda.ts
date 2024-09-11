@@ -35,7 +35,6 @@ Param | Description
 \`\`\`
 `;
 
-// import { CloudWatch } from 'aws-sdk';
 import {
   CloudWatchClient,
   GetMetricDataCommand,
@@ -43,7 +42,7 @@ import {
 
 const DURATION = 5; // minutes
 
-interface Event {
+export interface Event {
   readonly key: string;
   readonly description: string;
   readonly widgetContext: WidgetContext;
@@ -185,30 +184,6 @@ const getVisibleMessageCount = async (
     })
   );
 
-  // const params: CloudWatch.GetMetricDataInput = {
-  //   StartTime: new Date(new Date().getTime() - DURATION * 60 * 1000), // 5 minutes ago
-  //   EndTime: new Date(), // now
-  //   ScanBy: 'TimestampDescending',
-  //   MetricDataQueries: queues.map((queue, index) => ({
-  //     Id: `m${index}`,
-  //     MetricStat: {
-  //       Period: 60,
-  //       Stat: 'Maximum',
-  //       Metric: {
-  //         Namespace: 'AWS/SQS',
-  //         MetricName: 'ApproximateNumberOfMessagesVisible',
-  //         Dimensions: [
-  //           {
-  //             Name: 'QueueName',
-  //             Value: queue.queueName,
-  //           },
-  //         ],
-  //       },
-  //     },
-  //   })),
-  // };
-  // const cloudwatch = new CloudWatch();
-  // const response = await cloudwatch.getMetricData(params).promise();
   return (response.MetricDataResults ?? []).reduce((acc, result) => {
     if (result.Id) {
       const id = Number.parseInt(result.Id.replace('m', ''), 10);

@@ -1,3 +1,6 @@
+import { ECSClient } from '@aws-sdk/client-ecs';
+import { LambdaClient } from '@aws-sdk/client-lambda';
+import { HeadObjectCommand, NotFound, S3Client } from '@aws-sdk/client-s3';
 import * as _AWS from 'aws-sdk';
 import * as AWSXRay from 'aws-xray-sdk-core';
 
@@ -5,6 +8,14 @@ import * as AWSXRay from 'aws-xray-sdk-core';
 AWSXRay.setContextMissingStrategy(() => {});
 
 const AWS = AWSXRay.captureAWS(_AWS);
+
+export const S3_CLIENT: S3Client = AWSXRay.captureAWSv3Client(new S3Client({}));
+export const LAMBDA_CLIENT: LambdaClient = AWSXRay.captureAWSv3Client(
+  new LambdaClient({})
+);
+export const ECS_CLIENT: ECSClient = AWSXRay.captureAWSv3Client(
+  new ECSClient({})
+);
 
 let _ecs: AWS.ECS | undefined;
 let _s3: AWS.S3 | undefined;
@@ -30,22 +41,24 @@ export function s3(): AWS.S3 {
 /**
  * Checks whether an object exists in S3 at the provided bucket and key.
  */
-export function s3ObjectExists(bucket: string, key: string): Promise<boolean> {
-  return s3()
-    .headObject({
-      Bucket: bucket,
-      Key: key,
-    })
-    .promise()
-    .then(
-      () => true,
-      (cause) => {
-        if (cause.code === 'NotFound') {
-          return false;
-        }
-        return Promise.reject(cause);
-      }
+export async function s3ObjectExists(
+  bucket: string,
+  key: string
+): Promise<boolean> {
+  try {
+    await S3_CLIENT.send(
+      new HeadObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      })
     );
+    return true;
+  } catch (cause: any) {
+    if (cause instanceof NotFound || cause.name === 'NotFound') {
+      return false;
+    }
+    throw cause;
+  }
 }
 
 export function sqs(): AWS.SQS {

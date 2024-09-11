@@ -1,10 +1,15 @@
-import * as AWS from 'aws-sdk';
+import {
+  GetObjectCommand,
+  NoSuchBucket,
+  NoSuchKey,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { DenyListMap, DenyListRule } from './api';
 import {
   ENV_DENY_LIST_BUCKET_NAME,
   ENV_DENY_LIST_OBJECT_KEY,
 } from './constants';
-import { s3 } from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 /**
@@ -20,7 +25,7 @@ export class DenyListClient {
     return client;
   }
 
-  private readonly s3: AWS.S3;
+  private readonly s3Client: S3Client;
   private readonly bucketName: string;
   private readonly objectKey: string;
 
@@ -29,7 +34,7 @@ export class DenyListClient {
   private constructor() {
     this.bucketName = requireEnv(ENV_DENY_LIST_BUCKET_NAME);
     this.objectKey = requireEnv(ENV_DENY_LIST_OBJECT_KEY);
-    this.s3 = s3();
+    this.s3Client = S3_CLIENT;
   }
 
   /**
@@ -50,7 +55,10 @@ export class DenyListClient {
         Key: this.objectKey,
       };
 
-      const { Body: body } = await this.s3.getObject(params).promise();
+      const { Body: body } = await this.s3Client.send(
+        new GetObjectCommand(params)
+      );
+
       if (!body) {
         console.log(
           `WARNING: deny list body is empty at ${this.bucketName}/${this.objectKey}`
@@ -58,7 +66,7 @@ export class DenyListClient {
         return;
       }
 
-      const contents = body.toString('utf-8');
+      const contents = await body.transformToString();
 
       // an empty string is a valid (empty) deny list
       if (contents.length === 0) {
@@ -74,7 +82,12 @@ export class DenyListClient {
 
       this._map = data;
     } catch (e: any) {
-      if (e.code === 'NoSuchKey' || e.code === 'NoSuchBucket') {
+      if (
+        e.name === 'NoSuchKey' ||
+        e.name === 'NoSuchBucket' ||
+        e instanceof NoSuchKey ||
+        e instanceof NoSuchBucket
+      ) {
         return;
       }
 
