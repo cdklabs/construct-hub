@@ -12,7 +12,7 @@ import {
   ENV_DENY_LIST_OBJECT_KEY,
 } from '../../../backend/deny-list/constants';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
-import { stringToStream } from '../../streams';
+import { toStream } from '../../streams';
 
 const sample: Record<string, DenyListRule> = {
   'foo/v1.2.3': {
@@ -73,7 +73,7 @@ test('s3 object is an empty file', async () => {
   const s3Mock = mockClient(S3Client);
 
   s3Mock.on(GetObjectCommand).resolves({
-    Body: stringToStream(''),
+    Body: toStream(''),
   });
 
   const client = await DenyListClient.newClient();
@@ -89,7 +89,7 @@ test('s3 object is not a valid json', async () => {
   const s3Mock = mockClient(S3Client);
 
   s3Mock.on(GetObjectCommand).resolves({
-    Body: stringToStream('09x{}'),
+    Body: toStream('09x{}'),
   });
 
   const expected = new Error(
@@ -105,7 +105,7 @@ describe('lookup', () => {
   beforeEach(async () => {
     s3Mock = mockClient(S3Client);
     s3Mock.on(GetObjectCommand).resolves({
-      Body: stringToStream(JSON.stringify(sample)),
+      Body: toStream(JSON.stringify(sample)),
     });
 
     client = await DenyListClient.newClient();

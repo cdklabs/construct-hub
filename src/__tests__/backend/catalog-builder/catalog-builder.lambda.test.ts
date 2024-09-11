@@ -1,5 +1,4 @@
 import { randomBytes } from 'crypto';
-import { PassThrough } from 'stream';
 import * as zip from 'zlib';
 
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
@@ -12,6 +11,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import { sdkStreamMixin } from '@smithy/util-stream';
 import { mockClient } from 'aws-sdk-client-mock';
 import * as tar from 'tar-stream';
 
@@ -23,7 +23,7 @@ import {
 } from '../../../backend/deny-list/constants';
 import { CatalogBuilderInput } from '../../../backend/payload-schema';
 import * as constants from '../../../backend/shared/constants';
-import { stringToStream } from '../../streams';
+import { toStream } from '../../streams';
 
 let mockBucketName: string | undefined;
 
@@ -69,7 +69,7 @@ test('initial build', () => {
     expect(req.Bucket).toBe(mockBucketName);
 
     if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-      return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+      return { Body: toStream(JSON.stringify(npmMetadata)) };
     }
     const matches = new RegExp(
       `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
@@ -240,11 +240,11 @@ test('rebuild (with continuation)', async () => {
     expect(req.Bucket).toBe(mockBucketName);
 
     if (req.Key === constants.CATALOG_KEY) {
-      return { Body: stringToStream(JSON.stringify(mockCatalog)) };
+      return { Body: toStream(JSON.stringify(mockCatalog)) };
     }
 
     if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-      return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+      return { Body: toStream(JSON.stringify(npmMetadata)) };
     }
     const matches = new RegExp(
       `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
@@ -416,7 +416,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+        return { Body: toStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -428,7 +428,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -489,7 +489,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+        return { Body: toStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -501,7 +501,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -558,7 +558,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+        return { Body: toStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -570,7 +570,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -619,7 +619,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+        return { Body: toStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -631,7 +631,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -681,7 +681,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
+        return { Body: toStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -694,7 +694,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -753,16 +753,7 @@ function mockNpmPackage(name: string, version: string) {
   const gzip = zip.createGzip();
   tarball.pipe(gzip);
 
-  const passthrough = new PassThrough();
-  gzip.pipe(passthrough);
-
-  return new Promise<Buffer>((ok) => {
-    const chunks = new Array<Buffer>();
-    passthrough.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-    passthrough.once('end', () => {
-      ok(Buffer.concat(chunks));
-    });
-  });
+  return Promise.resolve(sdkStreamMixin(gzip));
 }
 
 function tryMockDenyList(req: AWS.S3.GetObjectRequest) {
@@ -770,7 +761,7 @@ function tryMockDenyList(req: AWS.S3.GetObjectRequest) {
     req.Bucket === MOCK_DENY_LIST_BUCKET &&
     req.Key === MOCK_DENY_LIST_OBJECT
   ) {
-    return { Body: stringToStream(JSON.stringify(MOCK_DENY_LIST_MAP)) };
+    return { Body: toStream(JSON.stringify(MOCK_DENY_LIST_MAP)) };
   } else {
     return undefined;
   }
