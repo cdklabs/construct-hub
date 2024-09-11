@@ -49,6 +49,7 @@ const project = new CdklabsConstructLibrary({
     cdkCli,
     '@aws-sdk/client-codeartifact',
     '@aws-sdk/client-s3',
+    '@aws-sdk/client-cloudwatch',
     '@smithy/types',
     '@smithy/util-retry',
     '@smithy/util-stream',

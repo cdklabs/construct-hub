@@ -35,7 +35,12 @@ Param | Description
 \`\`\`
 `;
 
-import { CloudWatch } from 'aws-sdk';
+// import { CloudWatch } from 'aws-sdk';
+import {
+  CloudWatchClient,
+  GetMetricDataCommand,
+} from '@aws-sdk/client-cloudwatch';
+
 const DURATION = 5; // minutes
 
 interface Event {
@@ -152,38 +157,65 @@ const getVisibleMessageCount = async (
 ): Promise<Record<string, number>> => {
   // Keeping the time period to 5 minutes to show current state of the queue when re-drive happens
   const queues = Object.values(queueConfigs);
-  const params: CloudWatch.GetMetricDataInput = {
-    StartTime: new Date(new Date().getTime() - DURATION * 60 * 1000), // 5 minutes ago
-    EndTime: new Date(), // now
-    ScanBy: 'TimestampDescending',
-    MetricDataQueries: queues.map((queue, index) => ({
-      Id: `m${index}`,
-      MetricStat: {
-        Period: 60,
-        Stat: 'Maximum',
-        Metric: {
-          Namespace: 'AWS/SQS',
-          MetricName: 'ApproximateNumberOfMessagesVisible',
-          Dimensions: [
-            {
-              Name: 'QueueName',
-              Value: queue.queueName,
-            },
-          ],
+
+  const cloudwatchClient = new CloudWatchClient({});
+
+  const response = await cloudwatchClient.send(
+    new GetMetricDataCommand({
+      StartTime: new Date(new Date().getTime() - DURATION * 60 * 1000), // 5 minutes ago
+      EndTime: new Date(), // now
+      ScanBy: 'TimestampDescending',
+      MetricDataQueries: queues.map((queue, index) => ({
+        Id: `m${index}`,
+        MetricStat: {
+          Period: 60,
+          Stat: 'Maximum',
+          Metric: {
+            Namespace: 'AWS/SQS',
+            MetricName: 'ApproximateNumberOfMessagesVisible',
+            Dimensions: [
+              {
+                Name: 'QueueName',
+                Value: queue.queueName,
+              },
+            ],
+          },
         },
-      },
-    })),
-  };
-  const cloudwatch = new CloudWatch();
-  const response = await cloudwatch.getMetricData(params).promise();
-  const data = (response.MetricDataResults ?? []).reduce((acc, result) => {
+      })),
+    })
+  );
+
+  // const params: CloudWatch.GetMetricDataInput = {
+  //   StartTime: new Date(new Date().getTime() - DURATION * 60 * 1000), // 5 minutes ago
+  //   EndTime: new Date(), // now
+  //   ScanBy: 'TimestampDescending',
+  //   MetricDataQueries: queues.map((queue, index) => ({
+  //     Id: `m${index}`,
+  //     MetricStat: {
+  //       Period: 60,
+  //       Stat: 'Maximum',
+  //       Metric: {
+  //         Namespace: 'AWS/SQS',
+  //         MetricName: 'ApproximateNumberOfMessagesVisible',
+  //         Dimensions: [
+  //           {
+  //             Name: 'QueueName',
+  //             Value: queue.queueName,
+  //           },
+  //         ],
+  //       },
+  //     },
+  //   })),
+  // };
+  // const cloudwatch = new CloudWatch();
+  // const response = await cloudwatch.getMetricData(params).promise();
+  return (response.MetricDataResults ?? []).reduce((acc, result) => {
     if (result.Id) {
       const id = Number.parseInt(result.Id.replace('m', ''), 10);
       return { ...acc, [queues[id].queueName]: result.Values?.[0] ?? 0 };
     }
     return acc;
   }, {} as Record<string, number>);
-  return data;
 };
 
 function generateTable(
