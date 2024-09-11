@@ -10,7 +10,7 @@ import {
   handler,
   PackageVersion,
 } from '../../../package-sources/npmjs/stage-and-notify.lambda';
-import { toStream } from '../../streams';
+import { stringToStream } from '../../streams';
 
 const MOCK_DENY_LIST_BUCKET = 'deny-list-bucket-name';
 const MOCK_DENY_LIST_OBJECT = 'my-deny-list.json';
@@ -36,7 +36,7 @@ test('ignores 404', async () => {
   const s3Mock = mockClient(S3Client);
 
   s3Mock.on(GetObjectCommand).resolves({
-    Body: toStream(JSON.stringify({})),
+    Body: stringToStream(JSON.stringify({})),
   });
 
   nock(basePath).get(uri).reply(404);

@@ -23,7 +23,7 @@ import {
 } from '../../../backend/deny-list/constants';
 import { CatalogBuilderInput } from '../../../backend/payload-schema';
 import * as constants from '../../../backend/shared/constants';
-import { toStream } from '../../streams';
+import { stringToStream } from '../../streams';
 
 let mockBucketName: string | undefined;
 
@@ -69,7 +69,7 @@ test('initial build', () => {
     expect(req.Bucket).toBe(mockBucketName);
 
     if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-      return { Body: toStream(JSON.stringify(npmMetadata)) };
+      return { Body: stringToStream(JSON.stringify(npmMetadata)) };
     }
     const matches = new RegExp(
       `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
@@ -240,11 +240,11 @@ test('rebuild (with continuation)', async () => {
     expect(req.Bucket).toBe(mockBucketName);
 
     if (req.Key === constants.CATALOG_KEY) {
-      return { Body: toStream(JSON.stringify(mockCatalog)) };
+      return { Body: stringToStream(JSON.stringify(mockCatalog)) };
     }
 
     if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-      return { Body: toStream(JSON.stringify(npmMetadata)) };
+      return { Body: stringToStream(JSON.stringify(npmMetadata)) };
     }
     const matches = new RegExp(
       `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
@@ -416,7 +416,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: toStream(JSON.stringify(npmMetadata)) };
+        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -428,7 +428,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -489,7 +489,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: toStream(JSON.stringify(npmMetadata)) };
+        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -501,7 +501,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -558,7 +558,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: toStream(JSON.stringify(npmMetadata)) };
+        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -570,7 +570,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -619,7 +619,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: toStream(JSON.stringify(npmMetadata)) };
+        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -631,7 +631,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -681,7 +681,7 @@ describe('incremental build', () => {
       expect(req.Bucket).toBe(mockBucketName);
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        return { Body: toStream(JSON.stringify(npmMetadata)) };
+        return { Body: stringToStream(JSON.stringify(npmMetadata)) };
       }
 
       const matches = new RegExp(
@@ -694,7 +694,7 @@ describe('incremental build', () => {
         }));
       } else if (req.Key === constants.CATALOG_KEY) {
         return {
-          Body: toStream(JSON.stringify(initialCatalog, null, 2)),
+          Body: stringToStream(JSON.stringify(initialCatalog, null, 2)),
         };
       } else {
         throw new NoSuchKey({
@@ -761,7 +761,7 @@ function tryMockDenyList(req: AWS.S3.GetObjectRequest) {
     req.Bucket === MOCK_DENY_LIST_BUCKET &&
     req.Key === MOCK_DENY_LIST_OBJECT
   ) {
-    return { Body: toStream(JSON.stringify(MOCK_DENY_LIST_MAP)) };
+    return { Body: stringToStream(JSON.stringify(MOCK_DENY_LIST_MAP)) };
   } else {
     return undefined;
   }
