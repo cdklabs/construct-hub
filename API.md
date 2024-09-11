@@ -12745,14 +12745,14 @@ public bind(): TagConditionConfig
 ```typescript
 import { TagCondition } from 'construct-hub'
 
-TagCondition.and(conds: TagCondition)
+TagCondition.and(conds: ...TagCondition[])
 ```
 
 Create an && condition which applies only when all condition arguments are true.
 
 ###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.and.parameter.conds"></a>
 
-- *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
+- *Type:* ...<a href="#construct-hub.TagCondition">TagCondition</a>[]
 
 ---
 
@@ -12761,14 +12761,14 @@ Create an && condition which applies only when all condition arguments are true.
 ```typescript
 import { TagCondition } from 'construct-hub'
 
-TagCondition.field(keys: string)
+TagCondition.field(keys: ...string[])
 ```
 
 Target a field within the `package.json` to assert against. Nested fields can be accessed by passing multiple keys. `TagCondition.field('key1', 'key2')` will access `packageJson?.key1?.key2`.
 
 ###### `keys`<sup>Required</sup> <a name="keys" id="construct-hub.TagCondition.field.parameter.keys"></a>
 
-- *Type:* string
+- *Type:* ...string[]
 
 ---
 
@@ -12777,7 +12777,7 @@ Target a field within the `package.json` to assert against. Nested fields can be
 ```typescript
 import { TagCondition } from 'construct-hub'
 
-TagCondition.not(conds: TagCondition)
+TagCondition.not(conds: ...TagCondition[])
 ```
 
 Create a !
@@ -12786,7 +12786,7 @@ condition which applies if the condition argument is false
 
 ###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.not.parameter.conds"></a>
 
-- *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
+- *Type:* ...<a href="#construct-hub.TagCondition">TagCondition</a>[]
 
 ---
 
@@ -12795,14 +12795,14 @@ condition which applies if the condition argument is false
 ```typescript
 import { TagCondition } from 'construct-hub'
 
-TagCondition.or(conds: TagCondition)
+TagCondition.or(conds: ...TagCondition[])
 ```
 
 Create an || condition which applies if any of the condition arguments are true.
 
 ###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.or.parameter.conds"></a>
 
-- *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
+- *Type:* ...<a href="#construct-hub.TagCondition">TagCondition</a>[]
 
 ---
 
