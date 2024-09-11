@@ -1,9 +1,17 @@
-import * as AWS from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
+import {
+  GetObjectCommand,
+  NotFound,
+  PutObjectCommand,
+  S3Client,
+  S3ServiceException,
+} from '@aws-sdk/client-s3';
+import { StreamingBlobPayloadOutputTypes } from '@smithy/types';
+import { mockClient } from 'aws-sdk-client-mock';
+import 'aws-sdk-client-mock-jest';
 import * as feed from 'feed';
-
 import { handler } from '../../../backend/feed-builder/update-feed.lambda';
 import * as constants from '../../../backend/shared/constants';
+import { stringToStream } from '../../streams';
 
 // Hack to spy on methods of es5 class by wrapping the class
 jest.mock('feed', () => {
@@ -55,10 +63,11 @@ const MOCK_CATALOG = {
     };
   }),
 };
+const mockS3 = mockClient(S3Client);
+const s3ObjectMap: Map<string, StreamingBlobPayloadOutputTypes> = new Map();
 
-const s3ObjectMap: Map<string, Buffer> = new Map();
-let putObjectMock: jest.Mock;
 beforeEach(() => {
+  mockS3.reset();
   process.env.CATALOG_BUCKET_NAME = MOCK_CATALOG_BUCKET_NAME;
   process.env.CATALOG_OBJECT_KEY = MOCK_CATALOG_OBJECT_KEY;
   process.env.FEED_ENTRY_COUNT = MAX_ENTRIES_IN_FEED;
@@ -70,37 +79,40 @@ beforeEach(() => {
     const { releaseNotesKey } = constants.getObjectKeys(name, version);
     s3ObjectMap.set(
       releaseNotesKey,
-      Buffer.from(`Release notes for ${pkgName}`)
+      stringToStream(`Release notes for ${pkgName}`)
     );
   });
 
   s3ObjectMap.set(
     constants.CATALOG_KEY,
-    Buffer.from(JSON.stringify(MOCK_CATALOG))
+    stringToStream(JSON.stringify(MOCK_CATALOG))
   );
 
-  setupS3GetObjectMock().mockImplementation(
-    (req: AWS.S3.GetObjectRequest, cb) => {
-      expect(req.Bucket).toEqual(MOCK_CATALOG_BUCKET_NAME);
-      if (s3ObjectMap.has(req.Key)) {
-        const response = { Body: s3ObjectMap.get(req.Key) };
-        cb(null, response);
-      }
-
-      cb({ statusCode: 404 });
+  mockS3.on(GetObjectCommand).callsFake((request) => {
+    expect(request.Bucket).toEqual(MOCK_CATALOG_BUCKET_NAME);
+    if (s3ObjectMap.has(request.Key)) {
+      return { Body: s3ObjectMap.get(request.Key) };
     }
-  );
 
-  putObjectMock = setupPutObjectMock().mockImplementation(
-    (req: AWS.S3.PutObjectRequest, cb) => {
-      console.log(req.Key);
-      expect(req.Bucket).toEqual(MOCK_CATALOG_BUCKET_NAME);
-      if (req.Key === 'atom' || req.Key === 'rss') {
-        return cb(null, {});
-      }
-      cb({ error: 'NotSaved' }, null);
+    throw new NotFound({
+      message: `NotFound GET request: ${request.Key}`,
+      $metadata: {},
+    });
+  });
+
+  mockS3.on(PutObjectCommand).callsFake((request) => {
+    expect(request.Bucket).toEqual(MOCK_CATALOG_BUCKET_NAME);
+    if (request.Key === 'atom' || request.Key === 'rss') {
+      return {};
     }
-  );
+
+    throw new S3ServiceException({
+      $metadata: {},
+      name: 'NotSaved',
+      message: 'NotSaved',
+      $fault: 'server',
+    });
+  });
 });
 
 afterEach(() => {
@@ -112,35 +124,41 @@ afterEach(() => {
 
 test(`generate feed latest ${MAX_ENTRIES_IN_FEED} packages`, async () => {
   await handler();
-  expect(putObjectMock).toHaveBeenCalledTimes(2);
-  expect(putObjectMock.mock.calls[0][0].Key).toEqual('atom');
-  expect(putObjectMock.mock.calls[1][0].Key).toEqual('rss');
+  expect(mockS3).toHaveReceivedCommandTimes(PutObjectCommand, 2);
+  expect(mockS3).toHaveReceivedNthSpecificCommandWith(1, PutObjectCommand, {
+    Bucket: MOCK_CATALOG_BUCKET_NAME,
+    Key: 'atom',
+    Body: expect.anything(),
+    CacheControl: expect.anything(),
+    ContentType: 'application/atom+xml',
+  });
+  expect(mockS3).toHaveReceivedNthSpecificCommandWith(2, PutObjectCommand, {
+    Bucket: MOCK_CATALOG_BUCKET_NAME,
+    Key: 'rss',
+    Body: expect.anything(),
+    CacheControl: expect.anything(),
+    ContentType: 'application/xml',
+  });
 
   expect((feed as any).mocks.addItem).toHaveBeenCalledTimes(2);
+  const firstCallArgs = (feed as any).mocks.addItem.mock.calls[0][0];
+  const secondCallArgs = (feed as any).mocks.addItem.mock.calls[1][0];
 
-  expect((feed as any).mocks.addItem.mock.calls[0][0].title).toEqual(
-    'pkg3@1.1.1'
-  );
-  expect(
-    (feed as any).mocks.addItem.mock.calls[0][0].date.toISOString()
-  ).toEqual('2022-10-19T17:10:30.008Z');
-  expect((feed as any).mocks.addItem.mock.calls[0][0].link).toEqual(
+  expect(firstCallArgs.title).toEqual('pkg3@1.1.1');
+  expect(firstCallArgs.date.toISOString()).toEqual('2022-10-19T17:10:30.008Z');
+  expect(firstCallArgs.link).toEqual(
     'https://myconstruct.dev/packages/pkg3/v/1.1.1'
   );
-  expect((feed as any).mocks.addItem.mock.calls[0][0].content).toEqual(
+  expect(firstCallArgs.content).toEqual(
     '<p>Release notes for pkg3@1.1.1</p>\n'
   );
 
-  expect((feed as any).mocks.addItem.mock.calls[1][0].title).toEqual(
-    'pkg2@1.24.0'
-  );
-  expect(
-    (feed as any).mocks.addItem.mock.calls[1][0].date.toISOString()
-  ).toEqual('2019-06-19T17:10:16.140Z');
-  expect((feed as any).mocks.addItem.mock.calls[1][0].link).toEqual(
+  expect(secondCallArgs.title).toEqual('pkg2@1.24.0');
+  expect(secondCallArgs.date.toISOString()).toEqual('2019-06-19T17:10:16.140Z');
+  expect(secondCallArgs.link).toEqual(
     'https://myconstruct.dev/packages/pkg2/v/1.24.0'
   );
-  expect((feed as any).mocks.addItem.mock.calls[1][0].content).toEqual(
+  expect(secondCallArgs.content).toEqual(
     '<p>Release notes for pkg2@1.24.0</p>\n'
   );
 });
@@ -149,30 +167,24 @@ test('packages are sorted in reverse chronological order', async () => {
   await handler();
 
   expect((feed as any).mocks.addItem).toHaveBeenCalledTimes(2);
+  const firstCallArgs = (feed as any).mocks.addItem.mock.calls[0][0];
+  const secondCallArgs = (feed as any).mocks.addItem.mock.calls[1][0];
 
-  expect((feed as any).mocks.addItem.mock.calls[0][0].title).toEqual(
-    'pkg3@1.1.1'
-  );
-  expect(
-    (feed as any).mocks.addItem.mock.calls[0][0].date.toISOString()
-  ).toEqual('2022-10-19T17:10:30.008Z');
-  expect((feed as any).mocks.addItem.mock.calls[0][0].link).toEqual(
+  expect(firstCallArgs.title).toEqual('pkg3@1.1.1');
+  expect(firstCallArgs.date.toISOString()).toEqual('2022-10-19T17:10:30.008Z');
+  expect(firstCallArgs.link).toEqual(
     'https://myconstruct.dev/packages/pkg3/v/1.1.1'
   );
-  expect((feed as any).mocks.addItem.mock.calls[0][0].content).toEqual(
+  expect(firstCallArgs.content).toEqual(
     '<p>Release notes for pkg3@1.1.1</p>\n'
   );
 
-  expect((feed as any).mocks.addItem.mock.calls[1][0].title).toEqual(
-    'pkg2@1.24.0'
-  );
-  expect(
-    (feed as any).mocks.addItem.mock.calls[1][0].date.toISOString()
-  ).toEqual('2019-06-19T17:10:16.140Z');
-  expect((feed as any).mocks.addItem.mock.calls[1][0].link).toEqual(
+  expect(secondCallArgs.title).toEqual('pkg2@1.24.0');
+  expect(secondCallArgs.date.toISOString()).toEqual('2019-06-19T17:10:16.140Z');
+  expect(secondCallArgs.link).toEqual(
     'https://myconstruct.dev/packages/pkg2/v/1.24.0'
   );
-  expect((feed as any).mocks.addItem.mock.calls[1][0].content).toEqual(
+  expect(secondCallArgs.content).toEqual(
     '<p>Release notes for pkg2@1.24.0</p>\n'
   );
 });
@@ -186,28 +198,3 @@ test('handle missing release-notes', async () => {
     'No release notes'
   );
 });
-
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
-const setupS3GetObjectMock = () => {
-  const spy = jest.fn();
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      return spy(req, cb);
-    }
-  );
-  return spy;
-};
-
-function setupPutObjectMock() {
-  const spy = jest.fn();
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      return spy(req, cb);
-    }
-  );
-  return spy;
-}

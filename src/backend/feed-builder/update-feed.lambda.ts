@@ -1,10 +1,14 @@
-import { AWSError } from 'aws-sdk';
+import {
+  GetObjectCommand,
+  NotFound,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { Feed } from 'feed';
 import type * as MarkdownIt from 'markdown-it';
 
 import { CacheStrategy } from '../../caching';
 import { CatalogClient } from '../catalog-builder/client.lambda-shared';
-import { s3 } from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 
@@ -77,25 +81,25 @@ export const handler = async () => {
 
   console.log('Saving feed data to s3 bucket');
   try {
-    await s3()
-      .putObject({
+    await S3_CLIENT.send(
+      new PutObjectCommand({
         Bucket: bucket,
         Key: constants.FEED_ATOM_KEY,
         Body: feed.atom1(),
         ContentType: 'application/atom+xml',
         CacheControl: CacheStrategy.default().toString(),
       })
-      .promise();
+    );
 
-    await s3()
-      .putObject({
+    await S3_CLIENT.send(
+      new PutObjectCommand({
         Bucket: bucket,
         Key: constants.FEED_RSS_KEY,
         Body: feed.rss2(),
         ContentType: 'application/xml',
         CacheControl: CacheStrategy.default().toString(),
       })
-      .promise();
+    );
     console.log('Done saving feed to s3');
   } catch (e) {
     throw new Error(`Unable to save feed to S3: ${e}`);
@@ -119,22 +123,26 @@ export const getPackageReleaseNotes = async (
   );
   try {
     console.log(`Getting release notes for ${packageName}@${packageVersion}`);
-    const releaseNotesContent = await s3()
-      .getObject({
+    const releaseNotesContent = await S3_CLIENT.send(
+      new GetObjectCommand({
         Bucket: bucket,
         Key: releaseNotesKey,
       })
-      .promise();
+    );
     console.log(`Done reading ${packageName}@${packageVersion}`);
     const releaseNotes = markdown.render(
-      releaseNotesContent.Body?.toString() || ''
+      (await releaseNotesContent.Body?.transformToString()) || ''
     );
     console.log('release notes:', releaseNotes);
     return releaseNotes;
-  } catch (e) {
-    if ((e as AWSError).statusCode === 404) {
+  } catch (error: any) {
+    if (
+      error instanceof NotFound ||
+      error.name === 'NotFound' ||
+      error.statusCode === 404
+    ) {
       return 'No release notes';
     }
-    throw e;
+    throw error;
   }
 };

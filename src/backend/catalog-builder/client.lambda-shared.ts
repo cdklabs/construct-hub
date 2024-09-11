@@ -1,6 +1,6 @@
-import * as AWS from 'aws-sdk';
+import { GetObjectCommand, type S3Client } from '@aws-sdk/client-s3';
 import { CatalogModel, PackageInfo } from '.';
-import { s3 } from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 export interface ICatalogClient {
@@ -26,7 +26,7 @@ export class CatalogClient implements ICatalogClient {
     return client;
   }
 
-  private readonly s3: AWS.S3;
+  private readonly s3Client: S3Client;
   private readonly bucketName: string;
   private readonly objectKey: string;
 
@@ -35,7 +35,7 @@ export class CatalogClient implements ICatalogClient {
   private constructor() {
     this.bucketName = requireEnv('CATALOG_BUCKET_NAME');
     this.objectKey = requireEnv('CATALOG_OBJECT_KEY');
-    this.s3 = s3();
+    this.s3Client = S3_CLIENT;
   }
 
   /**
@@ -53,21 +53,19 @@ export class CatalogClient implements ICatalogClient {
       Key: this.objectKey,
     };
 
-    let body: AWS.S3.Body | undefined;
+    let contents: string | undefined;
     try {
-      const data = await this.s3.getObject(params).promise();
-      body = data.Body;
+      const res = await this.s3Client.send(new GetObjectCommand(params));
+      contents = await res.Body?.transformToString('utf-8');
     } catch (e) {
       throw new CatalogNotFoundError(`${this.bucketName}/${this.objectKey}`);
     }
 
-    if (!body) {
+    if (!contents) {
       throw new Error(
         `Catalog body is empty at ${this.bucketName}/${this.objectKey}`
       );
     }
-
-    const contents = body.toString('utf-8');
 
     try {
       const data = JSON.parse(contents) as CatalogModel;
