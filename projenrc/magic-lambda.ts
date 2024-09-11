@@ -169,6 +169,10 @@ export function discoverLambdas(project: TypeScriptProject) {
   project.eslint?.allowDevDeps('src/**/*.lambda.ts');
   // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
   project.eslint?.allowDevDeps('src/**/*.lambda-shared.ts');
+
+  project.addDevDeps('@aws-sdk/client-s3');
+  project.addDevDeps('@aws-sdk/client-ecs');
+
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     const trigger = basename(entry).startsWith('trigger.');
     newLambdaHandler(project, entry, trigger);

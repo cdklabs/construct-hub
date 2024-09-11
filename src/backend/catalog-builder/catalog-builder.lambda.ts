@@ -1,8 +1,16 @@
 import { gunzip } from 'zlib';
 
+import { InvokeCommand } from '@aws-sdk/client-lambda';
+import {
+  GetObjectCommand,
+  GetObjectCommandOutput,
+  ListObjectsV2Command,
+  ListObjectsV2CommandInput,
+  NoSuchKey,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
-import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
 import { CatalogModel, PackageInfo } from '.';
@@ -11,6 +19,7 @@ import { CacheStrategy } from '../../caching';
 import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 
@@ -35,22 +44,13 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   const denyList = await DenyListClient.newClient();
 
   console.log('Loading existing catalog (if present)...');
-
-  const data = await aws
-    .s3()
-    .getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY })
-    .promise()
-    .catch((err: AWSError) =>
-      err.code !== 'NoSuchKey'
-        ? Promise.reject(err)
-        : Promise.resolve({
-            /* no data */
-          } as S3.GetObjectOutput)
-    );
+  const data = await getCatalog(BUCKET_NAME);
 
   if (data.Body) {
     console.log('Catalog found. Loading...');
-    const catalog: CatalogModel = JSON.parse(data.Body.toString('utf-8'));
+    const catalog: CatalogModel = JSON.parse(
+      await data.Body.transformToString()
+    );
     for (const info of catalog.packages) {
       const denyRule = denyList.lookup(info.name, info.version);
       if (denyRule != null) {
@@ -171,10 +171,8 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     }
   }
 
-  // Upload the result to S3 and exit.
-  const result = await aws
-    .s3()
-    .putObject({
+  const result = await aws.S3_CLIENT.send(
+    new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: constants.CATALOG_KEY,
       Body: JSON.stringify(catalog, null, 2),
@@ -187,7 +185,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
         'Package-Count': `${catalog.packages.length}`,
       },
     })
-    .promise();
+  );
 
   if (nextStartAfter != null) {
     console.log(`Will continue from ${nextStartAfter} in new invocation...`);
@@ -197,23 +195,21 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     };
     // We start it asynchronously, as this function has a provisionned
     // concurrency of 1 (so a synchronous attempt would always be throttled).
-    await aws
-      .lambda()
-      .invokeAsync({
+    await aws.LAMBDA_CLIENT.send(
+      new InvokeCommand({
         FunctionName: context.functionName,
-        InvokeArgs: JSON.stringify(nextEvent, null, 2),
+        Payload: JSON.stringify(nextEvent, null, 2),
       })
-      .promise();
+    );
   } else {
     if (process.env.FEED_BUILDER_FUNCTION_NAME) {
       // Catalog is updated. Update the RSS/ATOM feed
-      await aws
-        .lambda()
-        .invokeAsync({
+      await aws.LAMBDA_CLIENT.send(
+        new InvokeCommand({
           FunctionName: process.env.FEED_BUILDER_FUNCTION_NAME,
-          InvokeArgs: JSON.stringify({}),
+          Payload: JSON.stringify({}),
         })
-        .promise();
+      );
     }
   }
 
@@ -229,13 +225,14 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
  * @param startAfter the key to start reading from, if provided.
  */
 async function* relevantObjects(bucket: string, startAfter?: string) {
-  const request: S3.ListObjectsV2Request = {
+  const request: ListObjectsV2CommandInput = {
     Bucket: bucket,
     Prefix: constants.STORAGE_KEY_PREFIX,
     StartAfter: startAfter,
   };
+
   do {
-    const result = await aws.s3().listObjectsV2(request).promise();
+    const result = await S3_CLIENT.send(new ListObjectsV2Command(request));
     for (const object of result.Contents ?? []) {
       if (!object.Key?.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
         continue;
@@ -311,18 +308,16 @@ async function appendPackage(
   console.log(`Registering ${packageName}@${version}`);
 
   // Donwload the tarball to inspect the `package.json` data therein.
-  const pkg = await aws
-    .s3()
-    .getObject({ Bucket: bucketName, Key: pkgKey })
-    .promise();
+  const pkg = await aws.S3_CLIENT.send(
+    new GetObjectCommand({ Bucket: bucketName, Key: pkgKey })
+  );
   const metadataKey = pkgKey.replace(
     constants.PACKAGE_KEY_SUFFIX,
     constants.METADATA_KEY_SUFFIX
   );
-  const metadataResponse = await aws
-    .s3()
-    .getObject({ Bucket: bucketName, Key: metadataKey })
-    .promise();
+  const metadataResponse = await aws.S3_CLIENT.send(
+    new GetObjectCommand({ Bucket: bucketName, Key: metadataKey })
+  );
   const manifest = await new Promise<Buffer>((ok, ko) => {
     gunzip(Buffer.from(pkg.Body! as any), (err, tar) => {
       if (err) {
@@ -361,7 +356,7 @@ async function appendPackage(
   // Add the PackageInfo into the working set
   const pkgMetadata = JSON.parse(manifest.toString('utf-8'));
   const npmMetadata = JSON.parse(
-    metadataResponse?.Body?.toString('utf-8') ?? '{}'
+    (await metadataResponse?.Body?.transformToString()) ?? ''
   );
   const major = new SemVer(pkgMetadata.version).major;
   if (!packages.has(pkgMetadata.name)) {
@@ -378,4 +373,22 @@ async function appendPackage(
     name: pkgMetadata.name,
     version: pkgMetadata.version,
   });
+}
+
+async function getCatalog(bucketName: string): Promise<GetObjectCommandOutput> {
+  try {
+    return await aws.S3_CLIENT.send(
+      new GetObjectCommand({
+        Bucket: bucketName,
+        Key: constants.CATALOG_KEY,
+      })
+    );
+  } catch (e: any) {
+    if (e instanceof NoSuchKey || e.name === 'NoSuchKey') {
+      return {
+        /* no data */
+      } as GetObjectCommandOutput;
+    }
+    throw e;
+  }
 }
