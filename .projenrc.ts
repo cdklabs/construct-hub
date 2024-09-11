@@ -39,7 +39,6 @@ const project = new CdklabsConstructLibrary({
 
   devDeps: [
     ...peerDeps,
-    '@smithy/util-stream',
     '@jsii/spec',
     '@types/fs-extra',
     '@types/semver',
@@ -59,7 +58,6 @@ const project = new CdklabsConstructLibrary({
     'aws-sdk-client-mock',
     'aws-sdk-client-mock-jest',
     'aws-sdk-mock',
-    'aws-sdk-client-mock',
     'aws-sdk',
     'aws-xray-sdk-core',
     'case',

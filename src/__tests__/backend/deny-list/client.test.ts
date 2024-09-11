@@ -4,9 +4,7 @@ import {
   NoSuchKey,
   S3Client,
 } from '@aws-sdk/client-s3';
-import * as AWS from 'aws-sdk';
 import { mockClient } from 'aws-sdk-client-mock';
-import * as AWSMock from 'aws-sdk-mock';
 import { DenyListRule } from '../../../backend';
 import { DenyListClient } from '../../../backend/deny-list/client.lambda-shared';
 import {
@@ -31,13 +29,11 @@ const sample: Record<string, DenyListRule> = {
 beforeEach(() => {
   process.env[ENV_DENY_LIST_BUCKET_NAME] = 'deny-list-bucket-name';
   process.env[ENV_DENY_LIST_OBJECT_KEY] = 'deny-list.json';
-  AWSMock.setSDKInstance(AWS);
 });
 
 afterEach(() => {
   delete process.env[ENV_DENY_LIST_BUCKET_NAME];
   delete process.env[ENV_DENY_LIST_OBJECT_KEY];
-  AWSMock.restore();
   aws.reset();
 });
 
