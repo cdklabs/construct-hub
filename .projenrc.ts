@@ -47,6 +47,7 @@ const project = new CdklabsConstructLibrary({
     '@types/tough-cookie',
     '@types/uuid',
     cdkCli,
+    '@aws-sdk/client-cloudwatch',
     '@aws-sdk/client-codeartifact',
     '@aws-sdk/client-lambda',
     '@aws-sdk/client-s3',
