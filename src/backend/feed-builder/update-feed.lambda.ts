@@ -1,5 +1,6 @@
 import {
   GetObjectCommand,
+  NoSuchKey,
   NotFound,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
@@ -139,7 +140,8 @@ export const getPackageReleaseNotes = async (
     if (
       error instanceof NotFound ||
       error.name === 'NotFound' ||
-      error.statusCode === 404
+      error instanceof NoSuchKey ||
+      error.name === 'NoSuchKey'
     ) {
       return 'No release notes';
     }

@@ -1,6 +1,6 @@
 import {
   GetObjectCommand,
-  NotFound,
+  NoSuchKey,
   PutObjectCommand,
   S3Client,
   S3ServiceException,
@@ -94,8 +94,8 @@ beforeEach(() => {
       return { Body: s3ObjectMap.get(request.Key) };
     }
 
-    throw new NotFound({
-      message: `NotFound GET request: ${request.Key}`,
+    throw new NoSuchKey({
+      message: `NoSuchKey GET request: ${request.Key}`,
       $metadata: {},
     });
   });
