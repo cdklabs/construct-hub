@@ -311,6 +311,8 @@ async function appendPackage(
   const pkg = await aws.S3_CLIENT.send(
     new GetObjectCommand({ Bucket: bucketName, Key: pkgKey })
   );
+  const pkgData = await pkg.Body!.transformToByteArray();
+
   const metadataKey = pkgKey.replace(
     constants.PACKAGE_KEY_SUFFIX,
     constants.METADATA_KEY_SUFFIX
@@ -319,7 +321,7 @@ async function appendPackage(
     new GetObjectCommand({ Bucket: bucketName, Key: metadataKey })
   );
   const manifest = await new Promise<Buffer>((ok, ko) => {
-    gunzip(Buffer.from(pkg.Body! as any), (err, tar) => {
+    gunzip(pkgData, (err, tar) => {
       if (err) {
         return ko(err);
       }
