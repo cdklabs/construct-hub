@@ -1,7 +1,14 @@
+import {
+  CodeartifactClient,
+  GetPackageVersionAssetCommand,
+  PackageFormat,
+} from '@aws-sdk/client-codeartifact';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import { SPEC_FILE_NAME } from '@jsii/spec';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context, EventBridgeEvent } from 'aws-lambda';
-
+import { captureAWSv3Client } from 'aws-xray-sdk-core';
 import {
   METRICS_NAMESPACE,
   MetricName,
@@ -11,12 +18,16 @@ import {
 } from './constants.lambda-shared';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
-import * as aws from '../../backend/shared/aws.lambda-shared';
+import { S3_CLIENT, SQS_CLIENT } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
 import { extractObjects } from '../../backend/shared/tarball.lambda-shared';
 
 const DETAIL_TYPE = 'CodeArtifact Package Version State Change' as const;
+
+const CODEARTIFACT_CLIENT: CodeartifactClient = captureAWSv3Client(
+  new CodeartifactClient()
+);
 
 export const handler = metricScope(
   (metrics) =>
@@ -60,20 +71,19 @@ export const handler = metricScope(
         return;
       }
 
-      const { asset, packageVersionRevision } = await aws
-        .codeArtifact()
-        .getPackageVersionAsset({
+      const { asset, packageVersionRevision } = await CODEARTIFACT_CLIENT.send(
+        new GetPackageVersionAssetCommand({
           asset: 'package.tgz', // Always named this way for npm packages!
           domainOwner: event.detail.domainOwner,
           domain: event.detail.domainName,
           repository: event.detail.repositoryName,
-          format: event.detail.packageFormat,
+          format: event.detail.packageFormat as PackageFormat, // input is provided by EventBridge and should be correct, if not a hard fail seems fine
           namespace: event.detail.packageNamespace,
           package: event.detail.packageName,
           packageVersion: event.detail.packageVersion,
         })
-        .promise();
-      const tarball = Buffer.from(asset! as any);
+      );
+      const tarball = Buffer.from(await asset!.transformToByteArray());
 
       const { assemblyJson, packageJson } = await extractObjects(tarball, {
         assemblyJson: { path: `package/${SPEC_FILE_NAME}` },
@@ -113,9 +123,8 @@ export const handler = metricScope(
       }
 
       const stagingKey = `${packageName}/${event.detail.packageVersion}/${packageVersionRevision}/package.tgz`;
-      await aws
-        .s3()
-        .putObject({
+      await S3_CLIENT.send(
+        new PutObjectCommand({
           Bucket: stagingBucket,
           Key: stagingKey,
           Body: asset,
@@ -126,7 +135,7 @@ export const handler = metricScope(
             'Lambda-Run-Id': context.awsRequestId,
           },
         })
-        .promise();
+      );
 
       const message = integrity(
         {
@@ -136,9 +145,8 @@ export const handler = metricScope(
         },
         tarball
       );
-      return aws
-        .sqs()
-        .sendMessage({
+      return SQS_CLIENT.send(
+        new SendMessageCommand({
           MessageAttributes: {
             AWS_REQUEST_ID: {
               DataType: 'String',
@@ -156,7 +164,7 @@ export const handler = metricScope(
           MessageBody: JSON.stringify(message),
           QueueUrl: queueUrl,
         })
-        .promise();
+      );
     }
 );
 

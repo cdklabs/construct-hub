@@ -1,6 +1,18 @@
 import * as console from 'console';
-import { gunzipSync } from 'zlib';
+import { text } from 'node:stream/consumers';
+import { createGunzip } from 'zlib';
 
+import { InvokeCommand } from '@aws-sdk/client-lambda';
+import {
+  GetObjectCommand,
+  NoSuchKey,
+  PutObjectCommand,
+  PutObjectCommandInput,
+} from '@aws-sdk/client-s3';
+import {
+  StreamingBlobPayloadInputTypes,
+  StreamingBlobPayloadOutputTypes,
+} from '@smithy/types';
 import {
   metricScope,
   Configuration,
@@ -19,7 +31,10 @@ import { CouchChanges, DatabaseChange } from './couch-changes.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
-import * as aws from '../../backend/shared/aws.lambda-shared';
+import {
+  LAMBDA_CLIENT,
+  S3_CLIENT,
+} from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
@@ -161,13 +176,13 @@ export async function handler(event: ScheduledEvent, context: Context) {
               };
               // "Fire-and-forget" invocation here.
               console.log(`Sending ${invokeArgs.tarballUrl} for staging`);
-              await aws
-                .lambda()
-                .invokeAsync({
+              await LAMBDA_CLIENT.send(
+                new InvokeCommand({
                   FunctionName: stagingFunction,
-                  InvokeArgs: JSON.stringify(invokeArgs, null, 2),
+                  InvocationType: 'Event',
+                  Payload: Buffer.from(JSON.stringify(invokeArgs)),
                 })
-                .promise();
+              );
               // Record that this is now a "known" version (no need to re-discover)
               knownVersions.set(`${infos.name}@${infos.version}`, modified);
             })
@@ -230,17 +245,17 @@ async function loadLastTransactionMarker(
   registry: CouchChanges
 ): Promise<{ marker: string | number; knownVersions: Map<string, Date> }> {
   try {
-    const response = await aws
-      .s3()
-      .getObject({
+    const response = await S3_CLIENT.send(
+      new GetObjectCommand({
         Bucket: stagingBucket,
         Key: MARKER_FILE_NAME,
       })
-      .promise();
-    if (response.ContentEncoding === 'gzip') {
-      response.Body = gunzipSync(Buffer.from(response.Body! as any));
+    );
+    if (!response.Body) {
+      throw new Error('Transaction Marker Response Body is empty');
     }
-    let data = JSON.parse(response.Body!.toString('utf-8'), (key, value) => {
+    let body = await transformBody(response.Body, response.ContentEncoding);
+    let data = JSON.parse(body, (key, value) => {
       if (key !== 'knownVersions') {
         return value;
       }
@@ -269,14 +284,31 @@ async function loadLastTransactionMarker(
 
     return data;
   } catch (error: any) {
-    if (error.code !== 'NoSuchKey') {
-      throw error;
+    if (error instanceof NoSuchKey || error.name === 'NoSuchKey') {
+      console.warn(
+        `Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`
+      );
+      return { marker: '0', knownVersions: new Map() };
     }
-    console.warn(
-      `Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`
-    );
-    return { marker: '0', knownVersions: new Map() };
+    // re-throw unexpected errors
+    throw error;
   }
+}
+
+/**
+ * Helper function to transform a possibly gzip'ed blob stream into a string.
+ * @returns string
+ */
+async function transformBody(
+  body: StreamingBlobPayloadOutputTypes,
+  encoding?: string
+): Promise<string> {
+  if (encoding === 'gzip') {
+    const gunzip = createGunzip();
+    return text(body.pipe(gunzip));
+  }
+
+  return body.transformToString('utf-8');
 }
 
 /**
@@ -330,12 +362,11 @@ function putObject(
   context: Context,
   bucket: string,
   key: string,
-  body: AWS.S3.Body,
-  opts: Omit<AWS.S3.PutObjectRequest, 'Bucket' | 'Key' | 'Body'> = {}
+  body: StreamingBlobPayloadInputTypes,
+  opts: Omit<PutObjectCommandInput, 'Bucket' | 'Key' | 'Body'> = {}
 ) {
-  return aws
-    .s3()
-    .putObject({
+  return S3_CLIENT.send(
+    new PutObjectCommand({
       Bucket: bucket,
       Key: key,
       Body: body,
@@ -347,7 +378,7 @@ function putObject(
       },
       ...opts,
     })
-    .promise();
+  );
 }
 //#endregion
 
