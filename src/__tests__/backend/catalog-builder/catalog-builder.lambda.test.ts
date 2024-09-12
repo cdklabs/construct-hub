@@ -1,5 +1,4 @@
 import { randomBytes } from 'crypto';
-import { PassThrough } from 'stream';
 import * as zip from 'zlib';
 
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
@@ -12,6 +11,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import { sdkStreamMixin } from '@smithy/util-stream';
 import { mockClient } from 'aws-sdk-client-mock';
 import * as tar from 'tar-stream';
 
@@ -753,16 +753,7 @@ function mockNpmPackage(name: string, version: string) {
   const gzip = zip.createGzip();
   tarball.pipe(gzip);
 
-  const passthrough = new PassThrough();
-  gzip.pipe(passthrough);
-
-  return new Promise<Buffer>((ok) => {
-    const chunks = new Array<Buffer>();
-    passthrough.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-    passthrough.once('end', () => {
-      ok(Buffer.concat(chunks));
-    });
-  });
+  return Promise.resolve(sdkStreamMixin(gzip));
 }
 
 function tryMockDenyList(req: AWS.S3.GetObjectRequest) {
