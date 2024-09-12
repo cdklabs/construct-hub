@@ -8,7 +8,6 @@ import {
 } from '@aws-sdk/client-s3';
 import * as spec from '@jsii/spec';
 import { sdkStreamMixin } from '@smithy/util-stream';
-
 import { mockClient } from 'aws-sdk-client-mock';
 import {
   LanguageNotSupportedError,

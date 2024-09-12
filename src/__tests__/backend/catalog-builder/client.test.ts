@@ -1,12 +1,16 @@
-import * as AWS from 'aws-sdk';
-import { AWSError } from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
+import {
+  GetObjectCommand,
+  NoSuchBucket,
+  NoSuchKey,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { mockClient } from 'aws-sdk-client-mock';
 import type { PackageInfo } from '../../../backend/catalog-builder';
 import {
   CatalogClient,
   CatalogNotFoundError,
 } from '../../../backend/catalog-builder/client.lambda-shared';
-import * as aws from '../../../backend/shared/aws.lambda-shared';
+import { stringToStream } from '../../streams';
 
 const samplePackages: Partial<PackageInfo>[] = [
   {
@@ -35,25 +39,26 @@ const samplePackages: Partial<PackageInfo>[] = [
   },
 ];
 
+const mockS3 = mockClient(S3Client);
+
 beforeEach(() => {
   process.env.CATALOG_BUCKET_NAME = 'catalog-bucket-name';
   process.env.CATALOG_OBJECT_KEY = 'catalog.json';
-  AWSMock.setSDKInstance(AWS);
+  mockS3.reset();
 });
 
 afterEach(() => {
   delete process.env.CATALOG_BUCKET_NAME;
   delete process.env.CATALOG_OBJECT_KEY;
-  AWSMock.restore();
-  aws.reset();
 });
 
 test('s3 object not found error', async () => {
-  AWSMock.mock('S3', 'getObject', (_, callback) => {
-    const err = new Error('NoSuchKey');
-    (err as any).code = 'NoSuchKey';
-    callback(err as AWSError, undefined);
-  });
+  mockS3.on(GetObjectCommand).rejects(
+    new NoSuchKey({
+      $metadata: {},
+      message: 'The specified key does not exist.',
+    })
+  );
 
   const expected = new CatalogNotFoundError('catalog-bucket-name/catalog.json');
   return expect(async () => CatalogClient.newClient()).rejects.toEqual(
@@ -62,11 +67,12 @@ test('s3 object not found error', async () => {
 });
 
 test('s3 bucket not found error', async () => {
-  AWSMock.mock('S3', 'getObject', (_, callback) => {
-    const err = new Error('NoSuchBucket');
-    (err as any).code = 'NoSuchBucket';
-    callback(err as AWSError, undefined);
-  });
+  mockS3.on(GetObjectCommand).rejects(
+    new NoSuchBucket({
+      $metadata: {},
+      message: 'The specified bucket does not exist.',
+    })
+  );
 
   const expected = new CatalogNotFoundError('catalog-bucket-name/catalog.json');
   return expect(async () => CatalogClient.newClient()).rejects.toEqual(
@@ -75,11 +81,30 @@ test('s3 bucket not found error', async () => {
 });
 
 test('empty file', async () => {
-  AWSMock.mock('S3', 'getObject', (params, callback) => {
-    expect(params.Bucket).toBe('catalog-bucket-name');
-    expect(params.Key).toBe('catalog.json');
-    callback(undefined, { Body: '' });
-  });
+  mockS3
+    .on(GetObjectCommand, {
+      Bucket: 'catalog-bucket-name',
+      Key: 'catalog.json',
+    })
+    .resolves({
+      Body: stringToStream(''),
+    });
+
+  const expected = new Error(
+    'Catalog body is empty at catalog-bucket-name/catalog.json'
+  );
+  return expect(async () => CatalogClient.newClient()).rejects.toEqual(
+    expected
+  );
+});
+
+test('no body', async () => {
+  mockS3
+    .on(GetObjectCommand, {
+      Bucket: 'catalog-bucket-name',
+      Key: 'catalog.json',
+    })
+    .resolves({});
 
   const expected = new Error(
     'Catalog body is empty at catalog-bucket-name/catalog.json'
@@ -90,11 +115,12 @@ test('empty file', async () => {
 });
 
 test('json parsing error', async () => {
-  AWSMock.mock('S3', 'getObject', (params, callback) => {
-    expect(params.Bucket).toBe('catalog-bucket-name');
-    expect(params.Key).toBe('catalog.json');
-    callback(undefined, { Body: '09x{}' });
-  });
+  mockS3
+    .on(GetObjectCommand, {
+      Bucket: 'catalog-bucket-name',
+      Key: 'catalog.json',
+    })
+    .resolves({ Body: stringToStream('09x{}') });
 
   const expected = new Error(
     'Unable to parse catalog file catalog-bucket-name/catalog.json: SyntaxError: Unexpected number in JSON at position 1'
@@ -105,11 +131,14 @@ test('json parsing error', async () => {
 });
 
 test('happy path - get packages', async () => {
-  AWSMock.mock('S3', 'getObject', (params, callback) => {
-    expect(params.Bucket).toBe('catalog-bucket-name');
-    expect(params.Key).toBe('catalog.json');
-    callback(undefined, { Body: JSON.stringify({ packages: samplePackages }) });
-  });
+  mockS3
+    .on(GetObjectCommand, {
+      Bucket: 'catalog-bucket-name',
+      Key: 'catalog.json',
+    })
+    .resolves({
+      Body: stringToStream(JSON.stringify({ packages: samplePackages })),
+    });
 
   const client = await CatalogClient.newClient();
   expect(client.packages).toStrictEqual(samplePackages);

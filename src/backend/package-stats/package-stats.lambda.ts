@@ -1,3 +1,4 @@
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import got from 'got';
@@ -9,7 +10,7 @@ import {
 } from './npm-downloads.lambda-shared';
 import { CacheStrategy } from '../../caching';
 import { CatalogClient } from '../catalog-builder/client.lambda-shared';
-import * as aws from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 /**
@@ -72,9 +73,8 @@ export async function handler(event: any, context: Context) {
   })();
 
   // Upload the result to S3 and exit.
-  return aws
-    .s3()
-    .putObject({
+  return S3_CLIENT.send(
+    new PutObjectCommand({
       Bucket: STATS_BUCKET_NAME,
       Key: STATS_OBJECT_KEY,
       Body: JSON.stringify(stats, null, 2),
@@ -87,7 +87,7 @@ export async function handler(event: any, context: Context) {
         'Package-Stats-Count': `${statsCount}`,
       },
     })
-    .promise();
+  );
 }
 
 function updateStats(
