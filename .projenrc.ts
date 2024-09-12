@@ -50,6 +50,8 @@ const project = new CdklabsConstructLibrary({
     '@aws-sdk/client-codeartifact',
     '@aws-sdk/client-lambda',
     '@aws-sdk/client-s3',
+    '@aws-sdk/client-sfn',
+    '@aws-sdk/client-sqs',
     '@smithy/types',
     '@smithy/util-retry',
     '@smithy/util-stream',

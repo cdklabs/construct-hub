@@ -1,6 +1,11 @@
-import { Context } from 'aws-lambda';
-import type * as AWS from 'aws-sdk';
-import * as aws from '../shared/aws.lambda-shared';
+import { StartExecutionCommand } from '@aws-sdk/client-sfn';
+import {
+  DeleteMessageCommand,
+  ReceiveMessageCommand,
+  ReceiveMessageCommandOutput,
+} from '@aws-sdk/client-sqs';
+import type { Context } from 'aws-lambda';
+import { SFN_CLIENT, SQS_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 export async function handler(event: unknown, context: Context): Promise<void> {
@@ -9,14 +14,12 @@ export async function handler(event: unknown, context: Context): Promise<void> {
 
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
-  const sfn = aws.stepFunctions();
-
   for await (const message of messagesToRedrive(queueUrl)) {
     const input = JSON.parse(message.Body!);
     console.log(`Redriving message ${JSON.stringify(input, null, 2)}`);
 
-    const { executionArn } = await sfn
-      .startExecution({
+    const { executionArn } = await SFN_CLIENT.send(
+      new StartExecutionCommand({
         stateMachineArn: stateMachineArn,
         input: JSON.stringify({
           ...input,
@@ -34,29 +37,27 @@ export async function handler(event: unknown, context: Context): Promise<void> {
           },
         }),
       })
-      .promise();
+    );
     console.log(`Redrive execution ARN: ${executionArn}`);
 
-    await aws
-      .sqs()
-      .deleteMessage({
+    await SQS_CLIENT.send(
+      new DeleteMessageCommand({
         QueueUrl: queueUrl,
         ReceiptHandle: message.ReceiptHandle!,
       })
-      .promise();
+    );
   }
 }
 
 async function* messagesToRedrive(queueUrl: string) {
-  const sqs = aws.sqs();
-  let result: AWS.SQS.ReceiveMessageResult;
+  let result: ReceiveMessageCommandOutput;
   do {
-    result = await sqs
-      .receiveMessage({
+    result = await SQS_CLIENT.send(
+      new ReceiveMessageCommand({
         QueueUrl: queueUrl,
         VisibilityTimeout: 900, // 15 minutes
       })
-      .promise();
+    );
     if (result.Messages) {
       yield* result.Messages;
     }

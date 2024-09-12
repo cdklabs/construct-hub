@@ -1,6 +1,8 @@
 import { ECSClient } from '@aws-sdk/client-ecs';
 import { LambdaClient } from '@aws-sdk/client-lambda';
 import { HeadObjectCommand, NotFound, S3Client } from '@aws-sdk/client-s3';
+import { SFNClient } from '@aws-sdk/client-sfn';
+import { SQSClient } from '@aws-sdk/client-sqs';
 import * as _AWS from 'aws-sdk';
 import * as AWSXRay from 'aws-xray-sdk-core';
 
@@ -15,6 +17,12 @@ export const LAMBDA_CLIENT: LambdaClient = AWSXRay.captureAWSv3Client(
 );
 export const ECS_CLIENT: ECSClient = AWSXRay.captureAWSv3Client(
   new ECSClient({})
+);
+export const SQS_CLIENT: SQSClient = AWSXRay.captureAWSv3Client(
+  new SQSClient()
+);
+export const SFN_CLIENT: SFNClient = AWSXRay.captureAWSv3Client(
+  new SFNClient()
 );
 
 let _ecs: AWS.ECS | undefined;
