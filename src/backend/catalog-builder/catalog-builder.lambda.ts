@@ -204,9 +204,11 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   } else {
     if (process.env.FEED_BUILDER_FUNCTION_NAME) {
       // Catalog is updated. Update the RSS/ATOM feed
+      console.log(`Updating feeds...`);
       await aws.LAMBDA_CLIENT.send(
         new InvokeCommand({
           FunctionName: process.env.FEED_BUILDER_FUNCTION_NAME,
+          InvocationType: 'Event',
           Payload: JSON.stringify({}),
         })
       );
