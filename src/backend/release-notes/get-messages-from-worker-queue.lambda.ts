@@ -1,7 +1,10 @@
+import { ListExecutionsCommand } from '@aws-sdk/client-sfn';
+import type { Message } from '@aws-sdk/client-sqs';
+import { ReceiveMessageCommand } from '@aws-sdk/client-sqs';
 import { metricScope, Unit } from 'aws-embedded-metrics';
-import { StepFunctions, SQS } from 'aws-sdk';
 import * as constants from './constants';
 import { getServiceLimits } from './shared/github-changelog-fetcher.lambda-shared';
+import { SFN_CLIENT, SQS_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 // Each of the release note fetch task can involve making multiple Github
@@ -19,7 +22,7 @@ type ServiceLimit = {
 type ExecutionResult = {
   error?: string;
   status?: string;
-  messages?: SQS.Message[];
+  messages?: Message[];
 };
 
 /**
@@ -86,15 +89,15 @@ export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
   const sfnArn = requireEnv('STEP_FUNCTION_ARN');
 
   // Ensure only one instance of step function is running
-  const activities = await new StepFunctions()
-    .listExecutions({
+  const activities = await SFN_CLIENT.send(
+    new ListExecutionsCommand({
       stateMachineArn: sfnArn,
       maxResults: 1,
       statusFilter: 'RUNNING',
     })
-    .promise();
+  );
 
-  if (activities.executions.length > 1) {
+  if (activities.executions && activities.executions.length > 1) {
     return { error: 'MaxConcurrentExecutionError' };
   }
   if (serviceLimit.remaining <= MAX_GH_REQUEST_PER_PACKAGE) {
@@ -106,15 +109,15 @@ export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
     };
   }
 
-  const messages = await new SQS()
-    .receiveMessage({
+  const messages = await SQS_CLIENT.send(
+    new ReceiveMessageCommand({
       QueueUrl: process.env.SQS_QUEUE_URL!,
       MaxNumberOfMessages: Math.min(
         Math.floor(serviceLimit.remaining / MAX_GH_REQUEST_PER_PACKAGE),
         10
       ),
     })
-    .promise();
+  );
 
   if (messages.Messages?.length) {
     return {

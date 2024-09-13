@@ -1,10 +1,15 @@
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { metricScope, MetricsLogger, Unit } from 'aws-embedded-metrics';
-import * as AWS from 'aws-sdk';
-import { AWSError } from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
+import { mockClient } from 'aws-sdk-client-mock';
+import 'aws-sdk-client-mock-jest';
 import * as constants from '../../../backend/release-notes/constants';
 import { generateReleaseNotes } from '../../../backend/release-notes/shared/github-changelog-fetcher.lambda-shared';
 import { extractObjects } from '../../../backend/shared/tarball.lambda-shared';
+import { stringToStream } from '../../streams';
 
 jest.mock('aws-embedded-metrics');
 jest.mock('../../../backend/shared/tarball.lambda-shared');
@@ -14,7 +19,8 @@ jest.mock(
 
 const MOCK_BUCKET_NAME = 'package-data-bucket';
 const PACKAGE_TGZ = 'data/@aws-cdk/aws-amplify/v1.144.0/package.tgz';
-const FAKE_TAR_GZ = Buffer.from('fake-tarball-content[gzipped]');
+const FAKE_TAR_DATA = 'fake-tarball-content[gzipped]';
+const FAKE_TAR_GZ = Buffer.from(FAKE_TAR_DATA);
 const MOCK_TARBALL_URI = `s3://${MOCK_BUCKET_NAME}.test-bermuda-2.s3.amazonaws.com/${PACKAGE_TGZ}`;
 const MOCK_RELEASE_NOTES_KEY =
   'data/@aws-cdk/aws-amplify/v1.144.0/release-notes.md';
@@ -45,6 +51,8 @@ const MOCKED_RELEASE_NOTES = `
 * Some other bug
 `;
 
+const mockS3 = mockClient(S3Client);
+
 const mockPutMetric = jest
   .fn()
   .mockName('MetricsLogger.putMetric') as jest.MockedFunction<
@@ -58,8 +66,6 @@ const mockSetNamespace = jest
 >;
 
 let handler: any;
-let s3GetObjSpy: jest.Mock;
-let s3PutObjSpy: jest.Mock;
 const extractObjectMock = <jest.MockedFunction<typeof extractObjects>>(
   extractObjects
 );
@@ -97,9 +103,9 @@ beforeEach(async () => {
   jest.resetAllMocks();
   process.env.BUCKET_NAME = MOCK_BUCKET_NAME;
 
-  AWSMock.setSDKInstance(AWS);
-  s3GetObjSpy = setupPkgTarS3GetObjectMock();
-  s3PutObjSpy = setupReleaseNotesS3PutObjectMock();
+  mockS3.reset();
+  setupPkgTarS3GetObjectMock();
+  setupReleaseNotesS3PutObjectMock();
 
   extractObjectMock.mockResolvedValue({
     packageJson: Buffer.from(JSON.stringify(MOCKED_PACKAGE_JSON)),
@@ -110,11 +116,7 @@ beforeEach(async () => {
 afterEach(async () => {
   // clean up the env vars
   process.env.BUCKET_NAME = undefined;
-
-  AWSMock.restore();
 });
-
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 test('happy case', async () => {
   await expect(
@@ -125,8 +127,8 @@ test('happy case', async () => {
     packageJson: { path: 'package/package.json', required: true },
   });
 
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
-  expect(s3PutObjSpy).toHaveBeenCalledTimes(1);
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 1);
+  expect(mockS3).toHaveReceivedCommandTimes(PutObjectCommand, 1);
 
   expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
   expect(generateReleaseNotes).toHaveBeenCalledWith(
@@ -160,8 +162,8 @@ test('When repository uses git@github.com url', async () => {
     packageJson: { path: 'package/package.json', required: true },
   });
 
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
-  expect(s3PutObjSpy).toHaveBeenCalledTimes(1);
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 1);
+  expect(mockS3).toHaveReceivedCommandTimes(PutObjectCommand, 1);
 
   expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
   expect(generateReleaseNotes).toHaveBeenCalledWith(
@@ -187,8 +189,8 @@ test('When repository info is missing sends "UnSupportedRepo"', async () => {
   ).resolves.toEqual({ error: 'UnSupportedRepo' });
   expect(generateReleaseNotes).not.toHaveBeenCalled();
 
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
-  expect(s3PutObjSpy).not.toHaveBeenCalled();
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 1);
+  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
 
   const PKG_JSON_WITH_GITLAB_REPO = {
     ...MOCKED_PACKAGE_JSON,
@@ -202,8 +204,8 @@ test('When repository info is missing sends "UnSupportedRepo"', async () => {
     handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: 'UnSupportedRepo' });
   expect(generateReleaseNotes).not.toHaveBeenCalled();
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(2);
-  expect(s3PutObjSpy).not.toHaveBeenCalled();
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 2);
+  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
   expect(mockPutMetric).toHaveBeenCalledWith(
     constants.UnSupportedRepo,
     1,
@@ -231,8 +233,8 @@ test('sends RequestQuotaExhausted error when GitHub sends error code 403', async
     packageJson: { path: 'package/package.json', required: true },
   });
 
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
-  expect(s3PutObjSpy).not.toHaveBeenCalled();
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 1);
+  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
   expect(mockPutMetric).toHaveBeenCalledWith(
     constants.RequestQuotaExhausted,
     1,
@@ -258,8 +260,8 @@ test('sends InvalidCredentials error when GitHub sends error code 401', async ()
     packageJson: { path: 'package/package.json', required: true },
   });
 
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
-  expect(s3PutObjSpy).not.toHaveBeenCalled();
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 1);
+  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
   expect(mockPutMetric).toHaveBeenCalledWith(
     constants.InvalidCredentials,
     1,
@@ -283,8 +285,8 @@ test('When GH does not have any release notes', async () => {
     packageJson: { path: 'package/package.json', required: true },
   });
 
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
-  expect(s3PutObjSpy).not.toHaveBeenCalled();
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 1);
+  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
 });
 
 test('when tarball is invalid send InvalidTarball error', async () => {
@@ -301,8 +303,8 @@ test('when tarball is invalid send InvalidTarball error', async () => {
     packageJson: { path: 'package/package.json', required: true },
   });
 
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
-  expect(s3PutObjSpy).not.toHaveBeenCalled();
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 1);
+  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
   expect(mockPutMetric).toHaveBeenCalledWith(
     constants.InvalidTarball,
     1,
@@ -335,8 +337,8 @@ test('throw error when package.json is not valid', async () => {
     packageJson: { path: 'package/package.json', required: true },
   });
 
-  expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
-  expect(s3PutObjSpy).not.toHaveBeenCalled();
+  expect(mockS3).toHaveReceivedCommandTimes(GetObjectCommand, 1);
+  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
   expect(mockPutMetric).toHaveBeenCalledWith(
     constants.InvalidPackageJson,
     1,
@@ -346,38 +348,21 @@ test('throw error when package.json is not valid', async () => {
 
 // Helper functions
 const setupPkgTarS3GetObjectMock = () => {
-  const spy = jest.fn().mockResolvedValue({ Body: FAKE_TAR_GZ });
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(MOCK_BUCKET_NAME);
-        expect(req.Key).toBe(PACKAGE_TGZ);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, spy());
-    }
-  );
-  return spy;
+  mockS3
+    .on(GetObjectCommand, {
+      Bucket: MOCK_BUCKET_NAME,
+      Key: PACKAGE_TGZ,
+    })
+    .callsFake(() => ({ Body: stringToStream(FAKE_TAR_DATA) }));
 };
 
 function setupReleaseNotesS3PutObjectMock() {
-  const spy = jest.fn();
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(MOCK_BUCKET_NAME);
-        expect(req.Key).toBe(MOCK_RELEASE_NOTES_KEY);
-        expect(req.Body).toBe(MOCKED_RELEASE_NOTES);
-      } catch (e) {
-        return cb(e as AWSError);
-      }
-      return cb(null, spy(req));
-    }
-  );
-  return spy;
+  mockS3
+    .on(PutObjectCommand, {
+      Bucket: MOCK_BUCKET_NAME,
+      Key: MOCK_RELEASE_NOTES_KEY,
+      Body: MOCKED_RELEASE_NOTES,
+      ContentType: 'text/markdown',
+    })
+    .resolves({});
 }

@@ -1,6 +1,13 @@
+import {
+  ListExecutionsCommand,
+  StartExecutionCommand,
+} from '@aws-sdk/client-sfn';
+import {
+  SendMessageBatchCommand,
+  SendMessageBatchRequestEntry,
+} from '@aws-sdk/client-sqs';
 import { SQSEvent } from 'aws-lambda';
-import * as aws from 'aws-sdk';
-import { SendMessageBatchRequestEntryList } from 'aws-sdk/clients/sqs';
+import { SFN_CLIENT, SQS_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 const SLEEP_TIME = 1000 * 5; // 5 seconds
@@ -23,18 +30,16 @@ export const handler = async (event: SQSEvent) => {
   const SFN_ARN = requireEnv('SFN_ARN');
   const WORKER_QUEUE_URL = requireEnv('WORKER_QUEUE_URL');
 
-  const sqs = new aws.SQS();
-  let messages: SendMessageBatchRequestEntryList = [];
+  let messages: SendMessageBatchRequestEntry[] = [];
   console.log('attempting to send messages');
   const requests = event.Records.map<any>((record, index) => {
     if (index > 0 && index % 10 === 0) {
-      return sqs
-        .sendMessageBatch({
+      return SQS_CLIENT.send(
+        new SendMessageBatchCommand({
           Entries: messages,
           QueueUrl: WORKER_QUEUE_URL,
         })
-        .promise();
-      messages = [];
+      );
     } else {
       console.log('message => ', record.body);
       messages.push({ Id: record.messageId, MessageBody: record.body });
@@ -45,12 +50,12 @@ export const handler = async (event: SQSEvent) => {
   // last batch of message
   if (messages.length) {
     requests.push(
-      sqs
-        .sendMessageBatch({
+      SQS_CLIENT.send(
+        new SendMessageBatchCommand({
           Entries: messages,
           QueueUrl: WORKER_QUEUE_URL,
         })
-        .promise()
+      )
     );
   }
   await Promise.all(requests);
@@ -69,25 +74,22 @@ export const handler = async (event: SQSEvent) => {
     if (await isStepFunctionAlreadyRunning()) return;
   }
 
-  const sfn = new aws.StepFunctions();
-  const invocation = await sfn
-    .startExecution({
+  const invocation = await SFN_CLIENT.send(
+    new StartExecutionCommand({
       stateMachineArn: SFN_ARN,
     })
-    .promise();
+  );
   console.log('invocation done', invocation);
   return;
 };
 
 const isStepFunctionAlreadyRunning = async (): Promise<boolean> => {
   const SFN_ARN = requireEnv('SFN_ARN');
-  const sfn = new aws.StepFunctions();
-
-  const invocations = await sfn
-    .listExecutions({
+  const invocations = await SFN_CLIENT.send(
+    new ListExecutionsCommand({
       stateMachineArn: SFN_ARN,
       statusFilter: 'RUNNING',
     })
-    .promise();
-  return invocations.executions.length > 0;
+  );
+  return Boolean(invocations.executions && invocations.executions.length > 0);
 };
