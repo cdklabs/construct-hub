@@ -1,9 +1,11 @@
 import * as https from 'https';
 import { URL } from 'url';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { S3KeyPrefix } from './constants.lambda-shared';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
-import { s3, sqs } from '../../backend/shared/aws.lambda-shared';
+import { S3_CLIENT, SQS_CLIENT } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
 
@@ -65,8 +67,8 @@ export async function handler(
     new URL(event.tarballUrl).pathname
   }`.replace(/\/{2,}/g, '/');
   console.log(`Storing tarball in staging bucket with key ${stagingKey}`);
-  await s3()
-    .putObject({
+  await S3_CLIENT.send(
+    new PutObjectCommand({
       Bucket: stagingBucket,
       Key: stagingKey,
       Body: tarball,
@@ -82,7 +84,7 @@ export async function handler(
         ...(event.seq ? { Sequence: event.seq } : {}),
       },
     })
-    .promise();
+  );
 
   // Prepare ingestion request
   const message = integrity(
@@ -108,9 +110,9 @@ export async function handler(
       2
     )}`
   );
-  await sqs()
-    .sendMessage({
-      MessageBody: JSON.stringify(message, null, 2),
+  await SQS_CLIENT.send(
+    new SendMessageCommand({
+      MessageBody: JSON.stringify(message),
       MessageAttributes: {
         'Lambda-Log-Group': {
           DataType: 'String',
@@ -127,7 +129,7 @@ export async function handler(
       },
       QueueUrl: queueUrl,
     })
-    .promise();
+  );
 }
 
 export interface PackageVersion {

@@ -1,8 +1,12 @@
 import * as https from 'https';
 import { Readable } from 'stream';
 import { createGunzip } from 'zlib';
+import {
+  GetObjectCommand,
+  NoSuchKey,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
-import type { AWSError, S3 } from 'aws-sdk';
 import * as JSONStream from 'JSONStream';
 import {
   METRICS_NAMESPACE,
@@ -11,7 +15,7 @@ import {
   ObjectKey,
 } from './constants';
 import { CatalogModel } from '../../../backend';
-import * as aws from '../../../backend/shared/aws.lambda-shared';
+import { S3_CLIENT } from '../../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../../backend/shared/env.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
@@ -302,15 +306,14 @@ export class CanaryStateService {
     const url = this.url(packageName);
 
     console.log(`Saving to ${url}: ${JSON.stringify(state, null, 2)}`);
-    await aws
-      .s3()
-      .putObject({
+    await S3_CLIENT.send(
+      new PutObjectCommand({
         Bucket: this.bucketName,
         Key: this.key(packageName),
         Body: JSON.stringify(state, null, 2),
         ContentType: 'application/json',
       })
-      .promise();
+    );
   }
 
   /**
@@ -323,30 +326,30 @@ export class CanaryStateService {
     const url = this.url(packageName);
 
     console.log(`Fetching: ${url}`);
-    const data = await aws
-      .s3()
-      .getObject({ Bucket: this.bucketName, Key: objectKey })
-      .promise()
-      .catch((err: AWSError) =>
-        err.code !== 'NoSuchKey'
-          ? Promise.reject(err)
-          : Promise.resolve({
-              /* no data */
-            } as S3.GetObjectOutput)
+    try {
+      const res = await S3_CLIENT.send(
+        new GetObjectCommand({ Bucket: this.bucketName, Key: objectKey })
       );
 
-    if (!data?.Body) {
-      console.log(`Not found: ${url}`);
-      return undefined;
-    }
-
-    console.log(`Loaded: ${url}`);
-    return JSON.parse(data.Body.toString('utf-8'), (key, value) => {
-      if (key === 'publishedAt' || key === 'availableAt') {
-        return new Date(value);
+      const content = await res?.Body?.transformToString('utf-8');
+      if (!content) {
+        console.log(`Not found: ${url}`);
+        return undefined;
       }
-      return value;
-    });
+
+      console.log(`Loaded: ${url}`);
+      return JSON.parse(content, (key, value) => {
+        if (key === 'publishedAt' || key === 'availableAt') {
+          return new Date(value);
+        }
+        return value;
+      });
+    } catch (error: any) {
+      if (error instanceof NoSuchKey || error.name === 'NoSuchKey') {
+        return undefined;
+      }
+      throw error;
+    }
   }
 
   /**
