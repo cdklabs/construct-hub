@@ -1,16 +1,30 @@
 import { pseudoRandomBytes } from 'crypto';
+import {
+  CodeartifactClient,
+  GetPackageVersionAssetCommand,
+  GetPackageVersionAssetCommandOutput,
+} from '@aws-sdk/client-codeartifact';
+import {
+  PutObjectCommand,
+  PutObjectCommandOutput,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import {
+  SendMessageCommand,
+  SendMessageResult,
+  SQSClient,
+} from '@aws-sdk/client-sqs';
 import { SPEC_FILE_NAME } from '@jsii/spec';
 import type { Context } from 'aws-lambda';
-import * as AWS from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
+import { mockClient } from 'aws-sdk-client-mock';
 import * as denyListClient from '../../../backend/deny-list/client.lambda-shared';
 import * as licenseListClient from '../../../backend/license-list/client.lambda-shared';
-import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as env from '../../../backend/shared/env.lambda-shared';
 import { integrity } from '../../../backend/shared/integrity.lambda-shared';
 import * as tarball from '../../../backend/shared/tarball.lambda-shared';
 import { handler } from '../../../package-sources/codeartifact/code-artifact-forwarder.lambda';
 import { safeMock } from '../../safe-mock';
+import { stringToStream } from '../../streams';
 
 const mockBucketName = 'mock-bucket-name';
 const mockQueueUrl = 'https://mock-queue-url/dummy';
@@ -69,13 +83,14 @@ const mockExtractObjects = (
   tarball.extractObjects as jest.MockedFunction<typeof tarball.extractObjects>
 ).mockName('tarball.extractObjects');
 
-beforeEach(() => {
-  AWSMock.setSDKInstance(AWS);
-});
+const mockCodeartifact = mockClient(CodeartifactClient);
+const mockS3 = mockClient(S3Client);
+const mockSQS = mockClient(SQSClient);
 
-afterEach(() => {
-  AWSMock.restore();
-  reset();
+beforeEach(() => {
+  mockCodeartifact.reset();
+  mockS3.reset();
+  mockSQS.reset();
 });
 
 type RequestType = Parameters<typeof handler>[0];
@@ -103,46 +118,33 @@ test('happy path', async () => {
     )}`,
   });
 
-  const mockGetPackageVersionAssetResult: AWS.CodeArtifact.GetPackageVersionAssetResult =
-    {
-      asset: 'mock-asset-content',
-      assetName: 'package.tgz',
-      packageVersion: '1.2.3-dev.1337',
-      packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
-    };
-  AWSMock.mock(
-    'CodeArtifact',
-    'getPackageVersionAsset',
-    (
-      request: AWS.CodeArtifact.GetPackageVersionAssetRequest,
-      cb: Response<AWS.CodeArtifact.GetPackageVersionAssetResult>
-    ) => {
-      try {
-        expect(request).toEqual({
-          asset: 'package.tgz',
-          format: 'npm',
-          domainOwner: detail.domainOwner,
-          domain: detail.domainName,
-          repository: detail.repositoryName,
-          namespace: detail.packageNamespace,
-          package: detail.packageName,
-          packageVersion: detail.packageVersion,
-        });
-        cb(null, mockGetPackageVersionAssetResult);
-      } catch (e: any) {
-        cb(e);
-      }
-    }
-  );
+  const mockAsset = 'mock-asset-content';
+  const mockGetPackageVersionAssetResult: GetPackageVersionAssetResponse = {
+    asset: stringToStream(mockAsset),
+    assetName: 'package.tgz',
+    packageVersion: '1.2.3-dev.1337',
+    packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
+  };
+
+  mockCodeartifact
+    .on(GetPackageVersionAssetCommand, {
+      asset: 'package.tgz',
+      format: 'npm',
+      domainOwner: detail.domainOwner,
+      domain: detail.domainName,
+      repository: detail.repositoryName,
+      namespace: detail.packageNamespace,
+      package: detail.packageName,
+      packageVersion: detail.packageVersion,
+    })
+    .resolves(mockGetPackageVersionAssetResult);
 
   const mockAssembly = Buffer.from('mock-assembly-content');
   const mockPackageJson = safeMock<any>('package.json', {
     license: 'Apache-2.0',
   });
   mockExtractObjects.mockImplementationOnce(async (tgz, selector) => {
-    expect(tgz).toEqual(
-      Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
-    );
+    expect(tgz).toEqual(Buffer.from(mockAsset));
     expect(selector).toHaveProperty('assemblyJson', {
       path: `package/${SPEC_FILE_NAME}`,
     });
@@ -160,75 +162,56 @@ test('happy path', async () => {
   mockLicenseListLookup.mockReturnValueOnce('Apache-2.0');
 
   const stagingKey = `@${detail.packageNamespace}/${detail.packageName}/${detail.packageVersion}/${mockGetPackageVersionAssetResult.packageVersionRevision}/package.tgz`;
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req).toEqual({
-          Bucket: mockBucketName,
-          Key: stagingKey,
-          Body: mockGetPackageVersionAssetResult.asset!,
-          ContentType: 'application/octet-stream',
-          Metadata: {
-            'Lambda-Log-Group': mockContext.logGroupName,
-            'Lambda-Log-Stream': mockContext.logStreamName,
-            'Lambda-Run-Id': mockContext.awsRequestId,
-          },
-        });
-        cb(null, safeMock<AWS.S3.PutObjectOutput>('mockS3PutObjectOutput', {}));
-      } catch (e: any) {
-        cb(e);
-      }
-    }
-  );
 
-  const mockSendMessageResult: AWS.SQS.SendMessageResult = {
+  mockS3.on(PutObjectCommand).callsFake((req) => {
+    expect(req).toEqual({
+      Bucket: mockBucketName,
+      Key: stagingKey,
+      Body: mockGetPackageVersionAssetResult.asset!,
+      ContentType: 'application/octet-stream',
+      Metadata: {
+        'Lambda-Log-Group': mockContext.logGroupName,
+        'Lambda-Log-Stream': mockContext.logStreamName,
+        'Lambda-Run-Id': mockContext.awsRequestId,
+      },
+    });
+    return safeMock<PutObjectCommandOutput>('mockS3PutObjectOutput', {});
+  });
+
+  const mockSendMessageResult: SendMessageResult = {
     MessageId: pseudoRandomBytes(10).toString('base64'),
   };
   const time = new Date().toISOString();
   const resources = ['arn:obviously:made:up'];
-  AWSMock.mock(
-    'SQS',
-    'sendMessage',
-    (
-      req: AWS.SQS.SendMessageRequest,
-      cb: Response<AWS.SQS.SendMessageResult>
-    ) => {
-      try {
-        expect(req).toEqual({
-          MessageAttributes: {
-            AWS_REQUEST_ID: {
-              DataType: 'String',
-              StringValue: mockContext.awsRequestId,
-            },
-            LOG_GROUP_NAME: {
-              DataType: 'String',
-              StringValue: mockContext.logGroupName,
-            },
-            LOG_STREAM_NAME: {
-              DataType: 'String',
-              StringValue: mockContext.logStreamName,
-            },
+  mockSQS
+    .on(SendMessageCommand, {
+      MessageAttributes: {
+        AWS_REQUEST_ID: {
+          DataType: 'String',
+          StringValue: mockContext.awsRequestId,
+        },
+        LOG_GROUP_NAME: {
+          DataType: 'String',
+          StringValue: mockContext.logGroupName,
+        },
+        LOG_STREAM_NAME: {
+          DataType: 'String',
+          StringValue: mockContext.logStreamName,
+        },
+      },
+      MessageBody: JSON.stringify(
+        integrity(
+          {
+            tarballUri: `s3://${mockBucketName}/${stagingKey}`,
+            metadata: { resources: resources.join(', ') },
+            time,
           },
-          MessageBody: JSON.stringify(
-            integrity(
-              {
-                tarballUri: `s3://${mockBucketName}/${stagingKey}`,
-                metadata: { resources: resources.join(', ') },
-                time,
-              },
-              Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
-            )
-          ),
-          QueueUrl: mockQueueUrl,
-        });
-        cb(null, mockSendMessageResult);
-      } catch (e: any) {
-        cb(e);
-      }
-    }
-  );
+          Buffer.from(mockAsset)
+        )
+      ),
+      QueueUrl: mockQueueUrl,
+    })
+    .resolves(mockSendMessageResult);
 
   // WHEN
   const request: RequestType = safeMock<RequestType>('request', {
@@ -260,44 +243,31 @@ test('no license (i.e: UNLICENSED)', async () => {
     )}`,
   });
 
-  const mockGetPackageVersionAssetResult: AWS.CodeArtifact.GetPackageVersionAssetResult =
-    {
-      asset: 'mock-asset-content',
-      assetName: 'package.tgz',
-      packageVersion: '1.2.3-dev.1337',
-      packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
-    };
-  AWSMock.mock(
-    'CodeArtifact',
-    'getPackageVersionAsset',
-    (
-      request: AWS.CodeArtifact.GetPackageVersionAssetRequest,
-      cb: Response<AWS.CodeArtifact.GetPackageVersionAssetResult>
-    ) => {
-      try {
-        expect(request).toEqual({
-          asset: 'package.tgz',
-          format: 'npm',
-          domainOwner: detail.domainOwner,
-          domain: detail.domainName,
-          repository: detail.repositoryName,
-          namespace: detail.packageNamespace,
-          package: detail.packageName,
-          packageVersion: detail.packageVersion,
-        });
-        cb(null, mockGetPackageVersionAssetResult);
-      } catch (e: any) {
-        cb(e);
-      }
-    }
-  );
+  const mockAsset = 'mock-asset-content';
+  const mockGetPackageVersionAssetResult: GetPackageVersionAssetResponse = {
+    asset: stringToStream(mockAsset),
+    assetName: 'package.tgz',
+    packageVersion: '1.2.3-dev.1337',
+    packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
+  };
+
+  mockCodeartifact
+    .on(GetPackageVersionAssetCommand, {
+      asset: 'package.tgz',
+      format: 'npm',
+      domainOwner: detail.domainOwner,
+      domain: detail.domainName,
+      repository: detail.repositoryName,
+      namespace: detail.packageNamespace,
+      package: detail.packageName,
+      packageVersion: detail.packageVersion,
+    })
+    .resolves(mockGetPackageVersionAssetResult);
 
   const mockAssembly = Buffer.from('mock-assembly-content');
   const mockPackageJson = safeMock<any>('package.json', { license: undefined });
   mockExtractObjects.mockImplementationOnce(async (tgz, selector) => {
-    expect(tgz).toEqual(
-      Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
-    );
+    expect(tgz).toEqual(Buffer.from(mockAsset));
     expect(selector).toHaveProperty('assemblyJson', {
       path: `package/${SPEC_FILE_NAME}`,
     });
@@ -335,46 +305,32 @@ test('ineligible license', async () => {
     )}`,
   });
 
-  const mockGetPackageVersionAssetResult: AWS.CodeArtifact.GetPackageVersionAssetResult =
-    {
-      asset: 'mock-asset-content',
-      assetName: 'package.tgz',
-      packageVersion: '1.2.3-dev.1337',
-      packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
-    };
-  AWSMock.mock(
-    'CodeArtifact',
-    'getPackageVersionAsset',
-    (
-      request: AWS.CodeArtifact.GetPackageVersionAssetRequest,
-      cb: Response<AWS.CodeArtifact.GetPackageVersionAssetResult>
-    ) => {
-      try {
-        expect(request).toEqual({
-          asset: 'package.tgz',
-          format: 'npm',
-          domainOwner: detail.domainOwner,
-          domain: detail.domainName,
-          repository: detail.repositoryName,
-          namespace: detail.packageNamespace,
-          package: detail.packageName,
-          packageVersion: detail.packageVersion,
-        });
-        cb(null, mockGetPackageVersionAssetResult);
-      } catch (e: any) {
-        cb(e);
-      }
-    }
-  );
+  const mockAsset = 'mock-asset-content';
+  const mockGetPackageVersionAssetResult: GetPackageVersionAssetResponse = {
+    asset: stringToStream(mockAsset),
+    assetName: 'package.tgz',
+    packageVersion: '1.2.3-dev.1337',
+    packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
+  };
+  mockCodeartifact
+    .on(GetPackageVersionAssetCommand, {
+      asset: 'package.tgz',
+      format: 'npm',
+      domainOwner: detail.domainOwner,
+      domain: detail.domainName,
+      repository: detail.repositoryName,
+      namespace: detail.packageNamespace,
+      package: detail.packageName,
+      packageVersion: detail.packageVersion,
+    })
+    .resolves(mockGetPackageVersionAssetResult);
 
   const mockAssembly = Buffer.from('mock-assembly-content');
   const mockPackageJson = safeMock<any>('package.json', {
     license: 'Phony-MOCK',
   });
   mockExtractObjects.mockImplementationOnce(async (tgz, selector) => {
-    expect(tgz).toEqual(
-      Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
-    );
+    expect(tgz).toEqual(Buffer.from(mockAsset));
     expect(selector).toHaveProperty('assemblyJson', {
       path: `package/${SPEC_FILE_NAME}`,
     });
@@ -412,45 +368,31 @@ test('not a jsii package', async () => {
     )}`,
   });
 
-  const mockGetPackageVersionAssetResult: AWS.CodeArtifact.GetPackageVersionAssetResult =
-    {
-      asset: 'mock-asset-content',
-      assetName: 'package.tgz',
-      packageVersion: '1.2.3-dev.1337',
-      packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
-    };
-  AWSMock.mock(
-    'CodeArtifact',
-    'getPackageVersionAsset',
-    (
-      request: AWS.CodeArtifact.GetPackageVersionAssetRequest,
-      cb: Response<AWS.CodeArtifact.GetPackageVersionAssetResult>
-    ) => {
-      try {
-        expect(request).toEqual({
-          asset: 'package.tgz',
-          format: 'npm',
-          domainOwner: detail.domainOwner,
-          domain: detail.domainName,
-          repository: detail.repositoryName,
-          namespace: detail.packageNamespace,
-          package: detail.packageName,
-          packageVersion: detail.packageVersion,
-        });
-        cb(null, mockGetPackageVersionAssetResult);
-      } catch (e: any) {
-        cb(e);
-      }
-    }
-  );
+  const mockAsset = 'mock-asset-content';
+  const mockGetPackageVersionAssetResult: GetPackageVersionAssetResponse = {
+    asset: stringToStream(mockAsset),
+    assetName: 'package.tgz',
+    packageVersion: '1.2.3-dev.1337',
+    packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
+  };
+  mockCodeartifact
+    .on(GetPackageVersionAssetCommand, {
+      asset: 'package.tgz',
+      format: 'npm',
+      domainOwner: detail.domainOwner,
+      domain: detail.domainName,
+      repository: detail.repositoryName,
+      namespace: detail.packageNamespace,
+      package: detail.packageName,
+      packageVersion: detail.packageVersion,
+    })
+    .resolves(mockGetPackageVersionAssetResult);
 
   const mockPackageJson = safeMock<any>('package.json', {
     license: 'Apache-2.0',
   });
   mockExtractObjects.mockImplementationOnce(async (tgz, selector) => {
-    expect(tgz).toEqual(
-      Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
-    );
+    expect(tgz).toEqual(Buffer.from(mockAsset));
     expect(selector).toHaveProperty('assemblyJson', {
       path: `package/${SPEC_FILE_NAME}`,
     });
@@ -512,4 +454,7 @@ test('deleted package', async () => {
   return expect(handler(request, mockContext)).resolves.toBeUndefined();
 });
 
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
+type GetPackageVersionAssetResponse = Omit<
+  GetPackageVersionAssetCommandOutput,
+  '$metadata'
+>;
