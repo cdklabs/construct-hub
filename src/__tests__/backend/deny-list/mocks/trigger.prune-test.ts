@@ -6,7 +6,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Trigger } from 'aws-cdk-lib/triggers';
 import { Construct } from 'constructs';
 
-export interface TriggerClientTestProps extends lambda.FunctionOptions {
+export interface TriggerPruneTestProps extends lambda.FunctionOptions {
   /**
    * Trigger this handler after these constructs were deployed.
    * @default - trigger this handler after all implicit dependencies have been created
@@ -14,15 +14,15 @@ export interface TriggerClientTestProps extends lambda.FunctionOptions {
   readonly executeAfter?: Construct[];
 }
 
-export class TriggerClientTest extends lambda.Function {
-  constructor(scope: Construct, id: string, props?: TriggerClientTestProps) {
+export class TriggerPruneTest extends lambda.Function {
+  constructor(scope: Construct, id: string, props?: TriggerPruneTestProps) {
     super(scope, id, {
-      description: '__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts',
+      description: '__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/trigger.client-test.lambda.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/trigger.prune-test.lambda.bundle')),
     });
 
     new Trigger(this, 'Trigger', {

@@ -9,7 +9,7 @@ export interface CatalogBuilderMockProps extends lambda.FunctionOptions {
 export class CatalogBuilderMock extends lambda.Function {
   constructor(scope: Construct, id: string, props?: CatalogBuilderMockProps) {
     super(scope, id, {
-      description: '__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts',
+      description: '__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
       runtime: lambda.Runtime.NODEJS_16_X,

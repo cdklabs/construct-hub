@@ -91,8 +91,15 @@ const project = new CdklabsConstructLibrary({
   peerDeps,
 
   minNodeVersion: '16.16.0',
-  jsiiVersion: '5.4.x',
+
   typescriptVersion: '5.4.x',
+  // Exclude handler images from TypeScript compiler path
+  excludeTypescript: ['resources/**'],
+  tsconfigDev: {
+    include: ['test/**/*.ts'],
+  },
+
+  jsiiVersion: '5.4.x',
   rosettaOptions: {
     version: '5.4.x',
   },
@@ -139,9 +146,6 @@ const project = new CdklabsConstructLibrary({
   // run tests from .js -- otherwise lambda bundlers get confused
   testdir: 'src/__tests__',
 
-  // Exclude handler images from TypeScript compiler path
-  excludeTypescript: ['resources/**'],
-
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
     secret: 'GITHUB_TOKEN',
@@ -173,6 +177,10 @@ const project = new CdklabsConstructLibrary({
       singleQuote: true,
     },
   },
+  eslintOptions: {
+    dirs: [],
+    devdirs: ['test', 'src/__tests__'],
+  },
 
   // disable some features in favor of custom implementation
   // in future, we should migrate the custom code to use the provided feature
@@ -188,8 +196,9 @@ project.setScript(
   'yarn dev:synth && cd lib/__tests__/devapp && npx cdk-dia && mv diagram.png ../../../diagrams/diagram.png'
 );
 
-project.addGitIgnore('!/test/fixtures/tests/package.tgz');
-project.addGitIgnore('/test/integ.transliterator.ecstask.ts.snapshot/asset.*');
+project.addPackageIgnore('/test');
+project.addGitIgnore('!/test/fixtures/**');
+project.addGitIgnore('/test/*.snapshot/asset.*');
 project.addGitIgnore('!/src/third-party-types/*');
 
 project.package.addField('resolutions', {
