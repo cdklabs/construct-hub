@@ -1,5 +1,6 @@
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { EnvironmentVariables } from './constants';
-import { s3 } from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 /**
@@ -43,9 +44,9 @@ export class LicenseListClient {
     if (this.#map != null) {
       throw new Error('init() cannot be called twice');
     }
-    const { Body: body } = await s3()
-      .getObject({ Bucket: this.#bucketName, Key: this.#objectKey })
-      .promise();
+    const { Body: body } = await S3_CLIENT.send(
+      new GetObjectCommand({ Bucket: this.#bucketName, Key: this.#objectKey })
+    );
     if (!body) {
       console.log(
         `WARNING: license list is empty at ${this.#bucketName}/${
@@ -56,7 +57,7 @@ export class LicenseListClient {
       return;
     }
 
-    const licenseIds = JSON.parse(body.toString('utf-8'));
+    const licenseIds = JSON.parse(await body.transformToString('utf-8'));
     if (!Array.isArray(licenseIds)) {
       throw new Error(
         `Invalid format in license list file at ${this.#bucketName}/${
