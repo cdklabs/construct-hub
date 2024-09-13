@@ -1,7 +1,7 @@
 import { Duration, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { CatalogBuilderMock } from './integ/catalog-builder-mock';
+import { CatalogBuilderMock } from './mocks/catalog-builder-mock';
 import { DenyList, DenyListRule } from '../../../backend';
 import { createDenyListMap } from '../../../backend/deny-list/create-map';
 import { Monitoring } from '../../../monitoring';

@@ -1,13 +1,13 @@
 import * as path from 'path';
 import { ExpectedResult, IntegTest } from '@aws-cdk/integ-tests-alpha';
 import { App, ArnFormat, Duration, Stack } from 'aws-cdk-lib';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Cluster } from 'aws-cdk-lib/aws-ecs';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { JsonPath, Pass, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Transliterator } from '../lib/backend/transliterator';
-import { Vpc } from 'aws-cdk-lib/aws-ec2';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 const app = new App();
 const stack = new Stack(app, 'TransliteratorEcsTaskInteg');
@@ -18,13 +18,13 @@ const cluster = new Cluster(stack, 'Cluster', {
   vpc: new Vpc(stack, 'Vpc', {
     maxAzs: 2,
     restrictDefaultSecurityGroup: false,
-  })
+  }),
 });
 const transliterator = new Transliterator(stack, 'Transliterator', {
   bucket,
   monitoring: {
     addHighSeverityAlarm: () => {},
-    addLowSeverityAlarm: () => {}
+    addLowSeverityAlarm: () => {},
   },
 });
 
@@ -35,7 +35,7 @@ transliterator.taskDefinition.addToExecutionRolePolicy(
     actions: ['ecr:GetAuthorizationToken'],
     resources: ['*'], // Action does not support resource scoping
   })
-)
+);
 transliterator.taskDefinition.addToExecutionRolePolicy(
   new PolicyStatement({
     effect: Effect.ALLOW,
@@ -53,10 +53,12 @@ transliterator.taskDefinition.addToExecutionRolePolicy(
         resourceName: '*',
       }),
     ],
-  })  
+  })
 );
 
-const source = Source.asset(path.join(__dirname, 'fixtures/tests'));
+const source = Source.asset(
+  path.join(__dirname, 'fixtures/transliterator/package')
+);
 new BucketDeployment(stack, 'BucketDeployment', {
   sources: [source],
   destinationBucket: bucket,
@@ -112,11 +114,16 @@ const res = integTest.assertions.awsApiCall('StepFunctions', 'startExecution', {
   input: JSON.stringify(event),
 });
 const executionArn = res.getAttString('executionArn');
-integTest.assertions.awsApiCall('StepFunctions', 'describeExecution', {
-  executionArn,
-}).expect(ExpectedResult.objectLike({
-  status: 'SUCCEEDED',
-})).waitForAssertions({
-  totalTimeout: Duration.minutes(3),
-  interval: Duration.seconds(10),
-});
+integTest.assertions
+  .awsApiCall('StepFunctions', 'describeExecution', {
+    executionArn,
+  })
+  .expect(
+    ExpectedResult.objectLike({
+      status: 'SUCCEEDED',
+    })
+  )
+  .waitForAssertions({
+    totalTimeout: Duration.minutes(3),
+    interval: Duration.seconds(10),
+  });

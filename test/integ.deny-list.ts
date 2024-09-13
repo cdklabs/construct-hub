@@ -1,33 +1,25 @@
 import { join } from 'path';
+import { IntegTest } from '@aws-cdk/integ-tests-alpha';
 import { App, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { CatalogBuilderMock } from './catalog-builder-mock';
-import { TriggerClientTest } from './trigger.client-test';
-import { TriggerPruneTest } from './trigger.prune-test';
-import { DenyList } from '../../../../backend';
-import { STORAGE_KEY_PREFIX } from '../../../../backend/shared/constants';
-import { Monitoring } from '../../../../monitoring';
-import { OverviewDashboard } from '../../../../overview-dashboard';
+import { CatalogBuilderMock } from '../lib/__tests__/backend/deny-list/mocks/catalog-builder-mock';
+import { TriggerClientTest } from '../lib/__tests__/backend/deny-list/mocks/trigger.client-test';
+import { TriggerPruneTest } from '../lib/__tests__/backend/deny-list/mocks/trigger.prune-test';
+import { DenyList } from '../lib/backend';
+import { STORAGE_KEY_PREFIX } from '../lib/backend/shared/constants';
+import { Monitoring } from '../lib/monitoring';
+import { OverviewDashboard } from '../lib/overview-dashboard';
 
-// we need to pull mock package data from `src/` because we execute in `lib/`
 const mockPackageDataDir = join(
   __dirname,
-  '..',
-  '..',
-  '..',
-  '..',
-  '..',
-  'src',
-  '__tests__',
-  'backend',
+  'fixtures',
   'deny-list',
-  'integ',
   'package-data'
 );
 
 const app = new App();
-const stack = new Stack(app, 'TestDenyList');
+const stack = new Stack(app, 'DenyListInteg');
 
 const packageData = new s3.Bucket(stack, 'MockDataBucket', {
   autoDeleteObjects: true,
@@ -84,4 +76,6 @@ const test2 = new TriggerPruneTest(stack, 'PruneTest', {
 
 packageData.grantRead(test2);
 
-app.synth();
+new IntegTest(app, 'deny-list-integ', {
+  testCases: [stack],
+});
