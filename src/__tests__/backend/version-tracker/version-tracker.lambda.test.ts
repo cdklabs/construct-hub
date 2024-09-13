@@ -1,8 +1,10 @@
 import { randomBytes } from 'crypto';
-import * as AWS from 'aws-sdk';
-import type { AWSError } from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
-import * as aws from '../../../backend/shared/aws.lambda-shared';
+import {
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { mockClient } from 'aws-sdk-client-mock';
 import {
   ENV_PACKAGE_DATA_BUCKET_NAME,
   ENV_PACKAGE_DATA_KEY_PREFIX,
@@ -11,12 +13,16 @@ import {
 } from '../../../backend/version-tracker/constants';
 import { handler } from '../../../backend/version-tracker/version-tracker.lambda';
 
+const mockS3 = mockClient(S3Client);
+
 let mockVersionTrackerBucket: string | undefined;
 let mockVersionTrackerKey: string | undefined;
 let mockPackageDataBucket: string | undefined;
 let mockPackageDataKey: string | undefined;
 
-beforeEach((done) => {
+beforeEach(() => {
+  mockS3.reset();
+
   process.env[ENV_VERSION_TRACKER_BUCKET_NAME] = mockVersionTrackerBucket =
     randomBytes(16).toString('base64');
   process.env[ENV_VERSION_TRACKER_OBJECT_KEY] = mockVersionTrackerKey =
@@ -24,20 +30,15 @@ beforeEach((done) => {
   process.env[ENV_PACKAGE_DATA_BUCKET_NAME] = mockPackageDataBucket =
     randomBytes(16).toString('base64');
   process.env[ENV_PACKAGE_DATA_KEY_PREFIX] = mockPackageDataKey = 'the-data/';
-  AWSMock.setSDKInstance(AWS);
-  done();
 });
 
-afterEach((done) => {
-  AWSMock.restore();
-  aws.reset();
+afterEach(() => {
   process.env[ENV_VERSION_TRACKER_BUCKET_NAME] = mockVersionTrackerBucket =
     undefined;
   process.env[ENV_VERSION_TRACKER_OBJECT_KEY] = mockVersionTrackerKey =
     undefined;
   process.env[ENV_PACKAGE_DATA_BUCKET_NAME] = mockPackageDataBucket = undefined;
   process.env[ENV_PACKAGE_DATA_KEY_PREFIX] = mockPackageDataKey = undefined;
-  done();
 });
 
 test('happy path', () => {
@@ -74,28 +75,18 @@ test('happy path', () => {
 });
 
 function mockListObjects(prefixes: Record<string, string[]>) {
-  AWSMock.mock(
-    'S3',
-    'listObjectsV2',
-    (
-      req: AWS.S3.ListObjectsV2Request,
-      cb: Response<AWS.S3.ListObjectsV2Output>
-    ) => {
-      try {
-        expect(req.Bucket).toBe(mockPackageDataBucket);
-        expect(req.Delimiter).toBe('/');
-        expect(req.ContinuationToken).toBeUndefined();
-        expect(Object.keys(prefixes).includes(req.Prefix!)).toBe(true);
-      } catch (e) {
-        return cb(e as AWSError);
-      }
-      return cb(null, {
-        CommonPrefixes: prefixes[req.Prefix!].map((prefix) => ({
-          Prefix: prefix,
-        })),
-      });
-    }
-  );
+  mockS3.on(ListObjectsV2Command).callsFake((req) => {
+    expect(req.Bucket).toBe(mockPackageDataBucket);
+    expect(req.Delimiter).toBe('/');
+    expect(req.ContinuationToken).toBeUndefined();
+    expect(Object.keys(prefixes).includes(req.Prefix!)).toBe(true);
+
+    return {
+      CommonPrefixes: prefixes[req.Prefix!].map((prefix) => ({
+        Prefix: prefix,
+      })),
+    };
+  });
 }
 
 function mockPutObject(
@@ -107,35 +98,28 @@ function mockPutObject(
   const numVersions = Object.values(packages)
     .map((versions) => versions.length)
     .reduce((x, y) => x + y);
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockVersionTrackerBucket);
-        expect(req.Key).toBe(mockVersionTrackerKey);
-        expect(req.ContentType).toBe('application/json');
-        expect(req.Metadata).toHaveProperty(
-          'Package-Count',
-          numPackages.toString()
-        );
-        expect(req.Metadata).toHaveProperty(
-          'Version-Count',
-          numVersions.toString()
-        );
-        const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-        expect(body).toEqual({
-          packages,
-          updatedAt: expect.anything(),
-        });
-        expect(Date.parse(body.updatedAt)).toBeDefined();
-      } catch (e) {
-        return cb(e as AWSError);
-      }
-      return cb(null, mockPutObjectResult);
-    }
-  );
+
+  mockS3.on(PutObjectCommand).callsFake((req) => {
+    expect(req.Bucket).toBe(mockVersionTrackerBucket);
+    expect(req.Key).toBe(mockVersionTrackerKey);
+    expect(req.ContentType).toBe('application/json');
+    expect(req.Metadata).toHaveProperty(
+      'Package-Count',
+      numPackages.toString()
+    );
+    expect(req.Metadata).toHaveProperty(
+      'Version-Count',
+      numVersions.toString()
+    );
+    const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+    expect(body).toEqual({
+      packages,
+      updatedAt: expect.anything(),
+    });
+    expect(Date.parse(body.updatedAt)).toBeDefined();
+
+    return mockPutObjectResult;
+  });
+
   return mockPutObjectResult;
 }
-
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;

@@ -1,6 +1,10 @@
+import {
+  ListObjectsV2Command,
+  ListObjectsV2CommandInput,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
-import * as _AWS from 'aws-sdk';
 import {
   ENV_PACKAGE_DATA_BUCKET_NAME,
   ENV_PACKAGE_DATA_KEY_PREFIX,
@@ -10,7 +14,7 @@ import {
   METRICS_NAMESPACE,
 } from './constants';
 import { CacheStrategy } from '../../caching';
-import * as aws from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 // Batch size that limits how many outgoing S3 calls are made at a time.
@@ -94,9 +98,8 @@ export async function handler(event: any, context: Context) {
   })();
 
   // Upload the result to S3 and exit.
-  const result = await aws
-    .s3()
-    .putObject({
+  const result = await S3_CLIENT.send(
+    new PutObjectCommand({
       Bucket: VERSION_TRACKER_BUCKET_NAME,
       Key: VERSION_TRACKER_OBJECT_KEY,
       Body: JSON.stringify(versionJson),
@@ -110,7 +113,7 @@ export async function handler(event: any, context: Context) {
         'Version-Count': `${totalVersions}`,
       },
     })
-    .promise();
+  );
 
   return result;
 }
@@ -131,13 +134,15 @@ async function listPrefixes(bucket: string, prefix: string): Promise<string[]> {
 
   let continuationToken;
   do {
-    const listRequest: AWS.S3.ListObjectsV2Request = {
+    const listRequest: ListObjectsV2CommandInput = {
       Bucket: bucket,
       Prefix: prefix,
       Delimiter: '/',
       ContinuationToken: continuationToken,
     };
-    const listResponse = await aws.s3().listObjectsV2(listRequest).promise();
+    const listResponse = await S3_CLIENT.send(
+      new ListObjectsV2Command(listRequest)
+    );
     continuationToken = listResponse.NextContinuationToken;
 
     for (const { Prefix: commonPrefix } of listResponse.CommonPrefixes ?? []) {
