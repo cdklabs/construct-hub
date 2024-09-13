@@ -1,8 +1,9 @@
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
-import * as aws from 'aws-sdk';
 import * as constants from './constants';
 import { generateReleaseNotes } from './shared/github-changelog-fetcher.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 
@@ -33,20 +34,20 @@ export const handler = metricScope(
       metrics.putMetric(constants.UnSupportedTarballUrl, 1, Unit.Count);
       return { error: 'UnSupportedTarballUrl' };
     }
-    const tarball = await new aws.S3()
-      .getObject({
+    const tarball = await S3_CLIENT.send(
+      new GetObjectCommand({
         // Note: we drop anything after the first `.` in the host, as we only care about the bucket name.
         Bucket: tarballUri.host.split('.')[0],
         // Note: the pathname part is absolute, so we strip the leading `/`.
         Key: tarballUri.pathname.replace(/^\//, ''),
         VersionId: tarballUri.searchParams.get('versionId') ?? undefined,
       })
-      .promise();
+    );
     let packageJson: Buffer;
 
     try {
       ({ packageJson } = await extractObjects(
-        Buffer.from(tarball.Body! as any),
+        Buffer.from(await tarball.Body!.transformToByteArray()),
         {
           packageJson: { path: 'package/package.json', required: true },
         }
@@ -91,8 +92,8 @@ export const handler = metricScope(
         console.log(
           `storing release notes to s3://${BUCKET_NAME}${releaseNotesPath}`
         );
-        await new aws.S3()
-          .putObject({
+        await S3_CLIENT.send(
+          new PutObjectCommand({
             Bucket: BUCKET_NAME,
             Key: releaseNotesPath,
             Body: releaseNotes,
@@ -103,7 +104,7 @@ export const handler = metricScope(
               'Lambda-Run-Id': context.awsRequestId,
             },
           })
-          .promise();
+        );
       } else {
         console.log('No release notes found');
         metrics.putMetric(constants.PackageWithChangeLog, 0, Unit.Count);
