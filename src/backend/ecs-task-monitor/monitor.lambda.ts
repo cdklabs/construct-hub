@@ -1,7 +1,12 @@
+import {
+  DescribeTasksCommand,
+  ListTasksCommand,
+  StopTaskCommand,
+} from '@aws-sdk/client-ecs';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import { Context, ScheduledEvent } from 'aws-lambda';
 import { Environment, METRICS_NAMESPACE, MetricName } from './constants';
-import * as aws from '../shared/aws.lambda-shared';
+import { ECS_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
@@ -16,22 +21,20 @@ export const handler = metricScope(
     const CLUSTER_NAME = requireEnv(Environment.CLUSTER_NAME);
     const TIMEOUT_MILLIS = parseInt(requireEnv(Environment.TIMEOUT_MILLIS), 10);
 
-    const ecs = aws.ecs();
-
     const cutOffTime = Date.now() - TIMEOUT_MILLIS;
     let theNextToken: string | undefined;
     let killCount = 0;
     try {
       let taskCount = 0;
       do {
-        const { nextToken, taskArns } = await ecs
-          .listTasks({
+        const { nextToken, taskArns } = await ECS_CLIENT.send(
+          new ListTasksCommand({
             cluster: CLUSTER_NAME,
             desiredStatus: 'RUNNING',
             maxResults: 100,
             nextToken: theNextToken,
           })
-          .promise();
+        );
         theNextToken = nextToken;
 
         if (taskArns == null) {
@@ -39,12 +42,12 @@ export const handler = metricScope(
         }
         taskCount += taskArns.length;
 
-        const { failures, tasks } = await ecs
-          .describeTasks({
+        const { failures, tasks } = await ECS_CLIENT.send(
+          new DescribeTasksCommand({
             cluster: CLUSTER_NAME,
             tasks: taskArns,
           })
-          .promise();
+        );
 
         if (failures != null && failures.length > 0) {
           throw new Error(
@@ -75,23 +78,22 @@ export const handler = metricScope(
         }
 
         await Promise.all(
-          Array.from(toTerminate).map((task) =>
-            ecs
-              .stopTask({
-                cluster: CLUSTER_NAME,
-                task,
-                reason: `Terminated by ${context.functionName} (${context.awsRequestId}): Task timed out`,
-              })
-              .promise()
-              .then(
-                () => console.log(`SUCCESS: Terminated ${task}`),
-                (error) =>
-                  console.error(
-                    `WARNING: Failed to terminate ${task}: ${error}`
-                  )
-              )
-              .finally(() => (killCount += 1))
-          )
+          Array.from(toTerminate).map(async (task) => {
+            try {
+              await ECS_CLIENT.send(
+                new StopTaskCommand({
+                  cluster: CLUSTER_NAME,
+                  task,
+                  reason: `Terminated by ${context.functionName} (${context.awsRequestId}): Task timed out`,
+                })
+              );
+              console.log(`SUCCESS: Terminated ${task}`);
+            } catch (error) {
+              console.error(`WARNING: Failed to terminate ${task}: ${error}`);
+            } finally {
+              killCount += 1;
+            }
+          })
         );
       } while (theNextToken != null);
 
