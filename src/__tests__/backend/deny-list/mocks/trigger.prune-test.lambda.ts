@@ -1,7 +1,7 @@
-import * as AWS from 'aws-sdk';
+import { ListObjectsV2CommandInput, S3 } from '@aws-sdk/client-s3';
 import { requireEnv } from '../../../../backend/shared/env.lambda-shared';
 
-const s3 = new AWS.S3();
+const s3 = new S3();
 
 export async function handler() {
   const bucketName = requireEnv('BUCKET_NAME');
@@ -32,12 +32,12 @@ async function getAllObjectKeys(bucket: string) {
   let continuationToken;
   const objectKeys = new Array<string>();
   do {
-    const listRequest: AWS.S3.ListObjectsV2Request = {
+    const listRequest: ListObjectsV2CommandInput = {
       Bucket: bucket,
       ContinuationToken: continuationToken,
     };
     console.log(JSON.stringify({ listRequest }));
-    const listResponse = await s3.listObjectsV2(listRequest).promise();
+    const listResponse = await s3.listObjectsV2(listRequest);
     console.log(JSON.stringify({ listResponse }));
     continuationToken = listResponse.NextContinuationToken;
 
