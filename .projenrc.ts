@@ -2,7 +2,6 @@ import { join, relative } from 'path';
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
 import { github } from 'projen';
 import { addDevApp } from './projenrc/dev-app';
-import { discoverIntegrationTests } from './projenrc/integ-tests';
 import { discoverEcsTasks } from './projenrc/magic-ecs';
 import { discoverLambdas } from './projenrc/magic-lambda';
 import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
@@ -244,7 +243,6 @@ addDevApp(project);
 project.addDevDeps('glob');
 discoverLambdas(project);
 discoverEcsTasks(project);
-discoverIntegrationTests(project);
 
 // use custom version number of integ-runner
 project.deps.removeDependency('@aws-cdk/integ-runner');
