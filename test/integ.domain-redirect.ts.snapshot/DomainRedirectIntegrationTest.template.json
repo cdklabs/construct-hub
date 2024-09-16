@@ -1,0 +1,285 @@
+{
+ "Resources": {
+  "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicy54E1AEDA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "acm:AddTagsToCertificate",
+        "acm:DeleteCertificate",
+        "acm:DescribeCertificate",
+        "acm:RequestCertificate",
+        "route53:GetChange"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "route53:changeResourceRecordSets",
+       "Condition": {
+        "ForAllValues:StringEquals": {
+         "route53:ChangeResourceRecordSetsRecordTypes": [
+          "CNAME"
+         ],
+         "route53:ChangeResourceRecordSetsActions": [
+          "UPSERT"
+         ]
+        },
+        "ForAllValues:StringLike": {
+         "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
+          "*.integ.constructs.dev"
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Resource": "arn:aws:route53:::hostedzone/Z1234567ABCDEF1V2T3E"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicy54E1AEDA",
+    "Roles": [
+     {
+      "Ref": "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B"
+     }
+    ]
+   }
+  },
+  "MyDomainRedirectCertificateCertificateRequestorFunctionD2A136F7": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8.zip"
+    },
+    "Handler": "index.certificateRequestHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicy54E1AEDA",
+    "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B"
+   ]
+  },
+  "MyDomainRedirectCertificateCertificateRequestorResourceFBF8557C": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "MyDomainRedirectCertificateCertificateRequestorFunctionD2A136F7",
+      "Arn"
+     ]
+    },
+    "DomainName": "integ.constructs.dev",
+    "HostedZoneId": "Z1234567ABCDEF1V2T3E"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "MyDomainRedirectDistributionCF05BA92": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "Aliases": [
+      "integ.constructs.dev"
+     ],
+     "DefaultCacheBehavior": {
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true,
+      "TargetOriginId": "DomainRedirectIntegrationTestMyDomainRedirectDistributionOrigin19BC14965",
+      "ViewerProtocolPolicy": "allow-all"
+     },
+     "Enabled": true,
+     "HttpVersion": "http2",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "CustomOriginConfig": {
+        "OriginProtocolPolicy": "http-only",
+        "OriginSSLProtocols": [
+         "TLSv1.2"
+        ]
+       },
+       "DomainName": {
+        "Fn::Select": [
+         2,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::GetAtt": [
+             "DomainRedirectBucketsA177hjRedirectBucketconstructsdevAF40E4F7",
+             "WebsiteURL"
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "Id": "DomainRedirectIntegrationTestMyDomainRedirectDistributionOrigin19BC14965"
+      }
+     ],
+     "ViewerCertificate": {
+      "AcmCertificateArn": {
+       "Fn::GetAtt": [
+        "MyDomainRedirectCertificateCertificateRequestorResourceFBF8557C",
+        "Arn"
+       ]
+      },
+      "MinimumProtocolVersion": "TLSv1.2_2018",
+      "SslSupportMethod": "sni-only"
+     }
+    }
+   }
+  },
+  "MyDomainRedirectARecordB42CD602": {
+   "Type": "AWS::Route53::RecordSet",
+   "Properties": {
+    "AliasTarget": {
+     "DNSName": {
+      "Fn::GetAtt": [
+       "MyDomainRedirectDistributionCF05BA92",
+       "DomainName"
+      ]
+     },
+     "HostedZoneId": {
+      "Fn::FindInMap": [
+       "AWSCloudFrontPartitionHostedZoneIdMap",
+       {
+        "Ref": "AWS::Partition"
+       },
+       "zoneId"
+      ]
+     }
+    },
+    "Comment": "Created by the AWS CDK",
+    "HostedZoneId": "Z1234567ABCDEF1V2T3E",
+    "Name": "integ.constructs.dev.",
+    "Type": "A"
+   }
+  },
+  "MyDomainRedirectAaaaRecord9897C577": {
+   "Type": "AWS::Route53::RecordSet",
+   "Properties": {
+    "AliasTarget": {
+     "DNSName": {
+      "Fn::GetAtt": [
+       "MyDomainRedirectDistributionCF05BA92",
+       "DomainName"
+      ]
+     },
+     "HostedZoneId": {
+      "Fn::FindInMap": [
+       "AWSCloudFrontPartitionHostedZoneIdMap",
+       {
+        "Ref": "AWS::Partition"
+       },
+       "zoneId"
+      ]
+     }
+    },
+    "Comment": "Created by the AWS CDK",
+    "HostedZoneId": "Z1234567ABCDEF1V2T3E",
+    "Name": "integ.constructs.dev.",
+    "Type": "AAAA"
+   }
+  },
+  "DomainRedirectBucketsA177hjRedirectBucketconstructsdevAF40E4F7": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "WebsiteConfiguration": {
+     "RedirectAllRequestsTo": {
+      "HostName": "constructs.dev"
+     }
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  }
+ },
+ "Mappings": {
+  "AWSCloudFrontPartitionHostedZoneIdMap": {
+   "aws": {
+    "zoneId": "Z2FDTNDATAQYW2"
+   },
+   "aws-cn": {
+    "zoneId": "Z3RFFRIM2A3IF5"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
