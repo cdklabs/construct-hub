@@ -18,9 +18,7 @@ const mockPackageDataDir = join(
   'package-data'
 );
 
-const app = new App({
-  outdir: '/tmp/deny-list',
-});
+const app = new App();
 const stack = new Stack(app, 'DenyListInteg');
 
 const packageData = new s3.Bucket(stack, 'MockDataBucket', {
@@ -77,9 +75,6 @@ const test2 = new TriggerPruneTest(stack, 'PruneTest', {
 });
 
 packageData.grantRead(test2);
-
-const synthResult = app.synth();
-console.log(synthResult);
 
 new IntegTest(app, 'deny-list-integ', {
   testCases: [stack],
