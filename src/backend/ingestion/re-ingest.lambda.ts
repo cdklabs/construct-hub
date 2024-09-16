@@ -1,5 +1,6 @@
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import type { Context } from 'aws-lambda';
-import type * as AWS from 'aws-sdk';
 import * as aws from '../shared/aws.lambda-shared';
 import { METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -18,15 +19,16 @@ export async function handler(event: Input, context: Context) {
   const age = requireEnv('REPROCESS_AGE_MILLIS');
 
   console.log(`Download metadata object at ${bucket}/${event.Key}`);
-  const { Body: jsonMetadata } = await aws
-    .s3()
-    .getObject({ Bucket: bucket, Key: event.Key })
-    .promise();
+  const { Body: jsonMetadata } = await aws.S3_CLIENT.send(
+    new GetObjectCommand({ Bucket: bucket, Key: event.Key })
+  );
   if (jsonMetadata == null) {
     console.error(`No body found in ${bucket}/${event.Key}, aborting.`);
     return;
   }
-  const { date: time } = JSON.parse(jsonMetadata.toString('utf-8'));
+  const { date: time } = JSON.parse(
+    await jsonMetadata.transformToString('utf-8')
+  );
 
   const tarballKey = `${event.Key.substr(
     0,
@@ -40,10 +42,9 @@ export async function handler(event: Input, context: Context) {
     return;
   }
   console.log(`Download tarball object at ${bucket}/${tarballKey}`);
-  const { Body: tarball, VersionId: versionId } = await aws
-    .s3()
-    .getObject({ Bucket: bucket, Key: tarballKey })
-    .promise();
+  const { Body: tarball, VersionId: versionId } = await aws.S3_CLIENT.send(
+    new GetObjectCommand({ Bucket: bucket, Key: tarballKey })
+  );
   if (tarball == null) {
     console.error(`No body found in ${bucket}/${tarballKey}, aborting.`);
     return;
@@ -62,7 +63,7 @@ export async function handler(event: Input, context: Context) {
         reprocessLogStream: context.logStreamName,
       },
     },
-    Buffer.from(tarball as any)
+    await tarball.transformToByteArray()
   );
 
   console.log(
@@ -72,9 +73,8 @@ export async function handler(event: Input, context: Context) {
       2
     )}`
   );
-  return aws
-    .sqs()
-    .sendMessage({
+  return aws.SQS_CLIENT.send(
+    new SendMessageCommand({
       QueueUrl: queueUrl,
       MessageBody: JSON.stringify(ingestionInput, null, 2),
       MessageAttributes: {
@@ -92,7 +92,7 @@ export async function handler(event: Input, context: Context) {
         },
       },
     })
-    .promise();
+  );
 }
 
 function isYoungEnough(publishDate: string, historyTimeWindow: number) {

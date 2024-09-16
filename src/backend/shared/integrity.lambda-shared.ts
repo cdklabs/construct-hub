@@ -12,11 +12,11 @@ import type { IngestionInput } from './ingestion-input.lambda-shared';
  */
 export function integrity(
   input: Input,
-  tarball: Buffer,
+  tarball: Uint8Array,
   alg = input.integrity?.split('-')[0] ?? 'sha384'
 ): IngestionInput {
   const hash = createHash(alg);
-  const addField = (name: string, data: string | Buffer) =>
+  const addField = (name: string, data: string | Uint8Array) =>
     //           <SOH>        $name          <STX>        $data          <ETX>
     hash.update('\x01').update(name).update('\x02').update(data).update('\x03');
 

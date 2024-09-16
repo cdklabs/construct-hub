@@ -2,13 +2,16 @@ import { createHash } from 'crypto';
 import { basename, extname } from 'path';
 import { URL } from 'url';
 
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { StartExecutionCommand } from '@aws-sdk/client-sfn';
+import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import {
-  SPEC_FILE_NAME,
   Assembly,
   loadAssemblyFromBuffer,
+  SPEC_FILE_NAME,
   SPEC_FILE_NAME_COMPRESSED,
 } from '@jsii/spec';
-import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
+import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import {
@@ -73,21 +76,18 @@ export const handler = metricScope(
       if (tarballUri.protocol !== 's3:') {
         throw new Error(`Unsupported protocol in URI: ${tarballUri}`);
       }
-      const tarball = await aws
-        .s3()
-        .getObject({
+      const tarball = await aws.S3_CLIENT.send(
+        new GetObjectCommand({
           // Note: we drop anything after the first `.` in the host, as we only care about the bucket name.
           Bucket: tarballUri.host.split('.')[0],
           // Note: the pathname part is absolute, so we strip the leading `/`.
           Key: tarballUri.pathname.replace(/^\//, ''),
           VersionId: tarballUri.searchParams.get('versionId') ?? undefined,
         })
-        .promise();
-
-      const { integrity: integrityCheck } = integrity(
-        payload,
-        Buffer.from(tarball.Body! as any)
       );
+
+      const tarballContents = await tarball.Body!.transformToByteArray();
+      const { integrity: integrityCheck } = integrity(payload, tarballContents);
       if (payload.integrity !== integrityCheck) {
         throw new Error(
           `Integrity check failed: ${payload.integrity} !== ${integrityCheck}`
@@ -103,7 +103,7 @@ export const handler = metricScope(
       let licenseText: Buffer | undefined;
       try {
         ({ dotJsii, compDotJsii, packageJson, licenseText } =
-          await extractObjects(Buffer.from(tarball.Body! as any), {
+          await extractObjects(tarballContents, {
             dotJsii: { path: dotJsiiFile, required: true },
             compDotJsii: { path: compDotJsiiFile },
             packageJson: { path: 'package/package.json', required: true },
@@ -253,7 +253,7 @@ export const handler = metricScope(
             );
           } else {
             await codeArtifactPublishPackage(
-              Buffer.from(tarball.Body! as any),
+              tarballContents,
               codeArtifactProps
             );
           }
@@ -284,12 +284,11 @@ export const handler = metricScope(
         `${packageName}@${packageVersion} | Uploading package and metadata files`
       );
       const [pkg, storedMetadata] = await Promise.all([
-        aws
-          .s3()
-          .putObject({
+        aws.S3_CLIENT.send(
+          new PutObjectCommand({
             Bucket: BUCKET_NAME,
             Key: packageKey,
-            Body: tarball.Body,
+            Body: tarballContents,
             CacheControl: CacheStrategy.default().toString(),
             ContentType: 'application/octet-stream',
             Metadata: {
@@ -298,10 +297,9 @@ export const handler = metricScope(
               'Lambda-Run-Id': context.awsRequestId,
             },
           })
-          .promise(),
-        aws
-          .s3()
-          .putObject({
+        ),
+        aws.S3_CLIENT.send(
+          new PutObjectCommand({
             Bucket: BUCKET_NAME,
             Key: metadataKey,
             Body: JSON.stringify(metadata),
@@ -313,14 +311,13 @@ export const handler = metricScope(
               'Lambda-Run-Id': context.awsRequestId,
             },
           })
-          .promise(),
+        ),
       ]);
 
       // now we can upload the assembly.
       console.log(`${packageName}@${packageVersion} | Uploading assembly file`);
-      const assembly = await aws
-        .s3()
-        .putObject({
+      const assembly = await aws.S3_CLIENT.send(
+        new PutObjectCommand({
           Bucket: BUCKET_NAME,
           Key: assemblyKey,
           Body: Buffer.from(JSON.stringify(parsedAssembly), 'utf-8'),
@@ -332,7 +329,7 @@ export const handler = metricScope(
             'Lambda-Run-Id': context.awsRequestId,
           },
         })
-        .promise();
+      );
 
       const created: StateMachineInput = {
         bucket: BUCKET_NAME,
@@ -351,9 +348,8 @@ export const handler = metricScope(
       };
       console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
 
-      const sfn = await aws
-        .stepFunctions()
-        .startExecution({
+      const sfn = await aws.SFN_CLIENT.send(
+        new StartExecutionCommand({
           input: JSON.stringify(created),
           name: sfnExecutionNameFromParts(
             packageName,
@@ -362,11 +358,11 @@ export const handler = metricScope(
           ),
           stateMachineArn: STATE_MACHINE_ARN,
         })
-        .promise();
+      );
       console.log(`Started StateMachine execution: ${sfn.executionArn}`);
-      result.push(sfn.executionArn);
+      result.push(sfn.executionArn!);
 
-      // Dont fetch release notes if its a reIngestion request
+      // Don't fetch release notes if it's a reIngestion request
       if (
         payload.reIngest !== true &&
         process.env.RELEASE_NOTES_FETCH_QUEUE_URL
@@ -375,13 +371,12 @@ export const handler = metricScope(
           tarballUri: `s3://${BUCKET_NAME}/${packageKey}`,
         });
         console.log('sending message to release note fetcher ', body);
-        await aws
-          .sqs()
-          .sendMessage({
+        await aws.SQS_CLIENT.send(
+          new SendMessageCommand({
             QueueUrl: process.env.RELEASE_NOTES_FETCH_QUEUE_URL,
             MessageBody: body,
           })
-          .promise();
+        );
       }
     }
 
@@ -452,14 +447,13 @@ async function getConfig(bucket: string, key: string): Promise<Config> {
     packageLinks: [],
   };
   try {
-    const req = await aws
-      .s3()
-      .getObject({
+    const req = await aws.S3_CLIENT.send(
+      new GetObjectCommand({
         Bucket: bucket,
         Key: key,
       })
-      .promise();
-    const body = req?.Body?.toString();
+    );
+    const body = await req?.Body?.transformToString();
     if (body) {
       return JSON.parse(body);
     }

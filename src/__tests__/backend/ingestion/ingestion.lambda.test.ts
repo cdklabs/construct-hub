@@ -1,31 +1,40 @@
 import { createGzip, gzipSync } from 'zlib';
 import {
+  GetObjectCommand,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
+import {
   Assembly,
   CollectionKind,
   DependencyConfiguration,
   PrimitiveType,
   SchemaVersion,
-  Stability,
-  TypeKind,
   SPEC_FILE_NAME,
   SPEC_FILE_NAME_COMPRESSED,
+  Stability,
+  TypeKind,
 } from '@jsii/spec';
+import { StreamingBlobPayloadOutputTypes } from '@smithy/types';
+import { sdkStreamMixin } from '@smithy/util-stream';
 import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Context, SQSEvent } from 'aws-lambda';
-import * as AWS from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
+import { mockClient } from 'aws-sdk-client-mock';
 import { pack } from 'tar-stream';
 import { MetricName } from '../../../backend/ingestion/constants';
-import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 import type { requireEnv } from '../../../backend/shared/env.lambda-shared';
 import { integrity as computeIntegrity } from '../../../backend/shared/integrity.lambda-shared';
 import { TagCondition } from '../../../package-tag';
+import { stringToStream } from '../../streams';
 
 jest.setTimeout(10_000);
 
 jest.mock('aws-embedded-metrics');
 jest.mock('../../../backend/shared/env.lambda-shared');
+const decoder = new TextDecoder();
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const mockMetricScope = require('aws-embedded-metrics')
@@ -44,18 +53,9 @@ mockMetricScope.mockImplementation((cb) => {
   return async (...args) => impl(...args);
 });
 
-beforeEach((done) => {
-  AWSMock.setSDKInstance(AWS);
-  done();
-});
-
-afterEach((done) => {
-  AWSMock.restore();
-  reset();
-  done();
-});
-
 test('basic happy case', async () => {
+  const s3Mock = mockClient(S3Client);
+  const sfnMock = mockClient(SFNClient);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -91,12 +91,10 @@ test('basic happy case', async () => {
   const fakeDotJsii = JSON.stringify(
     fakeAssembly(packageName, packageVersion, packageLicense)
   );
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -104,40 +102,31 @@ test('basic happy case', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
@@ -145,83 +134,65 @@ test('basic happy case', async () => {
     packageName,
     packageVersion
   );
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
 
-            // our service removes the "types" field from the assembly since it is not needed
-            // and takes up a lot of space.
-            assertAssembly(fakeDotJsii, req.Body?.toString());
+  s3Mock.on(PutObjectCommand).callsFake(async (req: PutObjectCommandInput) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+    expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+    expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+    switch (req.Key) {
+      case assemblyKey:
+        expect(req.ContentType).toBe('application/json');
 
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(Buffer.from(req.Body! as any)).toEqual(
-              Buffer.from(
-                JSON.stringify({
-                  constructFrameworks: [],
-                  date: time,
-                  packageLinks: {},
-                  packageTags: [],
-                })
-              )
-            );
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(tarball);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
-        }
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
+        // our service removes the "types" field from the assembly since it is not needed
+        // and takes up a lot of space.
+        assertAssembly(fakeDotJsii, decoder.decode(req.Body! as Uint8Array));
+
+        // Must be created strictly after the tarball and metadata files have been uploaded.
+        expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+        break;
+      case metadataKey:
+        expect(req.ContentType).toBe('application/json');
+        expect(typeof req.Body).toBe('string');
+        expect(JSON.parse(req.Body! as string)).toEqual({
+          constructFrameworks: [],
+          date: time,
+          packageLinks: {},
+          packageTags: [],
+        });
+        mockMetadataCreated = true;
+        break;
+      case packageKey:
+        expect(req.ContentType).toBe('application/octet-stream');
+        expect(req.Body).toEqual(
+          await makeTarball().then((tb) => tb.transformToByteArray())
+        );
+        mockTarballCreated = true;
+        break;
+      default:
+        fail(`Unexpected key: "${req.Key}"`);
     }
-  );
+    return { VersionId: `${req.Key}-NewVersion` };
+  });
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock(
-    'StepFunctions',
-    'startExecution',
-    (
-      req: AWS.StepFunctions.StartExecutionInput,
-      cb: Response<AWS.StepFunctions.StartExecutionOutput>
-    ) => {
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: {
-            key: assemblyKey,
-            versionId: `${assemblyKey}-NewVersion`,
-          },
-          metadata: {
-            key: metadataKey,
-            versionId: `${metadataKey}-NewVersion`,
-          },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-        });
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { executionArn, startDate: new Date() });
-    }
-  );
+  sfnMock.on(StartExecutionCommand).callsFake((req) => {
+    expect(req.stateMachineArn).toBe(mockStateMachineArn);
+    expect(JSON.parse(req.input!)).toEqual({
+      bucket: mockBucketName,
+      assembly: {
+        key: assemblyKey,
+        versionId: `${assemblyKey}-NewVersion`,
+      },
+      metadata: {
+        key: metadataKey,
+        versionId: `${metadataKey}-NewVersion`,
+      },
+      package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+    });
+
+    return { executionArn, startDate: new Date() };
+  });
 
   const event: SQSEvent = {
     Records: [
@@ -232,7 +203,7 @@ test('basic happy case', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -271,6 +242,8 @@ test('basic happy case', async () => {
 });
 
 test('basic happy case with duplicated packages', async () => {
+  const s3Mock = mockClient(S3Client);
+  const sfnMock = mockClient(SFNClient);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -306,12 +279,10 @@ test('basic happy case with duplicated packages', async () => {
   const fakeDotJsii = JSON.stringify(
     fakeAssembly(packageName, packageVersion, packageLicense)
   );
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -319,40 +290,33 @@ test('basic happy case with duplicated packages', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .callsFake(async () => {
+      return { Body: await makeTarball() };
+    });
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
@@ -360,86 +324,65 @@ test('basic happy case with duplicated packages', async () => {
     packageName,
     packageVersion
   );
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
 
-            // our service removes the "types" field from the assembly since it is not needed
-            // and takes up a lot of space.
-            assertAssembly(fakeDotJsii, req.Body?.toString());
+  s3Mock.on(PutObjectCommand).callsFake(async (req: PutObjectCommandInput) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+    expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+    expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+    switch (req.Key) {
+      case assemblyKey:
+        expect(req.ContentType).toBe('application/json');
 
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(Buffer.from(req.Body! as any)).toEqual(
-              Buffer.from(
-                JSON.stringify({
-                  constructFrameworks: [],
-                  date: time,
-                  packageLinks: {},
-                  packageTags: [],
-                })
-              )
-            );
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(tarball);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
-        }
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
-    }
-  );
+        // our service removes the "types" field from the assembly since it is not needed
+        // and takes up a lot of space.
+        assertAssembly(fakeDotJsii, decoder.decode(req.Body! as Uint8Array));
 
-  let executionsStarted = 0;
-  const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock(
-    'StepFunctions',
-    'startExecution',
-    (
-      req: AWS.StepFunctions.StartExecutionInput,
-      cb: Response<AWS.StepFunctions.StartExecutionOutput>
-    ) => {
-      executionsStarted++;
-      expect(executionsStarted).toEqual(1);
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: {
-            key: assemblyKey,
-            versionId: `${assemblyKey}-NewVersion`,
-          },
-          metadata: {
-            key: metadataKey,
-            versionId: `${metadataKey}-NewVersion`,
-          },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+        // Must be created strictly after the tarball and metadata files have been uploaded.
+        expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+        break;
+      case metadataKey:
+        expect(req.ContentType).toBe('application/json');
+        expect(typeof req.Body).toBe('string');
+        expect(JSON.parse(req.Body! as string)).toEqual({
+          constructFrameworks: [],
+          date: time,
+          packageLinks: {},
+          packageTags: [],
         });
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { executionArn, startDate: new Date() });
+        mockMetadataCreated = true;
+        break;
+      case packageKey:
+        expect(req.ContentType).toBe('application/octet-stream');
+        expect(req.Body).toEqual(
+          await makeTarball().then((tb) => tb.transformToByteArray())
+        );
+        mockTarballCreated = true;
+        break;
+      default:
+        fail(`Unexpected key: "${req.Key}"`);
     }
-  );
+    return { VersionId: `${req.Key}-NewVersion` };
+  });
+
+  const executionArn = 'Fake-Execution-Arn';
+  sfnMock.on(StartExecutionCommand).callsFake((req) => {
+    expect(req.stateMachineArn).toBe(mockStateMachineArn);
+    expect(JSON.parse(req.input!)).toEqual({
+      bucket: mockBucketName,
+      assembly: {
+        key: assemblyKey,
+        versionId: `${assemblyKey}-NewVersion`,
+      },
+      metadata: {
+        key: metadataKey,
+        versionId: `${metadataKey}-NewVersion`,
+      },
+      package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+    });
+
+    return { executionArn, startDate: new Date() };
+  });
 
   const event: SQSEvent = {
     Records: [
@@ -450,7 +393,7 @@ test('basic happy case with duplicated packages', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -468,7 +411,7 @@ test('basic happy case with duplicated packages', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -507,6 +450,8 @@ test('basic happy case with duplicated packages', async () => {
 });
 
 test('basic happy case with compressed assembly', async () => {
+  const s3Mock = mockClient(S3Client);
+  const sfnMock = mockClient(SFNClient);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -547,12 +492,10 @@ test('basic happy case with compressed assembly', async () => {
     compression: 'gzip',
     filename: SPEC_FILE_NAME_COMPRESSED,
   });
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -560,41 +503,32 @@ test('basic happy case with compressed assembly', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsiiRedirect,
-    [`package/${SPEC_FILE_NAME_COMPRESSED}`]: gzipSync(fakeDotJsii),
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsiiRedirect,
+      [`package/${SPEC_FILE_NAME_COMPRESSED}`]: gzipSync(fakeDotJsii),
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
@@ -602,83 +536,65 @@ test('basic happy case with compressed assembly', async () => {
     packageName,
     packageVersion
   );
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
 
-            // our service removes the "types" field from the assembly since it is not needed
-            // and takes up a lot of space.
-            assertAssembly(fakeDotJsii, req.Body?.toString());
+  s3Mock.on(PutObjectCommand).callsFake(async (req: PutObjectCommandInput) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+    expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+    expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+    switch (req.Key) {
+      case assemblyKey:
+        expect(req.ContentType).toBe('application/json');
 
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(Buffer.from(req.Body! as any)).toEqual(
-              Buffer.from(
-                JSON.stringify({
-                  constructFrameworks: [],
-                  date: time,
-                  packageLinks: {},
-                  packageTags: [],
-                })
-              )
-            );
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(tarball);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
-        }
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
+        // our service removes the "types" field from the assembly since it is not needed
+        // and takes up a lot of space.
+        assertAssembly(fakeDotJsii, decoder.decode(req.Body! as Uint8Array));
+
+        // Must be created strictly after the tarball and metadata files have been uploaded.
+        expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+        break;
+      case metadataKey:
+        expect(req.ContentType).toBe('application/json');
+        expect(typeof req.Body).toBe('string');
+        expect(JSON.parse(req.Body! as string)).toEqual({
+          constructFrameworks: [],
+          date: time,
+          packageLinks: {},
+          packageTags: [],
+        });
+        mockMetadataCreated = true;
+        break;
+      case packageKey:
+        expect(req.ContentType).toBe('application/octet-stream');
+        expect(req.Body).toEqual(
+          await makeTarball().then((tb) => tb.transformToByteArray())
+        );
+        mockTarballCreated = true;
+        break;
+      default:
+        fail(`Unexpected key: "${req.Key}"`);
     }
-  );
+    return { VersionId: `${req.Key}-NewVersion` };
+  });
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock(
-    'StepFunctions',
-    'startExecution',
-    (
-      req: AWS.StepFunctions.StartExecutionInput,
-      cb: Response<AWS.StepFunctions.StartExecutionOutput>
-    ) => {
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: {
-            key: assemblyKey,
-            versionId: `${assemblyKey}-NewVersion`,
-          },
-          metadata: {
-            key: metadataKey,
-            versionId: `${metadataKey}-NewVersion`,
-          },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-        });
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { executionArn, startDate: new Date() });
-    }
-  );
+  sfnMock.on(StartExecutionCommand).callsFake((req) => {
+    expect(req.stateMachineArn).toBe(mockStateMachineArn);
+    expect(JSON.parse(req.input!)).toEqual({
+      bucket: mockBucketName,
+      assembly: {
+        key: assemblyKey,
+        versionId: `${assemblyKey}-NewVersion`,
+      },
+      metadata: {
+        key: metadataKey,
+        versionId: `${metadataKey}-NewVersion`,
+      },
+      package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+    });
+
+    return { executionArn, startDate: new Date() };
+  });
 
   const event: SQSEvent = {
     Records: [
@@ -689,7 +605,7 @@ test('basic happy case with compressed assembly', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -727,6 +643,8 @@ test('basic happy case with compressed assembly', async () => {
 });
 
 test('basic happy case with license file', async () => {
+  const s3Mock = mockClient(S3Client);
+  const sfnMock = mockClient(SFNClient);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -763,12 +681,10 @@ test('basic happy case with license file', async () => {
   const fakeDotJsii = JSON.stringify(
     fakeAssembly(packageName, packageVersion, packageLicense)
   );
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -776,41 +692,34 @@ test('basic happy case with license file', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/LICENSE.md': fakeLicense,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .callsFake(async () => {
+      return { Body: await makeTarball() };
+    });
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
@@ -818,83 +727,66 @@ test('basic happy case with license file', async () => {
     packageName,
     packageVersion
   );
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
-            assertAssembly(fakeDotJsii, req.Body?.toString());
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(Buffer.from(req.Body! as any)).toEqual(
-              Buffer.from(
-                JSON.stringify({
-                  constructFrameworks: [],
-                  date: time,
-                  licenseText: fakeLicense,
-                  packageLinks: {},
-                  packageTags: [],
-                })
-              )
-            );
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(tarball);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
-        }
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
+
+  s3Mock.on(PutObjectCommand).callsFake(async (req: PutObjectCommandInput) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+    expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+    expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+    switch (req.Key) {
+      case assemblyKey:
+        expect(req.ContentType).toBe('application/json');
+
+        // our service removes the "types" field from the assembly since it is not needed
+        // and takes up a lot of space.
+        assertAssembly(fakeDotJsii, decoder.decode(req.Body! as Uint8Array));
+
+        // Must be created strictly after the tarball and metadata files have been uploaded.
+        expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+        break;
+      case metadataKey:
+        expect(req.ContentType).toBe('application/json');
+        expect(typeof req.Body).toBe('string');
+        expect(JSON.parse(req.Body! as string)).toEqual({
+          constructFrameworks: [],
+          date: time,
+          licenseText: fakeLicense,
+          packageLinks: {},
+          packageTags: [],
+        });
+        mockMetadataCreated = true;
+        break;
+      case packageKey:
+        expect(req.ContentType).toBe('application/octet-stream');
+        expect(req.Body).toEqual(
+          await makeTarball().then((tb) => tb.transformToByteArray())
+        );
+        mockTarballCreated = true;
+        break;
+      default:
+        fail(`Unexpected key: "${req.Key}"`);
     }
-  );
+    return { VersionId: `${req.Key}-NewVersion` };
+  });
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock(
-    'StepFunctions',
-    'startExecution',
-    (
-      req: AWS.StepFunctions.StartExecutionInput,
-      cb: Response<AWS.StepFunctions.StartExecutionOutput>
-    ) => {
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: {
-            key: assemblyKey,
-            versionId: `${assemblyKey}-NewVersion`,
-          },
-          metadata: {
-            key: metadataKey,
-            versionId: `${metadataKey}-NewVersion`,
-          },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-        });
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, {
-        executionArn,
-        startDate: new Date(),
-      });
-    }
-  );
+  sfnMock.on(StartExecutionCommand).callsFake((req) => {
+    expect(req.stateMachineArn).toBe(mockStateMachineArn);
+    expect(JSON.parse(req.input!)).toEqual({
+      bucket: mockBucketName,
+      assembly: {
+        key: assemblyKey,
+        versionId: `${assemblyKey}-NewVersion`,
+      },
+      metadata: {
+        key: metadataKey,
+        versionId: `${metadataKey}-NewVersion`,
+      },
+      package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+    });
+
+    return { executionArn, startDate: new Date() };
+  });
 
   const event: SQSEvent = {
     Records: [
@@ -905,7 +797,7 @@ test('basic happy case with license file', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -943,6 +835,8 @@ test('basic happy case with license file', async () => {
 });
 
 test('basic happy case with custom package links', async () => {
+  const s3Mock = mockClient(S3Client);
+  const sfnMock = mockClient(SFNClient);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -980,27 +874,10 @@ test('basic happy case with custom package links', async () => {
   const fakeDotJsii = JSON.stringify(
     fakeAssembly(packageName, packageVersion, packageLicense)
   );
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [
-        {
-          linkLabel: 'PackageLink',
-          configKey: 'PackageLinkKey',
-        },
-        {
-          linkLabel: 'PackageLinkDomain',
-          configKey: 'PackageLinkDomainKey',
-          allowedDomains: ['somehost.com'],
-        },
-        {
-          linkLabel: 'PackageLinkBadDomain',
-          configKey: 'PackageLinkBadDomainKey',
-          allowedDomains: ['somehost.com'],
-        },
-      ],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1008,47 +885,38 @@ test('basic happy case with custom package links', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-      constructHub: {
-        packageLinks: {
-          PackageLinkKey: packageLinkValue,
-          PackageLinkDomainKey: packageLinkValue,
-          PackageLinkBadDomainKey: packageLinkBadValue,
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+        constructHub: {
+          packageLinks: {
+            PackageLinkKey: packageLinkValue,
+            PackageLinkDomainKey: packageLinkValue,
+            PackageLinkBadDomainKey: packageLinkBadValue,
+          },
         },
-      },
-    }),
-  });
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
@@ -1056,83 +924,65 @@ test('basic happy case with custom package links', async () => {
     packageName,
     packageVersion
   );
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
-            assertAssembly(fakeDotJsii, req.Body?.toString());
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(Buffer.from(req.Body! as any)).toEqual(
-              Buffer.from(
-                JSON.stringify({
-                  constructFrameworks: [],
-                  date: time,
-                  packageLinks: {
-                    PackageLinkKey: packageLinkValue,
-                    PackageLinkDomainKey: packageLinkValue,
-                    // no bad domain key since validation fails
-                  },
-                  packageTags: [],
-                })
-              )
-            );
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(tarball);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
-        }
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
+
+  s3Mock.on(PutObjectCommand).callsFake(async (req: PutObjectCommandInput) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+    expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+    expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+    switch (req.Key) {
+      case assemblyKey:
+        expect(req.ContentType).toBe('application/json');
+
+        // our service removes the "types" field from the assembly since it is not needed
+        // and takes up a lot of space.
+        assertAssembly(fakeDotJsii, decoder.decode(req.Body! as Uint8Array));
+
+        // Must be created strictly after the tarball and metadata files have been uploaded.
+        expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+        break;
+      case metadataKey:
+        expect(req.ContentType).toBe('application/json');
+        expect(typeof req.Body).toBe('string');
+        expect(JSON.parse(req.Body! as string)).toEqual({
+          constructFrameworks: [],
+          date: time,
+          packageLinks: {},
+          packageTags: [],
+        });
+        mockMetadataCreated = true;
+        break;
+      case packageKey:
+        expect(req.ContentType).toBe('application/octet-stream');
+        expect(req.Body).toEqual(
+          await makeTarball().then((tb) => tb.transformToByteArray())
+        );
+        mockTarballCreated = true;
+        break;
+      default:
+        fail(`Unexpected key: "${req.Key}"`);
     }
-  );
+    return { VersionId: `${req.Key}-NewVersion` };
+  });
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock(
-    'StepFunctions',
-    'startExecution',
-    (
-      req: AWS.StepFunctions.StartExecutionInput,
-      cb: Response<AWS.StepFunctions.StartExecutionOutput>
-    ) => {
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: {
-            key: assemblyKey,
-            versionId: `${assemblyKey}-NewVersion`,
-          },
-          metadata: {
-            key: metadataKey,
-            versionId: `${metadataKey}-NewVersion`,
-          },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-        });
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { executionArn, startDate: new Date() });
-    }
-  );
+  sfnMock.on(StartExecutionCommand).callsFake((req) => {
+    expect(req.stateMachineArn).toBe(mockStateMachineArn);
+    expect(JSON.parse(req.input!)).toEqual({
+      bucket: mockBucketName,
+      assembly: {
+        key: assemblyKey,
+        versionId: `${assemblyKey}-NewVersion`,
+      },
+      metadata: {
+        key: metadataKey,
+        versionId: `${metadataKey}-NewVersion`,
+      },
+      package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+    });
+
+    return { executionArn, startDate: new Date() };
+  });
 
   const event: SQSEvent = {
     Records: [
@@ -1143,7 +993,7 @@ test('basic happy case with custom package links', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -1181,7 +1031,8 @@ test('basic happy case with custom package links', async () => {
 });
 
 test('basic happy case with custom tags', async () => {
-  const packageName = '@package-scope/package-name';
+  const s3Mock = mockClient(S3Client);
+  const sfnMock = mockClient(SFNClient);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -1211,6 +1062,7 @@ test('basic happy case with custom tags', async () => {
   const stagingVersion = 'staging-version-id';
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
+  const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
   const fakeDotJsii = JSON.stringify(
@@ -1254,12 +1106,10 @@ test('basic happy case with custom tags', async () => {
     ...tagMaker('false', Object.entries(falseTags)),
   ];
 
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: mockPackageTags,
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: mockPackageTags,
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1267,40 +1117,31 @@ test('basic happy case with custom tags', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
@@ -1308,82 +1149,65 @@ test('basic happy case with custom tags', async () => {
     packageName,
     packageVersion
   );
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
-            assertAssembly(fakeDotJsii, req.Body?.toString());
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(Buffer.from(req.Body! as any)).toEqual(
-              Buffer.from(
-                JSON.stringify({
-                  constructFrameworks: [],
-                  date: time,
-                  packageLinks: {},
-                  // only includes true tags
-                  packageTags: trueEntries.map(([name]) => ({
-                    label: `true_${name}`,
-                  })),
-                })
-              )
-            );
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(tarball);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
-        }
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
+
+  s3Mock.on(PutObjectCommand).callsFake(async (req: PutObjectCommandInput) => {
+    expect(req.Bucket).toBe(mockBucketName);
+    expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+    expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+    expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+    switch (req.Key) {
+      case assemblyKey:
+        expect(req.ContentType).toBe('application/json');
+        assertAssembly(fakeDotJsii, decoder.decode(req.Body! as Uint8Array));
+
+        // Must be created strictly after the tarball and metadata files have been uploaded.
+        expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+        break;
+      case metadataKey:
+        expect(req.ContentType).toBe('application/json');
+        expect(typeof req.Body).toBe('string');
+        expect(JSON.parse(req.Body! as string)).toEqual({
+          constructFrameworks: [],
+          date: time,
+          packageLinks: {},
+          // only includes true tags
+          packageTags: trueEntries.map(([name]) => ({
+            label: `true_${name}`,
+          })),
+        });
+        mockMetadataCreated = true;
+        break;
+      case packageKey:
+        expect(req.ContentType).toBe('application/octet-stream');
+        expect(req.Body).toEqual(
+          await makeTarball().then((tb) => tb.transformToByteArray())
+        );
+        mockTarballCreated = true;
+        break;
+      default:
+        fail(`Unexpected key: "${req.Key}"`);
     }
-  );
+    return { VersionId: `${req.Key}-NewVersion` };
+  });
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock(
-    'StepFunctions',
-    'startExecution',
-    (
-      req: AWS.StepFunctions.StartExecutionInput,
-      cb: Response<AWS.StepFunctions.StartExecutionOutput>
-    ) => {
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: {
-            key: assemblyKey,
-            versionId: `${assemblyKey}-NewVersion`,
-          },
-          metadata: {
-            key: metadataKey,
-            versionId: `${metadataKey}-NewVersion`,
-          },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-        });
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { executionArn, startDate: new Date() });
-    }
-  );
+  sfnMock.on(StartExecutionCommand).callsFake((req) => {
+    expect(req.stateMachineArn).toBe(mockStateMachineArn);
+    expect(JSON.parse(req.input!)).toEqual({
+      bucket: mockBucketName,
+      assembly: {
+        key: assemblyKey,
+        versionId: `${assemblyKey}-NewVersion`,
+      },
+      metadata: {
+        key: metadataKey,
+        versionId: `${metadataKey}-NewVersion`,
+      },
+      package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+    });
+
+    return { executionArn, startDate: new Date() };
+  });
 
   const event: SQSEvent = {
     Records: [
@@ -1394,7 +1218,7 @@ test('basic happy case with custom tags', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -1439,6 +1263,8 @@ for (const [frameworkName, frameworkPackage] of [
   ['cdktf', 'cdktf'],
 ]) {
   test(`basic happy case with constructs framework (${frameworkName})`, async () => {
+    const s3Mock = mockClient(S3Client);
+    const sfnMock = mockClient(SFNClient);
     const mockBucketName = 'fake-bucket';
     const mockStateMachineArn = 'fake-state-machine-arn';
     const mockConfigBucket = 'fake-config-bucket';
@@ -1480,12 +1306,10 @@ for (const [frameworkName, frameworkPackage] of [
         },
       },
     });
-    const mockConfig = Buffer.from(
-      JSON.stringify({
-        packageLinks: [],
-        packageTags: [],
-      })
-    );
+    const mockConfig = JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    });
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -1493,40 +1317,31 @@ for (const [frameworkName, frameworkPackage] of [
       logStreamName: 'Fake-Log-Stream',
     } as any;
 
-    const tarball = await buildTarGz({
-      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-      'package/index.js': '// Ignore me!',
-      'package/package.json': JSON.stringify({
-        name: packageName,
-        version: packageVersion,
-        license: packageLicense,
-      }),
-    });
+    const makeTarball = async () =>
+      buildTarGz({
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      });
 
-    AWSMock.mock(
-      'S3',
-      'getObject',
-      (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-        if (req.Bucket === mockConfigBucket) {
-          try {
-            expect(req.Bucket).toBe(mockConfigBucket);
-            expect(req.Key).toBe(mockConfigkey);
-          } catch (e: any) {
-            return cb(e);
-          }
-          return cb(null, { Body: mockConfig });
-        }
+    s3Mock
+      .on(GetObjectCommand, {
+        Bucket: mockConfigBucket,
+        Key: mockConfigkey,
+      })
+      .resolves({ Body: stringToStream(mockConfig) });
 
-        try {
-          expect(req.Bucket).toBe(stagingBucket);
-          expect(req.Key).toBe(stagingKey);
-          expect(req.VersionId).toBe(stagingVersion);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: tarball });
-      }
-    );
+    s3Mock
+      .on(GetObjectCommand, {
+        Bucket: stagingBucket,
+        Key: stagingKey,
+        VersionId: stagingVersion,
+      })
+      .resolves({ Body: await makeTarball() });
 
     let mockTarballCreated = false;
     let mockMetadataCreated = false;
@@ -1534,79 +1349,69 @@ for (const [frameworkName, frameworkPackage] of [
       packageName,
       packageVersion
     );
-    AWSMock.mock(
-      'S3',
-      'putObject',
-      (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-        try {
-          expect(req.Bucket).toBe(mockBucketName);
-          expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-          expect(req.Metadata?.['Lambda-Log-Stream']).toBe(
-            context.logStreamName
-          );
-          expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-          switch (req.Key) {
-            case assemblyKey:
-              expect(req.ContentType).toBe('application/json');
-              assertAssembly(fakeDotJsii, req.Body?.toString());
-              // Must be created strictly after the tarball and metadata files have been uploaded.
-              expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-              break;
-            case metadataKey:
-              expect(req.ContentType).toBe('application/json');
-              expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-                constructFrameworks: [
-                  { name: frameworkName, majorVersion: 1337 },
-                ],
-                date: time,
-                packageLinks: {},
-                packageTags: [],
-              });
-              mockMetadataCreated = true;
-              break;
-            case packageKey:
-              expect(req.ContentType).toBe('application/octet-stream');
-              expect(req.Body).toEqual(tarball);
-              mockTarballCreated = true;
-              break;
-            default:
-              fail(`Unexpected key: "${req.Key}"`);
-          }
-        } catch (e: any) {
-          return cb(e);
+
+    s3Mock
+      .on(PutObjectCommand)
+      .callsFake(async (req: PutObjectCommandInput) => {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
+            assertAssembly(
+              fakeDotJsii,
+              decoder.decode(req.Body! as Uint8Array)
+            );
+
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(typeof req.Body).toBe('string');
+            expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
+              constructFrameworks: [
+                { name: frameworkName, majorVersion: 1337 },
+              ],
+              date: time,
+              packageLinks: {},
+              packageTags: [],
+            });
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(
+              await makeTarball().then((tb) => tb.transformToByteArray())
+            );
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
         }
-        return cb(null, { VersionId: `${req.Key}-NewVersion` });
-      }
-    );
+        return { VersionId: `${req.Key}-NewVersion` };
+      });
 
     const executionArn = 'Fake-Execution-Arn';
-    AWSMock.mock(
-      'StepFunctions',
-      'startExecution',
-      (
-        req: AWS.StepFunctions.StartExecutionInput,
-        cb: Response<AWS.StepFunctions.StartExecutionOutput>
-      ) => {
-        try {
-          expect(req.stateMachineArn).toBe(mockStateMachineArn);
-          expect(JSON.parse(req.input!)).toEqual({
-            bucket: mockBucketName,
-            assembly: {
-              key: assemblyKey,
-              versionId: `${assemblyKey}-NewVersion`,
-            },
-            metadata: {
-              key: metadataKey,
-              versionId: `${metadataKey}-NewVersion`,
-            },
-            package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-          });
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { executionArn, startDate: new Date() });
-      }
-    );
+    sfnMock.on(StartExecutionCommand).callsFake((req) => {
+      expect(req.stateMachineArn).toBe(mockStateMachineArn);
+      expect(JSON.parse(req.input!)).toEqual({
+        bucket: mockBucketName,
+        assembly: {
+          key: assemblyKey,
+          versionId: `${assemblyKey}-NewVersion`,
+        },
+        metadata: {
+          key: metadataKey,
+          versionId: `${metadataKey}-NewVersion`,
+        },
+        package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+      });
+
+      return { executionArn, startDate: new Date() };
+    });
 
     const event: SQSEvent = {
       Records: [
@@ -1617,7 +1422,7 @@ for (const [frameworkName, frameworkPackage] of [
             tarballUri,
             integrity: computeIntegrity(
               { metadata: {}, tarballUri, time },
-              tarball
+              await makeTarball().then((t) => t.transformToByteArray())
             ).integrity,
             time,
           }),
@@ -1655,6 +1460,8 @@ for (const [frameworkName, frameworkPackage] of [
   });
 
   test(`the construct framework package itself (${frameworkPackage} => ${frameworkName})`, async () => {
+    const s3Mock = mockClient(S3Client);
+    const sfnMock = mockClient(SFNClient);
     const mockBucketName = 'fake-bucket';
     const mockStateMachineArn = 'fake-state-machine-arn';
     const mockConfigBucket = 'fake-config-bucket';
@@ -1689,12 +1496,10 @@ for (const [frameworkName, frameworkPackage] of [
     const fakeDotJsii = JSON.stringify(
       fakeAssembly(frameworkPackage, packageVersion, packageLicense)
     );
-    const mockConfig = Buffer.from(
-      JSON.stringify({
-        packageLinks: [],
-        packageTags: [],
-      })
-    );
+    const mockConfig = JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    });
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -1702,40 +1507,31 @@ for (const [frameworkName, frameworkPackage] of [
       logStreamName: 'Fake-Log-Stream',
     } as any;
 
-    const tarball = await buildTarGz({
-      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-      'package/index.js': '// Ignore me!',
-      'package/package.json': JSON.stringify({
-        name: frameworkPackage,
-        version: packageVersion,
-        license: packageLicense,
-      }),
-    });
+    const makeTarball = async () =>
+      buildTarGz({
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: frameworkPackage,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      });
 
-    AWSMock.mock(
-      'S3',
-      'getObject',
-      (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-        if (req.Bucket === mockConfigBucket) {
-          try {
-            expect(req.Bucket).toBe(mockConfigBucket);
-            expect(req.Key).toBe(mockConfigkey);
-          } catch (e: any) {
-            return cb(e);
-          }
-          return cb(null, { Body: mockConfig });
-        }
+    s3Mock
+      .on(GetObjectCommand, {
+        Bucket: mockConfigBucket,
+        Key: mockConfigkey,
+      })
+      .resolves({ Body: stringToStream(mockConfig) });
 
-        try {
-          expect(req.Bucket).toBe(stagingBucket);
-          expect(req.Key).toBe(stagingKey);
-          expect(req.VersionId).toBe(stagingVersion);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: tarball });
-      }
-    );
+    s3Mock
+      .on(GetObjectCommand, {
+        Bucket: stagingBucket,
+        Key: stagingKey,
+        VersionId: stagingVersion,
+      })
+      .resolves({ Body: await makeTarball() });
 
     let mockTarballCreated = false;
     let mockMetadataCreated = false;
@@ -1743,79 +1539,67 @@ for (const [frameworkName, frameworkPackage] of [
       frameworkPackage,
       packageVersion
     );
-    AWSMock.mock(
-      'S3',
-      'putObject',
-      (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-        try {
-          expect(req.Bucket).toBe(mockBucketName);
-          expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-          expect(req.Metadata?.['Lambda-Log-Stream']).toBe(
-            context.logStreamName
-          );
-          expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-          switch (req.Key) {
-            case assemblyKey:
-              expect(req.ContentType).toBe('application/json');
-              assertAssembly(fakeDotJsii, req.Body?.toString());
-              // Must be created strictly after the tarball and metadata files have been uploaded.
-              expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-              break;
-            case metadataKey:
-              expect(req.ContentType).toBe('application/json');
-              expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-                constructFrameworks: [
-                  { name: frameworkName, majorVersion: 42 },
-                ],
-                date: time,
-                packageLinks: {},
-                packageTags: [],
-              });
-              mockMetadataCreated = true;
-              break;
-            case packageKey:
-              expect(req.ContentType).toBe('application/octet-stream');
-              expect(req.Body).toEqual(tarball);
-              mockTarballCreated = true;
-              break;
-            default:
-              fail(`Unexpected key: "${req.Key}"`);
-          }
-        } catch (e: any) {
-          return cb(e);
+
+    s3Mock
+      .on(PutObjectCommand)
+      .callsFake(async (req: PutObjectCommandInput) => {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
+            assertAssembly(
+              fakeDotJsii,
+              decoder.decode(req.Body! as Uint8Array)
+            );
+
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(typeof req.Body).toBe('string');
+            expect(JSON.parse(req.Body! as string)).toEqual({
+              constructFrameworks: [{ name: frameworkName, majorVersion: 42 }],
+              date: time,
+              packageLinks: {},
+              packageTags: [],
+            });
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(
+              await makeTarball().then((tb) => tb.transformToByteArray())
+            );
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
         }
-        return cb(null, { VersionId: `${req.Key}-NewVersion` });
-      }
-    );
+        return { VersionId: `${req.Key}-NewVersion` };
+      });
 
     const executionArn = 'Fake-Execution-Arn';
-    AWSMock.mock(
-      'StepFunctions',
-      'startExecution',
-      (
-        req: AWS.StepFunctions.StartExecutionInput,
-        cb: Response<AWS.StepFunctions.StartExecutionOutput>
-      ) => {
-        try {
-          expect(req.stateMachineArn).toBe(mockStateMachineArn);
-          expect(JSON.parse(req.input!)).toEqual({
-            bucket: mockBucketName,
-            assembly: {
-              key: assemblyKey,
-              versionId: `${assemblyKey}-NewVersion`,
-            },
-            metadata: {
-              key: metadataKey,
-              versionId: `${metadataKey}-NewVersion`,
-            },
-            package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-          });
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { executionArn, startDate: new Date() });
-      }
-    );
+    sfnMock.on(StartExecutionCommand).callsFake((req) => {
+      expect(req.stateMachineArn).toBe(mockStateMachineArn);
+      expect(JSON.parse(req.input!)).toEqual({
+        bucket: mockBucketName,
+        assembly: {
+          key: assemblyKey,
+          versionId: `${assemblyKey}-NewVersion`,
+        },
+        metadata: {
+          key: metadataKey,
+          versionId: `${metadataKey}-NewVersion`,
+        },
+        package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+      });
+
+      return { executionArn, startDate: new Date() };
+    });
 
     const event: SQSEvent = {
       Records: [
@@ -1826,7 +1610,7 @@ for (const [frameworkName, frameworkPackage] of [
             tarballUri,
             integrity: computeIntegrity(
               { metadata: {}, tarballUri, time },
-              tarball
+              await makeTarball().then((t) => t.transformToByteArray())
             ).integrity,
             time,
           }),
@@ -1864,6 +1648,8 @@ for (const [frameworkName, frameworkPackage] of [
   });
 
   test(`basic happy case with constructs framework (${frameworkName}), no major`, async () => {
+    const s3Mock = mockClient(S3Client);
+    const sfnMock = mockClient(SFNClient);
     const mockBucketName = 'fake-bucket';
     const mockStateMachineArn = 'fake-state-machine-arn';
     const mockConfigBucket = 'fake-config-bucket';
@@ -1906,12 +1692,10 @@ for (const [frameworkName, frameworkPackage] of [
         },
       },
     });
-    const mockConfig = Buffer.from(
-      JSON.stringify({
-        packageLinks: [],
-        packageTags: [],
-      })
-    );
+    const mockConfig = JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    });
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -1919,40 +1703,31 @@ for (const [frameworkName, frameworkPackage] of [
       logStreamName: 'Fake-Log-Stream',
     } as any;
 
-    const tarball = await buildTarGz({
-      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-      'package/index.js': '// Ignore me!',
-      'package/package.json': JSON.stringify({
-        name: packageName,
-        version: packageVersion,
-        license: packageLicense,
-      }),
-    });
+    const makeTarball = async () =>
+      buildTarGz({
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      });
 
-    AWSMock.mock(
-      'S3',
-      'getObject',
-      (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-        if (req.Bucket === mockConfigBucket) {
-          try {
-            expect(req.Bucket).toBe(mockConfigBucket);
-            expect(req.Key).toBe(mockConfigkey);
-          } catch (e: any) {
-            return cb(e);
-          }
-          return cb(null, { Body: mockConfig });
-        }
+    s3Mock
+      .on(GetObjectCommand, {
+        Bucket: mockConfigBucket,
+        Key: mockConfigkey,
+      })
+      .resolves({ Body: stringToStream(mockConfig) });
 
-        try {
-          expect(req.Bucket).toBe(stagingBucket);
-          expect(req.Key).toBe(stagingKey);
-          expect(req.VersionId).toBe(stagingVersion);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: tarball });
-      }
-    );
+    s3Mock
+      .on(GetObjectCommand, {
+        Bucket: stagingBucket,
+        Key: stagingKey,
+        VersionId: stagingVersion,
+      })
+      .resolves({ Body: await makeTarball() });
 
     let mockTarballCreated = false;
     let mockMetadataCreated = false;
@@ -1960,77 +1735,70 @@ for (const [frameworkName, frameworkPackage] of [
       packageName,
       packageVersion
     );
-    AWSMock.mock(
-      'S3',
-      'putObject',
-      (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-        try {
-          expect(req.Bucket).toBe(mockBucketName);
-          expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-          expect(req.Metadata?.['Lambda-Log-Stream']).toBe(
-            context.logStreamName
-          );
-          expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-          switch (req.Key) {
-            case assemblyKey:
-              expect(req.ContentType).toBe('application/json');
-              assertAssembly(fakeDotJsii, req.Body?.toString());
-              // Must be created strictly after the tarball and metadata files have been uploaded.
-              expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-              break;
-            case metadataKey:
-              expect(req.ContentType).toBe('application/json');
-              expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-                constructFrameworks: [{ name: frameworkName }], // No major version here (intentional)
-                date: time,
-                packageLinks: {},
-                packageTags: [],
-              });
-              mockMetadataCreated = true;
-              break;
-            case packageKey:
-              expect(req.ContentType).toBe('application/octet-stream');
-              expect(req.Body).toEqual(tarball);
-              mockTarballCreated = true;
-              break;
-            default:
-              fail(`Unexpected key: "${req.Key}"`);
-          }
-        } catch (e: any) {
-          return cb(e);
+
+    s3Mock
+      .on(PutObjectCommand)
+      .callsFake(async (req: PutObjectCommandInput) => {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
+
+            // our service removes the "types" field from the assembly since it is not needed
+            // and takes up a lot of space.
+            assertAssembly(
+              fakeDotJsii,
+              decoder.decode(req.Body! as Uint8Array)
+            );
+
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(typeof req.Body).toBe('string');
+            expect(JSON.parse(req.Body! as string)).toEqual({
+              constructFrameworks: [{ name: frameworkName }], // No major version here (intentional)
+              date: time,
+              packageLinks: {},
+              packageTags: [],
+            });
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(
+              await makeTarball().then((tb) => tb.transformToByteArray())
+            );
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
         }
-        return cb(null, { VersionId: `${req.Key}-NewVersion` });
-      }
-    );
+        return { VersionId: `${req.Key}-NewVersion` };
+      });
 
     const executionArn = 'Fake-Execution-Arn';
-    AWSMock.mock(
-      'StepFunctions',
-      'startExecution',
-      (
-        req: AWS.StepFunctions.StartExecutionInput,
-        cb: Response<AWS.StepFunctions.StartExecutionOutput>
-      ) => {
-        try {
-          expect(req.stateMachineArn).toBe(mockStateMachineArn);
-          expect(JSON.parse(req.input!)).toEqual({
-            bucket: mockBucketName,
-            assembly: {
-              key: assemblyKey,
-              versionId: `${assemblyKey}-NewVersion`,
-            },
-            metadata: {
-              key: metadataKey,
-              versionId: `${metadataKey}-NewVersion`,
-            },
-            package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-          });
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { executionArn, startDate: new Date() });
-      }
-    );
+    sfnMock.on(StartExecutionCommand).callsFake((req) => {
+      expect(req.stateMachineArn).toBe(mockStateMachineArn);
+      expect(JSON.parse(req.input!)).toEqual({
+        bucket: mockBucketName,
+        assembly: {
+          key: assemblyKey,
+          versionId: `${assemblyKey}-NewVersion`,
+        },
+        metadata: {
+          key: metadataKey,
+          versionId: `${metadataKey}-NewVersion`,
+        },
+        package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+      });
+
+      return { executionArn, startDate: new Date() };
+    });
 
     const event: SQSEvent = {
       Records: [
@@ -2041,7 +1809,7 @@ for (const [frameworkName, frameworkPackage] of [
             tarballUri,
             integrity: computeIntegrity(
               { metadata: {}, tarballUri, time },
-              tarball
+              await makeTarball().then((t) => t.transformToByteArray())
             ).integrity,
             time,
           }),
@@ -2080,6 +1848,7 @@ for (const [frameworkName, frameworkPackage] of [
 }
 
 test('mismatched package name', async () => {
+  const s3Mock = mockClient(S3Client);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -2116,12 +1885,10 @@ test('mismatched package name', async () => {
   const fakeDotJsii = JSON.stringify(
     fakeAssembly(packageName + '-oops', packageVersion, packageLicense)
   );
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -2129,41 +1896,32 @@ test('mismatched package name', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/LICENSE.md': fakeLicense,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   const event: SQSEvent = {
     Records: [
@@ -2174,7 +1932,7 @@ test('mismatched package name', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -2207,6 +1965,7 @@ test('mismatched package name', async () => {
 });
 
 test('mismatched package version', async () => {
+  const s3Mock = mockClient(S3Client);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -2243,12 +2002,10 @@ test('mismatched package version', async () => {
   const fakeDotJsii = JSON.stringify(
     fakeAssembly(packageName, packageVersion + '-oops', packageLicense)
   );
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -2256,41 +2013,32 @@ test('mismatched package version', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/LICENSE.md': fakeLicense,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   const event: SQSEvent = {
     Records: [
@@ -2301,7 +2049,7 @@ test('mismatched package version', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -2334,6 +2082,7 @@ test('mismatched package version', async () => {
 });
 
 test('mismatched package license', async () => {
+  const s3Mock = mockClient(S3Client);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -2370,12 +2119,10 @@ test('mismatched package license', async () => {
   const fakeDotJsii = JSON.stringify(
     fakeAssembly(packageName, packageVersion, packageLicense + '-oops')
   );
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -2383,41 +2130,32 @@ test('mismatched package license', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/LICENSE.md': fakeLicense,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   const event: SQSEvent = {
     Records: [
@@ -2428,7 +2166,7 @@ test('mismatched package license', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -2461,6 +2199,7 @@ test('mismatched package license', async () => {
 });
 
 test('missing .jsii file', async () => {
+  const s3Mock = mockClient(S3Client);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -2494,12 +2233,10 @@ test('missing .jsii file', async () => {
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -2507,40 +2244,31 @@ test('missing .jsii file', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      'package/LICENSE.md': fakeLicense,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   const event: SQSEvent = {
     Records: [
@@ -2551,7 +2279,7 @@ test('missing .jsii file', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -2578,6 +2306,7 @@ test('missing .jsii file', async () => {
 });
 
 test('missing package.json file', async () => {
+  const s3Mock = mockClient(S3Client);
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockConfigBucket = 'fake-config-bucket';
@@ -2614,12 +2343,10 @@ test('missing package.json file', async () => {
   const fakeDotJsii = JSON.stringify(
     fakeAssembly(packageName, packageVersion, packageLicense)
   );
-  const mockConfig = Buffer.from(
-    JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    })
-  );
+  const mockConfig = JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  });
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -2627,36 +2354,27 @@ test('missing package.json file', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  const tarball = await buildTarGz({
-    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-  });
+  const makeTarball = async () =>
+    buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/LICENSE.md': fakeLicense,
+      'package/index.js': '// Ignore me!',
+    });
 
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
-        try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
-        } catch (e: any) {
-          return cb(e);
-        }
-        return cb(null, { Body: mockConfig });
-      }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockConfigBucket,
+      Key: mockConfigkey,
+    })
+    .resolves({ Body: stringToStream(mockConfig) });
 
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e: any) {
-        return cb(e);
-      }
-      return cb(null, { Body: tarball });
-    }
-  );
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      VersionId: stagingVersion,
+    })
+    .resolves({ Body: await makeTarball() });
 
   const event: SQSEvent = {
     Records: [
@@ -2667,7 +2385,7 @@ test('missing package.json file', async () => {
           tarballUri,
           integrity: computeIntegrity(
             { metadata: {}, tarballUri, time },
-            tarball
+            await makeTarball().then((t) => t.transformToByteArray())
           ).integrity,
           time,
         }),
@@ -2693,39 +2411,32 @@ test('missing package.json file', async () => {
   ).resolves.toBeUndefined();
 });
 
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
-
 /**
  * Builds a .tar.gz blob from the provided entries.
  */
 async function buildTarGz(
   entries: Record<string, string | Buffer>
-): Promise<Buffer> {
-  return new Promise(async (ok, ko) => {
-    const tar = pack();
-    const gzip = createGzip();
+): Promise<StreamingBlobPayloadOutputTypes> {
+  const tar = pack();
+  const gzip = createGzip();
+  tar.pipe(gzip, { end: true });
 
-    const chunks = new Array<Buffer>();
-    gzip
-      .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-      .once('error', ko)
-      .once('finish', () => ok(Buffer.concat(chunks)));
+  for (const [name, data] of Object.entries(entries)) {
+    await new Promise<void>((tok, tko) => {
+      const bytes = typeof data === 'string' ? Buffer.from(data) : data;
+      const entry = tar.entry(
+        { name, size: bytes.length, mtime: new Date(0) },
+        () => tok()
+      );
+      entry.once('error', tko);
+      entry.end(bytes);
+    });
+  }
+  tar.finalize();
 
-    tar.pipe(gzip, { end: true });
-
-    for (const [name, data] of Object.entries(entries)) {
-      await new Promise<void>((tok, tko) => {
-        const bytes = typeof data === 'string' ? Buffer.from(data) : data;
-        const entry = tar.entry(
-          { name, size: bytes.length, mtime: new Date(0) },
-          () => tok()
-        );
-        entry.once('error', tko);
-        entry.end(bytes);
-      });
-    }
-    tar.finalize();
-  });
+  return Promise.resolve(
+    sdkStreamMixin(gzip) as StreamingBlobPayloadOutputTypes
+  );
 }
 
 function assertAssembly(expected: string, actual: string | undefined) {

@@ -76,7 +76,7 @@ export async function logInWithCodeArtifact({
  * @param opts    the information about the CodeArtifact repository.
  */
 export async function codeArtifactPublishPackage(
-  tarball: Buffer,
+  tarball: Uint8Array,
   opts: CodeArtifactProps
 ) {
   // Working in a temporary directory, so we can log into CodeArtifact and not leave traces.
