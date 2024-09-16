@@ -1886,7 +1886,7 @@
                               "s3Bucket": {
                                 "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                               },
-                              "s3Key": "298666e0b7d59f48175e895939f224a4fd01219245e145f103a73d60853366d9.zip"
+                              "s3Key": "19a29e352180aaae52dda883e3f24772dc7613b0e464248741292345426da33c.zip"
                             },
                             "description": "backend/deny-list/prune-handler.lambda.ts",
                             "environment": {
@@ -2485,17 +2485,85 @@
               "version": "2.120.0"
             }
           },
+          "Exports": {
+            "id": "Exports",
+            "path": "DenyListInteg/Exports",
+            "children": {
+              "Output{\"Fn::GetAtt\":[\"DenyListBucketC1C9D3D9\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"DenyListBucketC1C9D3D9\",\"Arn\"]}",
+                "path": "DenyListInteg/Exports/Output{\"Fn::GetAtt\":[\"DenyListBucketC1C9D3D9\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Ref\":\"DenyListBucketC1C9D3D9\"}": {
+                "id": "Output{\"Ref\":\"DenyListBucketC1C9D3D9\"}",
+                "path": "DenyListInteg/Exports/Output{\"Ref\":\"DenyListBucketC1C9D3D9\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Fn::GetAtt\":[\"MockDataBucket4719A0C1\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"MockDataBucket4719A0C1\",\"Arn\"]}",
+                "path": "DenyListInteg/Exports/Output{\"Fn::GetAtt\":[\"MockDataBucket4719A0C1\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Ref\":\"MockDataBucket4719A0C1\"}": {
+                "id": "Output{\"Ref\":\"MockDataBucket4719A0C1\"}",
+                "path": "DenyListInteg/Exports/Output{\"Ref\":\"MockDataBucket4719A0C1\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "DenyListInteg/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "DenyListInteg/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "DenyListAssertions": {
+        "id": "DenyListAssertions",
+        "path": "DenyListAssertions",
+        "children": {
           "ClientTest": {
             "id": "ClientTest",
-            "path": "DenyListInteg/ClientTest",
+            "path": "DenyListAssertions/ClientTest",
             "children": {
               "ServiceRole": {
                 "id": "ServiceRole",
-                "path": "DenyListInteg/ClientTest/ServiceRole",
+                "path": "DenyListAssertions/ClientTest/ServiceRole",
                 "children": {
                   "ImportServiceRole": {
                     "id": "ImportServiceRole",
-                    "path": "DenyListInteg/ClientTest/ServiceRole/ImportServiceRole",
+                    "path": "DenyListAssertions/ClientTest/ServiceRole/ImportServiceRole",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.Resource",
                       "version": "2.120.0"
@@ -2503,7 +2571,7 @@
                   },
                   "Resource": {
                     "id": "Resource",
-                    "path": "DenyListInteg/ClientTest/ServiceRole/Resource",
+                    "path": "DenyListAssertions/ClientTest/ServiceRole/Resource",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::IAM::Role",
                       "aws:cdk:cloudformation:props": {
@@ -2542,11 +2610,11 @@
                   },
                   "DefaultPolicy": {
                     "id": "DefaultPolicy",
-                    "path": "DenyListInteg/ClientTest/ServiceRole/DefaultPolicy",
+                    "path": "DenyListAssertions/ClientTest/ServiceRole/DefaultPolicy",
                     "children": {
                       "Resource": {
                         "id": "Resource",
-                        "path": "DenyListInteg/ClientTest/ServiceRole/DefaultPolicy/Resource",
+                        "path": "DenyListAssertions/ClientTest/ServiceRole/DefaultPolicy/Resource",
                         "attributes": {
                           "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
                           "aws:cdk:cloudformation:props": {
@@ -2561,20 +2629,14 @@
                                   "Effect": "Allow",
                                   "Resource": [
                                     {
-                                      "Fn::GetAtt": [
-                                        "DenyListBucketC1C9D3D9",
-                                        "Arn"
-                                      ]
+                                      "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttDenyListBucketC1C9D3D9Arn00FDD6F6"
                                     },
                                     {
                                       "Fn::Join": [
                                         "",
                                         [
                                           {
-                                            "Fn::GetAtt": [
-                                              "DenyListBucketC1C9D3D9",
-                                              "Arn"
-                                            ]
+                                            "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttDenyListBucketC1C9D3D9Arn00FDD6F6"
                                           },
                                           "/*"
                                         ]
@@ -2612,11 +2674,11 @@
               },
               "Code": {
                 "id": "Code",
-                "path": "DenyListInteg/ClientTest/Code",
+                "path": "DenyListAssertions/ClientTest/Code",
                 "children": {
                   "Stage": {
                     "id": "Stage",
-                    "path": "DenyListInteg/ClientTest/Code/Stage",
+                    "path": "DenyListAssertions/ClientTest/Code/Stage",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.AssetStaging",
                       "version": "2.120.0"
@@ -2624,7 +2686,7 @@
                   },
                   "AssetBucket": {
                     "id": "AssetBucket",
-                    "path": "DenyListInteg/ClientTest/Code/AssetBucket",
+                    "path": "DenyListAssertions/ClientTest/Code/AssetBucket",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.aws_s3.BucketBase",
                       "version": "2.120.0"
@@ -2638,7 +2700,7 @@
               },
               "Resource": {
                 "id": "Resource",
-                "path": "DenyListInteg/ClientTest/Resource",
+                "path": "DenyListAssertions/ClientTest/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
                   "aws:cdk:cloudformation:props": {
@@ -2649,19 +2711,19 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "dc7c9cf647602c5cb128ba8ba3452aa82303f268e519014d7468bf7c50c191af.zip"
+                      "s3Key": "00ef2569c33deb5d4dfa43f0d80aba645890648176a469cad03b1368abb097ad.zip"
                     },
-                    "description": "__tests__/backend/deny-list/mocks/trigger.client-test.lambda.ts",
+                    "description": "__tests__/backend/deny-list/mocks/client-test.lambda.ts",
                     "environment": {
                       "variables": {
                         "BUCKET_NAME": {
-                          "Ref": "DenyListBucketC1C9D3D9"
+                          "Fn::ImportValue": "DenyListInteg:ExportsOutputRefDenyListBucketC1C9D3D90E2E16C4"
                         },
+                        "FILE_NAME": "deny-list.json",
                         "DENY_LIST_BUCKET_NAME": {
-                          "Ref": "DenyListBucketC1C9D3D9"
+                          "Fn::ImportValue": "DenyListInteg:ExportsOutputRefDenyListBucketC1C9D3D90E2E16C4"
                         },
-                        "DENY_LIST_OBJECT_KEY": "deny-list.json",
-                        "FILE_NAME": "deny-list.json"
+                        "DENY_LIST_OBJECT_KEY": "deny-list.json"
                       }
                     },
                     "handler": "index.handler",
@@ -2678,143 +2740,6 @@
                   "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
                   "version": "2.120.0"
                 }
-              },
-              "Trigger": {
-                "id": "Trigger",
-                "path": "DenyListInteg/ClientTest/Trigger",
-                "children": {
-                  "Default": {
-                    "id": "Default",
-                    "path": "DenyListInteg/ClientTest/Trigger/Default",
-                    "children": {
-                      "Default": {
-                        "id": "Default",
-                        "path": "DenyListInteg/ClientTest/Trigger/Default/Default",
-                        "constructInfo": {
-                          "fqn": "aws-cdk-lib.CfnResource",
-                          "version": "2.120.0"
-                        }
-                      }
-                    },
-                    "constructInfo": {
-                      "fqn": "aws-cdk-lib.CustomResource",
-                      "version": "2.120.0"
-                    }
-                  }
-                },
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.triggers.Trigger",
-                  "version": "2.120.0"
-                }
-              },
-              "CurrentVersion": {
-                "id": "CurrentVersion",
-                "path": "DenyListInteg/ClientTest/CurrentVersion",
-                "children": {
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "DenyListInteg/ClientTest/CurrentVersion/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::Lambda::Version",
-                      "aws:cdk:cloudformation:props": {
-                        "functionName": {
-                          "Ref": "ClientTestBE4CEC14"
-                        }
-                      }
-                    },
-                    "constructInfo": {
-                      "fqn": "aws-cdk-lib.aws_lambda.CfnVersion",
-                      "version": "2.120.0"
-                    }
-                  }
-                },
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.aws_lambda.Version",
-                  "version": "2.120.0"
-                }
-              },
-              "Role": {
-                "id": "Role",
-                "path": "DenyListInteg/ClientTest/Role",
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.Resource",
-                  "version": "2.120.0"
-                }
-              },
-              "Policy": {
-                "id": "Policy",
-                "path": "DenyListInteg/ClientTest/Policy",
-                "children": {
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "DenyListInteg/ClientTest/Policy/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
-                      "aws:cdk:cloudformation:props": {
-                        "policyDocument": {
-                          "Statement": [
-                            {
-                              "Action": "lambda:InvokeFunction",
-                              "Effect": "Allow",
-                              "Resource": {
-                                "Fn::Join": [
-                                  "",
-                                  [
-                                    {
-                                      "Fn::GetAtt": [
-                                        "ClientTestBE4CEC14",
-                                        "Arn"
-                                      ]
-                                    },
-                                    "*"
-                                  ]
-                                ]
-                              }
-                            }
-                          ],
-                          "Version": "2012-10-17"
-                        },
-                        "policyName": "ClientTestPolicy7C5CF4ED",
-                        "roles": [
-                          {
-                            "Fn::Select": [
-                              1,
-                              {
-                                "Fn::Split": [
-                                  "/",
-                                  {
-                                    "Fn::Select": [
-                                      5,
-                                      {
-                                        "Fn::Split": [
-                                          ":",
-                                          {
-                                            "Fn::GetAtt": [
-                                              "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
-                                              "Arn"
-                                            ]
-                                          }
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    "constructInfo": {
-                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
-                      "version": "2.120.0"
-                    }
-                  }
-                },
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.aws_iam.Policy",
-                  "version": "2.120.0"
-                }
               }
             },
             "constructInfo": {
@@ -2822,51 +2747,17 @@
               "version": "2.120.0"
             }
           },
-          "AWSCDK.TriggerCustomResourceProviderCustomResourceProvider": {
-            "id": "AWSCDK.TriggerCustomResourceProviderCustomResourceProvider",
-            "path": "DenyListInteg/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider",
-            "children": {
-              "Staging": {
-                "id": "Staging",
-                "path": "DenyListInteg/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Staging",
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.AssetStaging",
-                  "version": "2.120.0"
-                }
-              },
-              "Role": {
-                "id": "Role",
-                "path": "DenyListInteg/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Role",
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.CfnResource",
-                  "version": "2.120.0"
-                }
-              },
-              "Handler": {
-                "id": "Handler",
-                "path": "DenyListInteg/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler",
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.CfnResource",
-                  "version": "2.120.0"
-                }
-              }
-            },
-            "constructInfo": {
-              "fqn": "aws-cdk-lib.CustomResourceProviderBase",
-              "version": "2.120.0"
-            }
-          },
           "PruneTest": {
             "id": "PruneTest",
-            "path": "DenyListInteg/PruneTest",
+            "path": "DenyListAssertions/PruneTest",
             "children": {
               "ServiceRole": {
                 "id": "ServiceRole",
-                "path": "DenyListInteg/PruneTest/ServiceRole",
+                "path": "DenyListAssertions/PruneTest/ServiceRole",
                 "children": {
                   "ImportServiceRole": {
                     "id": "ImportServiceRole",
-                    "path": "DenyListInteg/PruneTest/ServiceRole/ImportServiceRole",
+                    "path": "DenyListAssertions/PruneTest/ServiceRole/ImportServiceRole",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.Resource",
                       "version": "2.120.0"
@@ -2874,7 +2765,7 @@
                   },
                   "Resource": {
                     "id": "Resource",
-                    "path": "DenyListInteg/PruneTest/ServiceRole/Resource",
+                    "path": "DenyListAssertions/PruneTest/ServiceRole/Resource",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::IAM::Role",
                       "aws:cdk:cloudformation:props": {
@@ -2913,11 +2804,11 @@
                   },
                   "DefaultPolicy": {
                     "id": "DefaultPolicy",
-                    "path": "DenyListInteg/PruneTest/ServiceRole/DefaultPolicy",
+                    "path": "DenyListAssertions/PruneTest/ServiceRole/DefaultPolicy",
                     "children": {
                       "Resource": {
                         "id": "Resource",
-                        "path": "DenyListInteg/PruneTest/ServiceRole/DefaultPolicy/Resource",
+                        "path": "DenyListAssertions/PruneTest/ServiceRole/DefaultPolicy/Resource",
                         "attributes": {
                           "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
                           "aws:cdk:cloudformation:props": {
@@ -2932,20 +2823,14 @@
                                   "Effect": "Allow",
                                   "Resource": [
                                     {
-                                      "Fn::GetAtt": [
-                                        "MockDataBucket4719A0C1",
-                                        "Arn"
-                                      ]
+                                      "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttMockDataBucket4719A0C1ArnAE5BBF6D"
                                     },
                                     {
                                       "Fn::Join": [
                                         "",
                                         [
                                           {
-                                            "Fn::GetAtt": [
-                                              "MockDataBucket4719A0C1",
-                                              "Arn"
-                                            ]
+                                            "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttMockDataBucket4719A0C1ArnAE5BBF6D"
                                           },
                                           "/*"
                                         ]
@@ -2983,11 +2868,11 @@
               },
               "Code": {
                 "id": "Code",
-                "path": "DenyListInteg/PruneTest/Code",
+                "path": "DenyListAssertions/PruneTest/Code",
                 "children": {
                   "Stage": {
                     "id": "Stage",
-                    "path": "DenyListInteg/PruneTest/Code/Stage",
+                    "path": "DenyListAssertions/PruneTest/Code/Stage",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.AssetStaging",
                       "version": "2.120.0"
@@ -2995,7 +2880,7 @@
                   },
                   "AssetBucket": {
                     "id": "AssetBucket",
-                    "path": "DenyListInteg/PruneTest/Code/AssetBucket",
+                    "path": "DenyListAssertions/PruneTest/Code/AssetBucket",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.aws_s3.BucketBase",
                       "version": "2.120.0"
@@ -3009,7 +2894,7 @@
               },
               "Resource": {
                 "id": "Resource",
-                "path": "DenyListInteg/PruneTest/Resource",
+                "path": "DenyListAssertions/PruneTest/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
                   "aws:cdk:cloudformation:props": {
@@ -3020,16 +2905,16 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "eaebfbe4728c4732f4c5a7f65739264ac15076bebe4a531451befdf77770524e.zip"
+                      "s3Key": "dc003f7ca73d9d5e55926fb7ebd39d832e9e41b7565a9c5a86d4057893708bb8.zip"
                     },
-                    "description": "__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.ts",
+                    "description": "__tests__/backend/deny-list/mocks/prune-test.lambda.ts",
                     "environment": {
                       "variables": {
                         "BUCKET_NAME": {
-                          "Ref": "MockDataBucket4719A0C1"
+                          "Fn::ImportValue": "DenyListInteg:ExportsOutputRefMockDataBucket4719A0C16191E52D"
                         },
-                        "EXPECTED_KEYS": "[\"data/your/v1.2.4/world.txt\",\"data/your/v1.2.4/hello.txt\"]",
-                        "TIMEOUT_SEC": "120"
+                        "TIMEOUT_SEC": "120",
+                        "EXPECTED_KEYS": "[\"data/your/v1.2.4/world.txt\",\"data/your/v1.2.4/hello.txt\"]"
                       }
                     },
                     "handler": "index.handler",
@@ -3047,143 +2932,6 @@
                   "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
                   "version": "2.120.0"
                 }
-              },
-              "Trigger": {
-                "id": "Trigger",
-                "path": "DenyListInteg/PruneTest/Trigger",
-                "children": {
-                  "Default": {
-                    "id": "Default",
-                    "path": "DenyListInteg/PruneTest/Trigger/Default",
-                    "children": {
-                      "Default": {
-                        "id": "Default",
-                        "path": "DenyListInteg/PruneTest/Trigger/Default/Default",
-                        "constructInfo": {
-                          "fqn": "aws-cdk-lib.CfnResource",
-                          "version": "2.120.0"
-                        }
-                      }
-                    },
-                    "constructInfo": {
-                      "fqn": "aws-cdk-lib.CustomResource",
-                      "version": "2.120.0"
-                    }
-                  }
-                },
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.triggers.Trigger",
-                  "version": "2.120.0"
-                }
-              },
-              "CurrentVersion": {
-                "id": "CurrentVersion",
-                "path": "DenyListInteg/PruneTest/CurrentVersion",
-                "children": {
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "DenyListInteg/PruneTest/CurrentVersion/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::Lambda::Version",
-                      "aws:cdk:cloudformation:props": {
-                        "functionName": {
-                          "Ref": "PruneTest66C7D9FC"
-                        }
-                      }
-                    },
-                    "constructInfo": {
-                      "fqn": "aws-cdk-lib.aws_lambda.CfnVersion",
-                      "version": "2.120.0"
-                    }
-                  }
-                },
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.aws_lambda.Version",
-                  "version": "2.120.0"
-                }
-              },
-              "Role": {
-                "id": "Role",
-                "path": "DenyListInteg/PruneTest/Role",
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.Resource",
-                  "version": "2.120.0"
-                }
-              },
-              "Policy": {
-                "id": "Policy",
-                "path": "DenyListInteg/PruneTest/Policy",
-                "children": {
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "DenyListInteg/PruneTest/Policy/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
-                      "aws:cdk:cloudformation:props": {
-                        "policyDocument": {
-                          "Statement": [
-                            {
-                              "Action": "lambda:InvokeFunction",
-                              "Effect": "Allow",
-                              "Resource": {
-                                "Fn::Join": [
-                                  "",
-                                  [
-                                    {
-                                      "Fn::GetAtt": [
-                                        "PruneTest66C7D9FC",
-                                        "Arn"
-                                      ]
-                                    },
-                                    "*"
-                                  ]
-                                ]
-                              }
-                            }
-                          ],
-                          "Version": "2012-10-17"
-                        },
-                        "policyName": "PruneTestPolicyA887E151",
-                        "roles": [
-                          {
-                            "Fn::Select": [
-                              1,
-                              {
-                                "Fn::Split": [
-                                  "/",
-                                  {
-                                    "Fn::Select": [
-                                      5,
-                                      {
-                                        "Fn::Split": [
-                                          ":",
-                                          {
-                                            "Fn::GetAtt": [
-                                              "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
-                                              "Arn"
-                                            ]
-                                          }
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    "constructInfo": {
-                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
-                      "version": "2.120.0"
-                    }
-                  }
-                },
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.aws_iam.Policy",
-                  "version": "2.120.0"
-                }
               }
             },
             "constructInfo": {
@@ -3191,9 +2939,167 @@
               "version": "2.120.0"
             }
           },
+          "LambdaInvoke430db2f4c412d720946178d9d90463aa": {
+            "id": "LambdaInvoke430db2f4c412d720946178d9d90463aa",
+            "path": "DenyListAssertions/LambdaInvoke430db2f4c412d720946178d9d90463aa",
+            "children": {
+              "SdkProvider": {
+                "id": "SdkProvider",
+                "path": "DenyListAssertions/LambdaInvoke430db2f4c412d720946178d9d90463aa/SdkProvider",
+                "children": {
+                  "AssertionsProvider": {
+                    "id": "AssertionsProvider",
+                    "path": "DenyListAssertions/LambdaInvoke430db2f4c412d720946178d9d90463aa/SdkProvider/AssertionsProvider",
+                    "constructInfo": {
+                      "fqn": "constructs.Construct",
+                      "version": "10.0.5"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/integ-tests-alpha.AssertionsProvider",
+                  "version": "2.120.0-alpha.0"
+                }
+              },
+              "Default": {
+                "id": "Default",
+                "path": "DenyListAssertions/LambdaInvoke430db2f4c412d720946178d9d90463aa/Default",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "DenyListAssertions/LambdaInvoke430db2f4c412d720946178d9d90463aa/Default/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CustomResource",
+                  "version": "2.120.0"
+                }
+              },
+              "Invoke": {
+                "id": "Invoke",
+                "path": "DenyListAssertions/LambdaInvoke430db2f4c412d720946178d9d90463aa/Invoke",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              },
+              "AssertionResults": {
+                "id": "AssertionResults",
+                "path": "DenyListAssertions/LambdaInvoke430db2f4c412d720946178d9d90463aa/AssertionResults",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/integ-tests-alpha.LambdaInvokeFunction",
+              "version": "2.120.0-alpha.0"
+            }
+          },
+          "SingletonFunction1488541a7b23466481b69b4408076b81": {
+            "id": "SingletonFunction1488541a7b23466481b69b4408076b81",
+            "path": "DenyListAssertions/SingletonFunction1488541a7b23466481b69b4408076b81",
+            "children": {
+              "Staging": {
+                "id": "Staging",
+                "path": "DenyListAssertions/SingletonFunction1488541a7b23466481b69b4408076b81/Staging",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.AssetStaging",
+                  "version": "2.120.0"
+                }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "DenyListAssertions/SingletonFunction1488541a7b23466481b69b4408076b81/Role",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              },
+              "Handler": {
+                "id": "Handler",
+                "path": "DenyListAssertions/SingletonFunction1488541a7b23466481b69b4408076b81/Handler",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115": {
+            "id": "LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115",
+            "path": "DenyListAssertions/LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115",
+            "children": {
+              "SdkProvider": {
+                "id": "SdkProvider",
+                "path": "DenyListAssertions/LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115/SdkProvider",
+                "children": {
+                  "AssertionsProvider": {
+                    "id": "AssertionsProvider",
+                    "path": "DenyListAssertions/LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115/SdkProvider/AssertionsProvider",
+                    "constructInfo": {
+                      "fqn": "constructs.Construct",
+                      "version": "10.0.5"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/integ-tests-alpha.AssertionsProvider",
+                  "version": "2.120.0-alpha.0"
+                }
+              },
+              "Default": {
+                "id": "Default",
+                "path": "DenyListAssertions/LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115/Default",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "DenyListAssertions/LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115/Default/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CustomResource",
+                  "version": "2.120.0"
+                }
+              },
+              "Invoke": {
+                "id": "Invoke",
+                "path": "DenyListAssertions/LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115/Invoke",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              },
+              "AssertionResults": {
+                "id": "AssertionResults",
+                "path": "DenyListAssertions/LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115/AssertionResults",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/integ-tests-alpha.LambdaInvokeFunction",
+              "version": "2.120.0-alpha.0"
+            }
+          },
           "BootstrapVersion": {
             "id": "BootstrapVersion",
-            "path": "DenyListInteg/BootstrapVersion",
+            "path": "DenyListAssertions/BootstrapVersion",
             "constructInfo": {
               "fqn": "aws-cdk-lib.CfnParameter",
               "version": "2.120.0"
@@ -3201,7 +3107,7 @@
           },
           "CheckBootstrapVersion": {
             "id": "CheckBootstrapVersion",
-            "path": "DenyListInteg/CheckBootstrapVersion",
+            "path": "DenyListAssertions/CheckBootstrapVersion",
             "constructInfo": {
               "fqn": "aws-cdk-lib.CfnRule",
               "version": "2.120.0"
@@ -3227,32 +3133,6 @@
                 "constructInfo": {
                   "fqn": "constructs.Construct",
                   "version": "10.0.5"
-                }
-              },
-              "DeployAssert": {
-                "id": "DeployAssert",
-                "path": "deny-list-integ/DefaultTest/DeployAssert",
-                "children": {
-                  "BootstrapVersion": {
-                    "id": "BootstrapVersion",
-                    "path": "deny-list-integ/DefaultTest/DeployAssert/BootstrapVersion",
-                    "constructInfo": {
-                      "fqn": "aws-cdk-lib.CfnParameter",
-                      "version": "2.120.0"
-                    }
-                  },
-                  "CheckBootstrapVersion": {
-                    "id": "CheckBootstrapVersion",
-                    "path": "deny-list-integ/DefaultTest/DeployAssert/CheckBootstrapVersion",
-                    "constructInfo": {
-                      "fqn": "aws-cdk-lib.CfnRule",
-                      "version": "2.120.0"
-                    }
-                  }
-                },
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.Stack",
-                  "version": "2.120.0"
                 }
               }
             },

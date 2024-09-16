@@ -1,0 +1,500 @@
+{
+ "Resources": {
+  "ClientTestServiceRole4F7802CF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "ClientTestServiceRoleDefaultPolicy3CB30A97": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttDenyListBucketC1C9D3D9Arn00FDD6F6"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttDenyListBucketC1C9D3D9Arn00FDD6F6"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ClientTestServiceRoleDefaultPolicy3CB30A97",
+    "Roles": [
+     {
+      "Ref": "ClientTestServiceRole4F7802CF"
+     }
+    ]
+   }
+  },
+  "ClientTestBE4CEC14": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "00ef2569c33deb5d4dfa43f0d80aba645890648176a469cad03b1368abb097ad.zip"
+    },
+    "Description": "__tests__/backend/deny-list/mocks/client-test.lambda.ts",
+    "Environment": {
+     "Variables": {
+      "BUCKET_NAME": {
+       "Fn::ImportValue": "DenyListInteg:ExportsOutputRefDenyListBucketC1C9D3D90E2E16C4"
+      },
+      "FILE_NAME": "deny-list.json",
+      "DENY_LIST_BUCKET_NAME": {
+       "Fn::ImportValue": "DenyListInteg:ExportsOutputRefDenyListBucketC1C9D3D90E2E16C4"
+      },
+      "DENY_LIST_OBJECT_KEY": "deny-list.json"
+     }
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ClientTestServiceRole4F7802CF",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x"
+   },
+   "DependsOn": [
+    "ClientTestServiceRoleDefaultPolicy3CB30A97",
+    "ClientTestServiceRole4F7802CF"
+   ]
+  },
+  "PruneTestServiceRole91D2E3A2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "PruneTestServiceRoleDefaultPolicyBD33ABA2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttMockDataBucket4719A0C1ArnAE5BBF6D"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttMockDataBucket4719A0C1ArnAE5BBF6D"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "PruneTestServiceRoleDefaultPolicyBD33ABA2",
+    "Roles": [
+     {
+      "Ref": "PruneTestServiceRole91D2E3A2"
+     }
+    ]
+   }
+  },
+  "PruneTest66C7D9FC": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "dc003f7ca73d9d5e55926fb7ebd39d832e9e41b7565a9c5a86d4057893708bb8.zip"
+    },
+    "Description": "__tests__/backend/deny-list/mocks/prune-test.lambda.ts",
+    "Environment": {
+     "Variables": {
+      "BUCKET_NAME": {
+       "Fn::ImportValue": "DenyListInteg:ExportsOutputRefMockDataBucket4719A0C16191E52D"
+      },
+      "TIMEOUT_SEC": "120",
+      "EXPECTED_KEYS": "[\"data/your/v1.2.4/world.txt\",\"data/your/v1.2.4/hello.txt\"]"
+     }
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "PruneTestServiceRole91D2E3A2",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 300
+   },
+   "DependsOn": [
+    "PruneTestServiceRoleDefaultPolicyBD33ABA2",
+    "PruneTestServiceRole91D2E3A2"
+   ]
+  },
+  "LambdaInvoke430db2f4c412d720946178d9d90463aa": {
+   "Type": "Custom::DeployAssert@SdkCallLambdainvoke",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F",
+      "Arn"
+     ]
+    },
+    "service": "Lambda",
+    "api": "invoke",
+    "expected": "{\"$ObjectLike\":{\"StatusCode\":200}}",
+    "parameters": {
+     "FunctionName": {
+      "Fn::Join": [
+       "",
+       [
+        "\"",
+        {
+         "Ref": "ClientTestBE4CEC14"
+        },
+        "\""
+       ]
+      ]
+     }
+    },
+    "flattenResponse": "false",
+    "salt": "1726484204677"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "LambdaInvoke430db2f4c412d720946178d9d90463aaInvoke068B6BD3": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Ref": "ClientTestBE4CEC14"
+    },
+    "Principal": {
+     "Fn::GetAtt": [
+      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ],
+    "Policies": [
+     {
+      "PolicyName": "Inline",
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Action": [
+          "lambda:Invoke"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          "*"
+         ]
+        },
+        {
+         "Action": [
+          "lambda:InvokeFunction"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":lambda:",
+             {
+              "Ref": "AWS::Region"
+             },
+             ":",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":function:",
+             {
+              "Ref": "ClientTestBE4CEC14"
+             }
+            ]
+           ]
+          }
+         ]
+        },
+        {
+         "Action": [
+          "lambda:Invoke"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          "*"
+         ]
+        },
+        {
+         "Action": [
+          "lambda:InvokeFunction"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":lambda:",
+             {
+              "Ref": "AWS::Region"
+             },
+             ":",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":function:",
+             {
+              "Ref": "PruneTest66C7D9FC"
+             }
+            ]
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Runtime": "nodejs18.x",
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "4984c845346313a408899c8ff361d3b7b97953a9d4202e47694ef2a101f4b5c3.zip"
+    },
+    "Timeout": 120,
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115": {
+   "Type": "Custom::DeployAssert@SdkCallLambdainvoke",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F",
+      "Arn"
+     ]
+    },
+    "service": "Lambda",
+    "api": "invoke",
+    "expected": "{\"$ObjectLike\":{\"StatusCode\":200}}",
+    "parameters": {
+     "FunctionName": {
+      "Fn::Join": [
+       "",
+       [
+        "\"",
+        {
+         "Ref": "PruneTest66C7D9FC"
+        },
+        "\""
+       ]
+      ]
+     }
+    },
+    "flattenResponse": "false",
+    "salt": "1726484204678"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115Invoke6E8B9ABC": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Ref": "PruneTest66C7D9FC"
+    },
+    "Principal": {
+     "Fn::GetAtt": [
+      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
+      "Arn"
+     ]
+    }
+   }
+  }
+ },
+ "Outputs": {
+  "AssertionResultsLambdaInvoke430db2f4c412d720946178d9d90463aa": {
+   "Value": {
+    "Fn::GetAtt": [
+     "LambdaInvoke430db2f4c412d720946178d9d90463aa",
+     "assertion"
+    ]
+   }
+  },
+  "AssertionResultsLambdaInvoke45d0cbc8aab3b3eab09591e2f0644115": {
+   "Value": {
+    "Fn::GetAtt": [
+     "LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115",
+     "assertion"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

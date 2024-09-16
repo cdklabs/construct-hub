@@ -11,7 +11,6 @@ import {
   ENV_DENY_LIST_BUCKET_NAME,
   ENV_DENY_LIST_OBJECT_KEY,
 } from '../../../backend/deny-list/constants';
-import * as aws from '../../../backend/shared/aws.lambda-shared';
 import { stringToStream } from '../../streams';
 
 const sample: Record<string, DenyListRule> = {
@@ -34,7 +33,6 @@ beforeEach(() => {
 afterEach(() => {
   delete process.env[ENV_DENY_LIST_BUCKET_NAME];
   delete process.env[ENV_DENY_LIST_OBJECT_KEY];
-  aws.reset();
 });
 
 test('s3 object not found error', async () => {

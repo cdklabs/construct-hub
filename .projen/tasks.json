@@ -117,10 +117,10 @@
           "spawn": "bundle:catalog-builder"
         },
         {
-          "spawn": "bundle:trigger.prune-test"
+          "spawn": "bundle:prune-test"
         },
         {
-          "spawn": "bundle:trigger.client-test"
+          "spawn": "bundle:client-test"
         },
         {
           "spawn": "bundle:catalog-builder-mock"
@@ -199,6 +199,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+        }
+      ]
+    },
+    "bundle:client-test": {
+      "name": "bundle:client-test",
+      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/client-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/client-test.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+        }
+      ]
+    },
+    "bundle:client-test:watch": {
+      "name": "bundle:client-test:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/client-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/client-test.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
         }
       ]
     },
@@ -306,7 +324,7 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
         }
       ]
     },
@@ -454,6 +472,24 @@
         }
       ]
     },
+    "bundle:prune-test": {
+      "name": "bundle:prune-test",
+      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+        }
+      ]
+    },
+    "bundle:prune-test:watch": {
+      "name": "bundle:prune-test:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+        }
+      ]
+    },
     "bundle:re-ingest": {
       "name": "bundle:re-ingest",
       "description": "Create an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
@@ -571,42 +607,6 @@
         },
         {
           "exec": "ts-node projenrc/bundle-javascript-for-ecs.exec.ts src/backend/transliterator/transliterator.ecs-entrypoint.ts lib/backend/transliterator/transliterator.ecs-entrypoint.bundle/index.js --watch"
-        }
-      ]
-    },
-    "bundle:trigger.client-test": {
-      "name": "bundle:trigger.client-test",
-      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/trigger.client-test.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/trigger.client-test.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/trigger.client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
-        }
-      ]
-    },
-    "bundle:trigger.client-test:watch": {
-      "name": "bundle:trigger.client-test:watch",
-      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/trigger.client-test.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/trigger.client-test.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/trigger.client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
-        }
-      ]
-    },
-    "bundle:trigger.prune-test": {
-      "name": "bundle:trigger.prune-test",
-      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
-        }
-      ]
-    },
-    "bundle:trigger.prune-test:watch": {
-      "name": "bundle:trigger.prune-test:watch",
-      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/trigger.prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
         }
       ]
     },
@@ -770,10 +770,10 @@
           "spawn": "bundle:catalog-builder"
         },
         {
-          "spawn": "bundle:trigger.prune-test"
+          "spawn": "bundle:prune-test"
         },
         {
-          "spawn": "bundle:trigger.client-test"
+          "spawn": "bundle:client-test"
         },
         {
           "spawn": "bundle:catalog-builder-mock"

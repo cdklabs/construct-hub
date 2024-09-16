@@ -1,4 +1,6 @@
-import { gzipSync } from 'zlib';
+import { text } from 'node:stream/consumers';
+import { createGunzip, gzipSync } from 'zlib';
+import type { StreamingBlobPayloadOutputTypes } from '@smithy/types';
 
 const MINIMUM_SIZE_TO_COMPRESS = 1_024;
 
@@ -21,6 +23,25 @@ export function compressContent(buffer: Buffer): CompressContentResult {
     return { buffer };
   }
   return { buffer: gz, contentEncoding: 'gzip' };
+}
+
+/**
+ * Decompresses a possibly gzip'ed blob stream into a string.
+ *
+ * @param data the data stream that needs transforming
+ * @param encoding the encoding of the stream data
+ * @returns the stream data as a string, decompressed if necessary
+ */
+export async function decompressContent(
+  data: StreamingBlobPayloadOutputTypes,
+  encoding?: string
+): Promise<string> {
+  if (encoding === 'gzip') {
+    const gunzip = createGunzip();
+    return text(data.pipe(gunzip));
+  }
+
+  return data.transformToString('utf-8');
 }
 
 /**

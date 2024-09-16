@@ -1,7 +1,7 @@
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import type { Context } from 'aws-lambda';
-import * as aws from '../shared/aws.lambda-shared';
+import { S3_CLIENT, SQS_CLIENT } from '../shared/aws.lambda-shared';
 import { METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
@@ -19,7 +19,7 @@ export async function handler(event: Input, context: Context) {
   const age = requireEnv('REPROCESS_AGE_MILLIS');
 
   console.log(`Download metadata object at ${bucket}/${event.Key}`);
-  const { Body: jsonMetadata } = await aws.S3_CLIENT.send(
+  const { Body: jsonMetadata } = await S3_CLIENT.send(
     new GetObjectCommand({ Bucket: bucket, Key: event.Key })
   );
   if (jsonMetadata == null) {
@@ -42,7 +42,7 @@ export async function handler(event: Input, context: Context) {
     return;
   }
   console.log(`Download tarball object at ${bucket}/${tarballKey}`);
-  const { Body: tarball, VersionId: versionId } = await aws.S3_CLIENT.send(
+  const { Body: tarball, VersionId: versionId } = await S3_CLIENT.send(
     new GetObjectCommand({ Bucket: bucket, Key: tarballKey })
   );
   if (tarball == null) {
@@ -73,7 +73,7 @@ export async function handler(event: Input, context: Context) {
       2
     )}`
   );
-  return aws.SQS_CLIENT.send(
+  return SQS_CLIENT.send(
     new SendMessageCommand({
       QueueUrl: queueUrl,
       MessageBody: JSON.stringify(ingestionInput, null, 2),

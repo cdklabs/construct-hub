@@ -1,12 +1,20 @@
-import { gunzipSync } from 'zlib';
+import {
+  GetObjectCommand,
+  ListObjectsV2Command,
+  ListObjectsV2CommandInput,
+  PutObjectCommand,
+  PutObjectCommandOutput,
+} from '@aws-sdk/client-s3';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
-import { PromiseResult } from 'aws-sdk/lib/request';
 import { SemVer } from 'semver';
 import { HyperLogLog, createUniquesCounter } from 'streamcount';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
-import * as aws from '../shared/aws.lambda-shared';
-import { compressContent } from '../shared/compress-content.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
+import {
+  compressContent,
+  decompressContent,
+} from '../shared/compress-content.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
@@ -664,9 +672,7 @@ export interface IMetrics {
 export class AwsInventoryHost implements IInventoryHost {
   private readonly scratchworkBucket: string;
   private readonly packageDataBucket: string;
-  private reports: Promise<
-    PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>
-  >[] = [];
+  private reports: Promise<PutObjectCommandOutput>[] = [];
 
   constructor(private readonly context: Context) {
     this.scratchworkBucket = requireEnv('SCRATCHWORK_BUCKET_NAME');
@@ -688,14 +694,14 @@ export class AwsInventoryHost implements IInventoryHost {
   public async *relevantObjectKeys(
     continuationToken?: string
   ): AsyncGenerator<[string[], string | undefined], void, void> {
-    const request: AWS.S3.ListObjectsV2Request = {
+    const request: ListObjectsV2CommandInput = {
       Bucket: this.packageDataBucket,
       Prefix: constants.STORAGE_KEY_PREFIX,
     };
     if (continuationToken) request.ContinuationToken = continuationToken;
 
     do {
-      const response = await aws.s3().listObjectsV2(request).promise();
+      const response = await S3_CLIENT.send(new ListObjectsV2Command(request));
       const keys = [];
       for (const { Key } of response.Contents ?? []) {
         if (Key == null) {
@@ -720,9 +726,8 @@ export class AwsInventoryHost implements IInventoryHost {
     );
 
     const keyName = `inventory-canary-progress-${Date.now()}`;
-    await aws
-      .s3()
-      .putObject({
+    await S3_CLIENT.send(
+      new PutObjectCommand({
         Bucket: this.scratchworkBucket,
         Key: keyName,
         Body: buffer,
@@ -734,7 +739,7 @@ export class AwsInventoryHost implements IInventoryHost {
           'Lambda-Run-Id': this.context.awsRequestId,
         },
       })
-      .promise();
+    );
     return {
       continuationObjectKey: keyName,
     };
@@ -744,26 +749,27 @@ export class AwsInventoryHost implements IInventoryHost {
     console.log(
       'Found a continuation object key, retrieving data from the existing run...'
     );
-    let { Body, ContentEncoding } = await aws
-      .s3()
-      .getObject({
+    let res = await S3_CLIENT.send(
+      new GetObjectCommand({
         Bucket: this.scratchworkBucket,
         Key: continuationObjectKey,
       })
-      .promise();
-    // If it was compressed, decompress it.
-    if (ContentEncoding === 'gzip') {
-      Body = gunzipSync(Buffer.from(Body! as any));
+    );
+
+    if (!res.Body) {
+      throw new Error(
+        `Object key "${continuationObjectKey}" not found in bucket "${this.scratchworkBucket}".`
+      );
     }
-    if (!Body) {
+    const body = await decompressContent(res.Body, res.ContentEncoding);
+
+    if (!body) {
       throw new Error(
         `Object key "${continuationObjectKey}" not found in bucket "${this.scratchworkBucket}".`
       );
     }
     console.log('Deserializing data...');
-    const serializedState = Body.toString(
-      'utf-8'
-    ) as Serialized<InventoryCanaryState>;
+    const serializedState = body as Serialized<InventoryCanaryState>;
     const state = deserialize(serializedState);
     console.log('Deserializing finished.');
     return state;
@@ -776,9 +782,8 @@ export class AwsInventoryHost implements IInventoryHost {
       `Uploading list to s3://${this.packageDataBucket}/${reportKey}`
     );
     this.reports.push(
-      aws
-        .s3()
-        .putObject({
+      S3_CLIENT.send(
+        new PutObjectCommand({
           Body: buffer,
           Bucket: this.packageDataBucket,
           ContentEncoding: contentEncoding,
@@ -791,7 +796,7 @@ export class AwsInventoryHost implements IInventoryHost {
             'Lambda-Log-Stream-Name': this.context.logStreamName,
           },
         })
-        .promise()
+      )
     );
   }
 

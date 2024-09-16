@@ -1,6 +1,7 @@
-import { gunzipSync } from 'zlib';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { sort as semverSort } from 'semver';
-import { s3 } from '../shared/aws.lambda-shared';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
+import { decompressContent } from '../shared/compress-content.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 /// @singleton PackageVersionsTableWidget-Handler
@@ -23,19 +24,20 @@ export async function handler({
   try {
     const bucketName = requireEnv('BUCKET_NAME');
 
-    let { Body, ContentEncoding, LastModified } = await s3()
-      .getObject({
+    const res = await S3_CLIENT.send(
+      new GetObjectCommand({
         Bucket: bucketName,
         Key: key,
       })
-      .promise();
-    // If it was compressed, de-compress it now...
-    if (ContentEncoding === 'gzip') {
-      Body = gunzipSync(Buffer.from(Body! as any));
+    );
+
+    if (!res.Body) {
+      throw new Error('Response Body is empty');
     }
+    const body = await decompressContent(res.Body, res.ContentEncoding);
 
     const list = Array.from(
-      (JSON.parse(Body!.toString('utf-8')) as string[])
+      (JSON.parse(body) as string[])
         .reduce((map, entry) => {
           // Split on the @ that is not at the beginning of the string
           const [name, version] = entry.split(/(?!^)@/);
@@ -71,7 +73,7 @@ export async function handler({
             .join(', ')}`;
         }),
         '',
-        `Last updated: \`${LastModified?.toISOString() ?? 'N/A'}\``,
+        `Last updated: \`${res.LastModified?.toISOString() ?? 'N/A'}\``,
       ].join('\n'),
     };
   } catch (error) {

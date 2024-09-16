@@ -1,11 +1,11 @@
 import { join } from 'path';
-import { IntegTest } from '@aws-cdk/integ-tests-alpha';
+import { ExpectedResult, IntegTest } from '@aws-cdk/integ-tests-alpha';
 import { App, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { CatalogBuilderMock } from '../lib/__tests__/backend/deny-list/mocks/catalog-builder-mock';
-import { TriggerClientTest } from '../lib/__tests__/backend/deny-list/mocks/trigger.client-test';
-import { TriggerPruneTest } from '../lib/__tests__/backend/deny-list/mocks/trigger.prune-test';
+import { ClientTest } from '../lib/__tests__/backend/deny-list/mocks/client-test';
+import { PruneTest } from '../lib/__tests__/backend/deny-list/mocks/prune-test';
 import { DenyList } from '../lib/backend';
 import { STORAGE_KEY_PREFIX } from '../lib/backend/shared/constants';
 import { Monitoring } from '../lib/monitoring';
@@ -52,17 +52,17 @@ const denylist = new DenyList(stack, 'DenyList', {
 const catalogBuilderMock = new CatalogBuilderMock(stack, 'CatalogBuilderMock');
 denylist.prune.onChangeInvoke(catalogBuilderMock);
 
-const test1 = new TriggerClientTest(stack, 'ClientTest', {
-  executeAfter: [denylist],
+const assertionStack = new Stack(app, 'DenyListAssertions');
+
+const clientTest = new ClientTest(assertionStack, 'ClientTest', {
   environment: {
     BUCKET_NAME: denylist.bucket.bucketName,
     FILE_NAME: denylist.objectKey,
   },
 });
-denylist.grantRead(test1);
+denylist.grantRead(clientTest);
 
-const test2 = new TriggerPruneTest(stack, 'PruneTest', {
-  executeAfter: [denylist],
+const pruneTest = new PruneTest(assertionStack, 'PruneTest', {
   timeout: Duration.minutes(5),
   environment: {
     BUCKET_NAME: packageData.bucketName,
@@ -73,9 +73,29 @@ const test2 = new TriggerPruneTest(stack, 'PruneTest', {
     ]),
   },
 });
+packageData.grantRead(pruneTest);
 
-packageData.grantRead(test2);
-
-new IntegTest(app, 'deny-list-integ', {
+const { assertions: assert } = new IntegTest(app, 'deny-list-integ', {
   testCases: [stack],
+  assertionStack,
 });
+
+assert
+  .invokeFunction({
+    functionName: clientTest.functionName,
+  })
+  .expect(
+    ExpectedResult.objectLike({
+      StatusCode: 200,
+    })
+  );
+
+assert
+  .invokeFunction({
+    functionName: pruneTest.functionName,
+  })
+  .expect(
+    ExpectedResult.objectLike({
+      StatusCode: 200,
+    })
+  );
