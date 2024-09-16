@@ -9,12 +9,12 @@ import {
   MetricName,
   METRICS_NAMESPACE,
 } from './constants';
-import * as clients from '../shared/aws.lambda-shared';
+import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
-const s3 = clients.s3();
-const sqs = clients.sqs();
-const lambda = clients.lambda();
+const s3 = aws.s3();
+const sqs = aws.sqs();
+const lambda = aws.lambda();
 
 // Configure embedded metrics format
 Configuration.namespace = METRICS_NAMESPACE;

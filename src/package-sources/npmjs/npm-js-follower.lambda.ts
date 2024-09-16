@@ -1,7 +1,4 @@
 import * as console from 'console';
-import { text } from 'node:stream/consumers';
-import { createGunzip } from 'zlib';
-
 import { InvokeCommand } from '@aws-sdk/client-lambda';
 import {
   GetObjectCommand,
@@ -9,10 +6,7 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
 } from '@aws-sdk/client-s3';
-import {
-  StreamingBlobPayloadInputTypes,
-  StreamingBlobPayloadOutputTypes,
-} from '@smithy/types';
+import type { StreamingBlobPayloadInputTypes } from '@smithy/types';
 import {
   metricScope,
   Configuration,
@@ -35,6 +29,7 @@ import {
   LAMBDA_CLIENT,
   S3_CLIENT,
 } from '../../backend/shared/aws.lambda-shared';
+import { decompressContent } from '../../backend/shared/compress-content.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
@@ -254,7 +249,10 @@ async function loadLastTransactionMarker(
     if (!response.Body) {
       throw new Error('Transaction Marker Response Body is empty');
     }
-    let body = await transformBody(response.Body, response.ContentEncoding);
+    const body = await decompressContent(
+      response.Body,
+      response.ContentEncoding
+    );
     let data = JSON.parse(body, (key, value) => {
       if (key !== 'knownVersions') {
         return value;
@@ -293,22 +291,6 @@ async function loadLastTransactionMarker(
     // re-throw unexpected errors
     throw error;
   }
-}
-
-/**
- * Helper function to transform a possibly gzip'ed blob stream into a string.
- * @returns string
- */
-async function transformBody(
-  body: StreamingBlobPayloadOutputTypes,
-  encoding?: string
-): Promise<string> {
-  if (encoding === 'gzip') {
-    const gunzip = createGunzip();
-    return text(body.pipe(gunzip));
-  }
-
-  return body.transformToString('utf-8');
 }
 
 /**

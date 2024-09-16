@@ -22,7 +22,7 @@ import { CacheStrategy } from '../../caching';
 import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
-import * as aws from '../shared/aws.lambda-shared';
+import { S3_CLIENT, SFN_CLIENT, SQS_CLIENT } from '../shared/aws.lambda-shared';
 import {
   CodeArtifactProps,
   codeArtifactPublishPackage,
@@ -76,7 +76,7 @@ export const handler = metricScope(
       if (tarballUri.protocol !== 's3:') {
         throw new Error(`Unsupported protocol in URI: ${tarballUri}`);
       }
-      const tarball = await aws.S3_CLIENT.send(
+      const tarball = await S3_CLIENT.send(
         new GetObjectCommand({
           // Note: we drop anything after the first `.` in the host, as we only care about the bucket name.
           Bucket: tarballUri.host.split('.')[0],
@@ -284,7 +284,7 @@ export const handler = metricScope(
         `${packageName}@${packageVersion} | Uploading package and metadata files`
       );
       const [pkg, storedMetadata] = await Promise.all([
-        aws.S3_CLIENT.send(
+        S3_CLIENT.send(
           new PutObjectCommand({
             Bucket: BUCKET_NAME,
             Key: packageKey,
@@ -298,7 +298,7 @@ export const handler = metricScope(
             },
           })
         ),
-        aws.S3_CLIENT.send(
+        S3_CLIENT.send(
           new PutObjectCommand({
             Bucket: BUCKET_NAME,
             Key: metadataKey,
@@ -316,7 +316,7 @@ export const handler = metricScope(
 
       // now we can upload the assembly.
       console.log(`${packageName}@${packageVersion} | Uploading assembly file`);
-      const assembly = await aws.S3_CLIENT.send(
+      const assembly = await S3_CLIENT.send(
         new PutObjectCommand({
           Bucket: BUCKET_NAME,
           Key: assemblyKey,
@@ -348,7 +348,7 @@ export const handler = metricScope(
       };
       console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
 
-      const sfn = await aws.SFN_CLIENT.send(
+      const sfn = await SFN_CLIENT.send(
         new StartExecutionCommand({
           input: JSON.stringify(created),
           name: sfnExecutionNameFromParts(
@@ -371,7 +371,7 @@ export const handler = metricScope(
           tarballUri: `s3://${BUCKET_NAME}/${packageKey}`,
         });
         console.log('sending message to release note fetcher ', body);
-        await aws.SQS_CLIENT.send(
+        await SQS_CLIENT.send(
           new SendMessageCommand({
             QueueUrl: process.env.RELEASE_NOTES_FETCH_QUEUE_URL,
             MessageBody: body,
@@ -447,7 +447,7 @@ async function getConfig(bucket: string, key: string): Promise<Config> {
     packageLinks: [],
   };
   try {
-    const req = await aws.S3_CLIENT.send(
+    const req = await S3_CLIENT.send(
       new GetObjectCommand({
         Bucket: bucket,
         Key: key,

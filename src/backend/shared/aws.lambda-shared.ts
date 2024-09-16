@@ -1,6 +1,11 @@
 import { ECSClient } from '@aws-sdk/client-ecs';
 import { LambdaClient } from '@aws-sdk/client-lambda';
-import { HeadObjectCommand, NotFound, S3Client } from '@aws-sdk/client-s3';
+import {
+  HeadObjectCommand,
+  NoSuchKey,
+  NotFound,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { SFNClient } from '@aws-sdk/client-sfn';
 import { SQSClient } from '@aws-sdk/client-sqs';
 import * as _AWS from 'aws-sdk';
@@ -25,19 +30,9 @@ export const SFN_CLIENT: SFNClient = AWSXRay.captureAWSv3Client(
   new SFNClient()
 );
 
-let _ecs: AWS.ECS | undefined;
 let _s3: AWS.S3 | undefined;
 let _sqs: AWS.SQS | undefined;
-let _sfn: AWS.StepFunctions | undefined;
 let _lambda: AWS.Lambda | undefined;
-let _codeArtifact: AWS.CodeArtifact | undefined;
-
-export function ecs(): AWS.ECS {
-  if (_ecs == null) {
-    _ecs = new AWS.ECS();
-  }
-  return _ecs;
-}
 
 export function s3(): AWS.S3 {
   if (_s3 == null) {
@@ -62,7 +57,12 @@ export async function s3ObjectExists(
     );
     return true;
   } catch (cause: any) {
-    if (cause instanceof NotFound || cause.name === 'NotFound') {
+    if (
+      cause instanceof NoSuchKey ||
+      cause.name === 'NoSuchKey' ||
+      cause instanceof NotFound ||
+      cause.name === 'NotFound'
+    ) {
       return false;
     }
     throw cause;
@@ -76,31 +76,9 @@ export function sqs(): AWS.SQS {
   return _sqs;
 }
 
-export function stepFunctions(): AWS.StepFunctions {
-  if (_sfn == null) {
-    _sfn = new AWS.StepFunctions();
-  }
-  return _sfn;
-}
-
 export function lambda(): AWS.Lambda {
   if (_lambda == null) {
     _lambda = new AWS.Lambda();
   }
   return _lambda;
-}
-
-export function codeArtifact(): AWS.CodeArtifact {
-  if (_codeArtifact == null) {
-    _codeArtifact = new AWS.CodeArtifact();
-  }
-  return _codeArtifact;
-}
-
-/**
- * Resets all clients vended by this module. This is useful in unit tests when
- * `aws-sdk-mocks` is used, so that new mocks are injected as intended.
- */
-export function reset(): void {
-  _ecs = _s3 = _sqs = _sfn = _lambda = _codeArtifact = undefined;
 }

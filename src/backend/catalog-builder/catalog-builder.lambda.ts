@@ -18,8 +18,11 @@ import { MetricName, METRICS_NAMESPACE } from './constants';
 import { CacheStrategy } from '../../caching';
 import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
-import * as aws from '../shared/aws.lambda-shared';
-import { S3_CLIENT } from '../shared/aws.lambda-shared';
+import {
+  LAMBDA_CLIENT,
+  S3_CLIENT,
+  s3ObjectExists,
+} from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 
@@ -171,7 +174,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     }
   }
 
-  const result = await aws.S3_CLIENT.send(
+  const result = await S3_CLIENT.send(
     new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: constants.CATALOG_KEY,
@@ -195,7 +198,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     };
     // We start it asynchronously, as this function has a provisionned
     // concurrency of 1 (so a synchronous attempt would always be throttled).
-    await aws.LAMBDA_CLIENT.send(
+    await LAMBDA_CLIENT.send(
       new InvokeCommand({
         FunctionName: context.functionName,
         Payload: JSON.stringify(nextEvent, null, 2),
@@ -205,7 +208,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     if (process.env.FEED_BUILDER_FUNCTION_NAME) {
       // Catalog is updated. Update the RSS/ATOM feed
       console.log(`Updating feeds...`);
-      await aws.LAMBDA_CLIENT.send(
+      await LAMBDA_CLIENT.send(
         new InvokeCommand({
           FunctionName: process.env.FEED_BUILDER_FUNCTION_NAME,
           InvocationType: 'Event',
@@ -261,11 +264,11 @@ async function* relevantObjects(bucket: string, startAfter?: string) {
         object.Key.length - constants.PACKAGE_KEY_SUFFIX.length
       )}${constants.DOCS_KEY_SUFFIX_GO}`;
       if (
-        !(await aws.s3ObjectExists(bucket, tsDocs)) &&
-        !(await aws.s3ObjectExists(bucket, pyDocs)) &&
-        !(await aws.s3ObjectExists(bucket, javaDocs)) &&
-        !(await aws.s3ObjectExists(bucket, csharpDocs)) &&
-        !(await aws.s3ObjectExists(bucket, goDocs))
+        !(await s3ObjectExists(bucket, tsDocs)) &&
+        !(await s3ObjectExists(bucket, pyDocs)) &&
+        !(await s3ObjectExists(bucket, javaDocs)) &&
+        !(await s3ObjectExists(bucket, csharpDocs)) &&
+        !(await s3ObjectExists(bucket, goDocs))
       ) {
         continue;
       }
@@ -310,7 +313,7 @@ async function appendPackage(
   console.log(`Registering ${packageName}@${version}`);
 
   // Donwload the tarball to inspect the `package.json` data therein.
-  const pkg = await aws.S3_CLIENT.send(
+  const pkg = await S3_CLIENT.send(
     new GetObjectCommand({ Bucket: bucketName, Key: pkgKey })
   );
   const pkgData = await pkg.Body!.transformToByteArray();
@@ -319,7 +322,7 @@ async function appendPackage(
     constants.PACKAGE_KEY_SUFFIX,
     constants.METADATA_KEY_SUFFIX
   );
-  const metadataResponse = await aws.S3_CLIENT.send(
+  const metadataResponse = await S3_CLIENT.send(
     new GetObjectCommand({ Bucket: bucketName, Key: metadataKey })
   );
   const manifest = await new Promise<Buffer>((ok, ko) => {
@@ -381,7 +384,7 @@ async function appendPackage(
 
 async function getCatalog(bucketName: string): Promise<GetObjectCommandOutput> {
   try {
-    return await aws.S3_CLIENT.send(
+    return await S3_CLIENT.send(
       new GetObjectCommand({
         Bucket: bucketName,
         Key: constants.CATALOG_KEY,
