@@ -1,13 +1,14 @@
-import * as AWS from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
-import { reset } from '../../../backend/shared/aws.lambda-shared';
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
+import { mockClient } from 'aws-sdk-client-mock';
 import {
-  STORAGE_KEY_PREFIX,
   METADATA_KEY_SUFFIX,
   PACKAGE_KEY_SUFFIX,
+  STORAGE_KEY_PREFIX,
 } from '../../../backend/shared/constants';
 import type { requireEnv } from '../../../backend/shared/env.lambda-shared';
 import type { now } from '../../../backend/shared/time.lambda-shared';
+import { stringToStream } from '../../streams';
 
 jest.mock('../../../backend/shared/env.lambda-shared');
 jest.mock('../../../backend/shared/time.lambda-shared');
@@ -39,19 +40,10 @@ mockNow.mockImplementation(() =>
   new Date('2023-07-24T10:00:00.000Z').getTime()
 );
 
-beforeEach((done) => {
-  AWSMock.setSDKInstance(AWS);
-  done();
-});
-
-afterEach((done) => {
-  AWSMock.restore();
-  reset();
-  done();
-});
-
 test('basic case', () => {
   // GIVEN
+  const s3Mock = mockClient(S3Client);
+  const sqsMock = mockClient(SQSClient);
   const event = {
     Key: `${STORAGE_KEY_PREFIX}dummy${METADATA_KEY_SUFFIX}`,
   };
@@ -64,40 +56,35 @@ test('basic case', () => {
     logStreamName: 'log-stream-name',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (request, cb) => {
-    try {
-      expect(request.Bucket).toBe(mockBucketName);
-      if (request.Key === event.Key) {
-        cb(undefined, { Body: JSON.stringify({ date: mockTime }) });
-      } else if (request.Key === tarballKey) {
-        cb(undefined, { Body: Buffer.from('this-is-a-tarball-believe-me') });
-      } else {
-        fail(`Unexpected object key: ${request.Key}`);
-      }
-    } catch (e: any) {
-      cb(e, undefined);
-    }
-  });
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockBucketName,
+      Key: event.Key,
+    })
+    .resolves({ Body: stringToStream(JSON.stringify({ date: mockTime })) });
 
-  AWSMock.mock('SQS', 'sendMessage', (request, cb) => {
-    try {
-      expect(request.QueueUrl).toBe(mockQueueUrl);
-      expect(JSON.parse(request.MessageBody)).toEqual({
-        integrity:
-          'sha384-IOLCcAiKbgz1Uj1o3xp7apSzx1SbeNgBN67HA+Jhyb4ZDhNBeduhlGtDuRlo9UWU',
-        reIngest: true,
-        metadata: {
-          reprocessLogGroup: context.logGroupName,
-          reprocessLogStream: context.logStreamName,
-          reprocessRequestId: context.awsRequestId,
-        },
-        tarballUri: `s3://${mockBucketName}/${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`,
-        time: mockTime,
-      });
-      cb(undefined, {});
-    } catch (e: any) {
-      cb(e, undefined);
-    }
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockBucketName,
+      Key: tarballKey,
+    })
+    .resolves({ Body: stringToStream('this-is-a-tarball-believe-me') });
+
+  sqsMock.on(SendMessageCommand).callsFake((request) => {
+    expect(request.QueueUrl).toBe(mockQueueUrl);
+    expect(JSON.parse(request.MessageBody)).toEqual({
+      integrity:
+        'sha384-IOLCcAiKbgz1Uj1o3xp7apSzx1SbeNgBN67HA+Jhyb4ZDhNBeduhlGtDuRlo9UWU',
+      reIngest: true,
+      metadata: {
+        reprocessLogGroup: context.logGroupName,
+        reprocessLogStream: context.logStreamName,
+        reprocessRequestId: context.awsRequestId,
+      },
+      tarballUri: `s3://${mockBucketName}/${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`,
+      time: mockTime,
+    });
+    return {};
   });
 
   // THEN
@@ -112,6 +99,7 @@ test('basic case', () => {
 
 test('too old to re-ingest', () => {
   // GIVEN
+  const s3Mock = mockClient(S3Client);
   const event = {
     Key: `${STORAGE_KEY_PREFIX}dummy${METADATA_KEY_SUFFIX}`,
   };
@@ -124,20 +112,19 @@ test('too old to re-ingest', () => {
     logStreamName: 'log-stream-name',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (request, cb) => {
-    try {
-      expect(request.Bucket).toBe(mockBucketName);
-      if (request.Key === event.Key) {
-        cb(undefined, { Body: JSON.stringify({ date: mockTime }) });
-      } else if (request.Key === tarballKey) {
-        cb(undefined, { Body: Buffer.from('this-is-a-tarball-believe-me') });
-      } else {
-        fail(`Unexpected object key: ${request.Key}`);
-      }
-    } catch (e: any) {
-      cb(e, undefined);
-    }
-  });
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockBucketName,
+      Key: event.Key,
+    })
+    .resolves({ Body: stringToStream(JSON.stringify({ date: mockTime })) });
+
+  s3Mock
+    .on(GetObjectCommand, {
+      Bucket: mockBucketName,
+      Key: tarballKey,
+    })
+    .resolves({ Body: stringToStream('this-is-a-tarball-believe-me') });
 
   // THEN
   return expect(

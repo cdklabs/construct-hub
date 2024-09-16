@@ -19,7 +19,7 @@ import { extract } from 'tar-stream';
  * @returns the extracted objects.
  */
 export async function extractObjects<S extends Selector>(
-  tgz: Buffer,
+  tgz: Uint8Array,
   selector: S
 ): Promise<Selection<S>> {
   return new Promise((ok, ko) => {
@@ -99,6 +99,7 @@ function selectorMatches(path: string, config: SelectorProperty): boolean {
 interface Selector {
   readonly [name: string]: SelectorProperty;
 }
+
 type SelectorProperty = { readonly required?: boolean } & (
   | { readonly path: string }
   | { readonly path?: undefined; readonly filter: (path: string) => boolean }
