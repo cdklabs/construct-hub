@@ -1,4 +1,4 @@
-import { _Object, GetObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import type { Context } from 'aws-lambda';
 import { S3_CLIENT, SQS_CLIENT } from '../shared/aws.lambda-shared';
