@@ -4,6 +4,7 @@ import * as zip from 'zlib';
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import {
   GetObjectCommand,
+  GetObjectCommandInput,
   HeadObjectCommand,
   ListObjectsV2Command,
   NoSuchKey,
@@ -88,7 +89,7 @@ test('initial build', () => {
 
   // this is the suffix that triggers the catalog builder.
   const docsSuffix = constants.DOCS_KEY_SUFFIX_TYPESCRIPT;
-  const mockFirstPage: AWS.S3.ObjectList = [
+  const mockFirstPage = [
     {
       Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}`,
     },
@@ -106,7 +107,7 @@ test('initial build', () => {
     },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${docsSuffix}` },
   ];
-  const mockSecondPage: AWS.S3.ObjectList = [
+  const mockSecondPage = [
     {
       Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.0.0${constants.ASSEMBLY_KEY_SUFFIX}`,
     },
@@ -263,7 +264,7 @@ test('rebuild (with continuation)', async () => {
 
   // this is the suffix that triggers the catalog builder.
   const docsSuffix = constants.DOCS_KEY_SUFFIX_TYPESCRIPT;
-  const mockFirstPage: AWS.S3.ObjectList = [
+  const mockFirstPage = [
     {
       Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}`,
     },
@@ -756,7 +757,7 @@ function mockNpmPackage(name: string, version: string) {
   return Promise.resolve(sdkStreamMixin(gzip));
 }
 
-function tryMockDenyList(req: AWS.S3.GetObjectRequest) {
+function tryMockDenyList(req: GetObjectCommandInput) {
   if (
     req.Bucket === MOCK_DENY_LIST_BUCKET &&
     req.Key === MOCK_DENY_LIST_OBJECT

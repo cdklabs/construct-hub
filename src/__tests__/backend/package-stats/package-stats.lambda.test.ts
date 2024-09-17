@@ -118,7 +118,7 @@ describe('full build', () => {
         }) as any
     );
 
-    const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
+    const mockPutObjectResult = {};
     mockS3.on(PutObjectCommand).callsFake((req: PutObjectCommandInput) => {
       try {
         expect(req.Bucket).toBe(mockBucketName);

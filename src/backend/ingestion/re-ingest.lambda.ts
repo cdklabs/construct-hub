@@ -7,7 +7,7 @@ import { requireEnv } from '../shared/env.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
 import { now } from '../shared/time.lambda-shared';
 
-interface Input extends AWS.S3.Object {
+interface Input {
   Key: string;
 }
 

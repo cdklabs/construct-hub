@@ -1,5 +1,13 @@
+import { InvokeCommand, InvokeCommandInput } from '@aws-sdk/client-lambda';
+import {
+  ListObjectsV2Command,
+  ListObjectsV2CommandInput,
+} from '@aws-sdk/client-s3';
+import {
+  SendMessageCommand,
+  SendMessageCommandInput,
+} from '@aws-sdk/client-sqs';
 import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
-import * as AWS from 'aws-sdk';
 import { DenyListClient } from './client.lambda-shared';
 import {
   ENV_PRUNE_ON_CHANGE_FUNCTION_NAME,
@@ -9,12 +17,12 @@ import {
   MetricName,
   METRICS_NAMESPACE,
 } from './constants';
-import * as aws from '../shared/aws.lambda-shared';
+import {
+  LAMBDA_CLIENT,
+  S3_CLIENT,
+  SQS_CLIENT,
+} from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
-
-const s3 = aws.s3();
-const sqs = aws.sqs();
-const lambda = aws.lambda();
 
 // Configure embedded metrics format
 Configuration.namespace = METRICS_NAMESPACE;
@@ -46,13 +54,13 @@ export async function handler(event: unknown) {
     // prefix and delete them
     let continuation = undefined;
     do {
-      const req: AWS.S3.ListObjectsV2Request = {
+      const req: ListObjectsV2CommandInput = {
         Bucket: packageData,
         Prefix: prefix,
         ContinuationToken: continuation,
       };
 
-      const result = await s3.listObjectsV2(req).promise();
+      const result = await S3_CLIENT.send(new ListObjectsV2Command(req));
       continuation = result.NextContinuationToken;
 
       // queue all objects for deletion
@@ -60,34 +68,34 @@ export async function handler(event: unknown) {
         if (!object.Key) {
           continue;
         }
-        const sendMessageRequest: AWS.SQS.SendMessageRequest = {
+        const sendMessageRequest: SendMessageCommandInput = {
           QueueUrl: pruneQueue,
           MessageBody: object.Key,
         };
 
         console.log(JSON.stringify({ sendMessageRequest }));
-        const sendMessageResponse = await sqs
-          .sendMessage(sendMessageRequest)
-          .promise();
+        const sendMessageResponse = await SQS_CLIENT.send(
+          new SendMessageCommand(sendMessageRequest)
+        );
         console.log(JSON.stringify({ sendMessageResponse }));
         objectsFound.push(object.Key);
       }
     } while (continuation);
+  }
 
-    // trigger the "on change" handler objects were found and we have a handler
-    const onChangeFunctionName = process.env[ENV_PRUNE_ON_CHANGE_FUNCTION_NAME];
-    if (onChangeFunctionName && objectsFound.length > 0) {
-      console.log(`Triggering a on-change handler: ${onChangeFunctionName}`);
-      const onChangeCallbackRequest: AWS.Lambda.InvocationRequest = {
-        FunctionName: onChangeFunctionName,
-        InvocationType: 'Event',
-      };
+  // trigger the "on change" if handler objects were found and we have a handler
+  const onChangeFunctionName = process.env[ENV_PRUNE_ON_CHANGE_FUNCTION_NAME];
+  if (onChangeFunctionName && objectsFound.length > 0) {
+    console.log(`Triggering a on-change handler: ${onChangeFunctionName}`);
+    const onChangeCallbackRequest: InvokeCommandInput = {
+      FunctionName: onChangeFunctionName,
+      InvocationType: 'Event',
+    };
 
-      console.log(JSON.stringify({ onChangeCallbackRequest }));
-      const onChangeCallbackResponse = await lambda
-        .invoke(onChangeCallbackRequest)
-        .promise();
-      console.log(JSON.stringify({ onChangeCallbackResponse }));
-    }
+    console.log(JSON.stringify({ onChangeCallbackRequest }));
+    const onChangeCallbackResponse = await LAMBDA_CLIENT.send(
+      new InvokeCommand(onChangeCallbackRequest)
+    );
+    console.log(JSON.stringify({ onChangeCallbackResponse }));
   }
 }

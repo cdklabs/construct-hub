@@ -89,10 +89,8 @@ function mockListObjects(prefixes: Record<string, string[]>) {
   });
 }
 
-function mockPutObject(
-  packages: Record<string, string[]>
-): AWS.S3.PutObjectOutput {
-  const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
+function mockPutObject(packages: Record<string, string[]>) {
+  const mockPutObjectResult = {};
 
   const numPackages = Object.keys(packages).length;
   const numVersions = Object.values(packages)

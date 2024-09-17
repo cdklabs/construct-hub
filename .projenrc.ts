@@ -59,8 +59,6 @@ const project = new CdklabsConstructLibrary({
     'aws-embedded-metrics',
     'aws-sdk-client-mock',
     'aws-sdk-client-mock-jest',
-    'aws-sdk-mock',
-    'aws-sdk',
     'aws-xray-sdk-core',
     'case',
     'cdk-dia',
