@@ -1,4 +1,4 @@
-import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { _Object, GetObjectCommand } from '@aws-sdk/client-s3';
 import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import type { Context } from 'aws-lambda';
 import { S3_CLIENT, SQS_CLIENT } from '../shared/aws.lambda-shared';
@@ -7,7 +7,7 @@ import { requireEnv } from '../shared/env.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
 import { now } from '../shared/time.lambda-shared';
 
-interface Input extends AWS.S3.Object {
+interface Input {
   Key: string;
 }
 
