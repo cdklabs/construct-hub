@@ -9,7 +9,6 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
-import { IStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
 import { createRestrictedSecurityGroups } from './_limited-internet-access';
 import { AlarmActions, Domain } from './api';
@@ -271,9 +270,9 @@ export interface CodeArtifactDomainProps {
  */
 export class ConstructHub extends Construct implements iam.IGrantable {
   /**
-   * The state machine that starts the processing of a newly discovered package.
+   * The construct that orchestrates the back-end to process packages
    */
-  public readonly orchestrationStateMachine: IStateMachine;
+  public readonly orchestration: Orchestration;
 
   private readonly ingestion: Ingestion;
   private readonly monitoring: Monitoring;
@@ -413,7 +412,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       vpcSecurityGroups,
       feedBuilder,
     });
-    this.orchestrationStateMachine = orchestration.stateMachine;
+    this.orchestration = orchestration;
 
     // rebuild the catalog when the deny list changes.
     denyList.prune.onChangeInvoke(orchestration.catalogBuilder.function);

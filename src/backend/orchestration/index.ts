@@ -182,6 +182,12 @@ export class Orchestration extends Construct {
   public readonly regenerateAllDocumentation: IStateMachine;
 
   /**
+   * The function operators can use to reprocess a specific package version
+   * through the backend data pipeline.
+   */
+  public readonly regenerateAllDocumentationPerPackage: IStateMachine;
+
+  /**
    * The function that builds the catalog.
    */
   public readonly catalogBuilder: CatalogBuilder;
@@ -513,14 +519,17 @@ export class Orchestration extends Construct {
 
     // The workflow is intended to be manually triggered by an operator to
     // reprocess all package versions currently in store through the orchestrator.
-    this.regenerateAllDocumentation = new RegenerateAllDocumentation(
+    const regenerateAllDocumentation = new RegenerateAllDocumentation(
       this,
       'RegenerateAllDocumentation',
       {
         bucket: props.bucket,
         stateMachine: this.stateMachine,
       }
-    ).stateMachine;
+    );
+    this.regenerateAllDocumentation = regenerateAllDocumentation.stateMachine;
+    this.regenerateAllDocumentationPerPackage =
+      regenerateAllDocumentation.processPackageVersions;
 
     props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
       needsCatalogUpdateFunction,
@@ -671,6 +680,7 @@ interface RegenerateAllDocumentationProps {
 
 class RegenerateAllDocumentation extends Construct {
   public readonly stateMachine: StateMachine;
+  public readonly processPackageVersions: StateMachine;
 
   public constructor(
     scope: Construct,
@@ -772,6 +782,7 @@ class RegenerateAllDocumentation extends Construct {
       timeout: Duration.hours(1),
       tracingEnabled: true,
     });
+    this.processPackageVersions = processPackageVersions;
 
     // This workflow is broken into two sub-workflows because otherwise it hits the 25K events limit
     // of StepFunction executions relatively quickly.
