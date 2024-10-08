@@ -94,6 +94,7 @@ Any object.
 | <code><a href="#construct-hub.ConstructHub.property.highSeverityAlarms">highSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all high-severity alarms from this ConstructHub instance. |
 | <code><a href="#construct-hub.ConstructHub.property.ingestionQueue">ingestionQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | *No description.* |
 | <code><a href="#construct-hub.ConstructHub.property.lowSeverityAlarms">lowSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all low-severity alarms from this ConstructHub instance. |
+| <code><a href="#construct-hub.ConstructHub.property.regenerateAllDocumentationPerPackage">regenerateAllDocumentationPerPackage</a></code> | <code>aws-cdk-lib.aws_stepfunctions.IStateMachine</code> | The function operators can use to reprocess a specific package version through the backend data pipeline. |
 
 ---
 
@@ -171,6 +172,18 @@ Returns a list of all low-severity alarms from this ConstructHub instance.
 These do not necessitate immediate attention, as they do not have direct
 customer-visible impact, or handling is not time-sensitive. They indicate
 that something unusual (not necessarily bad) is happening.
+
+---
+
+##### `regenerateAllDocumentationPerPackage`<sup>Required</sup> <a name="regenerateAllDocumentationPerPackage" id="construct-hub.ConstructHub.property.regenerateAllDocumentationPerPackage"></a>
+
+```typescript
+public readonly regenerateAllDocumentationPerPackage: IStateMachine;
+```
+
+- *Type:* aws-cdk-lib.aws_stepfunctions.IStateMachine
+
+The function operators can use to reprocess a specific package version through the backend data pipeline.
 
 ---
 
