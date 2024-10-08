@@ -41,6 +41,7 @@ import {
   FeatureFlags,
   Category,
 } from './webapp';
+import { IStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 
 /**
  * Configuration for generating RSS and ATOM feed for the latest packages
@@ -270,9 +271,10 @@ export interface CodeArtifactDomainProps {
  */
 export class ConstructHub extends Construct implements iam.IGrantable {
   /**
-   * The construct that orchestrates the back-end to process packages
+   * The function operators can use to reprocess a specific package version
+   * through the backend data pipeline.
    */
-  public readonly orchestration: Orchestration;
+  public readonly regenerateAllDocumentationPerPackage: IStateMachine;
 
   private readonly ingestion: Ingestion;
   private readonly monitoring: Monitoring;
@@ -412,7 +414,8 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       vpcSecurityGroups,
       feedBuilder,
     });
-    this.orchestration = orchestration;
+    this.regenerateAllDocumentationPerPackage =
+      orchestration.regenerateAllDocumentationPerPackage;
 
     // rebuild the catalog when the deny list changes.
     denyList.prune.onChangeInvoke(orchestration.catalogBuilder.function);
