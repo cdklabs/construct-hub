@@ -489,6 +489,21 @@ more information about the available flags, check the documentation for
 By default, an AppRegistry application will be created that is associated
 with the stack you put the `ConstructHub` construct in.
 
+### Re-processing specific packages
+
+In some cases, you might need to re-generate the documentation for a given
+package version. This is useful, for example, in a CI/CD pipeline, to make
+sure there are no regressions before releasing a new version to production.
+
+To re-process a specific package, start the execution of the state machine
+called `ReprocessDocumentationPerPackage` with the following input:
+
+```json
+{
+  "Prefix": "data/<package-name>/v<package-version>"
+}
+```
+
 ## :raised_hand: Contributing
 
 If you are looking to contribute to this project, but don't know where to start,
