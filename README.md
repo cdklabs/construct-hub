@@ -15,7 +15,8 @@ instance with personalized configuration.
 >
 > ### Disclaimer
 >
-> The [public instance of ConstructHub](https://constructs.dev) is Generally Available.
+> The [public instance of ConstructHub](https://constructs.dev) is Generally
+> Available.
 >
 > Self-hosted ConstructHub instances are however in active development and
 > should be considered *experimental*. Breaking changes to the public API of
@@ -32,8 +33,10 @@ instance with personalized configuration.
 > ### 💰 Cost of running Construct Hub
 >
 > If you opt to use Construct Hub for processing your CDK packages,
-> you will be subject to charges based on the number of packages processed by Construct Hub.
-> To minimize these charges, you can implement package filters for relevant sources
+> you will be subject to charges based on the number of packages processed by
+> Construct Hub.
+> To minimize these charges, you can implement package filters for relevant
+> sources
 > and exclude public NPM packages from the processing list.
 
 ### Quick Start
@@ -63,7 +66,7 @@ default CloudFront domain name, specify the `domain` property with the following
 elements:
 
 | Attribute                      | Description                                                                                       |
-| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+|--------------------------------|---------------------------------------------------------------------------------------------------|
 | `zone`                         | A Route53 Hosted Zone, where DNS records will be added.                                           |
 | `cert`                         | An Amazon Certificate Manager certificate, which must be in the `us-east-1` region.               |
 | `monitorCertificateExpiration` | Set to `false` if you do not want an alarm to be created when the certificate is close to expiry. |
@@ -119,6 +122,7 @@ value for `packageSources`. (But this can be re-enabled through the
 `fetchPackageStats` property if needed).
 
 [sources.NpmJs]: src/package-sources/npmjs.ts
+
 [sources.CodeArtifact]: src/package-sources/code-artifact.ts
 
 #### Package deny list
@@ -140,7 +144,10 @@ const stack = new Stack(app, 'StackName', { /* ... */ });
 new ConstructHub(stack, 'ConstructHub', {
   denyList: [
     // Denying _all_ versions of the "sneaky-hackery" package
-    { packageName: 'sneaky-hackery', reason: 'Mines bitcoins wherever it gets installed' },
+    {
+      packageName: 'sneaky-hackery',
+      reason: 'Mines bitcoins wherever it gets installed'
+    },
     // Denying _a specific_ version of the "bad-release" package
     { packageName: 'bad-release', version: '1.2.3', reason: 'CVE-####-#####' },
   ],
@@ -161,7 +168,7 @@ const myDomainZone = r53.HostedZone.fromHostedZoneAttributes(this, 'MyDomainZone
 });
 
 new ConstructHub(this, 'ConstructHub', {
-  additionalDomains: [ { hostedZone: myDomainZone } ]
+  additionalDomains: [{ hostedZone: myDomainZone }]
 });
 ```
 
@@ -387,10 +394,10 @@ This would allow publishers to add the following to their package.json:
 
 ```json
 "constructHub": {
-  "packageLinks": {
-    "SLA": "https://support.mypackage.com",
-    "Contact": "me.com/contact"
-  }
+"packageLinks": {
+"SLA": "https://support.mypackage.com",
+"Contact": "me.com/contact"
+}
 }
 ```
 
@@ -400,15 +407,18 @@ configured.
 ### RSS/ATOM feeds for recent packages
 
 Construct hub automatically generates RSS/ATOM feed showing the list of latest
-100 packages added. The generated feed can be configured to get release notes from
-GitHub by configuring it with [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
-The access token has to be stored in AWS Secretsmanager and should be passed to `feedConfiguration`
+100 packages added. The generated feed can be configured to get release notes
+from
+GitHub by configuring it
+with [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+The access token has to be stored in AWS Secretsmanager and should be passed to
+`feedConfiguration`
 
 For example:
 
 ```ts
 new ConstructHub(this, "ConstructHub", {
-  feedConfiguration: {
+    feedConfiguration: {
       githubTokenSecret: secretsmanager.Secret.fromSecretCompleteArn(this, 'GitHubToken', '<arn:aws:secretsmanager:us-east-2:11111111111:secret:releaseNotesFetcherGitHubToken-abCd1>'),
       feedDescription: 'Latest Constructs in the construct hub',
       feedTitle: 'Latest constructs',
@@ -488,6 +498,21 @@ more information about the available flags, check the documentation for
 
 By default, an AppRegistry application will be created that is associated
 with the stack you put the `ConstructHub` construct in.
+
+### Re-processing specific packages
+
+In some cases, you might need to re-generate the documentation for a given
+package version. This is useful, for example, in a CI/CD pipeline, to make
+sure there are no regressions before releasing a new version to production.
+
+To re-process a specific package, start the execution of the state machine
+called `ReprocessDocumentationPerPackage` with the following input:
+
+```json
+{
+  "Prefix": "data/<package-name>/v<package-version>"
+}
+```
 
 ## :raised_hand: Contributing
 
