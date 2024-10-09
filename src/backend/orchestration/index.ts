@@ -50,6 +50,9 @@ import {
 } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 
+const REPROCESS_PER_PACKAGE_STATE_MACHINE_NAME =
+  'ReprocessDocumentationPerPackage';
+
 /**
  * This retry policy is used for all items in the state machine and allows ample
  * retry attempts in order to avoid having to implement a custom backpressure
@@ -778,6 +781,7 @@ class RegenerateAllDocumentation extends Construct {
         .otherwise(new Succeed(this, 'Success'))
     );
     const processPackageVersions = new StateMachine(this, 'PerPackage', {
+      stateMachineName: REPROCESS_PER_PACKAGE_STATE_MACHINE_NAME,
       definition: processVersions,
       timeout: Duration.hours(1),
       tracingEnabled: true,
