@@ -345,7 +345,12 @@ export class Orchestration extends Construct {
       );
 
     // aws-cdk-lib is one of the biggest libs and runs in ~8min
-    const transliteratorTimeout = Duration.hours(1);
+    // We give the task some generous extra allowance to complete.
+    // If the task exceeds the runtime, it's very likely that there is an issue with the task execution.
+    //
+    // The timeout value is deliberately set close to the expected execution time,
+    // to avoid an excessive cumulative runtime with retries and to not normalize longer than necessary runtime.
+    const transliteratorTimeout = Duration.minutes(15);
 
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
@@ -416,14 +421,14 @@ export class Orchestration extends Construct {
             maxAttempts: 3,
           })
           .addRetry({
-            errors: ['States.Timeout'], // The task has stopped responding, or is just taking a long time to provision
-            // To compensate we'll give more retries and pause between them in
-            // case it's just a transient issue.
+            // The task has failed for an unknown reason, or stopped responding, or is just taking a long time to provision
+            // We will attempt a couple of retries with some time in between.
+            // This also covers the 'States.Timeout' error, but we are not giving timeout error any special treatment.
+            // If the task timeout is reached, it is most likely an issue with the task that needs investigation.
             backoffRate: 2,
             interval: Duration.seconds(30),
-            maxAttempts: 3,
+            maxAttempts: 2,
           })
-          .addRetry({ maxAttempts: 3 })
           .addCatch(ignore, { errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME] })
           .addCatch(sendToDeadLetterQueue, {
             errors: ['States.Timeout'],

@@ -5325,7 +5325,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.Timeout"],"IntervalSeconds":30,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":null,"Resource":"arn:",
+              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30,"MaxAttempts":2,"BackoffRate":2}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":900,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":null,"Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -5737,7 +5737,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "CLUSTER_NAME": {
               "Ref": "ConstructHubOrchestrationCluster3D6F0081",
             },
-            "TIMEOUT_MILLIS": "4200000",
+            "TIMEOUT_MILLIS": "1500000",
           },
         },
         "Handler": "index.handler",
@@ -7095,6 +7095,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               },
             },
             "Name": "Resource",
+            "Ulimits": [
+              {
+                "HardLimit": 1024,
+                "Name": "nofile",
+                "SoftLimit": 1024,
+              },
+            ],
           },
         ],
         "Cpu": "4096",
