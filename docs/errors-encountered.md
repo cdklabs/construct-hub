@@ -18,17 +18,17 @@ resources if Construct Hub is running in a VPC, etc.).
 
 ### Running Out of File Descriptors (`ENOFILE`, `EMFILE: too many open files` or `EBUSY`)
 
-Programs running in AWS Lambda Functions or Amazon ECS tasks, have stricter restrictions on file system access than when running the same program locally.
+Programs running in AWS Lambda Functions or Amazon ECS tasks have stricter restrictions on file system access than when running the same program locally.
 In particular the Transliterator task is susceptible to making many file system calls.
 
 If these file system calls are executed in parallel, it is possible the program will run out of file descriptors.
-This surfaces as a `ENOFILE` or `EMFILE: too many open files` failure, but can also be the reason behind a less unambiguous error like `EBUSY`.
+This surfaces as a `ENOFILE` or `EMFILE: too many open files` failure, but can also be the reason behind a less obvious error like `EBUSY`.
 
 **Running Out of File Descriptors is not expected behavior.**
 In most cases this indicates a code bug, not a misconfiguration.
 Even though serverless systems are limited in their resources, the executed code must not exceed these limits or be able to appropriately react to these limitations.
 
-The usual culprit are file system calls, executed in unbound parallelism and often depended on the program input.
+The usual culprit are file system calls, executed in unbound parallelism and often dependant on the program input.
 For example reading and writing a file for every example snippet that the package being transliterated contains (for perspective: `aws-cdk-lib` has thousands of such snippets).
 
 #### Investigation
