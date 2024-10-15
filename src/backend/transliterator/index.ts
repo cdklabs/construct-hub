@@ -13,6 +13,7 @@ import {
   ICluster,
   LogDrivers,
   OperatingSystemFamily,
+  UlimitName,
 } from 'aws-cdk-lib/aws-ecs';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -179,24 +180,23 @@ export class Transliterator extends Construct {
     });
 
     /**
-     * Construct hub tracking issue: https://github.com/cdklabs/construct-hub/issues/982
+     * We are specifying a low ulimit for file descriptors to prevent the container from accidentally using much more file descriptors than anticipated.
+     * The transliterator task normally uses a low (<100) number of file descriptors at a time.
+     * Allowing the usage of much more FDs, will mask bugs in the tasks code that unintentionally make a lot of file system calls.
+     * This might cause task runtime to slowly build up, or cause the task to work until an input package suddenly tips the number of FDs over tge edge.
      *
-     * Encountered one of these errors in ECS:
-     *  - EMFILE: too many open files
-     *  - Error: getaddrinfo EBUSY states.us-east-1.amazonaws.com
-     *
-     * This issue occurs because the container is running out of file descriptors, to read files or make network requests.
-     * Normally this limit is configured via the `ulimit` setting. However on AWS Fargate a much lower limit applies.
-     * For ECS ulimit documentation see: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_Ulimit.html
-     *
-     * We currently don't believe a specific ulimit configuration is needed, the defaults (which are the max) should work.
-     * For references, here is the previously used config.
+     * Instead we are extremely limiting the number of allowed FDs to catch any issues early on.
      */
-    // this.containerDefinition.addUlimits({
-    //   name: UlimitName.NOFILE, // file descriptors
-    //   softLimit: 16_384,
-    //   hardLimit: 65_535,
-    // });
+    this.containerDefinition.addUlimits({
+      // file descriptors
+      name: UlimitName.NOFILE,
+      // set limits deliberately low but well above the expected usages
+      // running out of file descriptors is an indication of a runaway process in the task
+      // this should not be increased, instead investigate why the process needs so many file descriptors.
+      // it should most likely not need them and there is a bug that causes a spike in usage.
+      softLimit: 1024,
+      hardLimit: 1024,
+    });
 
     repository?.grantReadFromRepository(this.taskDefinition.taskRole);
 

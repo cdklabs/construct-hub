@@ -1875,9 +1875,16 @@
                           {
                             "essential": true,
                             "image": {
-                              "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}:8d872715ca58e94d53d354eb8a3b9d23c8717ecde82951789fbf0af223f31d2c"
+                              "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}:3bf4059b1541a86dc1653f6b61fbbbfb0b54b4f2c4e15e17387ec6439172b90c"
                             },
                             "name": "Resource",
+                            "ulimits": [
+                              {
+                                "name": "nofile",
+                                "softLimit": 1024,
+                                "hardLimit": 1024
+                              }
+                            ],
                             "logConfiguration": {
                               "logDriver": "awslogs",
                               "options": {
@@ -2180,7 +2187,7 @@
                           "s3Bucket": {
                             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                           },
-                          "s3Key": "3322b7049fb0ed2b7cbb644a2ada8d1116ff80c32dca89e6ada846b5de26f961.zip"
+                          "s3Key": "a0ea9d2b8e999826c40e06645a39aca710e93abb4c9d6c2a1ee2f9295325decc.zip"
                         },
                         "description": "/opt/awscli/aws"
                       }
