@@ -16,30 +16,98 @@ resources if Construct Hub is running in a VPC, etc.).
 
 ## Transliteration Task Errors
 
-### Running Out of File Descriptors (`ENOFILE`)
+### Running Out of File Descriptors (`ENOFILE`, `EMFILE: too many open files` or `EBUSY`)
 
-The Transliterator task in particular has been susceptible to running out of
-file descriptors in the past, making the task extremely slow, or causing it to
-fail or time out (sending the StepFunctions heart beat requires opening a
-network connection, which requires at least 1 available file descriptor).
+Programs running in AWS Lambda Functions or Amazon ECS tasks have stricter restrictions on file system access than when running the same program locally.
+In particular the Transliterator task is susceptible to making many file system calls.
 
-In order to determine where file descriptors are going, tasks can be configured
-to have `lsof` run on each heartbeat tick, which will display the list of all
-open files to `STDOUT`, which will be visible in the task's log.
+If these file system calls are executed in parallel, it is possible the program will run out of file descriptors.
+This surfaces as a `ENOFILE` or `EMFILE: too many open files` failure, but can also be the reason behind a less obvious error like `EBUSY`.
 
-To enable this feature, the task input must contain an
-`env.RUN_LSOF_ON_HEARTBEAT` key with a string value (the value is arbitrary, but
-must be truthy for Javascript - so non-empty - for the logging to be enabled).
+**Running Out of File Descriptors is not expected behavior.**
+In most cases this indicates a code bug, not a misconfiguration.
+Even though serverless systems are limited in their resources, the executed code must not exceed these limits or be able to appropriately react to these limitations.
 
-In the case of the Transliterator task, the command includes the entire state
-machine's input object, so one can simply re-run the state machine after having
-merged the following into the state machine input object:
+The usual culprit are file system calls, executed in unbound parallelism and often dependant on the program input.
+For example reading and writing a file for every example snippet that the package being transliterated contains (for perspective: `aws-cdk-lib` has thousands of such snippets).
 
-```json
-{
-  "env": {
-    "RUN_LSOF_ON_HEARTBEAT": "YES"
-  }
+#### Investigation
+
+Primary goal of the investigation should be to identify the file descriptor leak.
+As described above, the most likely cause will be code with unbound parallelism in file system access.
+
+Start by finding a local reproduction of the issue.
+This can be achieved by restricting the local soft and hard limits to a low value like `256`.
+After this, when running the program locally the same failures or slow-downs should be observable as in the deployed environment.
+
+Next steps will be to identify the code path responsible for the spike in file system calls.
+Paste this script into your shell, and then execute the command like so:
+
+```bash
+fdwatch() {
+    eval "$1 &"
+    pid=$!
+    while sleep .5; do
+        lsof -p $({ echo "$pid"; pgrep -P "$pid"; } | paste -sd , -) | grep -v " txt " | wc -l;
+    done
+}
+```
+
+```console
+fdwatch "npx jsii-docgen -p aws-cdk-lib"
+```
+
+This will run the command, but also every 500ms print out the number of file descriptors used by it.
+If the command is printing sufficient debug logs, this will help you narrow down the offending code path.
+For example, the following output would indicate that the issue occurs between printing "Step 2" and "Step 3".
+
+```console
+[3] 95150
+      26
+      47
+Installing package aws-cdk-lib
+      49
+      49
+Step 1
+      49
+      49
+Step 2
+      49
+      4314
+      7132
+      3001
+      49
+Step 3
+      49
+      49
+```
+
+#### Resolution
+
+Once the code is identified, ensure file system calls are restricted and verify with the above approach.
+Common causes in code are:
+
+##### Unbound use of `Promise.all()`
+
+File system calls inside `Promise.all()` may be executed in parallel.
+If the size of list depends on program input and is not a fixed size,
+limit parallelism with something like `p-limit` or convert to synchronous processing.
+
+```ts
+// 💥 This will spike file system calls
+Promise.all(veryLargeList.map(doSomethingWithFileSystem));
+```
+
+##### No `await` for file system calls in `for`-loops
+
+File system calls inside a `for`-loop that are not `await`ed (e.g. they are fire-and-forget) will be executed in parallel.
+If the size of list depends on program input and is not a fixed size,
+await the file system call inside the loop or use synchronous file system access functions.
+
+```ts
+for (const item of veryLargeList) {
+  // 💥 This will spike file system calls
+  fs.promises.readFile()
 }
 ```
 
