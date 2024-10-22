@@ -13,6 +13,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { Assembly } from '@jsii/spec';
 import { StreamingBlobPayloadInputTypes } from '@smithy/types';
+import type { NodeJsClient } from '@smithy/types';
 import { AdaptiveRetryStrategy } from '@smithy/util-retry';
 import { Sema } from 'async-sema';
 import { metricScope, Unit } from 'aws-embedded-metrics';
@@ -46,7 +47,7 @@ const S3_CLIENT = new S3Client({
   retryStrategy: new AdaptiveRetryStrategy(
     async () => MAX_RETRIES_S3_REQUESTS /* maxAttempts */
   ),
-});
+}) as NodeJsClient<S3Client>;
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download

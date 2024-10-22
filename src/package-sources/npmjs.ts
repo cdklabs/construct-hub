@@ -37,6 +37,7 @@ import type {
 } from '../package-source';
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
+import { ReStagePackageVersion } from './npmjs/re-stage-package-version';
 
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid
@@ -175,6 +176,17 @@ export class NpmJs implements IPackageSource {
     denyList?.grantRead(follower);
     licenseList.grantRead(follower);
     stager.grantInvoke(follower);
+
+    const restager = new ReStagePackageVersion(scope, 'ReStagePackageVersion', {
+      description: `Manually re-stage a package version`,
+      environment: {
+        FUNCTION_NAME: stager.functionName,
+        REGISTRY_URL: 'https://registry.npmjs.org',
+      },
+      memorySize: 1024,
+      timeout: Duration.seconds(10),
+    });
+    stager.grantInvoke(restager);
 
     const rule = new Rule(scope, 'NpmJs/Schedule', {
       description: `${scope.node.path}/NpmJs/Schedule`,
