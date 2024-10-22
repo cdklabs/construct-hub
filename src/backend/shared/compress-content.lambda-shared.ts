@@ -1,6 +1,6 @@
 import { text } from 'node:stream/consumers';
 import { createGunzip, gzipSync } from 'zlib';
-import type { StreamingBlobPayloadOutputTypes } from '@smithy/types';
+import type { NodeJsRuntimeStreamingBlobPayloadOutputTypes } from '@smithy/types';
 
 const MINIMUM_SIZE_TO_COMPRESS = 1_024;
 
@@ -33,7 +33,7 @@ export function compressContent(buffer: Buffer): CompressContentResult {
  * @returns the stream data as a string, decompressed if necessary
  */
 export async function decompressContent(
-  data: StreamingBlobPayloadOutputTypes,
+  data: NodeJsRuntimeStreamingBlobPayloadOutputTypes,
   encoding?: string
 ): Promise<string> {
   if (encoding === 'gzip') {

@@ -115,6 +115,9 @@ class MockChildProcess
       (err) => this.emit('error', err)
     );
   }
+  [Symbol.dispose](): void {
+    throw new Error('Method not implemented.');
+  }
 
   public get connected(): never {
     throw new Error('Not Implemented');
