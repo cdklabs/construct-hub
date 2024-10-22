@@ -239,6 +239,7 @@ addVpcAllowListManagement(project);
 addDevApp(project);
 
 project.addDevDeps('glob');
+project.addDevDeps('@types/node@^18');
 discoverLambdas(project);
 discoverEcsTasks(project);
 

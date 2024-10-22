@@ -312,7 +312,7 @@ async function appendPackage(
 
   console.log(`Registering ${packageName}@${version}`);
 
-  // Donwload the tarball to inspect the `package.json` data therein.
+  // Download the tarball to inspect the `package.json` data therein.
   const pkg = await S3_CLIENT.send(
     new GetObjectCommand({ Bucket: bucketName, Key: pkgKey })
   );

@@ -548,7 +548,7 @@ function getRelevantVersionInfos(
  * The scheme of a package version in the update. Includes the package.json keys, as well as some additional npm metadata
  * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
  */
-interface VersionInfo {
+export interface VersionInfo {
   readonly dependencies?: { readonly [name: string]: string };
   readonly devDependencies?: { readonly [name: string]: string };
   readonly peerDependencies?: { readonly [name: string]: string };
