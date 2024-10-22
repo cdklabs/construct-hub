@@ -241,11 +241,11 @@ The dead-letter queue can be accessed by clicking the *DLQ* button under the
 information about the failure that caused the message to be placed here. They
 include the following elements:
 
-Key                          | Description
------------------------------|--------------------------------------------------
-`$TaskExecution`             | References to the StateMachine execution
-`DocGen[].error`             | Error message returned by a DocGen task
-`catalogBuilderOutput.error` | Error message returned by the catalog builder
+| Key                          | Description                                   |
+| ---------------------------- | --------------------------------------------- |
+| `$TaskExecution`             | References to the StateMachine execution      |
+| `DocGen[].error`             | Error message returned by a DocGen task       |
+| `catalogBuilderOutput.error` | Error message returned by the catalog builder |
 
 For each language supported by the Construct Hub, there should be an entry under
 the `DocGen` array. If the `error` field has a value or an empty object (`{}`) it
@@ -629,6 +629,31 @@ effects of executing these workflows.
 
 --------------------------------------------------------------------------------
 
+## :repeat_one: Re-processing individual items
+
+Two workflows are available for reprocessing of individual items:
+
+1. The "re-stage package version" lambda can be used to re stage a package version
+   that was not ingested by the NpmJs follower. This will trigger the usual staging
+   and processing flow. If the package version is deny-listed, this will NOT circumvent
+   the block. Invoke the lambda function with the following payload:
+   ```json
+   {
+     "name": "<package-name>",
+     "version": "<package-version>"
+   }
+   ```
+2. The "ReprocessDocumentationPerPackage" State machine re-runs an already indexed package
+   through the documentation-generation process. This is useful when a new
+   language is added to ConstructHub, or the documentation generator has changed.
+   ```json
+  {
+    "Prefix": "data/<package-name>/v<package-version>"
+  }
+   ```
+
+--------------------------------------------------------------------------------
+
 ### `ConstructHub/Sources/NpmJs/Canary/SLA-Breached`
 
 #### Description
@@ -655,7 +680,8 @@ account ran out of Lambda concurrent executions for a while. The Lambda function
 can be found in the Lambda console: its description contains
 `Sources/NpmJs/PackageCanary`. If the function runs as intended,
 [dive into the Lambda logs][#lambda-log-dive] to understand why it might be
-unable to evaluate the metric.
+unable to evaluate the metric. It should clearly output which versions of the
+tracked package are expected, but missing.
 
 Otherwise, look for traces of the package version in the logs of each step in
 the pipeline:
@@ -670,6 +696,9 @@ For additional recommendations for diving into CloudWatch Logs, refer to the
 [Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
 
 #### Resolution
+
+If a tracked package version was not ingested or processed, try to re-stag or re-process
+the specific version.
 
 The alarm will automatically go back to green once all outstanding versions of
 the configured canary package are available in the ConstructHub instance, and
