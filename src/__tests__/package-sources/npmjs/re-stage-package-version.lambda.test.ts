@@ -51,23 +51,6 @@ test('happy path', async () => {
     )
   );
 
-  // nock(MOCK_REGISTRY_URL)
-  //   .get(`/${event.name}/${event.version}`)
-  //   .reply(
-  //     200,
-  //     {
-  //       name: 'construct-hub-probe',
-  //       version: '0.0.8000',
-  //       dist: {
-  //         shasum: mockShaSum,
-  //         tarball: mockTarball,
-  //       },
-  //     },
-  //     {
-  //       'Last-Modified': mockLastModified,
-  //     }
-  //   );
-
   await expect(handler(event)).resolves.toBe(undefined);
 
   expect(mockFetch).toHaveBeenCalledTimes(1);
