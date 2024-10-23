@@ -58,7 +58,7 @@ test('adds lambda function to concurrent usage graph', () => {
       'const handler = () => {console.log("hello")};'
     ),
     handler: 'handler',
-    runtime: lambda.Runtime.NODEJS_16_X,
+    runtime: lambda.Runtime.NODEJS_20_X,
   });
 
   const dashboard = new OverviewDashboard(stack, 'OverViewDashboard');

@@ -12,7 +12,7 @@ export class CodeArtifactForwarder extends lambda.Function {
       description: 'package-sources/codeartifact/code-artifact-forwarder.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/code-artifact-forwarder.lambda.bundle')),
     });

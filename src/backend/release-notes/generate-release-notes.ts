@@ -12,7 +12,7 @@ export class GenerateReleaseNotes extends lambda.Function {
       description: 'backend/release-notes/generate-release-notes.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/generate-release-notes.lambda.bundle')),
     });

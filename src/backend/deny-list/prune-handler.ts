@@ -12,7 +12,7 @@ export class PruneHandler extends lambda.Function {
       description: 'backend/deny-list/prune-handler.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/prune-handler.lambda.bundle')),
     });

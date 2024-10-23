@@ -12,7 +12,7 @@ export class GetMessagesFromWorkerQueue extends lambda.Function {
       description: 'backend/release-notes/get-messages-from-worker-queue.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/get-messages-from-worker-queue.lambda.bundle')),
     });

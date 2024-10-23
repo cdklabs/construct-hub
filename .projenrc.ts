@@ -87,8 +87,6 @@ const project = new CdklabsConstructLibrary({
 
   peerDeps,
 
-  minNodeVersion: '16.16.0',
-
   typescriptVersion: '5.4.x',
   // Exclude handler images from TypeScript compiler path
   excludeTypescript: ['resources/**'],
@@ -239,7 +237,7 @@ addVpcAllowListManagement(project);
 addDevApp(project);
 
 project.addDevDeps('glob');
-project.addDevDeps('@types/node@^18');
+project.addDevDeps('@types/node@^20');
 discoverLambdas(project);
 discoverEcsTasks(project);
 
