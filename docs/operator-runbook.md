@@ -647,9 +647,9 @@ Two workflows are available for reprocessing of individual items:
    through the documentation-generation process. This is useful when a new
    language is added to ConstructHub, or the documentation generator has changed.
    ```json
-  {
-    "Prefix": "data/<package-name>/v<package-version>"
-  }
+   {
+     "Prefix": "data/<package-name>/v<package-version>"
+   }
    ```
 
 --------------------------------------------------------------------------------
