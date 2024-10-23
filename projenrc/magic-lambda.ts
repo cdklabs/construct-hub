@@ -99,7 +99,7 @@ function newLambdaHandler(
     }
   }
   ts.line('architecture: lambda.Architecture.ARM_64,');
-  ts.line('runtime: lambda.Runtime.NODEJS_16_X,');
+  ts.line('runtime: lambda.Runtime.NODEJS_20_X,');
   ts.line("handler: 'index.handler',");
   ts.line(
     `code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`
@@ -136,7 +136,7 @@ function newLambdaHandler(
     'esbuild',
     '--bundle',
     entry,
-    '--target="node18"',
+    '--target="node20"',
     '--platform="node"',
     `--outfile="${outfile}"`,
     '--external:aws-sdk',
@@ -185,7 +185,7 @@ export function discoverLambdas(project: TypeScriptProject) {
       'esbuild',
       '--bundle',
       ...entrypoints,
-      '--target="node14"',
+      '--target="node20',
       '--platform="node"',
       `--outbase="${project.srcdir}"`,
       `--outdir="${project.libdir}"`,

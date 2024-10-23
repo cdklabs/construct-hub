@@ -12,7 +12,7 @@ export class NpmjsPackageCanary extends lambda.Function {
       description: 'package-sources/npmjs/canary/npmjs-package-canary.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/npmjs-package-canary.lambda.bundle')),
     });

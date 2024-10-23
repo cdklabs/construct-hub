@@ -30,7 +30,7 @@ test('watchful can be used for setting up automatic monitoring', () => {
   // GIVEN
   const stack = new Stack();
   const fn = new lambda.Function(stack, 'Function', {
-    runtime: lambda.Runtime.NODEJS_16_X,
+    runtime: lambda.Runtime.NODEJS_20_X,
     code: lambda.Code.fromInline('foo'),
     handler: 'index.handler',
   });
