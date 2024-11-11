@@ -122,10 +122,9 @@ test('json parsing error', async () => {
     })
     .resolves({ Body: stringToStream('09x{}') });
 
-  const expected = new Error(
-    'Unable to parse catalog file catalog-bucket-name/catalog.json: SyntaxError: Unexpected number in JSON at position 1'
-  );
-  return expect(async () => CatalogClient.newClient()).rejects.toEqual(
+  const expected =
+    'Unable to parse catalog file catalog-bucket-name/catalog.json: SyntaxError: Unexpected number in JSON at position 1';
+  return expect(async () => CatalogClient.newClient()).rejects.toThrow(
     expected
   );
 });

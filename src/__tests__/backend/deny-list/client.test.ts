@@ -90,10 +90,12 @@ test('s3 object is not a valid json', async () => {
     Body: stringToStream('09x{}'),
   });
 
-  const expected = new Error(
-    'Unable to parse deny list file deny-list-bucket-name/deny-list.json: SyntaxError: Unexpected number in JSON at position 1'
+  const expected =
+    'Unable to parse deny list file deny-list-bucket-name/deny-list.json: SyntaxError: Unexpected number in JSON at position 1';
+
+  await expect(async () => DenyListClient.newClient()).rejects.toThrow(
+    expected
   );
-  await expect(DenyListClient.newClient()).rejects.toEqual(expected);
 });
 
 describe('lookup', () => {
