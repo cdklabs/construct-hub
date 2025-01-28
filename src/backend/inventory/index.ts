@@ -598,6 +598,25 @@ export class Inventory extends Construct {
   }
 
   /**
+   * The count of package versions that have a language specific transliteration error.
+   */
+  public metricTransliterationErrorPackageVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
+    return new Metric({
+      period: this.rate,
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_TRANSLITERATION_ERROR_VERSIONS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
    * The count of package version submodules that have a language specific corrupt assembly.
    */
   public metricCorruptAssemblySubmoduleCount(
@@ -612,6 +631,25 @@ export class Inventory extends Construct {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package version submodules that have a language specific transliteration error.
+   */
+  public metricTransliterationErrorSubmoduleCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
+    return new Metric({
+      period: this.rate,
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_TRANSLITERATION_ERROR_SUBMODULES,
       namespace: METRICS_NAMESPACE,
     });
   }
