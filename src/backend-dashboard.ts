@@ -651,6 +651,10 @@ export class BackendDashboard extends Construct {
               label: 'Corrupt Assembly',
               color: '#3542D7',
             }),
+            inventory.metricTransliterationErrorPackageVersionCount(language, {
+              label: 'Transliteration Error',
+              color: '#FF8C00',
+            }),
             inventory.metricUnsupportedPackageVersionCount(language, {
               label: 'Unsupported',
               color: '#9467bd',
@@ -675,6 +679,10 @@ export class BackendDashboard extends Construct {
             inventory.metricCorruptAssemblySubmoduleCount(language, {
               label: 'Corrupt Assembly',
               color: '#3542D7',
+            }),
+            inventory.metricTransliterationErrorSubmoduleCount(language, {
+              label: 'Transliteration Error',
+              color: '#FF8C00',
             }),
             inventory.metricUnsupportedSubmoduleCount(language, {
               label: 'Unsupported',

@@ -108,6 +108,15 @@ export async function realHandler(
               pv
             );
             break;
+
+          case 'transliteration-error':
+            recordPerLanguage(
+              classed.lang,
+              DocumentationStatus.TRANSLITERATION_ERROR,
+              pv
+            );
+            break;
+
           case 'unknown':
             indexedPackageStates.unknownObjectsEstimate.add(key);
             break;
@@ -410,6 +419,11 @@ export const enum DocumentationStatus {
    * This package supports the given language and has documentation for it.
    */
   SUPPORTED = 'Supported',
+
+  /**
+   * The snippet transliteration into the given language failed.
+   */
+  TRANSLITERATION_ERROR = 'TransliterationError',
 }
 
 const METRIC_NAME_BY_STATUS_AND_GRAIN: {
@@ -445,6 +459,15 @@ const METRIC_NAME_BY_STATUS_AND_GRAIN: {
     [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS,
     [Grain.PACKAGE_VERSION_SUBMODULES]:
       MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES,
+  },
+  [DocumentationStatus.TRANSLITERATION_ERROR]: {
+    [Grain.PACKAGES]: MetricName.PER_LANGUAGE_TRANSLITERATION_ERROR_PACKAGES,
+    [Grain.PACKAGE_MAJOR_VERSIONS]:
+      MetricName.PER_LANGUAGE_TRANSLITERATION_ERROR_MAJORS,
+    [Grain.PACKAGE_VERSIONS]:
+      MetricName.PER_LANGUAGE_TRANSLITERATION_ERROR_VERSIONS,
+    [Grain.PACKAGE_VERSION_SUBMODULES]:
+      MetricName.PER_LANGUAGE_TRANSLITERATION_ERROR_SUBMODULES,
   },
 };
 
@@ -488,6 +511,10 @@ export function classifyDocumentationFile(key: string): FileClassification {
       key.endsWith(constants.corruptAssemblyKeySuffix(lang, undefined, 'json'))
     ) {
       return { type: 'corrupt-assembly', lang };
+    }
+
+    if (key.endsWith(constants.transliterationErrorKeySuffix(lang))) {
+      return { type: 'transliteration-error', lang };
     }
 
     // Currently we generate both JSON files and markdown files, so for now
@@ -649,9 +676,11 @@ export interface IInventoryHost {
   log(...xs: any[]): void;
 
   loadProgress(continuationObjectKey: string): Promise<InventoryCanaryState>;
+
   saveProgress(state: InventoryCanaryState): Promise<InventoryCanaryEvent>;
 
   queueReport(reportKey: string, packageVersions: string[]): void;
+
   uploadsComplete(): Promise<void>;
 
   relevantObjectKeys(
@@ -666,6 +695,7 @@ export interface IInventoryHost {
 
 export interface IMetrics {
   setDimensions(dimensionSet: Record<string, string>): IMetrics;
+
   putMetric(key: string, value: number, unit?: Unit | string): IMetrics;
 }
 
@@ -845,4 +875,5 @@ export type FileClassification =
     }
   | { type: 'corrupt-assembly'; lang: DocumentationLanguage }
   | { type: 'ignore' }
+  | { type: 'transliteration-error'; lang: DocumentationLanguage }
   | { type: 'unknown' };

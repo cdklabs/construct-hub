@@ -48,6 +48,10 @@ test.each([
     'data/@awlsring/cdktf-proxmox/v0.0.123/docs-csharp.json',
     { type: 'known-json', lang: DocumentationLanguage.CSHARP, supported: true },
   ],
+  [
+    'data/@bluedynamics/cdk8s-plone/v0.0.49/docs-python.*.transliteration-failed',
+    { type: 'transliteration-error', lang: DocumentationLanguage.PYTHON },
+  ],
 ] satisfies Array<[string, FileClassification]>)(
   'classify key %p',
   (key, expected) => {
