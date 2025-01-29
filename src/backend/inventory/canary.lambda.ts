@@ -246,6 +246,7 @@ export async function realHandler(
           DocumentationStatus.SUPPORTED,
           DocumentationStatus.UNSUPPORTED,
           DocumentationStatus.CORRUPT_ASSEMBLY,
+          DocumentationStatus.TRANSLITERATION_ERROR,
         ]) {
           const countEstimate = Math.floor(
             statuses.get(forStatus)?.count() ?? 0
