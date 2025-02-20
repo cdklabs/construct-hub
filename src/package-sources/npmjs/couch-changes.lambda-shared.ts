@@ -43,6 +43,8 @@ export class CouchChanges extends EventEmitter {
    * @param since     the sequence value since when history should be fetched.
    * @param batchSize the maximum amount of changes to return in a single page.
    *
+   * @see https://docs.couchdb.org/en/stable/api/database/changes.html
+   *
    * @returns a page of changes.
    */
   public async changes(
@@ -61,7 +63,7 @@ export class CouchChanges extends EventEmitter {
 
     const filter = { name: { $gt: null } };
 
-    return this.https('post', changesUrl, filter) as any;
+    return this.https('get', changesUrl, filter) as any;
   }
 
   /**
