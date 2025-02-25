@@ -467,6 +467,10 @@ relevant.
 For additional recommendations for diving into CloudWatch Logs, refer to the
 [Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
 
+If you suspect the problem is with upstream npmjs.com, you can cut them a ticket. Log
+in to <https://npmjs.com>, visit the [Support Page](https://www.npmjs.com/support) and
+select *There is a problem with the npm registry*.
+
 #### Resolution
 
 This alarm will automatically go back to green once the `NpmJs` follower stops
@@ -530,6 +534,10 @@ any problem.
 
 For additional recommendations for diving into CloudWatch Logs, refer to the
 [Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
+
+If you suspect the problem is with upstream npmjs.com, you can cut them a ticket. Log
+in to <https://npmjs.com>, visit the [Support Page](https://www.npmjs.com/support) and
+select *There is a problem with the npm registry*.
 
 #### Resolution
 
