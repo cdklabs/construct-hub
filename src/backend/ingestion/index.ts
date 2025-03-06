@@ -344,7 +344,7 @@ export class Ingestion extends Construct implements IGrantable {
       reprocessWorkflow.stateMachine
         .metricFailed()
         .createAlarm(this, 'ReprocessingFailureAlarm', {
-          alarmName: `${this.node.path}/ReprocessingFailure`,
+          alarmName: `${reprocessWorkflow.node.path}/Failure`,
           alarmDescription: [
             'The Reprocessing workflow is failing!',
             '',
