@@ -448,35 +448,32 @@ class ReprocessIngestionWorkflow extends Construct {
     // Need to physical-name the state machine so it can self-invoke.
     const stateMachineName = stateMachineNameFrom(this.node.path);
 
+    const listObjects = (name: string, token?: string) =>
+      new CallAwsService(this, name, {
+        service: 's3',
+        action: 'listObjectsV2',
+        iamAction: 's3:ListBucket',
+        iamResources: [props.bucket.bucketArn],
+        parameters: {
+          Bucket: props.bucket.bucketName,
+          ContinuationToken: token,
+          Prefix: STORAGE_KEY_PREFIX,
+          // A bit lower than the 1000 limit, to avoid getting responses
+          // that are too large for StepFunctions to handle.
+          MaxKeys: 900,
+        },
+        resultPath: '$.response',
+      }).addRetry({ errors: ['S3.SdkClientException'] });
+
     const listBucket = new Choice(this, 'Has a ContinuationToken?')
       .when(
         Condition.isPresent('$.ContinuationToken'),
-        new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
-          service: 's3',
-          action: 'listObjectsV2',
-          iamAction: 's3:ListBucket',
-          iamResources: [props.bucket.bucketArn],
-          parameters: {
-            Bucket: props.bucket.bucketName,
-            ContinuationToken: JsonPath.stringAt('$.ContinuationToken'),
-            Prefix: STORAGE_KEY_PREFIX,
-          },
-          resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] })
+        listObjects(
+          'S3.ListObjectsV2(NextPage)',
+          JsonPath.stringAt('$.ContinuationToken')
+        )
       )
-      .otherwise(
-        new CallAwsService(this, 'S3.ListObjectsV2(FirstPage)', {
-          service: 's3',
-          action: 'listObjectsV2',
-          iamAction: 's3:ListBucket',
-          iamResources: [props.bucket.bucketArn],
-          parameters: {
-            Bucket: props.bucket.bucketName,
-            Prefix: STORAGE_KEY_PREFIX,
-          },
-          resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] })
-      )
+      .otherwise(listObjects('S3.ListObjectsV2(FirstPage)'))
       .afterwards();
 
     const process = new Map(this, 'Process Result', {
