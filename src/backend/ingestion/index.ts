@@ -356,7 +356,7 @@ export class Ingestion extends Construct implements IGrantable {
           ].join('\n'),
           comparisonOperator:
             ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          evaluationPeriods: 2,
+          evaluationPeriods: 1,
           threshold: 1,
         })
     );
