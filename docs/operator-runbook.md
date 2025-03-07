@@ -635,6 +635,27 @@ object such as the following:
 This information may be useful to other operations as they observe the side
 effects of executing these workflows.
 
+### `ConstructHub/Ingestion/ReprocessWorkflow/Failure`
+
+#### Description
+
+The reprocessing workflow has failed and therefore not all packages have
+been re-ingested. This will have knock-on effects on other metrics, such as
+the number of invocations of the ingest and re-ingest functions.
+
+#### Investigation
+
+In the StepFunctions console, go to the
+`ConstructHub.Ingestion.ReprocessWorkflow` state machine. You may use the
+*Filter by status* dropdown list to isolate failed executions. Review the
+TaskFailed and ExecutionFailed events, looking for error messages that
+indicate what went wrong.
+
+#### Resolution
+
+Once the root cause has been identified and fixed (unless this was a
+transient issue), the next execution of the workflow should succeed.
+
 --------------------------------------------------------------------------------
 
 ## :repeat_one: Re-processing individual items
