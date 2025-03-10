@@ -37,7 +37,11 @@ import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
 import { ReIngest } from './re-ingest';
 import { Repository } from '../../codeartifact/repository';
-import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
+import {
+  lambdaFunctionUrl,
+  sqsQueueUrl,
+  stateMachineUrl,
+} from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
 import { PackageTagConfig } from '../../package-tag';
@@ -333,6 +337,28 @@ export class Ingestion extends Construct implements IGrantable {
         // Lambda only emits metrics when the function is invoked. No invokation => no errors.
         treatMissingData: TreatMissingData.NOT_BREACHING,
       })
+    );
+
+    props.monitoring.addLowSeverityAlarm(
+      'Reprocessing workflow failures',
+      reprocessWorkflow.stateMachine
+        .metricFailed()
+        .createAlarm(this, 'ReprocessingFailureAlarm', {
+          alarmName: `${reprocessWorkflow.node.path}/Failure`,
+          alarmDescription: [
+            'The Reprocessing workflow is failing!',
+            '',
+            `RunBook: ${RUNBOOK_URL}`,
+            '',
+            `Direct link to the state machine: ${stateMachineUrl(
+              reprocessWorkflow.stateMachine
+            )}`,
+          ].join('\n'),
+          comparisonOperator:
+            ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          evaluationPeriods: 1,
+          threshold: 1,
+        })
     );
 
     props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
