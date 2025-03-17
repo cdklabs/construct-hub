@@ -2806,7 +2806,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)FirstTry"}],"Default":"S3.ListObjectsV2(FirstPage)FirstTry"},"S3.ListObjectsV2(FirstPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(FirstPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -2814,7 +2814,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","Prefix":"data/","MaxKeys":900}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "","Prefix":"data/","MaxKeys":1000}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(NextPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -2822,7 +2822,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":900}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":1000}},"S3.ListObjectsV2(NextPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":500}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -2849,7 +2857,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "AWS::AccountId",
               },
-              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"}},"TimeoutSeconds":3600}",
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"},"S3.ListObjectsV2(FirstPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":500}}},"TimeoutSeconds":3600}",
             ],
           ],
         },
@@ -15806,7 +15822,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)FirstTry"}],"Default":"S3.ListObjectsV2(FirstPage)FirstTry"},"S3.ListObjectsV2(FirstPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(FirstPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -15814,7 +15830,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","Prefix":"data/","MaxKeys":900}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "","Prefix":"data/","MaxKeys":1000}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(NextPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -15822,7 +15838,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":900}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":1000}},"S3.ListObjectsV2(NextPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":500}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -15849,7 +15873,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "AWS::AccountId",
               },
-              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"}},"TimeoutSeconds":3600}",
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"},"S3.ListObjectsV2(FirstPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":500}}},"TimeoutSeconds":3600}",
             ],
           ],
         },
@@ -28684,7 +28716,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)FirstTry"}],"Default":"S3.ListObjectsV2(FirstPage)FirstTry"},"S3.ListObjectsV2(FirstPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(FirstPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -28692,7 +28724,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","Prefix":"data/","MaxKeys":900}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "","Prefix":"data/","MaxKeys":1000}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(NextPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -28700,7 +28732,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":900}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":1000}},"S3.ListObjectsV2(NextPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":500}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -28727,7 +28767,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "AWS::AccountId",
               },
-              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"}},"TimeoutSeconds":3600}",
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"},"S3.ListObjectsV2(FirstPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":500}}},"TimeoutSeconds":3600}",
             ],
           ],
         },
@@ -41536,7 +41584,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)FirstTry"}],"Default":"S3.ListObjectsV2(FirstPage)FirstTry"},"S3.ListObjectsV2(FirstPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(FirstPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -41544,7 +41592,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","Prefix":"data/","MaxKeys":900}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "","Prefix":"data/","MaxKeys":1000}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(NextPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -41552,7 +41600,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":900}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":1000}},"S3.ListObjectsV2(NextPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":500}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -41579,7 +41635,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "AWS::AccountId",
               },
-              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"}},"TimeoutSeconds":3600}",
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"},"S3.ListObjectsV2(FirstPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":500}}},"TimeoutSeconds":3600}",
             ],
           ],
         },
@@ -54597,7 +54661,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)FirstTry"}],"Default":"S3.ListObjectsV2(FirstPage)FirstTry"},"S3.ListObjectsV2(FirstPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(FirstPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -54605,7 +54669,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","Prefix":"data/","MaxKeys":900}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "","Prefix":"data/","MaxKeys":1000}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)FirstTry":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"Next":"S3.ListObjectsV2(NextPage)DataLimitFallback"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -54613,7 +54677,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":900}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":1000}},"S3.ListObjectsV2(NextPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":500}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -54640,7 +54712,15 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "AWS::AccountId",
               },
-              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"}},"TimeoutSeconds":3600}",
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"},"S3.ListObjectsV2(FirstPage)DataLimitFallback":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":500}}},"TimeoutSeconds":3600}",
             ],
           ],
         },
