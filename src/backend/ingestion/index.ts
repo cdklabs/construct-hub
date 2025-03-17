@@ -474,7 +474,11 @@ class ReprocessIngestionWorkflow extends Construct {
     // Need to physical-name the state machine so it can self-invoke.
     const stateMachineName = stateMachineNameFrom(this.node.path);
 
-    const listObjects = (name: string, token?: string) =>
+    const listObjectsWithMaxKeys = (
+      name: string,
+      maxKeys: number,
+      token?: string
+    ) =>
       new CallAwsService(this, name, {
         service: 's3',
         action: 'listObjectsV2',
@@ -484,12 +488,34 @@ class ReprocessIngestionWorkflow extends Construct {
           Bucket: props.bucket.bucketName,
           ContinuationToken: token,
           Prefix: STORAGE_KEY_PREFIX,
-          // A bit lower than the 1000 limit, to avoid getting responses
-          // that are too large for StepFunctions to handle.
-          MaxKeys: 900,
+          MaxKeys: maxKeys,
         },
         resultPath: '$.response',
-      }).addRetry({ errors: ['S3.SdkClientException'] });
+      });
+
+    const listObjects = (name: string, token?: string) => {
+      // First attempt with MaxKeys: 1000
+      const firstTry = listObjectsWithMaxKeys(
+        `${name}FirstTry`,
+        1000,
+        token
+      ).addRetry({ errors: ['S3.SdkClientException'] });
+
+      // Fallback for DataLimitExceeded with MaxKeys: 500
+      // We need this when the responses are too large for StepFunctions to handle
+      const dataLimitFallback = listObjectsWithMaxKeys(
+        `${name}DataLimitFallback`,
+        500,
+        token
+      );
+
+      // Chain them using Catch specifically for States.DataLimitExceeded
+      firstTry.addCatch(dataLimitFallback, {
+        errors: ['States.DataLimitExceeded'],
+      });
+
+      return firstTry;
+    };
 
     const listBucket = new Choice(this, 'Has a ContinuationToken?')
       .when(
