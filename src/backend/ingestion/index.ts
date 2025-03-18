@@ -494,27 +494,42 @@ class ReprocessIngestionWorkflow extends Construct {
       });
 
     const listObjects = (name: string, token?: string) => {
-      // First attempt with MaxKeys: 1000
-      const firstTry = listObjectsWithMaxKeys(
-        `${name}FirstTry`,
-        1000,
+      // Create a chain of retries with decreasing MaxKeys values
+      const startMaxKeysValue = 1000;
+      const minMaxKeysValue = 100;
+      const decrement = 100;
+
+      let currentTask;
+      let previousTask;
+
+      // Create tasks from highest to lowest MaxKeys
+      for (
+        let maxKeys = startMaxKeysValue;
+        maxKeys >= minMaxKeysValue;
+        maxKeys -= decrement
+      ) {
+        currentTask = listObjectsWithMaxKeys(
+          `${name}Try${maxKeys}`,
+          maxKeys,
+          token
+        ).addRetry({ errors: ['S3.SdkClientException'] });
+
+        // Chain this task to the previous one using DataLimitExceeded catch
+        if (previousTask) {
+          previousTask.addCatch(currentTask, {
+            errors: ['States.DataLimitExceeded'],
+          });
+        }
+
+        previousTask = currentTask;
+      }
+
+      // Return the first task in the chain (MaxKeys: 1000)
+      return listObjectsWithMaxKeys(
+        `${name}Try${startMaxKeysValue}`,
+        startMaxKeysValue,
         token
       ).addRetry({ errors: ['S3.SdkClientException'] });
-
-      // Fallback for DataLimitExceeded with MaxKeys: 500
-      // We need this when the responses are too large for StepFunctions to handle
-      const dataLimitFallback = listObjectsWithMaxKeys(
-        `${name}DataLimitFallback`,
-        500,
-        token
-      );
-
-      // Chain them using Catch specifically for States.DataLimitExceeded
-      firstTry.addCatch(dataLimitFallback, {
-        errors: ['States.DataLimitExceeded'],
-      });
-
-      return firstTry;
     };
 
     const listBucket = new Choice(this, 'Has a ContinuationToken?')
