@@ -499,37 +499,35 @@ class ReprocessIngestionWorkflow extends Construct {
       const minMaxKeysValue = 100;
       const decrement = 100;
 
-      let currentTask;
-      let previousTask;
+      // Create the first task with maximum MaxKeys value
+      const firstTask = listObjectsWithMaxKeys(
+        `${name}Try${startMaxKeysValue}`,
+        startMaxKeysValue,
+        token
+      ).addRetry({ errors: ['S3.SdkClientException'] });
 
-      // Create tasks from highest to lowest MaxKeys
+      // Chain tasks with decreasing MaxKeys values
+      let lastTask = firstTask;
       for (
-        let maxKeys = startMaxKeysValue;
+        let maxKeys = startMaxKeysValue - decrement;
         maxKeys >= minMaxKeysValue;
         maxKeys -= decrement
       ) {
-        currentTask = listObjectsWithMaxKeys(
+        const nextTask = listObjectsWithMaxKeys(
           `${name}Try${maxKeys}`,
           maxKeys,
           token
         ).addRetry({ errors: ['S3.SdkClientException'] });
 
         // Chain this task to the previous one using DataLimitExceeded catch
-        if (previousTask) {
-          previousTask.addCatch(currentTask, {
-            errors: ['States.DataLimitExceeded'],
-          });
-        }
+        lastTask.addCatch(nextTask, {
+          errors: ['States.DataLimitExceeded'],
+        });
 
-        previousTask = currentTask;
+        lastTask = nextTask;
       }
 
-      // Return the first task in the chain (MaxKeys: 1000)
-      return listObjectsWithMaxKeys(
-        `${name}Try${startMaxKeysValue}`,
-        startMaxKeysValue,
-        token
-      ).addRetry({ errors: ['S3.SdkClientException'] });
+      return firstTask;
     };
 
     const listBucket = new Choice(this, 'Has a ContinuationToken?')
