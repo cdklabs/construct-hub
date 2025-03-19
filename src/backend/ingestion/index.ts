@@ -474,7 +474,11 @@ class ReprocessIngestionWorkflow extends Construct {
     // Need to physical-name the state machine so it can self-invoke.
     const stateMachineName = stateMachineNameFrom(this.node.path);
 
-    const listObjects = (name: string, token?: string) =>
+    const listObjectsWithMaxKeys = (
+      name: string,
+      maxKeys: number,
+      token?: string
+    ) =>
       new CallAwsService(this, name, {
         service: 's3',
         action: 'listObjectsV2',
@@ -484,12 +488,47 @@ class ReprocessIngestionWorkflow extends Construct {
           Bucket: props.bucket.bucketName,
           ContinuationToken: token,
           Prefix: STORAGE_KEY_PREFIX,
-          // A bit lower than the 1000 limit, to avoid getting responses
-          // that are too large for StepFunctions to handle.
-          MaxKeys: 900,
+          MaxKeys: maxKeys,
         },
         resultPath: '$.response',
-      }).addRetry({ errors: ['S3.SdkClientException'] });
+      });
+
+    const listObjects = (name: string, token?: string) => {
+      // Create a chain of retries with decreasing MaxKeys values
+      const startMaxKeysValue = 1000;
+      const minMaxKeysValue = 100;
+      const decrement = 100;
+
+      // Create the first task with maximum MaxKeys value
+      const firstTask = listObjectsWithMaxKeys(
+        `${name}Try${startMaxKeysValue}`,
+        startMaxKeysValue,
+        token
+      ).addRetry({ errors: ['S3.SdkClientException'] });
+
+      // Chain tasks with decreasing MaxKeys values
+      let lastTask = firstTask;
+      for (
+        let maxKeys = startMaxKeysValue - decrement;
+        maxKeys >= minMaxKeysValue;
+        maxKeys -= decrement
+      ) {
+        const nextTask = listObjectsWithMaxKeys(
+          `${name}Try${maxKeys}`,
+          maxKeys,
+          token
+        ).addRetry({ errors: ['S3.SdkClientException'] });
+
+        // Chain this task to the previous one using DataLimitExceeded catch
+        lastTask.addCatch(nextTask, {
+          errors: ['States.DataLimitExceeded'],
+        });
+
+        lastTask = nextTask;
+      }
+
+      return firstTask;
+    };
 
     const listBucket = new Choice(this, 'Has a ContinuationToken?')
       .when(
