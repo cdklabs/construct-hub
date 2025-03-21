@@ -522,6 +522,7 @@ class ReprocessIngestionWorkflow extends Construct {
         // Chain this task to the previous one using DataLimitExceeded catch
         lastTask.addCatch(nextTask, {
           errors: ['States.DataLimitExceeded'],
+          resultPath: JsonPath.DISCARD,
         });
 
         lastTask = nextTask;
