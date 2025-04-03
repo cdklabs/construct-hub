@@ -7346,7 +7346,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:095c19b98bab5c46bc4ada3eda593e04b6aba138ec6ba55fa526455d9f30bfc7",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:83330cc512e0f6b6dd13d446d94cc603af4b10599b24c760aeb7388ab9a6c1fa",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -16281,6 +16281,15 @@ function handler(event) {
           {
             "Ref": "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1",
           },
+          {
+            "Fn::FindInMap": [
+              "CloudwatchlambdainsightsversionMap",
+              {
+                "Ref": "AWS::Region",
+              },
+              "1x0x229x0xx86x64",
+            ],
+          },
         ],
         "MemorySize": 512,
         "Role": {
@@ -16318,6 +16327,18 @@ function handler(event) {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy",
               ],
             ],
           },
@@ -16449,15 +16470,6 @@ function handler(event) {
           {
             "Ref": "ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA",
           },
-          {
-            "Fn::FindInMap": [
-              "CloudwatchlambdainsightsversionMap",
-              {
-                "Ref": "AWS::Region",
-              },
-              "1x0x229x0xx86x64",
-            ],
-          },
         ],
         "Role": {
           "Fn::GetAtt": [
@@ -16494,18 +16506,6 @@ function handler(event) {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy",
               ],
             ],
           },
