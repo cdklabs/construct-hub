@@ -687,7 +687,7 @@ Two workflows are available for reprocessing of individual items:
 
 #### Description
 
-This alarm is only provisioned in case the [NpmJs package canary][package-canary]
+This alarm is only provisioned in case the [Discovery canary](application-overview.md#5-discovery-canary)
 was configured. It triggers when the canary detects that a recently published
 package version (by default, the tracked package is `construct-hub-probe`) was
 not discovered and indexed within the predefined SLA period (by default, `5`
@@ -741,11 +741,11 @@ re-initialize the canary to track only the latest available version.
 
 #### Description
 
-This alarm is only provisioned in case the [NpmJs package canary][package-canary]
+This alarm is only provisioned in case the [Discovery canary](application-overview.md#5-discovery-canary)
 was configured. It triggers when the canary is not running as expected, or is
 reporting failures.
 
-When the [NpmJs package canary][package-canary] does not successfully run, the
+When the [Discovery canary](application-overview.md#5-discovery-canary) does not successfully run, the
 `ConstructHub/Sources/NpmJs/Canary/SLA-Breached` alarm cannot be triggered due
 to lack of data. This may hence hide customer-visible problems.
 
