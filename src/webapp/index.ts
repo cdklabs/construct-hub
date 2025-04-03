@@ -331,10 +331,13 @@ export class WebApp extends Construct {
 
     const lambdaInsightsArn =
       lambda.LambdaInsightsVersion.VERSION_1_0_229_0.layerVersionArn;
+    
+    // Escape hatch to find the underlying Lambda Function
     const cfnFunction = webAppDeploy.node.findChild(
       'CustomResourceHandler'
     ) as lambda.SingletonFunction;
 
+    // Add Lambda Insights to the Lambda Function
     cfnFunction.addLayers(
       lambda.LayerVersion.fromLayerVersionArn(
         this,
@@ -343,6 +346,9 @@ export class WebApp extends Construct {
       )
     );
 
+    // Add Lambda Insights IAM role permissions
+    // role can only be undefined when the function is imported, which
+    // is not the case here
     cfnFunction.role!.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName(
         'CloudWatchLambdaInsightsExecutionRolePolicy'
