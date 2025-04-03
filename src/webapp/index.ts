@@ -2,6 +2,8 @@ import * as path from 'path';
 import { CfnOutput } from 'aws-cdk-lib';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as r53 from 'aws-cdk-lib/aws-route53';
 import * as r53targets from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
@@ -317,7 +319,7 @@ export class WebApp extends Construct {
     // "website" contains the static react app
     const webappDir = path.join(__dirname, '..', '..', 'website');
 
-    new s3deploy.BucketDeployment(this, 'DeployWebsite', {
+    const webAppDeploy = new s3deploy.BucketDeployment(this, 'DeployWebsite', {
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
@@ -327,6 +329,32 @@ export class WebApp extends Construct {
         .toArray()
         .map(s3deploy.CacheControl.fromString),
     });
+
+    const lambdaInsightsArn =
+      lambda.LambdaInsightsVersion.VERSION_1_0_229_0.layerVersionArn;
+    
+    // Escape hatch to find the underlying Lambda Function
+    const cfnFunction = webAppDeploy.node.findChild(
+      'CustomResourceHandler'
+    ) as lambda.SingletonFunction;
+
+    // Add Lambda Insights to the Lambda Function
+    cfnFunction.addLayers(
+      lambda.LayerVersion.fromLayerVersionArn(
+        this,
+        'LambdaInsights',
+        lambdaInsightsArn
+      )
+    );
+
+    // Add Lambda Insights IAM role permissions
+    // role can only be undefined when the function is imported, which
+    // is not the case here
+    cfnFunction.role!.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        'CloudWatchLambdaInsightsExecutionRolePolicy'
+      )
+    );
 
     // Generate config.json to customize frontend behavior
     const config = new WebappConfig({
