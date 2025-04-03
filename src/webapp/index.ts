@@ -324,6 +324,7 @@ export class WebApp extends Construct {
       distribution: this.distribution,
       prune: false,
       sources: [s3deploy.Source.asset(webappDir)],
+      memoryLimit: 512,
       cacheControl: CacheStrategy.default()
         .toArray()
         .map(s3deploy.CacheControl.fromString),
@@ -393,6 +394,7 @@ export class WebApp extends Construct {
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
+      memoryLimit: 512,
       cacheControl: CacheStrategy.default()
         .toArray()
         .map(s3deploy.CacheControl.fromString),
