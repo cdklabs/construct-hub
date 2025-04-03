@@ -87,16 +87,16 @@ const project = new CdklabsConstructLibrary({
 
   peerDeps,
 
-  typescriptVersion: '5.4.x',
+  typescriptVersion: '5.8.x',
   // Exclude handler images from TypeScript compiler path
   excludeTypescript: ['resources/**'],
   tsconfigDev: {
     include: ['test/**/*.ts'],
   },
 
-  jsiiVersion: '5.4.x',
+  jsiiVersion: '5.8.x',
   rosettaOptions: {
-    version: '5.4.x',
+    version: '5.8.x',
   },
 
   pullRequestTemplateContents: [
