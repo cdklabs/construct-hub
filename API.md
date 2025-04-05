@@ -3154,12 +3154,15 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.AGPL_3_0_ONLY">AGPL_3_0_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Affero General Public License v3.0 only. |
 | <code><a href="#construct-hub.SpdxLicense.property.AGPL_3_0_OR_LATER">AGPL_3_0_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Affero General Public License v3.0 or later. |
 | <code><a href="#construct-hub.SpdxLicense.property.ALADDIN">ALADDIN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Aladdin Free Public License. |
+| <code><a href="#construct-hub.SpdxLicense.property.AMD_NEWLIB">AMD_NEWLIB</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | AMD newlib License. |
 | <code><a href="#construct-hub.SpdxLicense.property.AMDPLPA">AMDPLPA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | AMD's plpa_map.c License. |
 | <code><a href="#construct-hub.SpdxLicense.property.AML">AML</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple MIT License. |
 | <code><a href="#construct-hub.SpdxLicense.property.AML_GLSLANG">AML_GLSLANG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | AML glslang variant License. |
 | <code><a href="#construct-hub.SpdxLicense.property.AMPAS">AMPAS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Academy of Motion Picture Arts and Sciences BSD. |
 | <code><a href="#construct-hub.SpdxLicense.property.ANTLR_PD">ANTLR_PD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ANTLR Software Rights Notice. |
 | <code><a href="#construct-hub.SpdxLicense.property.ANTLR_PD_FALLBACK">ANTLR_PD_FALLBACK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ANTLR Software Rights Notice with license fallback. |
+| <code><a href="#construct-hub.SpdxLicense.property.ANY_OSI">ANY_OSI</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Any OSI License. |
+| <code><a href="#construct-hub.SpdxLicense.property.ANY_OSI_PERL_MODULES">ANY_OSI_PERL_MODULES</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Any OSI License - Perl Modules. |
 | <code><a href="#construct-hub.SpdxLicense.property.APACHE_1_0">APACHE_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.APACHE_1_1">APACHE_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.APACHE_2_0">APACHE_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apache License 2.0. |
@@ -3189,12 +3192,14 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.BLESSING">BLESSING</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SQLite Blessing. |
 | <code><a href="#construct-hub.SpdxLicense.property.BLUEOAK_1_0_0">BLUEOAK_1_0_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Blue Oak Model License 1.0.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.BOEHM_GC">BOEHM_GC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Boehm-Demers-Weiser GC License. |
+| <code><a href="#construct-hub.SpdxLicense.property.BOEHM_GC_WITHOUT_FEE">BOEHM_GC_WITHOUT_FEE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Boehm-Demers-Weiser GC License (without fee). |
 | <code><a href="#construct-hub.SpdxLicense.property.BORCEUX">BORCEUX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Borceux license. |
 | <code><a href="#construct-hub.SpdxLicense.property.BRIAN_GLADMAN_2_CLAUSE">BRIAN_GLADMAN_2_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Brian Gladman 2-Clause License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BRIAN_GLADMAN_3_CLAUSE">BRIAN_GLADMAN_3_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Brian Gladman 3-Clause License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BSD_1_CLAUSE">BSD_1_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 1-Clause License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE">BSD_2_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause "Simplified" License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_DARWIN">BSD_2_CLAUSE_DARWIN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause - Ian Darwin variant. |
+| <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_FIRST_LINES">BSD_2_CLAUSE_FIRST_LINES</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause - first lines requirement. |
 | <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_FREEBSD">BSD_2_CLAUSE_FREEBSD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause FreeBSD License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_NETBSD">BSD_2_CLAUSE_NETBSD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD 2-Clause NetBSD License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BSD_2_CLAUSE_PATENT">BSD_2_CLAUSE_PATENT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BSD-2-Clause Plus Patent License. |
@@ -3235,6 +3240,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.CAL_1_0_COMBINED_WORK_EXCEPTION">CAL_1_0_COMBINED_WORK_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Cryptographic Autonomy License 1.0 (Combined Work Exception). |
 | <code><a href="#construct-hub.SpdxLicense.property.CALDERA">CALDERA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Caldera License. |
 | <code><a href="#construct-hub.SpdxLicense.property.CALDERA_NO_PREAMBLE">CALDERA_NO_PREAMBLE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Caldera License (without preamble). |
+| <code><a href="#construct-hub.SpdxLicense.property.CATHARON">CATHARON</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Catharon License. |
 | <code><a href="#construct-hub.SpdxLicense.property.CATOSL_1_1">CATOSL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Computer Associates Trusted Open Source License 1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.CC_BY_1_0">CC_BY_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 1.0 Generic. |
 | <code><a href="#construct-hub.SpdxLicense.property.CC_BY_2_0">CC_BY_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution 2.0 Generic. |
@@ -3288,6 +3294,8 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_3_0_IGO">CC_BY_SA_3_0_IGO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution-ShareAlike 3.0 IGO. |
 | <code><a href="#construct-hub.SpdxLicense.property.CC_BY_SA_4_0">CC_BY_SA_4_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Attribution Share Alike 4.0 International. |
 | <code><a href="#construct-hub.SpdxLicense.property.CC_PDDC">CC_PDDC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Public Domain Dedication and Certification. |
+| <code><a href="#construct-hub.SpdxLicense.property.CC_PDM_1_0">CC_PDM_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative    Commons Public Domain Mark 1.0 Universal. |
+| <code><a href="#construct-hub.SpdxLicense.property.CC_SA_1_0">CC_SA_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Share Alike 1.0 Generic. |
 | <code><a href="#construct-hub.SpdxLicense.property.CC0_1_0">CC0_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Creative Commons Zero v1.0 Universal. |
 | <code><a href="#construct-hub.SpdxLicense.property.CDDL_1_0">CDDL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Development and Distribution License 1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.CDDL_1_1">CDDL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Development and Distribution License 1.1. |
@@ -3331,12 +3339,16 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.CUA_OPL_1_0">CUA_OPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CUA Office Public License v1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.CUBE">CUBE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Cube License. |
 | <code><a href="#construct-hub.SpdxLicense.property.CURL">CURL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | curl License. |
+| <code><a href="#construct-hub.SpdxLicense.property.CVE_TOU">CVE_TOU</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Common Vulnerability Enumeration ToU License. |
 | <code><a href="#construct-hub.SpdxLicense.property.D_FSL_1_0">D_FSL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Deutsche Freie Software Lizenz. |
 | <code><a href="#construct-hub.SpdxLicense.property.DEC_3_CLAUSE">DEC_3_CLAUSE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | DEC 3-Clause License. |
 | <code><a href="#construct-hub.SpdxLicense.property.DIFFMARK">DIFFMARK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | diffmark license. |
 | <code><a href="#construct-hub.SpdxLicense.property.DL_DE_BY_2_0">DL_DE_BY_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Data licence Germany – attribution – version 2.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.DL_DE_ZERO_2_0">DL_DE_ZERO_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Data licence Germany – zero – version 2.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.DOC">DOC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | DOC License. |
+| <code><a href="#construct-hub.SpdxLicense.property.DOCBOOK_SCHEMA">DOCBOOK_SCHEMA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | DocBook Schema License. |
+| <code><a href="#construct-hub.SpdxLicense.property.DOCBOOK_STYLESHEET">DOCBOOK_STYLESHEET</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | DocBook Stylesheet License. |
+| <code><a href="#construct-hub.SpdxLicense.property.DOCBOOK_XML">DOCBOOK_XML</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | DocBook XML License. |
 | <code><a href="#construct-hub.SpdxLicense.property.DOTSEQN">DOTSEQN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Dotseqn License. |
 | <code><a href="#construct-hub.SpdxLicense.property.DRL_1_0">DRL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Detection Rule License 1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.DRL_1_1">DRL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Detection Rule License 1.1. |
@@ -3378,6 +3390,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.FWLW">FWLW</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | fwlw License. |
 | <code><a href="#construct-hub.SpdxLicense.property.GCR_DOCS">GCR_DOCS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Gnome GCR Documentation License. |
 | <code><a href="#construct-hub.SpdxLicense.property.GD">GD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GD License. |
+| <code><a href="#construct-hub.SpdxLicense.property.GENERIC_XTS">GENERIC_XTS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Generic XTS License. |
 | <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1">GFDL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_ONLY">GFDL_1_1_INVARIANTS_ONLY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 only - invariants. |
 | <code><a href="#construct-hub.SpdxLicense.property.GFDL_1_1_INVARIANTS_OR_LATER">GFDL_1_1_INVARIANTS_OR_LATER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | GNU Free Documentation License v1.1 or later - invariants. |
@@ -3427,8 +3440,10 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.GRAPHICS_GEMS">GRAPHICS_GEMS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Graphics Gems License. |
 | <code><a href="#construct-hub.SpdxLicense.property.GSOAP_1_3B">GSOAP_1_3B</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | gSOAP Public License v1.3b. |
 | <code><a href="#construct-hub.SpdxLicense.property.GTKBOOK">GTKBOOK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | gtkbook License. |
+| <code><a href="#construct-hub.SpdxLicense.property.GUTMANN">GUTMANN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Gutmann License. |
 | <code><a href="#construct-hub.SpdxLicense.property.HASKELL_REPORT">HASKELL_REPORT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Haskell Language Report License. |
 | <code><a href="#construct-hub.SpdxLicense.property.HDPARM">HDPARM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | hdparm License. |
+| <code><a href="#construct-hub.SpdxLicense.property.HIDAPI">HIDAPI</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HIDAPI License. |
 | <code><a href="#construct-hub.SpdxLicense.property.HIPPOCRATIC_2_1">HIPPOCRATIC_2_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Hippocratic License 2.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.HP_1986">HP_1986</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Hewlett-Packard 1986 License. |
 | <code><a href="#construct-hub.SpdxLicense.property.HP_1989">HP_1989</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Hewlett-Packard 1989 License. |
@@ -3437,18 +3452,25 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_DOC">HPND_DOC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - documentation variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_DOC_SELL">HPND_DOC_SELL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - documentation sell variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_EXPORT_US">HPND_EXPORT_US</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND with US Government export control warning. |
+| <code><a href="#construct-hub.SpdxLicense.property.HPND_EXPORT_US_ACKNOWLEDGEMENT">HPND_EXPORT_US_ACKNOWLEDGEMENT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND with US Government export control warning and acknowledgment. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_EXPORT_US_MODIFY">HPND_EXPORT_US_MODIFY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND with US Government export control warning and modification rqmt. |
+| <code><a href="#construct-hub.SpdxLicense.property.HPND_EXPORT2_US">HPND_EXPORT2_US</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND with US Government export control and 2 disclaimers. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_FENNEBERG_LIVINGSTON">HPND_FENNEBERG_LIVINGSTON</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Fenneberg-Livingston variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_INRIA_IMAG">HPND_INRIA_IMAG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer    - INRIA-IMAG variant. |
+| <code><a href="#construct-hub.SpdxLicense.property.HPND_INTEL">HPND_INTEL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Intel variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_KEVLIN_HENNEY">HPND_KEVLIN_HENNEY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Kevlin Henney variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_MARKUS_KUHN">HPND_MARKUS_KUHN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Markus Kuhn variant. |
+| <code><a href="#construct-hub.SpdxLicense.property.HPND_MERCHANTABILITY_VARIANT">HPND_MERCHANTABILITY_VARIANT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - merchantability variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_MIT_DISCLAIMER">HPND_MIT_DISCLAIMER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer with MIT disclaimer. |
+| <code><a href="#construct-hub.SpdxLicense.property.HPND_NETREK">HPND_NETREK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Netrek variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_PBMPLUS">HPND_PBMPLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - Pbmplus variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_MIT_DISCLAIMER_XSERVER">HPND_SELL_MIT_DISCLAIMER_XSERVER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell xserver variant with MIT disclaimer. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_REGEXPR">HPND_SELL_REGEXPR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell regexpr variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_VARIANT">HPND_SELL_VARIANT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - sell variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_VARIANT_MIT_DISCLAIMER">HPND_SELL_VARIANT_MIT_DISCLAIMER</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND sell variant with MIT disclaimer. |
+| <code><a href="#construct-hub.SpdxLicense.property.HPND_SELL_VARIANT_MIT_DISCLAIMER_REV">HPND_SELL_VARIANT_MIT_DISCLAIMER_REV</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HPND sell variant with MIT disclaimer - reverse. |
 | <code><a href="#construct-hub.SpdxLicense.property.HPND_UC">HPND_UC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - University of California variant. |
+| <code><a href="#construct-hub.SpdxLicense.property.HPND_UC_EXPORT_US">HPND_UC_EXPORT_US</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Historical Permission Notice and Disclaimer - University of California, US export warning. |
 | <code><a href="#construct-hub.SpdxLicense.property.HTMLTIDY">HTMLTIDY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | HTML Tidy License. |
 | <code><a href="#construct-hub.SpdxLicense.property.I_MATIX">I_MATIX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | iMatix Standard Function Library Agreement. |
 | <code><a href="#construct-hub.SpdxLicense.property.IBM_PIBS">IBM_PIBS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | IBM PowerPC Initialization and Boot Software. |
@@ -3460,6 +3482,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.IMLIB2">IMLIB2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Imlib2 License. |
 | <code><a href="#construct-hub.SpdxLicense.property.INFO_ZIP">INFO_ZIP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Info-ZIP License. |
 | <code><a href="#construct-hub.SpdxLicense.property.INNER_NET_2_0">INNER_NET_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Inner Net License v2.0. |
+| <code><a href="#construct-hub.SpdxLicense.property.INNO_SETUP">INNO_SETUP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Inno Setup License. |
 | <code><a href="#construct-hub.SpdxLicense.property.INTEL">INTEL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Intel Open Source License. |
 | <code><a href="#construct-hub.SpdxLicense.property.INTEL_ACPI">INTEL_ACPI</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Intel ACPI Software License Agreement. |
 | <code><a href="#construct-hub.SpdxLicense.property.INTERBASE_1_0">INTERBASE_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Interbase Public License v1.0. |
@@ -3528,14 +3551,17 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.MCPHEE_SLIDESHOW">MCPHEE_SLIDESHOW</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | McPhee Slideshow License. |
 | <code><a href="#construct-hub.SpdxLicense.property.METAMAIL">METAMAIL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | metamail License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MINPACK">MINPACK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Minpack License. |
+| <code><a href="#construct-hub.SpdxLicense.property.MIPS">MIPS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIPS License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIR_O_S">MIR_O_S</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | The MirOS Licence. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT">MIT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_0">MIT_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT No Attribution. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_ADVERTISING">MIT_ADVERTISING</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Enlightenment License (e16). |
+| <code><a href="#construct-hub.SpdxLicense.property.MIT_CLICK">MIT_CLICK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Click License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_CMU">MIT_CMU</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | CMU License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_ENNA">MIT_ENNA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | enna License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_FEH">MIT_FEH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | feh License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_FESTIVAL">MIT_FESTIVAL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Festival Variant. |
+| <code><a href="#construct-hub.SpdxLicense.property.MIT_KHRONOS_OLD">MIT_KHRONOS_OLD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Khronos - old variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_MODERN_VARIANT">MIT_MODERN_VARIANT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT License Modern Variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_OPEN_GROUP">MIT_OPEN_GROUP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT Open Group variant. |
 | <code><a href="#construct-hub.SpdxLicense.property.MIT_TESTREGEX">MIT_TESTREGEX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | MIT testregex Variant. |
@@ -3563,7 +3589,9 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.NASA_1_3">NASA_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NASA Open Source Agreement 1.3. |
 | <code><a href="#construct-hub.SpdxLicense.property.NAUMEN">NAUMEN</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Naumen Public License. |
 | <code><a href="#construct-hub.SpdxLicense.property.NBPL_1_0">NBPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Net Boolean Public License v1. |
+| <code><a href="#construct-hub.SpdxLicense.property.NCBI_PD">NCBI_PD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NCBI Public Domain Notice. |
 | <code><a href="#construct-hub.SpdxLicense.property.NCGL_UK_2_0">NCGL_UK_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Non-Commercial Government Licence. |
+| <code><a href="#construct-hub.SpdxLicense.property.NCL">NCL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NCL Source Code License. |
 | <code><a href="#construct-hub.SpdxLicense.property.NCSA">NCSA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | University of Illinois/NCSA Open Source License. |
 | <code><a href="#construct-hub.SpdxLicense.property.NET_CD_F">NET_CD_F</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NetCDF license. |
 | <code><a href="#construct-hub.SpdxLicense.property.NET_SNMP">NET_SNMP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Net-SNMP License. |
@@ -3587,6 +3615,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.NTP_0">NTP_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | NTP No Attribution. |
 | <code><a href="#construct-hub.SpdxLicense.property.NUNIT">NUNIT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Nunit License. |
 | <code><a href="#construct-hub.SpdxLicense.property.O_UDA_1_0">O_UDA_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Use of Data Agreement v1.0. |
+| <code><a href="#construct-hub.SpdxLicense.property.OAR">OAR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OAR License. |
 | <code><a href="#construct-hub.SpdxLicense.property.OCCT_PL">OCCT_PL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open CASCADE Technology Public License. |
 | <code><a href="#construct-hub.SpdxLicense.property.OCLC_2_0">OCLC_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | OCLC Research Public License 2.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.ODBL_1_0">ODBL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Open Data Commons Open Database License v1.0. |
@@ -3643,11 +3672,13 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.PHP_3_0">PHP_3_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PHP License v3.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.PHP_3_01">PHP_3_01</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PHP License v3.01. |
 | <code><a href="#construct-hub.SpdxLicense.property.PIXAR">PIXAR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Pixar License. |
+| <code><a href="#construct-hub.SpdxLicense.property.PKGCONF">PKGCONF</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | pkgconf License. |
 | <code><a href="#construct-hub.SpdxLicense.property.PLEXUS">PLEXUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Plexus Classworlds License. |
 | <code><a href="#construct-hub.SpdxLicense.property.PNMSTITCH">PNMSTITCH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | pnmstitch License. |
 | <code><a href="#construct-hub.SpdxLicense.property.POLYFORM_NONCOMMERCIAL_1_0_0">POLYFORM_NONCOMMERCIAL_1_0_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PolyForm Noncommercial License 1.0.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.POLYFORM_SMALL_BUSINESS_1_0_0">POLYFORM_SMALL_BUSINESS_1_0_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PolyForm Small Business License 1.0.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.POSTGRE_SQ_L">POSTGRE_SQ_L</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | PostgreSQL License. |
+| <code><a href="#construct-hub.SpdxLicense.property.PPL">PPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Peer Production License. |
 | <code><a href="#construct-hub.SpdxLicense.property.PSF_2_0">PSF_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Python Software Foundation License 2.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.PSFRAG">PSFRAG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | psfrag License. |
 | <code><a href="#construct-hub.SpdxLicense.property.PSUTILS">PSUTILS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | psutils License. |
@@ -3666,6 +3697,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.RSA_MD">RSA_MD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | RSA Message-Digest License. |
 | <code><a href="#construct-hub.SpdxLicense.property.RSCPL">RSCPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Ricoh Source Code Public License. |
 | <code><a href="#construct-hub.SpdxLicense.property.RUBY">RUBY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Ruby License. |
+| <code><a href="#construct-hub.SpdxLicense.property.RUBY_PTY">RUBY_PTY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Ruby pty extension license. |
 | <code><a href="#construct-hub.SpdxLicense.property.SAX_PD">SAX_PD</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sax Public Domain Notice. |
 | <code><a href="#construct-hub.SpdxLicense.property.SAX_PD_2_0">SAX_PD_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sax Public Domain Notice 2.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.SAXPATH">SAXPATH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Saxpath License. |
@@ -3673,6 +3705,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.SCHEME_REPORT">SCHEME_REPORT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Scheme Language Report License. |
 | <code><a href="#construct-hub.SpdxLicense.property.SENDMAIL">SENDMAIL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sendmail License. |
 | <code><a href="#construct-hub.SpdxLicense.property.SENDMAIL_8_23">SENDMAIL_8_23</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sendmail License 8.23. |
+| <code><a href="#construct-hub.SpdxLicense.property.SENDMAIL_OPEN_SOURCE_1_1">SENDMAIL_OPEN_SOURCE_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sendmail Open Source License v1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.SGI_B_1_0">SGI_B_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.SGI_B_1_1">SGI_B_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.SGI_B_2_0">SGI_B_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SGI Free Software License B v2.0. |
@@ -3685,6 +3718,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.SISSL_1_2">SISSL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun Industry Standards Source License v1.2. |
 | <code><a href="#construct-hub.SpdxLicense.property.SL">SL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SL License. |
 | <code><a href="#construct-hub.SpdxLicense.property.SLEEPYCAT">SLEEPYCAT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sleepycat License. |
+| <code><a href="#construct-hub.SpdxLicense.property.SMAIL_GPL">SMAIL_GPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SMAIL General Public License. |
 | <code><a href="#construct-hub.SpdxLicense.property.SMLNJ">SMLNJ</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Standard ML of New Jersey License. |
 | <code><a href="#construct-hub.SpdxLicense.property.SMPPL">SMPPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Secure Messaging Protocol Public License. |
 | <code><a href="#construct-hub.SpdxLicense.property.SNIA">SNIA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SNIA Public License 1.1. |
@@ -3703,6 +3737,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.STANDARDML_NJ">STANDARDML_NJ</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Standard ML of New Jersey License. |
 | <code><a href="#construct-hub.SpdxLicense.property.SUGARCRM_1_1_3">SUGARCRM_1_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SugarCRM Public License v1.1.3. |
 | <code><a href="#construct-hub.SpdxLicense.property.SUN_PPP">SUN_PPP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun PPP License. |
+| <code><a href="#construct-hub.SpdxLicense.property.SUN_PPP_2000">SUN_PPP_2000</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Sun PPP License (2000). |
 | <code><a href="#construct-hub.SpdxLicense.property.SUN_PRO">SUN_PRO</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SunPro License. |
 | <code><a href="#construct-hub.SpdxLicense.property.SWL">SWL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Scheme Widget Library (SWL) Software License Agreement. |
 | <code><a href="#construct-hub.SpdxLicense.property.SWRULE">SWRULE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | swrule License. |
@@ -3712,15 +3747,20 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.TCP_WRAPPERS">TCP_WRAPPERS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TCP Wrappers License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TERM_READ_KEY">TERM_READ_KEY</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TermReadKey License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TGPPL_1_0">TGPPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Transitive Grace Period Public Licence 1.0. |
+| <code><a href="#construct-hub.SpdxLicense.property.THIRD_EYE">THIRD_EYE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ThirdEye License. |
+| <code><a href="#construct-hub.SpdxLicense.property.THREE_D_SLICER_1_0">THREE_D_SLICER_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | 3D Slicer License v1.0. |
+| <code><a href="#construct-hub.SpdxLicense.property.THREEPARTTABLE">THREEPARTTABLE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | threeparttable License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TMATE">TMATE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TMate Open Source License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TORQUE_1_1">TORQUE_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TORQUE v2.5+ Software License v1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.TOSL">TOSL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Trusster Open Source License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TPDL">TPDL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Time::ParseDate License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TPL_1_0">TPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | THOR Public License 1.0. |
+| <code><a href="#construct-hub.SpdxLicense.property.TRUSTED_QS_L">TRUSTED_QS_L</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TrustedQSL License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TTWL">TTWL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Text-Tabs+Wrap License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TTYP0">TTYP0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | TTYP0 License. |
 | <code><a href="#construct-hub.SpdxLicense.property.TU_BERLIN_1_0">TU_BERLIN_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Technische Universitaet Berlin License 1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.TU_BERLIN_2_0">TU_BERLIN_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Technische Universitaet Berlin License 2.0. |
+| <code><a href="#construct-hub.SpdxLicense.property.UBUNTU_FONT_1_0">UBUNTU_FONT_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Ubuntu Font Licence v1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.UCAR">UCAR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | UCAR License. |
 | <code><a href="#construct-hub.SpdxLicense.property.UCL_1_0">UCL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Upstream Compatibility License v1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.ULEM">ULEM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | ulem License. |
@@ -3745,9 +3785,11 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.WIDGET_WORKSHOP">WIDGET_WORKSHOP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Widget Workshop License. |
 | <code><a href="#construct-hub.SpdxLicense.property.WSUIPA">WSUIPA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Wsuipa License. |
 | <code><a href="#construct-hub.SpdxLicense.property.WTFPL">WTFPL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Do What The F*ck You Want To Public License. |
+| <code><a href="#construct-hub.SpdxLicense.property.WWL">WWL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | WWL License. |
 | <code><a href="#construct-hub.SpdxLicense.property.WX_WINDOWS">WX_WINDOWS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | wxWindows Library License. |
 | <code><a href="#construct-hub.SpdxLicense.property.X11">X11</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | X11 License. |
 | <code><a href="#construct-hub.SpdxLicense.property.X11_DISTRIBUTE_MODIFICATIONS_VARIANT">X11_DISTRIBUTE_MODIFICATIONS_VARIANT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | X11 License Distribution Modification Variant. |
+| <code><a href="#construct-hub.SpdxLicense.property.X11_SWAPPED">X11_SWAPPED</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | X11 swapped final paragraphs. |
 | <code><a href="#construct-hub.SpdxLicense.property.XDEBUG_1_03">XDEBUG_1_03</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Xdebug License v 1.03. |
 | <code><a href="#construct-hub.SpdxLicense.property.XEROX">XEROX</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Xerox License. |
 | <code><a href="#construct-hub.SpdxLicense.property.XFIG">XFIG</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Xfig License. |
@@ -3758,6 +3800,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.XNET">XNET</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | X.Net License. |
 | <code><a href="#construct-hub.SpdxLicense.property.XPP">XPP</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | XPP License. |
 | <code><a href="#construct-hub.SpdxLicense.property.XSKAT">XSKAT</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | XSkat License. |
+| <code><a href="#construct-hub.SpdxLicense.property.XZOOM">XZOOM</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | xzoom License. |
 | <code><a href="#construct-hub.SpdxLicense.property.YPL_1_0">YPL_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Yahoo! |
 | <code><a href="#construct-hub.SpdxLicense.property.YPL_1_1">YPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Yahoo! |
 | <code><a href="#construct-hub.SpdxLicense.property.ZED">ZED</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Zed License. |
@@ -4068,6 +4111,20 @@ Aladdin Free Public License.
 
 ---
 
+##### `AMD_NEWLIB`<sup>Required</sup> <a name="AMD_NEWLIB" id="construct-hub.SpdxLicense.property.AMD_NEWLIB"></a>
+
+```typescript
+public readonly AMD_NEWLIB: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+AMD newlib License.
+
+> [https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/sys/a29khif/_close.S;h=04f52ae00de1dafbd9055ad8d73c5c697a3aae7f;hb=HEAD](https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/sys/a29khif/_close.S;h=04f52ae00de1dafbd9055ad8d73c5c697a3aae7f;hb=HEAD)
+
+---
+
 ##### `AMDPLPA`<sup>Required</sup> <a name="AMDPLPA" id="construct-hub.SpdxLicense.property.AMDPLPA"></a>
 
 ```typescript
@@ -4149,6 +4206,34 @@ public readonly ANTLR_PD_FALLBACK: SpdxLicense;
 ANTLR Software Rights Notice with license fallback.
 
 > [http://www.antlr2.org/license.html](http://www.antlr2.org/license.html)
+
+---
+
+##### `ANY_OSI`<sup>Required</sup> <a name="ANY_OSI" id="construct-hub.SpdxLicense.property.ANY_OSI"></a>
+
+```typescript
+public readonly ANY_OSI: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Any OSI License.
+
+> [https://metacpan.org/pod/Exporter::Tidy#LICENSE](https://metacpan.org/pod/Exporter::Tidy#LICENSE)
+
+---
+
+##### `ANY_OSI_PERL_MODULES`<sup>Required</sup> <a name="ANY_OSI_PERL_MODULES" id="construct-hub.SpdxLicense.property.ANY_OSI_PERL_MODULES"></a>
+
+```typescript
+public readonly ANY_OSI_PERL_MODULES: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Any OSI License - Perl Modules.
+
+> [https://metacpan.org/release/JUERD/Exporter-Tidy-0.09/view/Tidy.pm#LICENSE](https://metacpan.org/release/JUERD/Exporter-Tidy-0.09/view/Tidy.pm#LICENSE)
 
 ---
 
@@ -4558,6 +4643,20 @@ Boehm-Demers-Weiser GC License.
 
 ---
 
+##### `BOEHM_GC_WITHOUT_FEE`<sup>Required</sup> <a name="BOEHM_GC_WITHOUT_FEE" id="construct-hub.SpdxLicense.property.BOEHM_GC_WITHOUT_FEE"></a>
+
+```typescript
+public readonly BOEHM_GC_WITHOUT_FEE: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Boehm-Demers-Weiser GC License (without fee).
+
+> [https://github.com/MariaDB/server/blob/11.6/libmysqld/lib_sql.cc](https://github.com/MariaDB/server/blob/11.6/libmysqld/lib_sql.cc)
+
+---
+
 ##### `BORCEUX`<sup>Required</sup> <a name="BORCEUX" id="construct-hub.SpdxLicense.property.BORCEUX"></a>
 
 ```typescript
@@ -4639,6 +4738,20 @@ public readonly BSD_2_CLAUSE_DARWIN: SpdxLicense;
 BSD 2-Clause - Ian Darwin variant.
 
 > [https://github.com/file/file/blob/master/COPYING](https://github.com/file/file/blob/master/COPYING)
+
+---
+
+##### `BSD_2_CLAUSE_FIRST_LINES`<sup>Required</sup> <a name="BSD_2_CLAUSE_FIRST_LINES" id="construct-hub.SpdxLicense.property.BSD_2_CLAUSE_FIRST_LINES"></a>
+
+```typescript
+public readonly BSD_2_CLAUSE_FIRST_LINES: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+BSD 2-Clause - first lines requirement.
+
+> [https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L664-L690](https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L664-L690)
 
 ---
 
@@ -4834,7 +4947,7 @@ public readonly BSD_3_CLAUSE_NO_NUCLEAR_LICENSE: SpdxLicense;
 
 BSD 3-Clause No Nuclear License.
 
-> [http://download.oracle.com/otn-pub/java/licenses/bsd.txt?AuthParam=1467140197_43d516ce1776bd08a58235a7785be1cc](http://download.oracle.com/otn-pub/java/licenses/bsd.txt?AuthParam=1467140197_43d516ce1776bd08a58235a7785be1cc)
+> [http://download.oracle.com/otn-pub/java/licenses/bsd.txt](http://download.oracle.com/otn-pub/java/licenses/bsd.txt)
 
 ---
 
@@ -5199,6 +5312,20 @@ public readonly CALDERA_NO_PREAMBLE: SpdxLicense;
 Caldera License (without preamble).
 
 > [https://github.com/apache/apr/blob/trunk/LICENSE#L298C6-L298C29](https://github.com/apache/apr/blob/trunk/LICENSE#L298C6-L298C29)
+
+---
+
+##### `CATHARON`<sup>Required</sup> <a name="CATHARON" id="construct-hub.SpdxLicense.property.CATHARON"></a>
+
+```typescript
+public readonly CATHARON: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Catharon License.
+
+> [https://github.com/scummvm/scummvm/blob/v2.8.0/LICENSES/CatharonLicense.txt](https://github.com/scummvm/scummvm/blob/v2.8.0/LICENSES/CatharonLicense.txt)
 
 ---
 
@@ -5944,6 +6071,34 @@ Creative Commons Public Domain Dedication and Certification.
 
 ---
 
+##### `CC_PDM_1_0`<sup>Required</sup> <a name="CC_PDM_1_0" id="construct-hub.SpdxLicense.property.CC_PDM_1_0"></a>
+
+```typescript
+public readonly CC_PDM_1_0: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Creative    Commons Public Domain Mark 1.0 Universal.
+
+> [https://creativecommons.org/publicdomain/mark/1.0/](https://creativecommons.org/publicdomain/mark/1.0/)
+
+---
+
+##### `CC_SA_1_0`<sup>Required</sup> <a name="CC_SA_1_0" id="construct-hub.SpdxLicense.property.CC_SA_1_0"></a>
+
+```typescript
+public readonly CC_SA_1_0: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Creative Commons Share Alike 1.0 Generic.
+
+> [https://creativecommons.org/licenses/sa/1.0/legalcode](https://creativecommons.org/licenses/sa/1.0/legalcode)
+
+---
+
 ##### `CC0_1_0`<sup>Required</sup> <a name="CC0_1_0" id="construct-hub.SpdxLicense.property.CC0_1_0"></a>
 
 ```typescript
@@ -6546,6 +6701,20 @@ curl License.
 
 ---
 
+##### `CVE_TOU`<sup>Required</sup> <a name="CVE_TOU" id="construct-hub.SpdxLicense.property.CVE_TOU"></a>
+
+```typescript
+public readonly CVE_TOU: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Common Vulnerability Enumeration ToU License.
+
+> [https://www.cve.org/Legal/TermsOfUse](https://www.cve.org/Legal/TermsOfUse)
+
+---
+
 ##### `D_FSL_1_0`<sup>Required</sup> <a name="D_FSL_1_0" id="construct-hub.SpdxLicense.property.D_FSL_1_0"></a>
 
 ```typescript
@@ -6627,6 +6796,48 @@ public readonly DOC: SpdxLicense;
 DOC License.
 
 > [http://www.cs.wustl.edu/~schmidt/ACE-copying.html](http://www.cs.wustl.edu/~schmidt/ACE-copying.html)
+
+---
+
+##### `DOCBOOK_SCHEMA`<sup>Required</sup> <a name="DOCBOOK_SCHEMA" id="construct-hub.SpdxLicense.property.DOCBOOK_SCHEMA"></a>
+
+```typescript
+public readonly DOCBOOK_SCHEMA: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+DocBook Schema License.
+
+> [https://github.com/docbook/xslt10-stylesheets/blob/efd62655c11cc8773708df7a843613fa1e932bf8/xsl/assembly/schema/docbook51b7.rnc](https://github.com/docbook/xslt10-stylesheets/blob/efd62655c11cc8773708df7a843613fa1e932bf8/xsl/assembly/schema/docbook51b7.rnc)
+
+---
+
+##### `DOCBOOK_STYLESHEET`<sup>Required</sup> <a name="DOCBOOK_STYLESHEET" id="construct-hub.SpdxLicense.property.DOCBOOK_STYLESHEET"></a>
+
+```typescript
+public readonly DOCBOOK_STYLESHEET: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+DocBook Stylesheet License.
+
+> [http://www.docbook.org/xml/5.0/docbook-5.0.zip](http://www.docbook.org/xml/5.0/docbook-5.0.zip)
+
+---
+
+##### `DOCBOOK_XML`<sup>Required</sup> <a name="DOCBOOK_XML" id="construct-hub.SpdxLicense.property.DOCBOOK_XML"></a>
+
+```typescript
+public readonly DOCBOOK_XML: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+DocBook XML License.
+
+> [https://github.com/docbook/xslt10-stylesheets/blob/efd62655c11cc8773708df7a843613fa1e932bf8/xsl/COPYING#L27](https://github.com/docbook/xslt10-stylesheets/blob/efd62655c11cc8773708df7a843613fa1e932bf8/xsl/COPYING#L27)
 
 ---
 
@@ -7203,6 +7414,20 @@ public readonly GD: SpdxLicense;
 GD License.
 
 > [https://libgd.github.io/manuals/2.3.0/files/license-txt.html](https://libgd.github.io/manuals/2.3.0/files/license-txt.html)
+
+---
+
+##### `GENERIC_XTS`<sup>Required</sup> <a name="GENERIC_XTS" id="construct-hub.SpdxLicense.property.GENERIC_XTS"></a>
+
+```typescript
+public readonly GENERIC_XTS: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Generic XTS License.
+
+> [https://github.com/mhogomchungu/zuluCrypt/blob/master/external_libraries/tcplay/generic_xts.c](https://github.com/mhogomchungu/zuluCrypt/blob/master/external_libraries/tcplay/generic_xts.c)
 
 ---
 
@@ -7892,6 +8117,20 @@ gtkbook License.
 
 ---
 
+##### `GUTMANN`<sup>Required</sup> <a name="GUTMANN" id="construct-hub.SpdxLicense.property.GUTMANN"></a>
+
+```typescript
+public readonly GUTMANN: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Gutmann License.
+
+> [https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.c](https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.c)
+
+---
+
 ##### `HASKELL_REPORT`<sup>Required</sup> <a name="HASKELL_REPORT" id="construct-hub.SpdxLicense.property.HASKELL_REPORT"></a>
 
 ```typescript
@@ -7917,6 +8156,20 @@ public readonly HDPARM: SpdxLicense;
 hdparm License.
 
 > [https://github.com/Distrotech/hdparm/blob/4517550db29a91420fb2b020349523b1b4512df2/LICENSE.TXT](https://github.com/Distrotech/hdparm/blob/4517550db29a91420fb2b020349523b1b4512df2/LICENSE.TXT)
+
+---
+
+##### `HIDAPI`<sup>Required</sup> <a name="HIDAPI" id="construct-hub.SpdxLicense.property.HIDAPI"></a>
+
+```typescript
+public readonly HIDAPI: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+HIDAPI License.
+
+> [https://github.com/signal11/hidapi/blob/master/LICENSE-orig.txt](https://github.com/signal11/hidapi/blob/master/LICENSE-orig.txt)
 
 ---
 
@@ -8032,6 +8285,20 @@ HPND with US Government export control warning.
 
 ---
 
+##### `HPND_EXPORT_US_ACKNOWLEDGEMENT`<sup>Required</sup> <a name="HPND_EXPORT_US_ACKNOWLEDGEMENT" id="construct-hub.SpdxLicense.property.HPND_EXPORT_US_ACKNOWLEDGEMENT"></a>
+
+```typescript
+public readonly HPND_EXPORT_US_ACKNOWLEDGEMENT: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+HPND with US Government export control warning and acknowledgment.
+
+> [https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L831-L852](https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L831-L852)
+
+---
+
 ##### `HPND_EXPORT_US_MODIFY`<sup>Required</sup> <a name="HPND_EXPORT_US_MODIFY" id="construct-hub.SpdxLicense.property.HPND_EXPORT_US_MODIFY"></a>
 
 ```typescript
@@ -8043,6 +8310,20 @@ public readonly HPND_EXPORT_US_MODIFY: SpdxLicense;
 HPND with US Government export control warning and modification rqmt.
 
 > [https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L1157-L1182](https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L1157-L1182)
+
+---
+
+##### `HPND_EXPORT2_US`<sup>Required</sup> <a name="HPND_EXPORT2_US" id="construct-hub.SpdxLicense.property.HPND_EXPORT2_US"></a>
+
+```typescript
+public readonly HPND_EXPORT2_US: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+HPND with US Government export control and 2 disclaimers.
+
+> [https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L111-L133](https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L111-L133)
 
 ---
 
@@ -8074,6 +8355,20 @@ Historical Permission Notice and Disclaimer    - INRIA-IMAG variant.
 
 ---
 
+##### `HPND_INTEL`<sup>Required</sup> <a name="HPND_INTEL" id="construct-hub.SpdxLicense.property.HPND_INTEL"></a>
+
+```typescript
+public readonly HPND_INTEL: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Historical Permission Notice and Disclaimer - Intel variant.
+
+> [https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/machine/i960/memcpy.S;hb=HEAD](https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/machine/i960/memcpy.S;hb=HEAD)
+
+---
+
 ##### `HPND_KEVLIN_HENNEY`<sup>Required</sup> <a name="HPND_KEVLIN_HENNEY" id="construct-hub.SpdxLicense.property.HPND_KEVLIN_HENNEY"></a>
 
 ```typescript
@@ -8102,6 +8397,20 @@ Historical Permission Notice and Disclaimer - Markus Kuhn variant.
 
 ---
 
+##### `HPND_MERCHANTABILITY_VARIANT`<sup>Required</sup> <a name="HPND_MERCHANTABILITY_VARIANT" id="construct-hub.SpdxLicense.property.HPND_MERCHANTABILITY_VARIANT"></a>
+
+```typescript
+public readonly HPND_MERCHANTABILITY_VARIANT: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Historical Permission Notice and Disclaimer - merchantability variant.
+
+> [https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/misc/fini.c;hb=HEAD](https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/misc/fini.c;hb=HEAD)
+
+---
+
 ##### `HPND_MIT_DISCLAIMER`<sup>Required</sup> <a name="HPND_MIT_DISCLAIMER" id="construct-hub.SpdxLicense.property.HPND_MIT_DISCLAIMER"></a>
 
 ```typescript
@@ -8113,6 +8422,20 @@ public readonly HPND_MIT_DISCLAIMER: SpdxLicense;
 Historical Permission Notice and Disclaimer with MIT disclaimer.
 
 > [https://metacpan.org/release/NLNETLABS/Net-DNS-SEC-1.22/source/LICENSE](https://metacpan.org/release/NLNETLABS/Net-DNS-SEC-1.22/source/LICENSE)
+
+---
+
+##### `HPND_NETREK`<sup>Required</sup> <a name="HPND_NETREK" id="construct-hub.SpdxLicense.property.HPND_NETREK"></a>
+
+```typescript
+public readonly HPND_NETREK: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Historical Permission Notice and Disclaimer - Netrek variant.
+
+> [undefined](undefined)
 
 ---
 
@@ -8186,6 +8509,20 @@ HPND sell variant with MIT disclaimer.
 
 ---
 
+##### `HPND_SELL_VARIANT_MIT_DISCLAIMER_REV`<sup>Required</sup> <a name="HPND_SELL_VARIANT_MIT_DISCLAIMER_REV" id="construct-hub.SpdxLicense.property.HPND_SELL_VARIANT_MIT_DISCLAIMER_REV"></a>
+
+```typescript
+public readonly HPND_SELL_VARIANT_MIT_DISCLAIMER_REV: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+HPND sell variant with MIT disclaimer - reverse.
+
+> [https://github.com/sigmavirus24/x11-ssh-askpass/blob/master/dynlist.c](https://github.com/sigmavirus24/x11-ssh-askpass/blob/master/dynlist.c)
+
+---
+
 ##### `HPND_UC`<sup>Required</sup> <a name="HPND_UC" id="construct-hub.SpdxLicense.property.HPND_UC"></a>
 
 ```typescript
@@ -8197,6 +8534,20 @@ public readonly HPND_UC: SpdxLicense;
 Historical Permission Notice and Disclaimer - University of California variant.
 
 > [https://core.tcl-lang.org/tk/file?name=compat/unistd.h](https://core.tcl-lang.org/tk/file?name=compat/unistd.h)
+
+---
+
+##### `HPND_UC_EXPORT_US`<sup>Required</sup> <a name="HPND_UC_EXPORT_US" id="construct-hub.SpdxLicense.property.HPND_UC_EXPORT_US"></a>
+
+```typescript
+public readonly HPND_UC_EXPORT_US: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Historical Permission Notice and Disclaimer - University of California, US export warning.
+
+> [https://github.com/RTimothyEdwards/magic/blob/master/LICENSE](https://github.com/RTimothyEdwards/magic/blob/master/LICENSE)
 
 ---
 
@@ -8351,6 +8702,20 @@ public readonly INNER_NET_2_0: SpdxLicense;
 Inner Net License v2.0.
 
 > [https://fedoraproject.org/wiki/Licensing/Inner_Net_License](https://fedoraproject.org/wiki/Licensing/Inner_Net_License)
+
+---
+
+##### `INNO_SETUP`<sup>Required</sup> <a name="INNO_SETUP" id="construct-hub.SpdxLicense.property.INNO_SETUP"></a>
+
+```typescript
+public readonly INNO_SETUP: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Inno Setup License.
+
+> [https://github.com/jrsoftware/issrc/blob/HEAD/license.txt](https://github.com/jrsoftware/issrc/blob/HEAD/license.txt)
 
 ---
 
@@ -9306,6 +9671,20 @@ Minpack License.
 
 ---
 
+##### `MIPS`<sup>Required</sup> <a name="MIPS" id="construct-hub.SpdxLicense.property.MIPS"></a>
+
+```typescript
+public readonly MIPS: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+MIPS License.
+
+> [https://sourceware.org/cgit/binutils-gdb/tree/include/coff/sym.h#n11](https://sourceware.org/cgit/binutils-gdb/tree/include/coff/sym.h#n11)
+
+---
+
 ##### `MIR_O_S`<sup>Required</sup> <a name="MIR_O_S" id="construct-hub.SpdxLicense.property.MIR_O_S"></a>
 
 ```typescript
@@ -9362,6 +9741,20 @@ Enlightenment License (e16).
 
 ---
 
+##### `MIT_CLICK`<sup>Required</sup> <a name="MIT_CLICK" id="construct-hub.SpdxLicense.property.MIT_CLICK"></a>
+
+```typescript
+public readonly MIT_CLICK: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+MIT Click License.
+
+> [https://github.com/kohler/t1utils/blob/master/LICENSE](https://github.com/kohler/t1utils/blob/master/LICENSE)
+
+---
+
 ##### `MIT_CMU`<sup>Required</sup> <a name="MIT_CMU" id="construct-hub.SpdxLicense.property.MIT_CMU"></a>
 
 ```typescript
@@ -9415,6 +9808,20 @@ public readonly MIT_FESTIVAL: SpdxLicense;
 MIT Festival Variant.
 
 > [https://github.com/festvox/flite/blob/master/COPYING](https://github.com/festvox/flite/blob/master/COPYING)
+
+---
+
+##### `MIT_KHRONOS_OLD`<sup>Required</sup> <a name="MIT_KHRONOS_OLD" id="construct-hub.SpdxLicense.property.MIT_KHRONOS_OLD"></a>
+
+```typescript
+public readonly MIT_KHRONOS_OLD: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+MIT Khronos - old variant.
+
+> [https://github.com/KhronosGroup/SPIRV-Cross/blob/main/LICENSES/LicenseRef-KhronosFreeUse.txt](https://github.com/KhronosGroup/SPIRV-Cross/blob/main/LICENSES/LicenseRef-KhronosFreeUse.txt)
 
 ---
 
@@ -9796,6 +10203,20 @@ Net Boolean Public License v1.
 
 ---
 
+##### `NCBI_PD`<sup>Required</sup> <a name="NCBI_PD" id="construct-hub.SpdxLicense.property.NCBI_PD"></a>
+
+```typescript
+public readonly NCBI_PD: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+NCBI Public Domain Notice.
+
+> [https://github.com/ncbi/sra-tools/blob/e8e5b6af4edc460156ad9ce5902d0779cffbf685/LICENSE](https://github.com/ncbi/sra-tools/blob/e8e5b6af4edc460156ad9ce5902d0779cffbf685/LICENSE)
+
+---
+
 ##### `NCGL_UK_2_0`<sup>Required</sup> <a name="NCGL_UK_2_0" id="construct-hub.SpdxLicense.property.NCGL_UK_2_0"></a>
 
 ```typescript
@@ -9807,6 +10228,20 @@ public readonly NCGL_UK_2_0: SpdxLicense;
 Non-Commercial Government Licence.
 
 > [http://www.nationalarchives.gov.uk/doc/non-commercial-government-licence/version/2/](http://www.nationalarchives.gov.uk/doc/non-commercial-government-licence/version/2/)
+
+---
+
+##### `NCL`<sup>Required</sup> <a name="NCL" id="construct-hub.SpdxLicense.property.NCL"></a>
+
+```typescript
+public readonly NCL: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+NCL Source Code License.
+
+> [https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/master/src/modules/module-filter-chain/pffft.c?ref_type=heads#L1-52](https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/master/src/modules/module-filter-chain/pffft.c?ref_type=heads#L1-52)
 
 ---
 
@@ -10129,6 +10564,20 @@ public readonly O_UDA_1_0: SpdxLicense;
 Open Use of Data Agreement v1.0.
 
 > [https://github.com/microsoft/Open-Use-of-Data-Agreement/blob/v1.0/O-UDA-1.0.md](https://github.com/microsoft/Open-Use-of-Data-Agreement/blob/v1.0/O-UDA-1.0.md)
+
+---
+
+##### `OAR`<sup>Required</sup> <a name="OAR" id="construct-hub.SpdxLicense.property.OAR"></a>
+
+```typescript
+public readonly OAR: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+OAR License.
+
+> [https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/string/strsignal.c;hb=HEAD#l35](https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/string/strsignal.c;hb=HEAD#l35)
 
 ---
 
@@ -10916,6 +11365,20 @@ Pixar License.
 
 ---
 
+##### `PKGCONF`<sup>Required</sup> <a name="PKGCONF" id="construct-hub.SpdxLicense.property.PKGCONF"></a>
+
+```typescript
+public readonly PKGCONF: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+pkgconf License.
+
+> [https://github.com/pkgconf/pkgconf/blob/master/cli/main.c#L8](https://github.com/pkgconf/pkgconf/blob/master/cli/main.c#L8)
+
+---
+
 ##### `PLEXUS`<sup>Required</sup> <a name="PLEXUS" id="construct-hub.SpdxLicense.property.PLEXUS"></a>
 
 ```typescript
@@ -10983,6 +11446,20 @@ public readonly POSTGRE_SQ_L: SpdxLicense;
 PostgreSQL License.
 
 > [http://www.postgresql.org/about/licence](http://www.postgresql.org/about/licence)
+
+---
+
+##### `PPL`<sup>Required</sup> <a name="PPL" id="construct-hub.SpdxLicense.property.PPL"></a>
+
+```typescript
+public readonly PPL: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Peer Production License.
+
+> [https://wiki.p2pfoundation.net/Peer_Production_License](https://wiki.p2pfoundation.net/Peer_Production_License)
 
 ---
 
@@ -11238,6 +11715,20 @@ Ruby License.
 
 ---
 
+##### `RUBY_PTY`<sup>Required</sup> <a name="RUBY_PTY" id="construct-hub.SpdxLicense.property.RUBY_PTY"></a>
+
+```typescript
+public readonly RUBY_PTY: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Ruby pty extension license.
+
+> [https://github.com/ruby/ruby/blob/9f6deaa6888a423720b4b127b5314f0ad26cc2e6/ext/pty/pty.c#L775-L786](https://github.com/ruby/ruby/blob/9f6deaa6888a423720b4b127b5314f0ad26cc2e6/ext/pty/pty.c#L775-L786)
+
+---
+
 ##### `SAX_PD`<sup>Required</sup> <a name="SAX_PD" id="construct-hub.SpdxLicense.property.SAX_PD"></a>
 
 ```typescript
@@ -11333,6 +11824,20 @@ public readonly SENDMAIL_8_23: SpdxLicense;
 Sendmail License 8.23.
 
 > [https://www.proofpoint.com/sites/default/files/sendmail-license.pdf](https://www.proofpoint.com/sites/default/files/sendmail-license.pdf)
+
+---
+
+##### `SENDMAIL_OPEN_SOURCE_1_1`<sup>Required</sup> <a name="SENDMAIL_OPEN_SOURCE_1_1" id="construct-hub.SpdxLicense.property.SENDMAIL_OPEN_SOURCE_1_1"></a>
+
+```typescript
+public readonly SENDMAIL_OPEN_SOURCE_1_1: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Sendmail Open Source License v1.1.
+
+> [https://github.com/trusteddomainproject/OpenDMARC/blob/master/LICENSE.Sendmail](https://github.com/trusteddomainproject/OpenDMARC/blob/master/LICENSE.Sendmail)
 
 ---
 
@@ -11501,6 +12006,20 @@ public readonly SLEEPYCAT: SpdxLicense;
 Sleepycat License.
 
 > [https://opensource.org/licenses/Sleepycat](https://opensource.org/licenses/Sleepycat)
+
+---
+
+##### `SMAIL_GPL`<sup>Required</sup> <a name="SMAIL_GPL" id="construct-hub.SpdxLicense.property.SMAIL_GPL"></a>
+
+```typescript
+public readonly SMAIL_GPL: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+SMAIL General Public License.
+
+> [https://sources.debian.org/copyright/license/debianutils/4.11.2/](https://sources.debian.org/copyright/license/debianutils/4.11.2/)
 
 ---
 
@@ -11756,6 +12275,20 @@ Sun PPP License.
 
 ---
 
+##### `SUN_PPP_2000`<sup>Required</sup> <a name="SUN_PPP_2000" id="construct-hub.SpdxLicense.property.SUN_PPP_2000"></a>
+
+```typescript
+public readonly SUN_PPP_2000: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Sun PPP License (2000).
+
+> [https://github.com/ppp-project/ppp/blob/master/modules/ppp_ahdlc.c#L7-L19](https://github.com/ppp-project/ppp/blob/master/modules/ppp_ahdlc.c#L7-L19)
+
+---
+
 ##### `SUN_PRO`<sup>Required</sup> <a name="SUN_PRO" id="construct-hub.SpdxLicense.property.SUN_PRO"></a>
 
 ```typescript
@@ -11882,6 +12415,48 @@ Transitive Grace Period Public Licence 1.0.
 
 ---
 
+##### `THIRD_EYE`<sup>Required</sup> <a name="THIRD_EYE" id="construct-hub.SpdxLicense.property.THIRD_EYE"></a>
+
+```typescript
+public readonly THIRD_EYE: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+ThirdEye License.
+
+> [https://sourceware.org/cgit/binutils-gdb/tree/include/coff/symconst.h#n11](https://sourceware.org/cgit/binutils-gdb/tree/include/coff/symconst.h#n11)
+
+---
+
+##### `THREE_D_SLICER_1_0`<sup>Required</sup> <a name="THREE_D_SLICER_1_0" id="construct-hub.SpdxLicense.property.THREE_D_SLICER_1_0"></a>
+
+```typescript
+public readonly THREE_D_SLICER_1_0: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+3D Slicer License v1.0.
+
+> [https://slicer.org/LICENSE](https://slicer.org/LICENSE)
+
+---
+
+##### `THREEPARTTABLE`<sup>Required</sup> <a name="THREEPARTTABLE" id="construct-hub.SpdxLicense.property.THREEPARTTABLE"></a>
+
+```typescript
+public readonly THREEPARTTABLE: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+threeparttable License.
+
+> [https://fedoraproject.org/wiki/Licensing/Threeparttable](https://fedoraproject.org/wiki/Licensing/Threeparttable)
+
+---
+
 ##### `TMATE`<sup>Required</sup> <a name="TMATE" id="construct-hub.SpdxLicense.property.TMATE"></a>
 
 ```typescript
@@ -11952,6 +12527,20 @@ THOR Public License 1.0.
 
 ---
 
+##### `TRUSTED_QS_L`<sup>Required</sup> <a name="TRUSTED_QS_L" id="construct-hub.SpdxLicense.property.TRUSTED_QS_L"></a>
+
+```typescript
+public readonly TRUSTED_QS_L: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+TrustedQSL License.
+
+> [https://sourceforge.net/p/trustedqsl/tqsl/ci/master/tree/LICENSE.txt](https://sourceforge.net/p/trustedqsl/tqsl/ci/master/tree/LICENSE.txt)
+
+---
+
 ##### `TTWL`<sup>Required</sup> <a name="TTWL" id="construct-hub.SpdxLicense.property.TTWL"></a>
 
 ```typescript
@@ -12005,6 +12594,20 @@ public readonly TU_BERLIN_2_0: SpdxLicense;
 Technische Universitaet Berlin License 2.0.
 
 > [https://github.com/CorsixTH/deps/blob/fd339a9f526d1d9c9f01ccf39e438a015da50035/licences/libgsm.txt](https://github.com/CorsixTH/deps/blob/fd339a9f526d1d9c9f01ccf39e438a015da50035/licences/libgsm.txt)
+
+---
+
+##### `UBUNTU_FONT_1_0`<sup>Required</sup> <a name="UBUNTU_FONT_1_0" id="construct-hub.SpdxLicense.property.UBUNTU_FONT_1_0"></a>
+
+```typescript
+public readonly UBUNTU_FONT_1_0: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Ubuntu Font Licence v1.0.
+
+> [https://ubuntu.com/legal/font-licence](https://ubuntu.com/legal/font-licence)
 
 ---
 
@@ -12342,6 +12945,20 @@ Do What The F*ck You Want To Public License.
 
 ---
 
+##### `WWL`<sup>Required</sup> <a name="WWL" id="construct-hub.SpdxLicense.property.WWL"></a>
+
+```typescript
+public readonly WWL: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+WWL License.
+
+> [http://www.db.net/downloads/wwl+db-1.3.tgz](http://www.db.net/downloads/wwl+db-1.3.tgz)
+
+---
+
 ##### `WX_WINDOWS`<sup>Required</sup> <a name="WX_WINDOWS" id="construct-hub.SpdxLicense.property.WX_WINDOWS"></a>
 
 ```typescript
@@ -12381,6 +12998,20 @@ public readonly X11_DISTRIBUTE_MODIFICATIONS_VARIANT: SpdxLicense;
 X11 License Distribution Modification Variant.
 
 > [https://github.com/mirror/ncurses/blob/master/COPYING](https://github.com/mirror/ncurses/blob/master/COPYING)
+
+---
+
+##### `X11_SWAPPED`<sup>Required</sup> <a name="X11_SWAPPED" id="construct-hub.SpdxLicense.property.X11_SWAPPED"></a>
+
+```typescript
+public readonly X11_SWAPPED: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+X11 swapped final paragraphs.
+
+> [https://github.com/fedeinthemix/chez-srfi/blob/master/srfi/LICENSE](https://github.com/fedeinthemix/chez-srfi/blob/master/srfi/LICENSE)
 
 ---
 
@@ -12521,6 +13152,20 @@ public readonly XSKAT: SpdxLicense;
 XSkat License.
 
 > [https://fedoraproject.org/wiki/Licensing/XSkat_License](https://fedoraproject.org/wiki/Licensing/XSkat_License)
+
+---
+
+##### `XZOOM`<sup>Required</sup> <a name="XZOOM" id="construct-hub.SpdxLicense.property.XZOOM"></a>
+
+```typescript
+public readonly XZOOM: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+xzoom License.
+
+> [https://metadata.ftp-master.debian.org/changelogs//main/x/xzoom/xzoom_0.3-27_copyright](https://metadata.ftp-master.debian.org/changelogs//main/x/xzoom/xzoom_0.3-27_copyright)
 
 ---
 
