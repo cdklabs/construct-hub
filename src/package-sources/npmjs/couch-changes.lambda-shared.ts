@@ -6,6 +6,8 @@ import { URL } from 'url';
 import { createGunzip } from 'zlib';
 import * as JSONStream from 'JSONStream';
 
+const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
+
 /**
  * A utility class that helps with traversing CouchDB database changes streams
  * in a promise-based, page-by-page manner.
@@ -13,6 +15,7 @@ import * as JSONStream from 'JSONStream';
 export class CouchChanges extends EventEmitter {
   private readonly agent: Agent;
   private readonly baseUrl: URL;
+  private readonly databaseUrl: URL;
 
   /**
    * @param baseUrl  the CouchDB endpoint URL.
@@ -27,7 +30,8 @@ export class CouchChanges extends EventEmitter {
       maxSockets: 4,
       timeout: 60_000,
     });
-    this.baseUrl = new URL(database, baseUrl);
+    this.baseUrl = new URL(baseUrl);
+    this.databaseUrl = new URL(database, baseUrl);
   }
 
   /**
@@ -51,17 +55,47 @@ export class CouchChanges extends EventEmitter {
   ): Promise<DatabaseChanges> {
     const batchSize = opts?.batchSize ?? 100;
 
-    const changesUrl = new URL('_changes', this.baseUrl);
-    changesUrl.searchParams.set('include_docs', 'true');
+    const changesUrl = new URL('_changes', this.databaseUrl);
     changesUrl.searchParams.set('limit', batchSize.toFixed());
-    changesUrl.searchParams.set('selector', '_filter');
-    changesUrl.searchParams.set('seq_interval', batchSize.toFixed());
     changesUrl.searchParams.set('since', since.toString());
-    changesUrl.searchParams.set('timeout', '20000' /* ms */);
 
-    const filter = { name: { $gt: null } };
+    const result = (await this.https(
+      'get',
+      changesUrl
+    )) as unknown as DatabaseChanges;
 
-    return this.https('post', changesUrl, filter) as any;
+    // add metadata docs to each change and filter out changes where metadata is empty
+    const filteredResults: DatabaseChange[] = [];
+    for (const change of result.results) {
+      console.log(JSON.stringify(change));
+      const metadata = await this.metadata(change.id);
+
+      // Only include changes where metadata is not an empty object
+      if (Object.keys(metadata).length > 0) {
+        change.doc = metadata;
+        filteredResults.push(change);
+      } else {
+        console.log(
+          `Filtering out change for ${change.id} due to empty metadata`
+        );
+      }
+    }
+
+    // Replace the original results with the filtered ones
+    result.results = filteredResults;
+
+    return result;
+  }
+
+  private async metadata(id: string) {
+    const metadataUrl = new URL(id, NPM_REGISTRY_URL);
+    console.log(`Fetching metadata for ${id}: ${metadataUrl}`);
+    try {
+      return await this.https('get', metadataUrl);
+    } catch (e) {
+      console.error(`Failed to fetch metadata for ${id}: ${e}`);
+      return {};
+    }
   }
 
   /**
@@ -95,11 +129,14 @@ export class CouchChanges extends EventEmitter {
       const headers: OutgoingHttpHeaders = {
         Accept: 'application/json',
         'Accept-Encoding': 'gzip',
+        'npm-replication-opt-in': 'true', // can be deleted after May 29: https://github.com/orgs/community/discussions/152515
       };
       if (body) {
         headers['Content-Type'] = 'application/json';
       }
-      console.log(`Request: ${method.toUpperCase()} ${url}`);
+      console.log(
+        `Request: ${method.toUpperCase()} ${url}, ${JSON.stringify(headers)}`
+      );
       const req = request(
         url,
         {
@@ -192,7 +229,7 @@ export interface DatabaseChanges {
   /**
    * The changes that are part of this batch.
    */
-  readonly results: readonly DatabaseChange[];
+  results: readonly DatabaseChange[];
 }
 
 export interface DatabaseChange {
@@ -221,7 +258,7 @@ export interface DatabaseChange {
   /**
    * If present, the resolved document after the change has been applied.
    */
-  readonly doc?: { readonly [key: string]: unknown };
+  doc?: { readonly [key: string]: unknown };
 }
 
 export interface DatabaseInfos {
