@@ -9,64 +9,55 @@ export class SpdxLicense {
 
   //#region Individual SPDX Licenses
   /**
-   * GNU General Public License v1.0 or later
+   * DSDP License
    *
-   * @see https://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html
+   * @see https://fedoraproject.org/wiki/Licensing/DSDP
    */
-  public static readonly GPL_1_0_OR_LATER = new SpdxLicense('GPL-1.0-or-later');
+  public static readonly DSDP = new SpdxLicense('DSDP');
 
   /**
-   * Netizen Open Source License
+   * NIST Public Domain Notice
    *
-   * @see http://bits.netizen.com.au/licenses/NOSL/nosl.txt
+   * @see https://github.com/tcheneau/simpleRPL/blob/e645e69e38dd4e3ccfeceb2db8cba05b7c2e0cd3/LICENSE.txt
    */
-  public static readonly NOSL = new SpdxLicense('NOSL');
+  public static readonly NIST_PD = new SpdxLicense('NIST-PD');
 
   /**
-   * Apple MIT License
+   * Creative Commons Attribution Non Commercial Share Alike 2.0 Generic
    *
-   * @see https://fedoraproject.org/wiki/Licensing/Apple_MIT_License
+   * @see https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode
    */
-  public static readonly AML = new SpdxLicense('AML');
+  public static readonly CC_BY_NC_SA_2_0 = new SpdxLicense('CC-BY-NC-SA-2.0');
 
   /**
-   * Sun Public License v1.0
+   * Norwegian Licence for Open Government Data (NLOD) 1.0
+   *
+   * @see http://data.norge.no/nlod/en/1.0
+   */
+  public static readonly NLOD_1_0 = new SpdxLicense('NLOD-1.0');
+
+  /**
+   * Red Hat eCos Public License v1.1
+   *
+   * @see http://ecos.sourceware.org/old-license.html
+   */
+  public static readonly RHECOS_1_1 = new SpdxLicense('RHeCos-1.1');
+
+  /**
+   * GNU Free Documentation License v1.3 only - no invariants
+   *
+   * @see https://www.gnu.org/licenses/fdl-1.3.txt
+   */
+  public static readonly GFDL_1_3_NO_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.3-no-invariants-only');
+
+  /**
+   * Ricoh Source Code Public License
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/SPL-1.0
+   * @see http://wayback.archive.org/web/20060715140826/http://www.risource.org/RPL/RPL-1.0A.shtml
    */
-  public static readonly SPL_1_0 = new SpdxLicense('SPL-1.0');
-
-  /**
-   * Jam License
-   *
-   * @osiApproved
-   *
-   * @see https://www.boost.org/doc/libs/1_35_0/doc/html/jam.html
-   */
-  public static readonly JAM = new SpdxLicense('Jam');
-
-  /**
-   * radvd License
-   *
-   * @see https://github.com/radvd-project/radvd/blob/master/COPYRIGHT
-   */
-  public static readonly RADVD = new SpdxLicense('radvd');
-
-  /**
-   * GNU Free Documentation License v1.1 only - no invariants
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
-   */
-  public static readonly GFDL_1_1_NO_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.1-no-invariants-only');
-
-  /**
-   * GNU Free Documentation License v1.1 or later - no invariants
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
-   */
-  public static readonly GFDL_1_1_NO_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.1-no-invariants-or-later');
+  public static readonly RSCPL = new SpdxLicense('RSCPL');
 
   /**
    * ASWF Digital Assets License 1.1
@@ -76,570 +67,25 @@ export class SpdxLicense {
   public static readonly ASWF_DIGITAL_ASSETS_1_1 = new SpdxLicense('ASWF-Digital-Assets-1.1');
 
   /**
-   * Open LDAP Public License v2.6
+   * eCos license version 2.0
    *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=1cae062821881f41b73012ba816434897abf4205
+   * @see https://www.gnu.org/licenses/ecos-license.html
    */
-  public static readonly OLDAP_2_6 = new SpdxLicense('OLDAP-2.6');
+  public static readonly ECOS_2_0 = new SpdxLicense('eCos-2.0');
 
   /**
-   * Historical Permission Notice and Disclaimer    - INRIA-IMAG variant
+   * Good Luck With That Public License
    *
-   * @see https://github.com/ppp-project/ppp/blob/master/pppd/ipv6cp.c#L75-L83
+   * @see https://github.com/me-shaon/GLWTPL/commit/da5f6bc734095efbacb442c0b31e33a65b9d6e85
    */
-  public static readonly HPND_INRIA_IMAG = new SpdxLicense('HPND-INRIA-IMAG');
+  public static readonly GLWTPL = new SpdxLicense('GLWTPL');
 
   /**
-   * PHP License v3.01
+   * Info-ZIP License
    *
-   * @osiApproved
-   *
-   * @see http://www.php.net/license/3_01.txt
-   */
-  public static readonly PHP_3_01 = new SpdxLicense('PHP-3.01');
-
-  /**
-   * GNU Lesser General Public License v2.1 or later
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
-   */
-  public static readonly LGPL_2_1_PLUS = new SpdxLicense('LGPL-2.1+');
-
-  /**
-   * W3C Software Notice and License (2002-12-31)
-   *
-   * @osiApproved
-   *
-   * @see http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.html
-   */
-  public static readonly W3_C = new SpdxLicense('W3C');
-
-  /**
-   * GNU Free Documentation License v1.2 or later - no invariants
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
-   */
-  public static readonly GFDL_1_2_NO_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.2-no-invariants-or-later');
-
-  /**
-   * Boehm-Demers-Weiser GC License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing:MIT#Another_Minimal_variant_(found_in_libatomic_ops)
-   */
-  public static readonly BOEHM_GC = new SpdxLicense('Boehm-GC');
-
-  /**
-   * SGI Free Software License B v1.1
-   *
-   * @see http://oss.sgi.com/projects/FreeB/
-   */
-  public static readonly SGI_B_1_1 = new SpdxLicense('SGI-B-1.1');
-
-  /**
-   * xinetd License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Xinetd_License
-   */
-  public static readonly XINETD = new SpdxLicense('xinetd');
-
-  /**
-   * Creative Commons Attribution No Derivatives 1.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nd/1.0/legalcode
-   */
-  public static readonly CC_BY_ND_1_0 = new SpdxLicense('CC-BY-ND-1.0');
-
-  /**
-   * OSET Public License version 2.1
-   *
-   * @osiApproved
-   *
-   * @see http://www.osetfoundation.org/public-license
-   */
-  public static readonly OSET_PL_2_1 = new SpdxLicense('OSET-PL-2.1');
-
-  /**
-   * libtiff License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/libtiff
-   */
-  public static readonly LIBTIFF = new SpdxLicense('libtiff');
-
-  /**
-   * Elastic License 2.0
-   *
-   * @see https://www.elastic.co/licensing/elastic-license
-   */
-  public static readonly ELASTIC_2_0 = new SpdxLicense('Elastic-2.0');
-
-  /**
-   * MakeIndex License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/MakeIndex
-   */
-  public static readonly MAKE_INDEX = new SpdxLicense('MakeIndex');
-
-  /**
-   * The MirOS Licence
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/MirOS
-   */
-  public static readonly MIR_O_S = new SpdxLicense('MirOS');
-
-  /**
-   * Sendmail License 8.23
-   *
-   * @see https://www.proofpoint.com/sites/default/files/sendmail-license.pdf
-   */
-  public static readonly SENDMAIL_8_23 = new SpdxLicense('Sendmail-8.23');
-
-  /**
-   * SGI Free Software License B v1.0
-   *
-   * @see http://oss.sgi.com/projects/FreeB/SGIFreeSWLicB.1.0.html
-   */
-  public static readonly SGI_B_1_0 = new SpdxLicense('SGI-B-1.0');
-
-  /**
-   * European Union Public License 1.1
-   *
-   * @osiApproved
-   *
-   * @see https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
-   */
-  public static readonly EUPL_1_1 = new SpdxLicense('EUPL-1.1');
-
-  /**
-   * Yahoo! Public License v1.0
-   *
-   * @see http://www.zimbra.com/license/yahoo_public_license_1.0.html
-   */
-  public static readonly YPL_1_0 = new SpdxLicense('YPL-1.0');
-
-  /**
-   * Text-Tabs+Wrap License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/TTWL
-   */
-  public static readonly TTWL = new SpdxLicense('TTWL');
-
-  /**
-   * Creative Commons Attribution Non Commercial 1.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nc/1.0/legalcode
-   */
-  public static readonly CC_BY_NC_1_0 = new SpdxLicense('CC-BY-NC-1.0');
-
-  /**
-   * Historical Permission Notice and Disclaimer - documentation variant
-   *
-   * @see https://gitlab.freedesktop.org/xorg/lib/libxext/-/blob/master/COPYING?ref_type=heads#L185-197
-   */
-  public static readonly HPND_DOC = new SpdxLicense('HPND-doc');
-
-  /**
-   * Deutsche Freie Software Lizenz
-   *
-   * @see http://www.dipp.nrw.de/d-fsl/lizenzen/
-   */
-  public static readonly D_FSL_1_0 = new SpdxLicense('D-FSL-1.0');
-
-  /**
-   * Open LDAP Public License v2.2.1
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=4bc786f34b50aa301be6f5600f58a980070f481e
-   */
-  public static readonly OLDAP_2_2_1 = new SpdxLicense('OLDAP-2.2.1');
-
-  /**
-   * SugarCRM Public License v1.1.3
-   *
-   * @see http://www.sugarcrm.com/crm/SPL
-   */
-  public static readonly SUGARCRM_1_1_3 = new SpdxLicense('SugarCRM-1.1.3');
-
-  /**
-   * European Union Public License 1.2
-   *
-   * @osiApproved
-   *
-   * @see https://joinup.ec.europa.eu/page/eupl-text-11-12
-   */
-  public static readonly EUPL_1_2 = new SpdxLicense('EUPL-1.2');
-
-  /**
-   * Aladdin Free Public License
-   *
-   * @see http://pages.cs.wisc.edu/~ghost/doc/AFPL/6.01/Public.htm
-   */
-  public static readonly ALADDIN = new SpdxLicense('Aladdin');
-
-  /**
-   * BSD Source Code Attribution
-   *
-   * @see https://github.com/robbiehanson/CocoaHTTPServer/blob/master/LICENSE.txt
-   */
-  public static readonly BSD_SOURCE_CODE = new SpdxLicense('BSD-Source-Code');
-
-  /**
-   * feh License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/MIT#feh
-   */
-  public static readonly MIT_FEH = new SpdxLicense('MIT-feh');
-
-  /**
-   * Creative Commons Attribution 3.0 United States
-   *
-   * @see https://creativecommons.org/licenses/by/3.0/us/legalcode
-   */
-  public static readonly CC_BY_3_0_US = new SpdxLicense('CC-BY-3.0-US');
-
-  /**
-   * Hewlett-Packard 1986 License
-   *
-   * @see https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/machine/hppa/memchr.S;h=1cca3e5e8867aa4bffef1f75a5c1bba25c0c441e;hb=HEAD#l2
-   */
-  public static readonly HP_1986 = new SpdxLicense('HP-1986');
-
-  /**
-   * Educational Community License v1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/ECL-1.0
-   */
-  public static readonly ECL_1_0 = new SpdxLicense('ECL-1.0');
-
-  /**
-   * Creative Commons Attribution Non Commercial Share Alike 3.0 Unported
-   *
-   * @see https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
-   */
-  public static readonly CC_BY_NC_SA_3_0 = new SpdxLicense('CC-BY-NC-SA-3.0');
-
-  /**
-   * Mackerras 3-Clause License
-   *
-   * @see https://github.com/ppp-project/ppp/blob/master/pppd/chap_ms.c#L6-L28
-   */
-  public static readonly MACKERRAS_3_CLAUSE = new SpdxLicense('Mackerras-3-Clause');
-
-  /**
-   * Soundex License
-   *
-   * @see https://metacpan.org/release/RJBS/Text-Soundex-3.05/source/Soundex.pm#L3-11
-   */
-  public static readonly SOUNDEX = new SpdxLicense('Soundex');
-
-  /**
-   * MIT License Modern Variant
-   *
-   * @osiApproved
-   *
-   * @see https://fedoraproject.org/wiki/Licensing:MIT#Modern_Variants
-   */
-  public static readonly MIT_MODERN_VARIANT = new SpdxLicense('MIT-Modern-Variant');
-
-  /**
-   * University of Illinois/NCSA Open Source License
-   *
-   * @osiApproved
-   *
-   * @see http://otm.illinois.edu/uiuc_openSource
-   */
-  public static readonly NCSA = new SpdxLicense('NCSA');
-
-  /**
-   * BSD 4 Clause Shortened
-   *
-   * @see https://metadata.ftp-master.debian.org/changelogs//main/a/arpwatch/arpwatch_2.1a15-7_copyright
-   */
-  public static readonly BSD_4_CLAUSE_SHORTENED = new SpdxLicense('BSD-4-Clause-Shortened');
-
-  /**
-   * Creative Commons Attribution Non Commercial No Derivatives 3.0 Germany
-   *
-   * @see https://creativecommons.org/licenses/by-nc-nd/3.0/de/legalcode
-   */
-  public static readonly CC_BY_NC_ND_3_0_DE = new SpdxLicense('CC-BY-NC-ND-3.0-DE');
-
-  /**
-   * NICTA Public Software License, Version 1.0
-   *
-   * @see https://opensource.apple.com/source/mDNSResponder/mDNSResponder-320.10/mDNSPosix/nss_ReadMe.txt
-   */
-  public static readonly NICTA_1_0 = new SpdxLicense('NICTA-1.0');
-
-  /**
-   * NIST Public Domain Notice with license fallback
-   *
-   * @see https://github.com/usnistgov/jsip/blob/59700e6926cbe96c5cdae897d9a7d2656b42abe3/LICENSE
-   */
-  public static readonly NIST_PD_FALLBACK = new SpdxLicense('NIST-PD-fallback');
-
-  /**
-   * Beerware License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Beerware
-   */
-  public static readonly BEERWARE = new SpdxLicense('Beerware');
-
-  /**
-   * HPND sell variant with MIT disclaimer
-   *
-   * @see https://github.com/sigmavirus24/x11-ssh-askpass/blob/master/README
-   */
-  public static readonly HPND_SELL_VARIANT_MIT_DISCLAIMER = new SpdxLicense('HPND-sell-variant-MIT-disclaimer');
-
-  /**
-   * CeCILL-C Free Software License Agreement
-   *
-   * @see http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
-   */
-  public static readonly CECILL_C = new SpdxLicense('CECILL-C');
-
-  /**
-   * Creative Commons Attribution Non Commercial No Derivatives 2.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nc-nd/2.0/legalcode
-   */
-  public static readonly CC_BY_NC_ND_2_0 = new SpdxLicense('CC-BY-NC-ND-2.0');
-
-  /**
-   * GNU General Public License v2.0 w/GCC Runtime Library exception
-   *
-   * @see https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/libgcc1.c;h=762f5143fc6eed57b6797c82710f3538aa52b40b;hb=cb143a3ce4fb417c68f5fa2691a1b1b1053dfba9#l10
-   */
-  public static readonly GPL_2_0_WITH_GCC_EXCEPTION = new SpdxLicense('GPL-2.0-with-GCC-exception');
-
-  /**
-   * XPP License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/xpp
-   */
-  public static readonly XPP = new SpdxLicense('xpp');
-
-  /**
-   * BSD 2-Clause FreeBSD License
-   *
-   * @see http://www.freebsd.org/copyright/freebsd-license.html
-   */
-  public static readonly BSD_2_CLAUSE_FREEBSD = new SpdxLicense('BSD-2-Clause-FreeBSD');
-
-  /**
-   * Bahyph License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Bahyph
-   */
-  public static readonly BAHYPH = new SpdxLicense('Bahyph');
-
-  /**
-   * The Unlicense
-   *
-   * @osiApproved
-   *
-   * @see https://unlicense.org/
-   */
-  public static readonly UNLICENSE = new SpdxLicense('Unlicense');
-
-  /**
-   * Open LDAP Public License v2.0.1
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=b6d68acd14e51ca3aab4428bf26522aa74873f0e
-   */
-  public static readonly OLDAP_2_0_1 = new SpdxLicense('OLDAP-2.0.1');
-
-  /**
-   * CeCILL Free Software License Agreement v1.0
-   *
-   * @see http://www.cecill.info/licences/Licence_CeCILL_V1-fr.html
-   */
-  public static readonly CECILL_1_0 = new SpdxLicense('CECILL-1.0');
-
-  /**
-   * Net Boolean Public License v1
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=37b4b3f6cc4bf34e1d3dec61e69914b9819d8894
-   */
-  public static readonly NBPL_1_0 = new SpdxLicense('NBPL-1.0');
-
-  /**
-   * Lucida Bitmap Fonts License
-   *
-   * @see https://gitlab.freedesktop.org/xorg/font/bh-100dpi/-/blob/master/COPYING?ref_type=heads
-   */
-  public static readonly LUCIDA_BITMAP_FONTS = new SpdxLicense('Lucida-Bitmap-Fonts');
-
-  /**
-   * Standard ML of New Jersey License
-   *
-   * @see https://www.smlnj.org/license.html
-   */
-  public static readonly SMLNJ = new SpdxLicense('SMLNJ');
-
-  /**
-   * ASWF Digital Assets License version 1.0
-   *
-   * @see https://github.com/AcademySoftwareFoundation/foundation/blob/main/digital_assets/aswf_digital_assets_license_v1.0.txt
-   */
-  public static readonly ASWF_DIGITAL_ASSETS_1_0 = new SpdxLicense('ASWF-Digital-Assets-1.0');
-
-  /**
-   * Licence Libre du Québec – Réciprocité version 1.1
-   *
-   * @osiApproved
-   *
-   * @see https://www.forge.gouv.qc.ca/participez/licence-logicielle/licence-libre-du-quebec-liliq-en-francais/licence-libre-du-quebec-reciprocite-liliq-r-v1-1/
-   */
-  public static readonly LILIQ_R_1_1 = new SpdxLicense('LiLiQ-R-1.1');
-
-  /**
-   * No Limit Public License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/NLPL
-   */
-  public static readonly NLPL = new SpdxLicense('NLPL');
-
-  /**
-   * FSF All Permissive License (without Warranty)
-   *
-   * @see https://git.savannah.gnu.org/cgit/wget.git/tree/util/trunc.c?h=v1.21.3&id=40747a11e44ced5a8ac628a41f879ced3e2ebce9#n6
-   */
-  public static readonly FSFAP_NO_WARRANTY_DISCLAIMER = new SpdxLicense('FSFAP-no-warranty-disclaimer');
-
-  /**
-   * Graphics Gems License
-   *
-   * @see https://github.com/erich666/GraphicsGems/blob/master/LICENSE.md
-   */
-  public static readonly GRAPHICS_GEMS = new SpdxLicense('Graphics-Gems');
-
-  /**
-   * Creative Commons Attribution 2.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by/2.0/legalcode
-   */
-  public static readonly CC_BY_2_0 = new SpdxLicense('CC-BY-2.0');
-
-  /**
-   * Creative Commons Attribution Non Commercial No Derivatives 3.0 Unported
-   *
-   * @see https://creativecommons.org/licenses/by-nc-nd/3.0/legalcode
-   */
-  public static readonly CC_BY_NC_ND_3_0 = new SpdxLicense('CC-BY-NC-ND-3.0');
-
-  /**
-   * Net-SNMP License
-   *
-   * @see http://net-snmp.sourceforge.net/about/license.html
-   */
-  public static readonly NET_SNMP = new SpdxLicense('Net-SNMP');
-
-  /**
-   * Open Software License 3.0
-   *
-   * @osiApproved
-   *
-   * @see https://web.archive.org/web/20120101081418/http://rosenlaw.com:80/OSL3.0.htm
-   */
-  public static readonly OSL_3_0 = new SpdxLicense('OSL-3.0');
-
-  /**
-   * FreeBSD Documentation License
-   *
-   * @see https://www.freebsd.org/copyright/freebsd-doc-license/
-   */
-  public static readonly FREEBSD_DOC = new SpdxLicense('FreeBSD-DOC');
-
-  /**
-   * David M. Gay dtoa License
-   *
-   * @see https://github.com/SWI-Prolog/swipl-devel/blob/master/src/os/dtoa.c
-   */
-  public static readonly DTOA = new SpdxLicense('dtoa');
-
-  /**
-   * GNU Free Documentation License v1.2 only - no invariants
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
-   */
-  public static readonly GFDL_1_2_NO_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.2-no-invariants-only');
-
-  /**
-   * pnmstitch License
-   *
-   * @see https://sourceforge.net/p/netpbm/code/HEAD/tree/super_stable/editor/pnmstitch.c#l2
-   */
-  public static readonly PNMSTITCH = new SpdxLicense('pnmstitch');
-
-  /**
-   * Enlightenment License (e16)
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/MIT_With_Advertising
-   */
-  public static readonly MIT_ADVERTISING = new SpdxLicense('MIT-advertising');
-
-  /**
-   * BSD Zero Clause License
-   *
-   * @osiApproved
-   *
-   * @see http://landley.net/toybox/license.html
-   */
-  public static readonly ZERO_BSD = new SpdxLicense('0BSD');
-
-  /**
-   * Zope Public License 1.1
-   *
-   * @see http://old.zope.org/Resources/License/ZPL-1.1
-   */
-  public static readonly ZPL_1_1 = new SpdxLicense('ZPL-1.1');
-
-  /**
-   * SIL Open Font License 1.1 with Reserved Font Name
-   *
-   * @osiApproved
-   *
-   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web
-   */
-  public static readonly OFL_1_1_RFN = new SpdxLicense('OFL-1.1-RFN');
-
-  /**
-   * Sybase Open Watcom Public License 1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Watcom-1.0
-   */
-  public static readonly WATCOM_1_0 = new SpdxLicense('Watcom-1.0');
-
-  /**
-   * DOC License
-   *
-   * @see http://www.cs.wustl.edu/~schmidt/ACE-copying.html
-   */
-  public static readonly DOC = new SpdxLicense('DOC');
-
-  /**
-   * GNU Lesser General Public License v3.0 only
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/lgpl-3.0-standalone.html
-   */
-  public static readonly LGPL_3_0_ONLY = new SpdxLicense('LGPL-3.0-only');
-
-  /**
-   * ssh-keyscan License
-   *
-   * @see https://github.com/openssh/openssh-portable/blob/master/LICENCE#L82
+   * @see http://www.info-zip.org/license.html
    */
-  public static readonly SSH_KEYSCAN = new SpdxLicense('ssh-keyscan');
+  public static readonly INFO_ZIP = new SpdxLicense('Info-ZIP');
 
   /**
    * LaTeX Project Public License v1.3c
@@ -651,189 +97,11 @@ export class SpdxLicense {
   public static readonly LPPL_1_3C = new SpdxLicense('LPPL-1.3c');
 
   /**
-   * OGC Software License, Version 1.0
+   * zlib/libpng License with Acknowledgement
    *
-   * @see https://www.ogc.org/ogc/software/1.0
+   * @see https://fedoraproject.org/wiki/Licensing/ZlibWithAcknowledgement
    */
-  public static readonly OGC_1_0 = new SpdxLicense('OGC-1.0');
-
-  /**
-   * Entessa Public License v1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Entessa
-   */
-  public static readonly ENTESSA = new SpdxLicense('Entessa');
-
-  /**
-   * Upstream Compatibility License v1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/UCL-1.0
-   */
-  public static readonly UCL_1_0 = new SpdxLicense('UCL-1.0');
-
-  /**
-   * BSD 3-Clause Modification
-   *
-   * @see https://fedoraproject.org/wiki/Licensing:BSD#Modification_Variant
-   */
-  public static readonly BSD_3_CLAUSE_MODIFICATION = new SpdxLicense('BSD-3-Clause-Modification');
-
-  /**
-   * Independent JPEG Group License
-   *
-   * @see http://dev.w3.org/cvsweb/Amaya/libjpeg/Attic/README?rev=1.2
-   */
-  public static readonly IJG = new SpdxLicense('IJG');
-
-  /**
-   * SIL Open Font License 1.0
-   *
-   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL10_web
-   */
-  public static readonly OFL_1_0 = new SpdxLicense('OFL-1.0');
-
-  /**
-   * GD License
-   *
-   * @see https://libgd.github.io/manuals/2.3.0/files/license-txt.html
-   */
-  public static readonly GD = new SpdxLicense('GD');
-
-  /**
-   * Fair License
-   *
-   * @osiApproved
-   *
-   * @see https://web.archive.org/web/20150926120323/http://fairlicense.org/
-   */
-  public static readonly FAIR = new SpdxLicense('Fair');
-
-  /**
-   * NIST Software License
-   *
-   * @see https://github.com/open-quantum-safe/liboqs/blob/40b01fdbb270f8614fde30e65d30e9da18c02393/src/common/rand/rand_nist.c#L1-L15
-   */
-  public static readonly NIST_SOFTWARE = new SpdxLicense('NIST-Software');
-
-  /**
-   * SunPro License
-   *
-   * @see https://github.com/freebsd/freebsd-src/blob/main/lib/msun/src/e_acosh.c
-   */
-  public static readonly SUN_PRO = new SpdxLicense('SunPro');
-
-  /**
-   * FSF Unlimited License (with License Retention)
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/FSF_Unlimited_License#License_Retention_Variant
-   */
-  public static readonly FSFULLR = new SpdxLicense('FSFULLR');
-
-  /**
-   * GNU Free Documentation License v1.2
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
-   */
-  public static readonly GFDL_1_2 = new SpdxLicense('GFDL-1.2');
-
-  /**
-   * Technische Universitaet Berlin License 1.0
-   *
-   * @see https://github.com/swh/ladspa/blob/7bf6f3799fdba70fda297c2d8fd9f526803d9680/gsm/COPYRIGHT
-   */
-  public static readonly TU_BERLIN_1_0 = new SpdxLicense('TU-Berlin-1.0');
-
-  /**
-   * Creative Commons Attribution Non Commercial Share Alike 1.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nc-sa/1.0/legalcode
-   */
-  public static readonly CC_BY_NC_SA_1_0 = new SpdxLicense('CC-BY-NC-SA-1.0');
-
-  /**
-   * AMD's plpa_map.c License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/AMD_plpa_map_License
-   */
-  public static readonly AMDPLPA = new SpdxLicense('AMDPLPA');
-
-  /**
-   * GNU Free Documentation License v1.3 only - no invariants
-   *
-   * @see https://www.gnu.org/licenses/fdl-1.3.txt
-   */
-  public static readonly GFDL_1_3_NO_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.3-no-invariants-only');
-
-  /**
-   * eGenix.com Public License 1.1.0
-   *
-   * @see http://www.egenix.com/products/eGenix.com-Public-License-1.1.0.pdf
-   */
-  public static readonly E_GENIX = new SpdxLicense('eGenix');
-
-  /**
-   * Japan Network Information Center License
-   *
-   * @see https://gitlab.isc.org/isc-projects/bind9/blob/master/COPYRIGHT#L366
-   */
-  public static readonly JPNIC = new SpdxLicense('JPNIC');
-
-  /**
-   * Creative Commons Attribution Non Commercial 3.0 Unported
-   *
-   * @see https://creativecommons.org/licenses/by-nc/3.0/legalcode
-   */
-  public static readonly CC_BY_NC_3_0 = new SpdxLicense('CC-BY-NC-3.0');
-
-  /**
-   * Linux man-pages Copyleft Variant
-   *
-   * @see https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man2/set_mempolicy.2#n5
-   */
-  public static readonly LINUX_MAN_PAGES_COPYLEFT_VAR = new SpdxLicense('Linux-man-pages-copyleft-var');
-
-  /**
-   * Academic Free License v1.1
-   *
-   * @osiApproved
-   *
-   * @see http://opensource.linux-mirror.org/licenses/afl-1.1.txt
-   */
-  public static readonly AFL_1_1 = new SpdxLicense('AFL-1.1');
-
-  /**
-   * Historical Permission Notice and Disclaimer - University of California variant
-   *
-   * @see https://core.tcl-lang.org/tk/file?name=compat/unistd.h
-   */
-  public static readonly HPND_UC = new SpdxLicense('HPND-UC');
-
-  /**
-   * AdaCore Doc License
-   *
-   * @see https://github.com/AdaCore/xmlada/blob/master/docs/index.rst
-   */
-  public static readonly ADACORE_DOC = new SpdxLicense('AdaCore-doc');
-
-  /**
-   * GNU General Public License v3.0 or later
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/gpl-3.0-standalone.html
-   */
-  public static readonly GPL_3_0_OR_LATER = new SpdxLicense('GPL-3.0-or-later');
-
-  /**
-   * Creative Commons Attribution 3.0 Germany
-   *
-   * @see https://creativecommons.org/licenses/by/3.0/de/legalcode
-   */
-  public static readonly CC_BY_3_0_DE = new SpdxLicense('CC-BY-3.0-DE');
+  public static readonly ZLIB_ACKNOWLEDGEMENT = new SpdxLicense('zlib-acknowledgement');
 
   /**
    * Checkmk License
@@ -841,152 +109,6 @@ export class SpdxLicense {
    * @see https://github.com/libcheck/check/blob/master/checkmk/checkmk.in
    */
   public static readonly CHECKMK = new SpdxLicense('checkmk');
-
-  /**
-   * LaTeX Project Public License v1.0
-   *
-   * @see http://www.latex-project.org/lppl/lppl-1-0.txt
-   */
-  public static readonly LPPL_1_0 = new SpdxLicense('LPPL-1.0');
-
-  /**
-   * Borceux license
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Borceux
-   */
-  public static readonly BORCEUX = new SpdxLicense('Borceux');
-
-  /**
-   * mpi Permissive License
-   *
-   * @see https://sources.debian.org/src/openmpi/4.1.0-10/ompi/debuggers/msgq_interface.h/?hl=19#L19
-   */
-  public static readonly MPI_PERMISSIVE = new SpdxLicense('mpi-permissive');
-
-  /**
-   * Historical Permission Notice and Disclaimer - DEC variant
-   *
-   * @see https://gitlab.freedesktop.org/xorg/app/xkbcomp/-/blob/master/COPYING?ref_type=heads#L69
-   */
-  public static readonly HPND_DEC = new SpdxLicense('HPND-DEC');
-
-  /**
-   * Open Public License v1.0
-   *
-   * @see http://old.koalateam.com/jackaroo/OPL_1_0.TXT
-   */
-  public static readonly OPL_1_0 = new SpdxLicense('OPL-1.0');
-
-  /**
-   * GNU General Public License v2.0 w/Bison exception
-   *
-   * @see http://git.savannah.gnu.org/cgit/bison.git/tree/data/yacc.c?id=193d7c7054ba7197b0789e14965b739162319b5e#n141
-   */
-  public static readonly GPL_2_0_WITH_BISON_EXCEPTION = new SpdxLicense('GPL-2.0-with-bison-exception');
-
-  /**
-   * Open Use of Data Agreement v1.0
-   *
-   * @see https://github.com/microsoft/Open-Use-of-Data-Agreement/blob/v1.0/O-UDA-1.0.md
-   */
-  public static readonly O_UDA_1_0 = new SpdxLicense('O-UDA-1.0');
-
-  /**
-   * NetCDF license
-   *
-   * @see http://www.unidata.ucar.edu/software/netcdf/copyright.html
-   */
-  public static readonly NET_CD_F = new SpdxLicense('NetCDF');
-
-  /**
-   * Open LDAP Public License v1.4
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=c9f95c2f3f2ffb5e0ae55fe7388af75547660941
-   */
-  public static readonly OLDAP_1_4 = new SpdxLicense('OLDAP-1.4');
-
-  /**
-   * GNU General Public License v3.0 w/Autoconf exception
-   *
-   * @see https://www.gnu.org/licenses/autoconf-exception-3.0.html
-   */
-  public static readonly GPL_3_0_WITH_AUTOCONF_EXCEPTION = new SpdxLicense('GPL-3.0-with-autoconf-exception');
-
-  /**
-   * Creative Commons Attribution 4.0 International
-   *
-   * @see https://creativecommons.org/licenses/by/4.0/legalcode
-   */
-  public static readonly CC_BY_4_0 = new SpdxLicense('CC-BY-4.0');
-
-  /**
-   * App::s2p License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/App-s2p
-   */
-  public static readonly APP_S2P = new SpdxLicense('App-s2p');
-
-  /**
-   * MIT License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/license/mit/
-   */
-  public static readonly MIT = new SpdxLicense('MIT');
-
-  /**
-   * X.Net License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Xnet
-   */
-  public static readonly XNET = new SpdxLicense('Xnet');
-
-  /**
-   * Cube License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Cube
-   */
-  public static readonly CUBE = new SpdxLicense('Cube');
-
-  /**
-   * BSD with attribution
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/BSD_with_Attribution
-   */
-  public static readonly BSD_3_CLAUSE_ATTRIBUTION = new SpdxLicense('BSD-3-Clause-Attribution');
-
-  /**
-   * Nokia Open Source License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/nokia
-   */
-  public static readonly NOKIA = new SpdxLicense('Nokia');
-
-  /**
-   * enna License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/MIT#enna
-   */
-  public static readonly MIT_ENNA = new SpdxLicense('MIT-enna');
-
-  /**
-   * Creative Commons Attribution 3.0 Netherlands
-   *
-   * @see https://creativecommons.org/licenses/by/3.0/nl/legalcode
-   */
-  public static readonly CC_BY_3_0_NL = new SpdxLicense('CC-BY-3.0-NL');
-
-  /**
-   * FreeImage Public License v1.0
-   *
-   * @see http://freeimage.sourceforge.net/freeimage-license.txt
-   */
-  public static readonly FREE_IMAGE = new SpdxLicense('FreeImage');
 
   /**
    * Open LDAP Public License v2.8
@@ -998,219 +120,27 @@ export class SpdxLicense {
   public static readonly OLDAP_2_8 = new SpdxLicense('OLDAP-2.8');
 
   /**
-   * ANTLR Software Rights Notice with license fallback
+   * Common Vulnerability Enumeration ToU License
    *
-   * @see http://www.antlr2.org/license.html
+   * @see https://www.cve.org/Legal/TermsOfUse
    */
-  public static readonly ANTLR_PD_FALLBACK = new SpdxLicense('ANTLR-PD-fallback');
+  public static readonly CVE_TOU = new SpdxLicense('cve-tou');
 
   /**
-   * THOR Public License 1.0
-   *
-   * @see https://fedoraproject.org/wiki/Licensing:ThorPublicLicense
-   */
-  public static readonly TPL_1_0 = new SpdxLicense('TPL-1.0');
-
-  /**
-   * Lesser General Public License For Linguistic Resources
-   *
-   * @see http://www-igm.univ-mlv.fr/~unitex/lgpllr.html
-   */
-  public static readonly LGPLLR = new SpdxLicense('LGPLLR');
-
-  /**
-   * Info-ZIP License
-   *
-   * @see http://www.info-zip.org/license.html
-   */
-  public static readonly INFO_ZIP = new SpdxLicense('Info-ZIP');
-
-  /**
-   * Unicode License Agreement - Data Files and Software (2015)
-   *
-   * @see https://web.archive.org/web/20151224134844/http://unicode.org/copyright.html
-   */
-  public static readonly UNICODE_DFS_2015 = new SpdxLicense('Unicode-DFS-2015');
-
-  /**
-   * Haskell Language Report License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Haskell_Language_Report_License
-   */
-  public static readonly HASKELL_REPORT = new SpdxLicense('HaskellReport');
-
-  /**
-   * Creative Commons Attribution-ShareAlike 3.0 IGO
-   *
-   * @see https://creativecommons.org/licenses/by-sa/3.0/igo/legalcode
-   */
-  public static readonly CC_BY_SA_3_0_IGO = new SpdxLicense('CC-BY-SA-3.0-IGO');
-
-  /**
-   * libpng License
-   *
-   * @see http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
-   */
-  public static readonly LIBPNG = new SpdxLicense('Libpng');
-
-  /**
-   * Open Data Commons Attribution License v1.0
-   *
-   * @see https://opendatacommons.org/licenses/by/1.0/
-   */
-  public static readonly ODC_BY_1_0 = new SpdxLicense('ODC-By-1.0');
-
-  /**
-   * Open Government Licence v3.0
-   *
-   * @see http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
-   */
-  public static readonly OGL_UK_3_0 = new SpdxLicense('OGL-UK-3.0');
-
-  /**
-   * Eclipse Public License 2.0
+   * The MirOS Licence
    *
    * @osiApproved
    *
-   * @see https://www.eclipse.org/legal/epl-2.0
+   * @see https://opensource.org/licenses/MirOS
    */
-  public static readonly EPL_2_0 = new SpdxLicense('EPL-2.0');
+  public static readonly MIR_O_S = new SpdxLicense('MirOS');
 
   /**
-   * GNU General Public License v2.0 w/Classpath exception
+   * The Parity Public License 6.0.0
    *
-   * @see https://www.gnu.org/software/classpath/license.html
+   * @see https://paritylicense.com/versions/6.0.0.html
    */
-  public static readonly GPL_2_0_WITH_CLASSPATH_EXCEPTION = new SpdxLicense('GPL-2.0-with-classpath-exception');
-
-  /**
-   * PADL License
-   *
-   * @see https://git.openldap.org/openldap/openldap/-/blob/master/libraries/libldap/os-local.c?ref_type=heads#L19-23
-   */
-  public static readonly PADL = new SpdxLicense('PADL');
-
-  /**
-   * psutils License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/psutils
-   */
-  public static readonly PSUTILS = new SpdxLicense('psutils');
-
-  /**
-   * Apple Public Source License 2.0
-   *
-   * @osiApproved
-   *
-   * @see http://www.opensource.apple.com/license/apsl/
-   */
-  public static readonly APSL_2_0 = new SpdxLicense('APSL-2.0');
-
-  /**
-   * Dotseqn License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Dotseqn
-   */
-  public static readonly DOTSEQN = new SpdxLicense('Dotseqn');
-
-  /**
-   * SIL Open Font License 1.0 with no Reserved Font Name
-   *
-   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL10_web
-   */
-  public static readonly OFL_1_0_NO_RFN = new SpdxLicense('OFL-1.0-no-RFN');
-
-  /**
-   * psfrag License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/psfrag
-   */
-  public static readonly PSFRAG = new SpdxLicense('psfrag');
-
-  /**
-   * CFITSIO License
-   *
-   * @see https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/f_user/node9.html
-   */
-  public static readonly CFITSIO = new SpdxLicense('CFITSIO');
-
-  /**
-   * Frameworx Open License 1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Frameworx-1.0
-   */
-  public static readonly FRAMEWORX_1_0 = new SpdxLicense('Frameworx-1.0');
-
-  /**
-   * ICU License
-   *
-   * @osiApproved
-   *
-   * @see http://source.icu-project.org/repos/icu/icu/trunk/license.html
-   */
-  public static readonly ICU = new SpdxLicense('ICU');
-
-  /**
-   * Common Development and Distribution License 1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/cddl1
-   */
-  public static readonly CDDL_1_0 = new SpdxLicense('CDDL-1.0');
-
-  /**
-   * Gnome GCR Documentation License
-   *
-   * @see https://github.com/GNOME/gcr/blob/master/docs/COPYING
-   */
-  public static readonly GCR_DOCS = new SpdxLicense('GCR-docs');
-
-  /**
-   * Server Side Public License, v 1
-   *
-   * @see https://www.mongodb.com/licensing/server-side-public-license
-   */
-  public static readonly SSPL_1_0 = new SpdxLicense('SSPL-1.0');
-
-  /**
-   * lsof License
-   *
-   * @see https://github.com/lsof-org/lsof/blob/master/COPYING
-   */
-  public static readonly LSOF = new SpdxLicense('lsof');
-
-  /**
-   * Cryptographic Autonomy License 1.0 (Combined Work Exception)
-   *
-   * @osiApproved
-   *
-   * @see http://cryptographicautonomylicense.com/license-text.html
-   */
-  public static readonly CAL_1_0_COMBINED_WORK_EXCEPTION = new SpdxLicense('CAL-1.0-Combined-Work-Exception');
-
-  /**
-   * snprintf License
-   *
-   * @see https://github.com/openssh/openssh-portable/blob/master/openbsd-compat/bsd-snprintf.c#L2
-   */
-  public static readonly SNPRINTF = new SpdxLicense('snprintf');
-
-  /**
-   * mplus Font License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing:Mplus?rd=Licensing/mplus
-   */
-  public static readonly MPLUS = new SpdxLicense('mplus');
-
-  /**
-   * BitTorrent Open Source License v1.1
-   *
-   * @see http://directory.fsf.org/wiki/License:BitTorrentOSL1.1
-   */
-  public static readonly BITTORRENT_1_1 = new SpdxLicense('BitTorrent-1.1');
+  public static readonly PARITY_6_0_0 = new SpdxLicense('Parity-6.0.0');
 
   /**
    * Creative Commons Attribution Share Alike 2.1 Japan
@@ -1220,156 +150,48 @@ export class SpdxLicense {
   public static readonly CC_BY_SA_2_1_JP = new SpdxLicense('CC-BY-SA-2.1-JP');
 
   /**
-   * SIL Open Font License 1.1
+   * Inno Setup License
+   *
+   * @see https://github.com/jrsoftware/issrc/blob/HEAD/license.txt
+   */
+  public static readonly INNO_SETUP = new SpdxLicense('InnoSetup');
+
+  /**
+   * IBM Public License v1.0
    *
    * @osiApproved
    *
-   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web
+   * @see https://opensource.org/licenses/IPL-1.0
    */
-  public static readonly OFL_1_1 = new SpdxLicense('OFL-1.1');
+  public static readonly IPL_1_0 = new SpdxLicense('IPL-1.0');
 
   /**
-   * mpich2 License
+   * Spencer License 86
    *
-   * @see https://fedoraproject.org/wiki/Licensing/MIT
+   * @see https://fedoraproject.org/wiki/Licensing/Henry_Spencer_Reg-Ex_Library_License
    */
-  public static readonly MPICH2 = new SpdxLicense('mpich2');
+  public static readonly SPENCER_86 = new SpdxLicense('Spencer-86');
 
   /**
-   * Universal Permissive License v1.0
+   * Japan Network Information Center License
    *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/UPL
+   * @see https://gitlab.isc.org/isc-projects/bind9/blob/master/COPYRIGHT#L366
    */
-  public static readonly UPL_1_0 = new SpdxLicense('UPL-1.0');
+  public static readonly JPNIC = new SpdxLicense('JPNIC');
 
   /**
-   * bcrypt Solar Designer License
+   * OpenVision License
    *
-   * @see https://github.com/bcrypt-ruby/bcrypt-ruby/blob/master/ext/mri/crypt_blowfish.c
+   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L66-L98
    */
-  public static readonly BCRYPT_SOLAR_DESIGNER = new SpdxLicense('bcrypt-Solar-Designer');
+  public static readonly OPEN_VISION = new SpdxLicense('OpenVision');
 
   /**
-   * Clips License
+   * SGP4 Permission Notice
    *
-   * @see https://github.com/DrItanium/maya/blob/master/LICENSE.CLIPS
+   * @see https://celestrak.org/publications/AIAA/2006-6753/faq.php
    */
-  public static readonly CLIPS = new SpdxLicense('Clips');
-
-  /**
-   * RealNetworks Public Source License v1.0
-   *
-   * @osiApproved
-   *
-   * @see https://helixcommunity.org/content/rpsl
-   */
-  public static readonly RPSL_1_0 = new SpdxLicense('RPSL-1.0');
-
-  /**
-   * Sax Public Domain Notice
-   *
-   * @see http://www.saxproject.org/copying.html
-   */
-  public static readonly SAX_PD = new SpdxLicense('SAX-PD');
-
-  /**
-   * Yahoo! Public License v1.1
-   *
-   * @see http://www.zimbra.com/license/yahoo_public_license_1.1.html
-   */
-  public static readonly YPL_1_1 = new SpdxLicense('YPL-1.1');
-
-  /**
-   * Xfig License
-   *
-   * @see https://github.com/Distrotech/transfig/blob/master/transfig/transfig.c
-   */
-  public static readonly XFIG = new SpdxLicense('Xfig');
-
-  /**
-   * Afmparse License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Afmparse
-   */
-  public static readonly AFMPARSE = new SpdxLicense('Afmparse');
-
-  /**
-   * eCos license version 2.0
-   *
-   * @see https://www.gnu.org/licenses/ecos-license.html
-   */
-  public static readonly ECOS_2_0 = new SpdxLicense('eCos-2.0');
-
-  /**
-   * CeCILL Free Software License Agreement v2.1
-   *
-   * @osiApproved
-   *
-   * @see http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
-   */
-  public static readonly CECILL_2_1 = new SpdxLicense('CECILL-2.1');
-
-  /**
-   * Open LDAP Public License v2.2
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=470b0c18ec67621c85881b2733057fecf4a1acc3
-   */
-  public static readonly OLDAP_2_2 = new SpdxLicense('OLDAP-2.2');
-
-  /**
-   * Code Project Open License 1.02
-   *
-   * @see http://www.codeproject.com/info/cpol10.aspx
-   */
-  public static readonly CPOL_1_02 = new SpdxLicense('CPOL-1.02');
-
-  /**
-   * Zeeff License
-   *
-   * @see ftp://ftp.tin.org/pub/news/utils/newsx/newsx-1.6.tar.gz
-   */
-  public static readonly ZEEFF = new SpdxLicense('Zeeff');
-
-  /**
-   * Open LDAP Public License v2.7
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=47c2415c1df81556eeb39be6cad458ef87c534a2
-   */
-  public static readonly OLDAP_2_7 = new SpdxLicense('OLDAP-2.7');
-
-  /**
-   * Minpack License
-   *
-   * @see http://www.netlib.org/minpack/disclaimer
-   */
-  public static readonly MINPACK = new SpdxLicense('Minpack');
-
-  /**
-   * GNU Lesser General Public License v2.1 only
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
-   */
-  public static readonly LGPL_2_1_ONLY = new SpdxLicense('LGPL-2.1-only');
-
-  /**
-   * Common Public License 1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/CPL-1.0
-   */
-  public static readonly CPL_1_0 = new SpdxLicense('CPL-1.0');
-
-  /**
-   * Licence Art Libre 1.3
-   *
-   * @see https://artlibre.org/
-   */
-  public static readonly LAL_1_3 = new SpdxLicense('LAL-1.3');
+  public static readonly SGP4 = new SpdxLicense('SGP4');
 
   /**
    * Mozilla Public License 1.1
@@ -1381,368 +203,261 @@ export class SpdxLicense {
   public static readonly MPL_1_1 = new SpdxLicense('MPL-1.1');
 
   /**
-   * Historical Permission Notice and Disclaimer - documentation sell variant
+   * BSD 3-Clause Clear License
    *
-   * @see https://gitlab.freedesktop.org/xorg/lib/libxtst/-/blob/master/COPYING?ref_type=heads#L108-117
+   * @see http://labs.metacarta.com/license-explanation.html#license
    */
-  public static readonly HPND_DOC_SELL = new SpdxLicense('HPND-doc-sell');
+  public static readonly BSD_3_CLAUSE_CLEAR = new SpdxLicense('BSD-3-Clause-Clear');
 
   /**
-   * Zimbra Public License v1.4
+   * AML glslang variant License
    *
-   * @see http://www.zimbra.com/legal/zimbra-public-license-1-4
+   * @see https://github.com/KhronosGroup/glslang/blob/main/LICENSE.txt#L949
    */
-  public static readonly ZIMBRA_1_4 = new SpdxLicense('Zimbra-1.4');
+  public static readonly AML_GLSLANG = new SpdxLicense('AML-glslang');
 
   /**
-   * NTP No Attribution
+   * Vim License
    *
-   * @see https://github.com/tytso/e2fsprogs/blob/master/lib/et/et_name.c
+   * @see http://vimdoc.sourceforge.net/htmldoc/uganda.html
    */
-  public static readonly NTP_0 = new SpdxLicense('NTP-0');
+  public static readonly VIM = new SpdxLicense('Vim');
 
   /**
-   * Intel Open Source License
+   * Community Specification License 1.0
+   *
+   * @see https://github.com/CommunitySpecification/1.0/blob/master/1._Community_Specification_License-v1.md
+   */
+  public static readonly COMMUNITY_SPEC_1_0 = new SpdxLicense('Community-Spec-1.0');
+
+  /**
+   * Open Software License 3.0
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/Intel
+   * @see https://web.archive.org/web/20120101081418/http://rosenlaw.com:80/OSL3.0.htm
    */
-  public static readonly INTEL = new SpdxLicense('Intel');
+  public static readonly OSL_3_0 = new SpdxLicense('OSL-3.0');
 
   /**
-   * Linux man-pages - 1 paragraph
+   * CrystalStacker License
    *
-   * @see https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man2/getcpu.2#n4
+   * @see https://fedoraproject.org/wiki/Licensing:CrystalStacker?rd=Licensing/CrystalStacker
    */
-  public static readonly LINUX_MAN_PAGES_1_PARA = new SpdxLicense('Linux-man-pages-1-para');
+  public static readonly CRYSTAL_STACKER = new SpdxLicense('CrystalStacker');
 
   /**
-   * Hewlett-Packard BSD variant license
-   *
-   * @see https://github.com/zdohnal/hplip/blob/master/COPYING#L939
-   */
-  public static readonly BSD_3_CLAUSE_HP = new SpdxLicense('BSD-3-Clause-HP');
-
-  /**
-   * SL License
-   *
-   * @see https://github.com/mtoyoda/sl/blob/master/LICENSE
-   */
-  public static readonly SL = new SpdxLicense('SL');
-
-  /**
-   * EU DataGrid Software License
+   * Mozilla Public License 1.0
    *
    * @osiApproved
    *
-   * @see http://eu-datagrid.web.cern.ch/eu-datagrid/license.html
+   * @see http://www.mozilla.org/MPL/MPL-1.0.html
    */
-  public static readonly EUDATAGRID = new SpdxLicense('EUDatagrid');
+  public static readonly MPL_1_0 = new SpdxLicense('MPL-1.0');
 
   /**
-   * BSD 3-Clause No Nuclear License
+   * Open LDAP Public License v1.2
    *
-   * @see http://download.oracle.com/otn-pub/java/licenses/bsd.txt?AuthParam=1467140197_43d516ce1776bd08a58235a7785be1cc
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=42b0383c50c299977b5893ee695cf4e486fb0dc7
    */
-  public static readonly BSD_3_CLAUSE_NO_NUCLEAR_LICENSE = new SpdxLicense('BSD-3-Clause-No-Nuclear-License');
+  public static readonly OLDAP_1_2 = new SpdxLicense('OLDAP-1.2');
 
   /**
-   * Secure Messaging Protocol Public License
+   * Sendmail License 8.23
    *
-   * @see https://github.com/dcblake/SMP/blob/master/Documentation/License.txt
+   * @see https://www.proofpoint.com/sites/default/files/sendmail-license.pdf
    */
-  public static readonly SMPPL = new SpdxLicense('SMPPL');
+  public static readonly SENDMAIL_8_23 = new SpdxLicense('Sendmail-8.23');
 
   /**
-   * TCP Wrappers License
+   * CMU Mach License
    *
-   * @see http://rc.quest.com/topics/openssh/license.php#tcpwrappers
+   * @see https://www.cs.cmu.edu/~410/licenses.html
    */
-  public static readonly TCP_WRAPPERS = new SpdxLicense('TCP-wrappers');
+  public static readonly CMU_MACH = new SpdxLicense('CMU-Mach');
 
   /**
-   * GNU Free Documentation License v1.1
+   * XPP License
    *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   * @see https://fedoraproject.org/wiki/Licensing/xpp
    */
-  public static readonly GFDL_1_1 = new SpdxLicense('GFDL-1.1');
+  public static readonly XPP = new SpdxLicense('xpp');
 
   /**
-   * GNU Free Documentation License v1.1 or later
+   * GNU General Public License v2.0 w/Bison exception
    *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   * @see http://git.savannah.gnu.org/cgit/bison.git/tree/data/yacc.c?id=193d7c7054ba7197b0789e14965b739162319b5e#n141
    */
-  public static readonly GFDL_1_1_OR_LATER = new SpdxLicense('GFDL-1.1-or-later');
+  public static readonly GPL_2_0_WITH_BISON_EXCEPTION = new SpdxLicense('GPL-2.0-with-bison-exception');
 
   /**
-   * Creative Commons Attribution Share Alike 2.0 England and Wales
-   *
-   * @see https://creativecommons.org/licenses/by-sa/2.0/uk/legalcode
-   */
-  public static readonly CC_BY_SA_2_0_UK = new SpdxLicense('CC-BY-SA-2.0-UK');
-
-  /**
-   * Xdebug License v 1.03
-   *
-   * @see https://github.com/xdebug/xdebug/blob/master/LICENSE
-   */
-  public static readonly XDEBUG_1_03 = new SpdxLicense('Xdebug-1.03');
-
-  /**
-   * Microsoft Limited Public License
-   *
-   * @see https://www.openhub.net/licenses/mslpl
-   */
-  public static readonly MS_LPL = new SpdxLicense('MS-LPL');
-
-  /**
-   * BSD-2-Clause Plus Patent License
+   * Educational Community License v1.0
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/BSDplusPatent
+   * @see https://opensource.org/licenses/ECL-1.0
    */
-  public static readonly BSD_2_CLAUSE_PATENT = new SpdxLicense('BSD-2-Clause-Patent');
+  public static readonly ECL_1_0 = new SpdxLicense('ECL-1.0');
 
   /**
-   * GNU General Public License v3.0 or later
+   * Plexus Classworlds License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Plexus_Classworlds_License
+   */
+  public static readonly PLEXUS = new SpdxLicense('Plexus');
+
+  /**
+   * Elastic License 2.0
+   *
+   * @see https://www.elastic.co/licensing/elastic-license
+   */
+  public static readonly ELASTIC_2_0 = new SpdxLicense('Elastic-2.0');
+
+  /**
+   * Common Public License 1.0
    *
    * @osiApproved
    *
-   * @see https://www.gnu.org/licenses/gpl-3.0-standalone.html
+   * @see https://opensource.org/licenses/CPL-1.0
    */
-  public static readonly GPL_3_0_PLUS = new SpdxLicense('GPL-3.0+');
+  public static readonly CPL_1_0 = new SpdxLicense('CPL-1.0');
 
   /**
-   * MPEG Software Simulation
+   * GNU Free Documentation License v1.2 only - no invariants
    *
-   * @see https://sourceforge.net/p/netpbm/code/HEAD/tree/super_stable/converter/ppm/ppmtompeg/jrevdct.c#l1189
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
    */
-  public static readonly MPEG_SSG = new SpdxLicense('MPEG-SSG');
+  public static readonly GFDL_1_2_NO_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.2-no-invariants-only');
 
   /**
-   * CNRI Jython License
+   * Open Public License v1.0
    *
-   * @see http://www.jython.org/license.html
+   * @see http://old.koalateam.com/jackaroo/OPL_1_0.TXT
    */
-  public static readonly CNRI_JYTHON = new SpdxLicense('CNRI-Jython');
+  public static readonly OPL_1_0 = new SpdxLicense('OPL-1.0');
 
   /**
-   * Historical Permission Notice and Disclaimer - Pbmplus variant
+   * Creative Commons Attribution Share Alike 4.0 International
    *
-   * @see https://sourceforge.net/p/netpbm/code/HEAD/tree/super_stable/netpbm.c#l8
+   * @see https://creativecommons.org/licenses/by-sa/4.0/legalcode
    */
-  public static readonly HPND_PBMPLUS = new SpdxLicense('HPND-Pbmplus');
+  public static readonly CC_BY_SA_4_0 = new SpdxLicense('CC-BY-SA-4.0');
 
   /**
-   * Creative Commons Attribution Non Commercial Share Alike 3.0 IGO
+   * Amazon Digital Services License
    *
-   * @see https://creativecommons.org/licenses/by-nc-sa/3.0/igo/legalcode
+   * @see https://fedoraproject.org/wiki/Licensing/AmazonDigitalServicesLicense
    */
-  public static readonly CC_BY_NC_SA_3_0_IGO = new SpdxLicense('CC-BY-NC-SA-3.0-IGO');
+  public static readonly ADSL = new SpdxLicense('ADSL');
 
   /**
-   * bzip2 and libbzip2 License v1.0.6
+   * SGI Free Software License B v1.1
    *
-   * @see https://sourceware.org/git/?p=bzip2.git;a=blob;f=LICENSE;hb=bzip2-1.0.6
+   * @see http://oss.sgi.com/projects/FreeB/
    */
-  public static readonly BZIP2_1_0_6 = new SpdxLicense('bzip2-1.0.6');
+  public static readonly SGI_B_1_1 = new SpdxLicense('SGI-B-1.1');
 
   /**
-   * TTYP0 License
+   * XFree86 License 1.1
    *
-   * @see https://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/
+   * @see http://www.xfree86.org/current/LICENSE4.html
    */
-  public static readonly TTYP0 = new SpdxLicense('TTYP0');
+  public static readonly XFREE86_1_1 = new SpdxLicense('XFree86-1.1');
 
   /**
-   * Transitive Grace Period Public Licence 1.0
+   * Latex2e with translated notice permission
    *
-   * @see https://fedoraproject.org/wiki/Licensing/TGPPL
+   * @see https://git.savannah.gnu.org/cgit/indent.git/tree/doc/indent.texi?id=a74c6b4ee49397cf330b333da1042bffa60ed14f#n74
    */
-  public static readonly TGPPL_1_0 = new SpdxLicense('TGPPL-1.0');
+  public static readonly LATEX2E_TRANSLATED_NOTICE = new SpdxLicense('Latex2e-translated-notice');
 
   /**
-   * NIST Public Domain Notice
-   *
-   * @see https://github.com/tcheneau/simpleRPL/blob/e645e69e38dd4e3ccfeceb2db8cba05b7c2e0cd3/LICENSE.txt
-   */
-  public static readonly NIST_PD = new SpdxLicense('NIST-PD');
-
-  /**
-   * Netscape Public License v1.0
-   *
-   * @see http://www.mozilla.org/MPL/NPL/1.0/
-   */
-  public static readonly NPL_1_0 = new SpdxLicense('NPL-1.0');
-
-  /**
-   * SNIA Public License 1.1
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/SNIA_Public_License
-   */
-  public static readonly SNIA = new SpdxLicense('SNIA');
-
-  /**
-   * PNG Reference Library version 2
-   *
-   * @see http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
-   */
-  public static readonly LIBPNG_2_0 = new SpdxLicense('libpng-2.0');
-
-  /**
-   * Creative Commons Attribution Non Commercial No Derivatives 3.0 IGO
-   *
-   * @see https://creativecommons.org/licenses/by-nc-nd/3.0/igo/legalcode
-   */
-  public static readonly CC_BY_NC_ND_3_0_IGO = new SpdxLicense('CC-BY-NC-ND-3.0-IGO');
-
-  /**
-   * Open Group Test Suite License
+   * IPA Font License
    *
    * @osiApproved
    *
-   * @see http://www.opengroup.org/testing/downloads/The_Open_Group_TSL.txt
+   * @see https://opensource.org/licenses/IPA
    */
-  public static readonly OGTSL = new SpdxLicense('OGTSL');
+  public static readonly IPA = new SpdxLicense('IPA');
 
   /**
-   * 3dfx Glide License
+   * psutils License
    *
-   * @see http://www.users.on.net/~triforce/glidexp/COPYING.txt
+   * @see https://fedoraproject.org/wiki/Licensing/psutils
    */
-  public static readonly GLIDE = new SpdxLicense('Glide');
+  public static readonly PSUTILS = new SpdxLicense('psutils');
 
   /**
-   * BSD 3-Clause No Military License
+   * Creative Commons Attribution Non Commercial No Derivatives 3.0 Unported
    *
-   * @see https://gitlab.syncad.com/hive/dhive/-/blob/master/LICENSE
+   * @see https://creativecommons.org/licenses/by-nc-nd/3.0/legalcode
    */
-  public static readonly BSD_3_CLAUSE_NO_MILITARY_LICENSE = new SpdxLicense('BSD-3-Clause-No-Military-License');
+  public static readonly CC_BY_NC_ND_3_0 = new SpdxLicense('CC-BY-NC-ND-3.0');
 
   /**
-   * Norwegian Licence for Open Government Data (NLOD) 1.0
+   * FSF Unlimited License (with License Retention)
    *
-   * @see http://data.norge.no/nlod/en/1.0
+   * @see https://fedoraproject.org/wiki/Licensing/FSF_Unlimited_License#License_Retention_Variant
    */
-  public static readonly NLOD_1_0 = new SpdxLicense('NLOD-1.0');
+  public static readonly FSFULLR = new SpdxLicense('FSFULLR');
 
   /**
-   * CNRI Python License
+   * SSLeay License - standalone
+   *
+   * @see https://www.tq-group.com/filedownloads/files/software-license-conditions/OriginalSSLeay/OriginalSSLeay.pdf
+   */
+  public static readonly SSLEAY_STANDALONE = new SpdxLicense('SSLeay-standalone');
+
+  /**
+   * MMIXware License
+   *
+   * @see https://gitlab.lrz.de/mmix/mmixware/-/blob/master/boilerplate.w
+   */
+  public static readonly MMIXWARE = new SpdxLicense('MMIXware');
+
+  /**
+   * Graphics Gems License
+   *
+   * @see https://github.com/erich666/GraphicsGems/blob/master/LICENSE.md
+   */
+  public static readonly GRAPHICS_GEMS = new SpdxLicense('Graphics-Gems');
+
+  /**
+   * HPND with US Government export control warning and acknowledgment
+   *
+   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L831-L852
+   */
+  public static readonly HPND_EXPORT_US_ACKNOWLEDGEMENT = new SpdxLicense('HPND-export-US-acknowledgement');
+
+  /**
+   * Creative Commons Attribution Non Commercial 2.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nc/2.0/legalcode
+   */
+  public static readonly CC_BY_NC_2_0 = new SpdxLicense('CC-BY-NC-2.0');
+
+  /**
+   * Open LDAP Public License v1.3
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=e5f8117f0ce088d0bd7a8e18ddf37eaa40eb09b1
+   */
+  public static readonly OLDAP_1_3 = new SpdxLicense('OLDAP-1.3');
+
+  /**
+   * GNU Lesser General Public License v2.1 only
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/CNRI-Python
+   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
    */
-  public static readonly CNRI_PYTHON = new SpdxLicense('CNRI-Python');
+  public static readonly LGPL_2_1_ONLY = new SpdxLicense('LGPL-2.1-only');
 
   /**
-   * JSON License
+   * Norwegian Licence for Open Government Data (NLOD) 2.0
    *
-   * @see http://www.json.org/license.html
+   * @see http://data.norge.no/nlod/en/2.0
    */
-  public static readonly JSON = new SpdxLicense('JSON');
-
-  /**
-   * Academic Free License v2.1
-   *
-   * @osiApproved
-   *
-   * @see http://opensource.linux-mirror.org/licenses/afl-2.1.txt
-   */
-  public static readonly AFL_2_1 = new SpdxLicense('AFL-2.1');
-
-  /**
-   * Naumen Public License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Naumen
-   */
-  public static readonly NAUMEN = new SpdxLicense('Naumen');
-
-  /**
-   * Artistic License 2.0
-   *
-   * @osiApproved
-   *
-   * @see http://www.perlfoundation.org/artistic_license_2_0
-   */
-  public static readonly ARTISTIC_2_0 = new SpdxLicense('Artistic-2.0');
-
-  /**
-   * Common Public Attribution License 1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/CPAL-1.0
-   */
-  public static readonly CPAL_1_0 = new SpdxLicense('CPAL-1.0');
-
-  /**
-   * Educational Community License v2.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/ECL-2.0
-   */
-  public static readonly ECL_2_0 = new SpdxLicense('ECL-2.0');
-
-  /**
-   * mailprio License
-   *
-   * @see https://fossies.org/linux/sendmail/contrib/mailprio
-   */
-  public static readonly MAILPRIO = new SpdxLicense('mailprio');
-
-  /**
-   * Adaptive Public License 1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/APL-1.0
-   */
-  public static readonly APL_1_0 = new SpdxLicense('APL-1.0');
-
-  /**
-   * Fuzzy Bitmap License
-   *
-   * @see https://github.com/SWI-Prolog/packages-xpce/blob/161a40cd82004f731ba48024f9d30af388a7edf5/src/img/gifwrite.c#L21-L26
-   */
-  public static readonly FBM = new SpdxLicense('FBM');
-
-  /**
-   * GNU Affero General Public License v3.0 or later
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/agpl.txt
-   */
-  public static readonly AGPL_3_0_OR_LATER = new SpdxLicense('AGPL-3.0-or-later');
-
-  /**
-   * Eclipse Public License 1.0
-   *
-   * @osiApproved
-   *
-   * @see http://www.eclipse.org/legal/epl-v10.html
-   */
-  public static readonly EPL_1_0 = new SpdxLicense('EPL-1.0');
-
-  /**
-   * SCEA Shared Source License
-   *
-   * @see http://research.scea.com/scea_shared_source_license.html
-   */
-  public static readonly SCEA = new SpdxLicense('SCEA');
-
-  /**
-   * Open Data Commons Public Domain Dedication & License 1.0
-   *
-   * @see http://opendatacommons.org/licenses/pddl/1.0/
-   */
-  public static readonly PDDL_1_0 = new SpdxLicense('PDDL-1.0');
+  public static readonly NLOD_2_0 = new SpdxLicense('NLOD-2.0');
 
   /**
    * BSD 2-Clause "Simplified" License
@@ -1754,91 +469,11 @@ export class SpdxLicense {
   public static readonly BSD_2_CLAUSE = new SpdxLicense('BSD-2-Clause');
 
   /**
-   * GNU General Public License v3.0 only
+   * mailprio License
    *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/gpl-3.0-standalone.html
+   * @see https://fossies.org/linux/sendmail/contrib/mailprio
    */
-  public static readonly GPL_3_0 = new SpdxLicense('GPL-3.0');
-
-  /**
-   * Artistic License 1.0 w/clause 8
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Artistic-1.0
-   */
-  public static readonly ARTISTIC_1_0_CL8 = new SpdxLicense('Artistic-1.0-cl8');
-
-  /**
-   * Creative Commons Attribution 3.0 Australia
-   *
-   * @see https://creativecommons.org/licenses/by/3.0/au/legalcode
-   */
-  public static readonly CC_BY_3_0_AU = new SpdxLicense('CC-BY-3.0-AU');
-
-  /**
-   * Bitstream Charter Font License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Charter#License_Text
-   */
-  public static readonly BITSTREAM_CHARTER = new SpdxLicense('Bitstream-Charter');
-
-  /**
-   * CERN Open Hardware Licence Version 2 - Weakly Reciprocal
-   *
-   * @osiApproved
-   *
-   * @see https://www.ohwr.org/project/cernohl/wikis/Documents/CERN-OHL-version-2
-   */
-  public static readonly CERN_OHL_W_2_0 = new SpdxLicense('CERN-OHL-W-2.0');
-
-  /**
-   * MIT No Attribution
-   *
-   * @osiApproved
-   *
-   * @see https://github.com/aws/mit-0
-   */
-  public static readonly MIT_0 = new SpdxLicense('MIT-0');
-
-  /**
-   * Sleepycat License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Sleepycat
-   */
-  public static readonly SLEEPYCAT = new SpdxLicense('Sleepycat');
-
-  /**
-   * Pixar License
-   *
-   * @see https://github.com/PixarAnimationStudios/OpenSubdiv/raw/v3_5_0/LICENSE.txt
-   */
-  public static readonly PIXAR = new SpdxLicense('Pixar');
-
-  /**
-   * Qhull License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Qhull
-   */
-  public static readonly QHULL = new SpdxLicense('Qhull');
-
-  /**
-   * Creative Commons Attribution Share Alike 1.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-sa/1.0/legalcode
-   */
-  public static readonly CC_BY_SA_1_0 = new SpdxLicense('CC-BY-SA-1.0');
-
-  /**
-   * Common Documentation License 1.0
-   *
-   * @see http://www.opensource.apple.com/cdl/
-   */
-  public static readonly CDL_1_0 = new SpdxLicense('CDL-1.0');
+  public static readonly MAILPRIO = new SpdxLicense('mailprio');
 
   /**
    * Creative Commons Attribution Share Alike 3.0 Unported
@@ -1848,92 +483,53 @@ export class SpdxLicense {
   public static readonly CC_BY_SA_3_0 = new SpdxLicense('CC-BY-SA-3.0');
 
   /**
-   * Open Government Licence v1.0
+   * Noweb License
    *
-   * @see http://www.nationalarchives.gov.uk/doc/open-government-licence/version/1/
+   * @see https://fedoraproject.org/wiki/Licensing/Noweb
    */
-  public static readonly OGL_UK_1_0 = new SpdxLicense('OGL-UK-1.0');
+  public static readonly NOWEB = new SpdxLicense('Noweb');
 
   /**
-   * Creative Commons Attribution Non Commercial Share Alike 2.0 Germany
+   * Soundex License
    *
-   * @see https://creativecommons.org/licenses/by-nc-sa/2.0/de/legalcode
+   * @see https://metacpan.org/release/RJBS/Text-Soundex-3.05/source/Soundex.pm#L3-11
    */
-  public static readonly CC_BY_NC_SA_2_0_DE = new SpdxLicense('CC-BY-NC-SA-2.0-DE');
+  public static readonly SOUNDEX = new SpdxLicense('Soundex');
 
   /**
-   * XFree86 License 1.1
+   * CeCILL Free Software License Agreement v1.0
    *
-   * @see http://www.xfree86.org/current/LICENSE4.html
+   * @see http://www.cecill.info/licences/Licence_CeCILL_V1-fr.html
    */
-  public static readonly XFREE86_1_1 = new SpdxLicense('XFree86-1.1');
+  public static readonly CECILL_1_0 = new SpdxLicense('CECILL-1.0');
 
   /**
-   * Nethack General Public License
+   * Aladdin Free Public License
    *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/NGPL
+   * @see http://pages.cs.wisc.edu/~ghost/doc/AFPL/6.01/Public.htm
    */
-  public static readonly NGPL = new SpdxLicense('NGPL');
+  public static readonly ALADDIN = new SpdxLicense('Aladdin');
 
   /**
-   * BSD 3-Clause No Nuclear License 2014
+   * SSH OpenSSH license
    *
-   * @see https://java.net/projects/javaeetutorial/pages/BerkeleyLicense
+   * @see https://github.com/openssh/openssh-portable/blob/1b11ea7c58cd5c59838b5fa574cd456d6047b2d4/LICENCE#L10
    */
-  public static readonly BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014 = new SpdxLicense('BSD-3-Clause-No-Nuclear-License-2014');
+  public static readonly SSH_OPENSSH = new SpdxLicense('SSH-OpenSSH');
 
   /**
-   * MIT testregex Variant
+   * BSD with Attribution and HPND disclaimer
    *
-   * @see https://github.com/dotnet/runtime/blob/55e1ac7c07df62c4108d4acedf78f77574470ce5/src/libraries/System.Text.RegularExpressions/tests/FunctionalTests/AttRegexTests.cs#L12-L28
+   * @see https://github.com/cyrusimap/cyrus-sasl/blob/master/COPYING
    */
-  public static readonly MIT_TESTREGEX = new SpdxLicense('MIT-testregex');
+  public static readonly BSD_ATTRIBUTION_HPND_DISCLAIMER = new SpdxLicense('BSD-Attribution-HPND-disclaimer');
 
   /**
-   * BSD 3-Clause Clear License
+   * Creative Commons Attribution Non Commercial Share Alike 2.0 England and Wales
    *
-   * @see http://labs.metacarta.com/license-explanation.html#license
+   * @see https://creativecommons.org/licenses/by-nc-sa/2.0/uk/legalcode
    */
-  public static readonly BSD_3_CLAUSE_CLEAR = new SpdxLicense('BSD-3-Clause-Clear');
-
-  /**
-   * MMIXware License
-   *
-   * @see https://gitlab.lrz.de/mmix/mmixware/-/blob/master/boilerplate.w
-   */
-  public static readonly MMIXWARE = new SpdxLicense('MMIXware');
-
-  /**
-   * LZMA SDK License (versions 9.22 and beyond)
-   *
-   * @see https://www.7-zip.org/sdk.html
-   */
-  public static readonly LZMA_SDK_9_22 = new SpdxLicense('LZMA-SDK-9.22');
-
-  /**
-   * Latex2e License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Latex2e
-   */
-  public static readonly LATEX2_E = new SpdxLicense('Latex2e');
-
-  /**
-   * GNU Lesser General Public License v3.0 or later
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/lgpl-3.0-standalone.html
-   */
-  public static readonly LGPL_3_0_PLUS = new SpdxLicense('LGPL-3.0+');
-
-  /**
-   * CeCILL-B Free Software License Agreement
-   *
-   * @see http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
-   */
-  public static readonly CECILL_B = new SpdxLicense('CECILL-B');
+  public static readonly CC_BY_NC_SA_2_0_UK = new SpdxLicense('CC-BY-NC-SA-2.0-UK');
 
   /**
    * Kazlib License
@@ -1943,67 +539,53 @@ export class SpdxLicense {
   public static readonly KAZLIB = new SpdxLicense('Kazlib');
 
   /**
-   * fwlw License
+   * Ubuntu Font Licence v1.0
    *
-   * @see https://mirrors.nic.cz/tex-archive/macros/latex/contrib/fwlw/README
+   * @see https://ubuntu.com/legal/font-licence
    */
-  public static readonly FWLW = new SpdxLicense('fwlw');
+  public static readonly UBUNTU_FONT_1_0 = new SpdxLicense('Ubuntu-font-1.0');
 
   /**
-   * Detection Rule License 1.1
+   * SGI OpenGL License
    *
-   * @see https://github.com/SigmaHQ/Detection-Rule-License/blob/6ec7fbde6101d101b5b5d1fcb8f9b69fbc76c04a/LICENSE.Detection.Rules.md
+   * @see https://gitlab.freedesktop.org/mesa/glw/-/blob/master/README?ref_type=heads
    */
-  public static readonly DRL_1_1 = new SpdxLicense('DRL-1.1');
+  public static readonly SGI_OPENGL = new SpdxLicense('SGI-OpenGL');
 
   /**
-   * Systemics BSD variant license
+   * Rdisc License
    *
-   * @see https://metacpan.org/release/DPARIS/Crypt-DES-2.07/source/COPYRIGHT
+   * @see https://fedoraproject.org/wiki/Licensing/Rdisc_License
    */
-  public static readonly BSD_SYSTEMICS = new SpdxLicense('BSD-Systemics');
+  public static readonly RDISC = new SpdxLicense('Rdisc');
 
   /**
-   * HPND with US Government export control warning and modification rqmt
+   * HPND sell variant with MIT disclaimer
    *
-   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L1157-L1182
+   * @see https://github.com/sigmavirus24/x11-ssh-askpass/blob/master/README
    */
-  public static readonly HPND_EXPORT_US_MODIFY = new SpdxLicense('HPND-export-US-modify');
+  public static readonly HPND_SELL_VARIANT_MIT_DISCLAIMER = new SpdxLicense('HPND-sell-variant-MIT-disclaimer');
 
   /**
-   * Caldera License (without preamble)
+   * Lesser General Public License For Linguistic Resources
    *
-   * @see https://github.com/apache/apr/blob/trunk/LICENSE#L298C6-L298C29
+   * @see http://www-igm.univ-mlv.fr/~unitex/lgpllr.html
    */
-  public static readonly CALDERA_NO_PREAMBLE = new SpdxLicense('Caldera-no-preamble');
+  public static readonly LGPLLR = new SpdxLicense('LGPLLR');
 
   /**
-   * Common Lisp LOOP License
+   * OAR License
    *
-   * @see https://gitlab.com/embeddable-common-lisp/ecl/-/blob/develop/src/lsp/loop.lsp
+   * @see https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/string/strsignal.c;hb=HEAD#l35
    */
-  public static readonly LOOP = new SpdxLicense('LOOP');
+  public static readonly OAR = new SpdxLicense('OAR');
 
   /**
-   * GNU Free Documentation License v1.1 only
+   * HTML Tidy License
    *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   * @see https://github.com/htacg/tidy-html5/blob/next/README/LICENSE.md
    */
-  public static readonly GFDL_1_1_ONLY = new SpdxLicense('GFDL-1.1-only');
-
-  /**
-   * Nara Institute of Science and Technology License (2003)
-   *
-   * @see https://enterprise.dejacode.com/licenses/public/naist-2003/#license-text
-   */
-  public static readonly NAIST_2003 = new SpdxLicense('NAIST-2003');
-
-  /**
-   * libselinux public domain notice
-   *
-   * @see https://github.com/SELinuxProject/selinux/blob/master/libselinux/LICENSE
-   */
-  public static readonly LIBSELINUX_1_0 = new SpdxLicense('libselinux-1.0');
+  public static readonly HTMLTIDY = new SpdxLicense('HTMLTIDY');
 
   /**
    * Academy of Motion Picture Arts and Sciences BSD
@@ -2013,298 +595,157 @@ export class SpdxLicense {
   public static readonly AMPAS = new SpdxLicense('AMPAS');
 
   /**
-   * gnuplot License
+   * Netizen Open Source License
    *
-   * @see https://fedoraproject.org/wiki/Licensing/Gnuplot
+   * @see http://bits.netizen.com.au/licenses/NOSL/nosl.txt
    */
-  public static readonly GNUPLOT = new SpdxLicense('gnuplot');
+  public static readonly NOSL = new SpdxLicense('NOSL');
 
   /**
-   * GNU Free Documentation License v1.1 or later - invariants
+   * fwlw License
    *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   * @see https://mirrors.nic.cz/tex-archive/macros/latex/contrib/fwlw/README
    */
-  public static readonly GFDL_1_1_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.1-invariants-or-later');
+  public static readonly FWLW = new SpdxLicense('fwlw');
 
   /**
-   * SIL Open Font License 1.1 with no Reserved Font Name
+   * w3m License
+   *
+   * @see https://github.com/tats/w3m/blob/master/COPYING
+   */
+  public static readonly W3_M = new SpdxLicense('w3m');
+
+  /**
+   * Latex2e License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Latex2e
+   */
+  public static readonly LATEX2_E = new SpdxLicense('Latex2e');
+
+  /**
+   * Open Use of Data Agreement v1.0
+   *
+   * @see https://github.com/microsoft/Open-Use-of-Data-Agreement/blob/v1.0/O-UDA-1.0.md
+   */
+  public static readonly O_UDA_1_0 = new SpdxLicense('O-UDA-1.0');
+
+  /**
+   * mplus Font License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing:Mplus?rd=Licensing/mplus
+   */
+  public static readonly MPLUS = new SpdxLicense('mplus');
+
+  /**
+   * Historical Permission Notice and Disclaimer - Intel variant
+   *
+   * @see https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/machine/i960/memcpy.S;hb=HEAD
+   */
+  public static readonly HPND_INTEL = new SpdxLicense('HPND-Intel');
+
+  /**
+   * Peer Production License
+   *
+   * @see https://wiki.p2pfoundation.net/Peer_Production_License
+   */
+  public static readonly PPL = new SpdxLicense('PPL');
+
+  /**
+   * SIL Open Font License 1.1 with Reserved Font Name
    *
    * @osiApproved
    *
    * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web
    */
-  public static readonly OFL_1_1_NO_RFN = new SpdxLicense('OFL-1.1-no-RFN');
+  public static readonly OFL_1_1_RFN = new SpdxLicense('OFL-1.1-RFN');
 
   /**
-   * LPD Documentation License
-   *
-   * @see https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md
-   */
-  public static readonly LPD_DOCUMENT = new SpdxLicense('LPD-document');
-
-  /**
-   * Adobe Display PostScript License
-   *
-   * @see https://gitlab.freedesktop.org/xorg/xserver/-/blob/master/COPYING?ref_type=heads#L752
-   */
-  public static readonly ADOBE_DISPLAY_POSTSCRIPT = new SpdxLicense('Adobe-Display-PostScript');
-
-  /**
-   * FSF All Permissive License
-   *
-   * @see https://www.gnu.org/prep/maintain/html_node/License-Notices-for-Other-Files.html
-   */
-  public static readonly FSFAP = new SpdxLicense('FSFAP');
-
-  /**
-   * wxWindows Library License
+   * Eclipse Public License 1.0
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/WXwindows
+   * @see http://www.eclipse.org/legal/epl-v10.html
    */
-  public static readonly WX_WINDOWS = new SpdxLicense('wxWindows');
+  public static readonly EPL_1_0 = new SpdxLicense('EPL-1.0');
 
   /**
-   * UnixCrypt License
+   * Historical Permission Notice and Disclaimer - University of California, US export warning
    *
-   * @see https://foss.heptapod.net/python-libs/passlib/-/blob/branch/stable/LICENSE#L70
+   * @see https://github.com/RTimothyEdwards/magic/blob/master/LICENSE
    */
-  public static readonly UNIX_CRYPT = new SpdxLicense('UnixCrypt');
+  public static readonly HPND_UC_EXPORT_US = new SpdxLicense('HPND-UC-export-US');
 
   /**
-   * United    Kingdom Open Parliament Licence v3.0
+   * Creative Commons Attribution 3.0 Germany
    *
-   * @see https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/
+   * @see https://creativecommons.org/licenses/by/3.0/de/legalcode
    */
-  public static readonly OPL_UK_3_0 = new SpdxLicense('OPL-UK-3.0');
+  public static readonly CC_BY_3_0_DE = new SpdxLicense('CC-BY-3.0-DE');
 
   /**
-   * Inner Net License v2.0
+   * SNIA Public License 1.1
    *
-   * @see https://fedoraproject.org/wiki/Licensing/Inner_Net_License
+   * @see https://fedoraproject.org/wiki/Licensing/SNIA_Public_License
    */
-  public static readonly INNER_NET_2_0 = new SpdxLicense('Inner-Net-2.0');
+  public static readonly SNIA = new SpdxLicense('SNIA');
 
   /**
-   * Artistic License 1.0
+   * Barr License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Barr
+   */
+  public static readonly BARR = new SpdxLicense('Barr');
+
+  /**
+   * Open LDAP Public License v2.1
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=b0d176738e96a0d3b9f85cb51e140a86f21be715
+   */
+  public static readonly OLDAP_2_1 = new SpdxLicense('OLDAP-2.1');
+
+  /**
+   * Creative Commons Attribution No Derivatives 4.0 International
+   *
+   * @see https://creativecommons.org/licenses/by-nd/4.0/legalcode
+   */
+  public static readonly CC_BY_ND_4_0 = new SpdxLicense('CC-BY-ND-4.0');
+
+  /**
+   * softSurfer License
+   *
+   * @see https://github.com/mm2/Little-CMS/blob/master/src/cmssm.c#L207
+   */
+  public static readonly SOFT_SURFER = new SpdxLicense('softSurfer');
+
+  /**
+   * GNU Lesser General Public License v2.1 or later
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/Artistic-1.0
+   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
    */
-  public static readonly ARTISTIC_1_0 = new SpdxLicense('Artistic-1.0');
+  public static readonly LGPL_2_1_OR_LATER = new SpdxLicense('LGPL-2.1-or-later');
 
   /**
-   * magaz License
+   * SIL Open Font License 1.0
    *
-   * @see https://mirrors.nic.cz/tex-archive/macros/latex/contrib/magaz/magaz.tex
+   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL10_web
    */
-  public static readonly MAGAZ = new SpdxLicense('magaz');
+  public static readonly OFL_1_0 = new SpdxLicense('OFL-1.0');
 
   /**
-   * Imlib2 License
+   * BSD 3-Clause Flex variant
    *
-   * @see http://trac.enlightenment.org/e/browser/trunk/imlib2/COPYING
+   * @see https://github.com/westes/flex/blob/master/COPYING
    */
-  public static readonly IMLIB2 = new SpdxLicense('Imlib2');
+  public static readonly BSD_3_CLAUSE_FLEX = new SpdxLicense('BSD-3-Clause-flex');
 
   /**
-   * The Parity Public License 7.0.0
+   * psfrag License
    *
-   * @see https://paritylicense.com/versions/7.0.0.html
+   * @see https://fedoraproject.org/wiki/Licensing/psfrag
    */
-  public static readonly PARITY_7_0_0 = new SpdxLicense('Parity-7.0.0');
-
-  /**
-   * Caldera License
-   *
-   * @see http://www.lemis.com/grog/UNIX/ancient-source-all.pdf
-   */
-  public static readonly CALDERA = new SpdxLicense('Caldera');
-
-  /**
-   * bzip2 and libbzip2 License v1.0.5
-   *
-   * @see https://sourceware.org/bzip2/1.0.5/bzip2-manual-1.0.5.html
-   */
-  public static readonly BZIP2_1_0_5 = new SpdxLicense('bzip2-1.0.5');
-
-  /**
-   * Microsoft Reciprocal License
-   *
-   * @osiApproved
-   *
-   * @see http://www.microsoft.com/opensource/licenses.mspx
-   */
-  public static readonly MS_RL = new SpdxLicense('MS-RL');
-
-  /**
-   * Creative Commons Zero v1.0 Universal
-   *
-   * @see https://creativecommons.org/publicdomain/zero/1.0/legalcode
-   */
-  public static readonly CC0_1_0 = new SpdxLicense('CC0-1.0');
-
-  /**
-   * GNU General Public License v2.0 w/Font exception
-   *
-   * @see https://www.gnu.org/licenses/gpl-faq.html#FontException
-   */
-  public static readonly GPL_2_0_WITH_FONT_EXCEPTION = new SpdxLicense('GPL-2.0-with-font-exception');
-
-  /**
-   * Unicode License v3
-   *
-   * @osiApproved
-   *
-   * @see https://www.unicode.org/license.txt
-   */
-  public static readonly UNICODE_3_0 = new SpdxLicense('Unicode-3.0');
-
-  /**
-   * McPhee Slideshow License
-   *
-   * @see https://mirror.las.iastate.edu/tex-archive/graphics/metapost/contrib/macros/slideshow/slideshow.mp
-   */
-  public static readonly MCPHEE_SLIDESHOW = new SpdxLicense('McPhee-slideshow');
-
-  /**
-   * Glulxe License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Glulxe
-   */
-  public static readonly GLULXE = new SpdxLicense('Glulxe');
-
-  /**
-   * Zend License v2.0
-   *
-   * @see https://web.archive.org/web/20130517195954/http://www.zend.com/license/2_00.txt
-   */
-  public static readonly ZEND_2_0 = new SpdxLicense('Zend-2.0');
-
-  /**
-   * Creative Commons Public Domain Dedication and Certification
-   *
-   * @see https://creativecommons.org/licenses/publicdomain/
-   */
-  public static readonly CC_PDDC = new SpdxLicense('CC-PDDC');
-
-  /**
-   * Creative Commons Attribution Share Alike 3.0 Austria
-   *
-   * @see https://creativecommons.org/licenses/by-sa/3.0/at/legalcode
-   */
-  public static readonly CC_BY_SA_3_0_AT = new SpdxLicense('CC-BY-SA-3.0-AT');
-
-  /**
-   * Open LDAP Public License 2.2.2
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=df2cc1e21eb7c160695f5b7cffd6296c151ba188
-   */
-  public static readonly OLDAP_2_2_2 = new SpdxLicense('OLDAP-2.2.2');
-
-  /**
-   * Leptonica License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Leptonica
-   */
-  public static readonly LEPTONICA = new SpdxLicense('Leptonica');
-
-  /**
-   * Unicode License Agreement - Data Files and Software (2016)
-   *
-   * @osiApproved
-   *
-   * @see https://www.unicode.org/license.txt
-   */
-  public static readonly UNICODE_DFS_2016 = new SpdxLicense('Unicode-DFS-2016');
-
-  /**
-   * Vim License
-   *
-   * @see http://vimdoc.sourceforge.net/htmldoc/uganda.html
-   */
-  public static readonly VIM = new SpdxLicense('Vim');
-
-  /**
-   * Adobe Glyph List License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/MIT#AdobeGlyph
-   */
-  public static readonly ADOBE_GLYPH = new SpdxLicense('Adobe-Glyph');
-
-  /**
-   * Solderpad Hardware License v0.5
-   *
-   * @see https://solderpad.org/licenses/SHL-0.5/
-   */
-  public static readonly SHL_0_5 = new SpdxLicense('SHL-0.5');
-
-  /**
-   * Etalab Open License 2.0
-   *
-   * @see https://github.com/DISIC/politique-de-contribution-open-source/blob/master/LICENSE.pdf
-   */
-  public static readonly ETALAB_2_0 = new SpdxLicense('etalab-2.0');
-
-  /**
-   * GNU Free Documentation License v1.3 or later - invariants
-   *
-   * @see https://www.gnu.org/licenses/fdl-1.3.txt
-   */
-  public static readonly GFDL_1_3_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.3-invariants-or-later');
-
-  /**
-   * Zope Public License 2.1
-   *
-   * @osiApproved
-   *
-   * @see http://old.zope.org/Resources/ZPL/
-   */
-  public static readonly ZPL_2_1 = new SpdxLicense('ZPL-2.1');
-
-  /**
-   * Time::ParseDate License
-   *
-   * @see https://metacpan.org/pod/Time::ParseDate#LICENSE
-   */
-  public static readonly TPDL = new SpdxLicense('TPDL');
-
-  /**
-   * Cronyx License
-   *
-   * @see https://gitlab.freedesktop.org/xorg/font/alias/-/blob/master/COPYING
-   */
-  public static readonly CRONYX = new SpdxLicense('Cronyx');
-
-  /**
-   * Crossword License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Crossword
-   */
-  public static readonly CROSSWORD = new SpdxLicense('Crossword');
-
-  /**
-   * Historical Permission Notice and Disclaimer - Fenneberg-Livingston variant
-   *
-   * @see https://github.com/FreeRADIUS/freeradius-client/blob/master/COPYRIGHT#L32
-   */
-  public static readonly HPND_FENNEBERG_LIVINGSTON = new SpdxLicense('HPND-Fenneberg-Livingston');
-
-  /**
-   * BSD 3-Clause acpica variant
-   *
-   * @see https://github.com/acpica/acpica/blob/master/source/common/acfileio.c#L119
-   */
-  public static readonly BSD_3_CLAUSE_ACPICA = new SpdxLicense('BSD-3-Clause-acpica');
-
-  /**
-   * iMatix Standard Function Library Agreement
-   *
-   * @see http://legacy.imatix.com/html/sfl/sfl4.htm#license
-   */
-  public static readonly I_MATIX = new SpdxLicense('iMatix');
+  public static readonly PSFRAG = new SpdxLicense('psfrag');
 
   /**
    * BSD 1-Clause License
@@ -2316,32 +757,371 @@ export class SpdxLicense {
   public static readonly BSD_1_CLAUSE = new SpdxLicense('BSD-1-Clause');
 
   /**
-   * dvipdfm License
+   * BSD 3-Clause No Military License
    *
-   * @see https://fedoraproject.org/wiki/Licensing/dvipdfm
+   * @see https://gitlab.syncad.com/hive/dhive/-/blob/master/LICENSE
    */
-  public static readonly DVIPDFM = new SpdxLicense('dvipdfm');
+  public static readonly BSD_3_CLAUSE_NO_MILITARY_LICENSE = new SpdxLicense('BSD-3-Clause-No-Military-License');
 
   /**
-   * Affero General Public License v1.0 only
+   * Cube License
    *
-   * @see http://www.affero.org/oagpl.html
+   * @see https://fedoraproject.org/wiki/Licensing/Cube
    */
-  public static readonly AGPL_1_0_ONLY = new SpdxLicense('AGPL-1.0-only');
+  public static readonly CUBE = new SpdxLicense('Cube');
 
   /**
-   * Adobe Utopia Font License
+   * LaTeX Project Public License v1.2
    *
-   * @see https://gitlab.freedesktop.org/xorg/font/adobe-utopia-100dpi/-/blob/master/COPYING?ref_type=heads
+   * @see http://www.latex-project.org/lppl/lppl-1-2.txt
    */
-  public static readonly ADOBE_UTOPIA = new SpdxLicense('Adobe-Utopia');
+  public static readonly LPPL_1_2 = new SpdxLicense('LPPL-1.2');
 
   /**
-   * Open LDAP Public License v1.3
+   * Open LDAP Public License 2.2.2
    *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=e5f8117f0ce088d0bd7a8e18ddf37eaa40eb09b1
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=df2cc1e21eb7c160695f5b7cffd6296c151ba188
    */
-  public static readonly OLDAP_1_3 = new SpdxLicense('OLDAP-1.3');
+  public static readonly OLDAP_2_2_2 = new SpdxLicense('OLDAP-2.2.2');
+
+  /**
+   * Text-Tabs+Wrap License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/TTWL
+   */
+  public static readonly TTWL = new SpdxLicense('TTWL');
+
+  /**
+   * Creative Commons Attribution 3.0 Unported
+   *
+   * @see https://creativecommons.org/licenses/by/3.0/legalcode
+   */
+  public static readonly CC_BY_3_0 = new SpdxLicense('CC-BY-3.0');
+
+  /**
+   * BSD 3-Clause Open MPI variant
+   *
+   * @see https://www.open-mpi.org/community/license.php
+   */
+  public static readonly BSD_3_CLAUSE_OPEN_MPI = new SpdxLicense('BSD-3-Clause-Open-MPI');
+
+  /**
+   * Creative Commons Attribution Non Commercial No Derivatives 3.0 IGO
+   *
+   * @see https://creativecommons.org/licenses/by-nc-nd/3.0/igo/legalcode
+   */
+  public static readonly CC_BY_NC_ND_3_0_IGO = new SpdxLicense('CC-BY-NC-ND-3.0-IGO');
+
+  /**
+   * Zope Public License 2.1
+   *
+   * @osiApproved
+   *
+   * @see http://old.zope.org/Resources/ZPL/
+   */
+  public static readonly ZPL_2_1 = new SpdxLicense('ZPL-2.1');
+
+  /**
+   * Creative Commons Zero v1.0 Universal
+   *
+   * @see https://creativecommons.org/publicdomain/zero/1.0/legalcode
+   */
+  public static readonly CC0_1_0 = new SpdxLicense('CC0-1.0');
+
+  /**
+   * Netscape Public License v1.0
+   *
+   * @see http://www.mozilla.org/MPL/NPL/1.0/
+   */
+  public static readonly NPL_1_0 = new SpdxLicense('NPL-1.0');
+
+  /**
+   * CeCILL Free Software License Agreement v2.0
+   *
+   * @see http://www.cecill.info/licences/Licence_CeCILL_V2-en.html
+   */
+  public static readonly CECILL_2_0 = new SpdxLicense('CECILL-2.0');
+
+  /**
+   * WWL License
+   *
+   * @see http://www.db.net/downloads/wwl+db-1.3.tgz
+   */
+  public static readonly WWL = new SpdxLicense('wwl');
+
+  /**
+   * Nethack General Public License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/NGPL
+   */
+  public static readonly NGPL = new SpdxLicense('NGPL');
+
+  /**
+   * FSF All Permissive License
+   *
+   * @see https://www.gnu.org/prep/maintain/html_node/License-Notices-for-Other-Files.html
+   */
+  public static readonly FSFAP = new SpdxLicense('FSFAP');
+
+  /**
+   * Any OSI License
+   *
+   * @see https://metacpan.org/pod/Exporter::Tidy#LICENSE
+   */
+  public static readonly ANY_OSI = new SpdxLicense('any-OSI');
+
+  /**
+   * mpich2 License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/MIT
+   */
+  public static readonly MPICH2 = new SpdxLicense('mpich2');
+
+  /**
+   * EU DataGrid Software License
+   *
+   * @osiApproved
+   *
+   * @see http://eu-datagrid.web.cern.ch/eu-datagrid/license.html
+   */
+  public static readonly EUDATAGRID = new SpdxLicense('EUDatagrid');
+
+  /**
+   * Sleepycat License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Sleepycat
+   */
+  public static readonly SLEEPYCAT = new SpdxLicense('Sleepycat');
+
+  /**
+   * Academic Free License v3.0
+   *
+   * @osiApproved
+   *
+   * @see http://www.rosenlaw.com/AFL3.0.htm
+   */
+  public static readonly AFL_3_0 = new SpdxLicense('AFL-3.0');
+
+  /**
+   * Arphic Public License
+   *
+   * @see http://ftp.gnu.org/gnu/non-gnu/chinese-fonts-truetype/LICENSE
+   */
+  public static readonly ARPHIC_1999 = new SpdxLicense('Arphic-1999');
+
+  /**
+   * BSD-4-Clause (University of California-Specific)
+   *
+   * @see http://www.freebsd.org/copyright/license.html
+   */
+  public static readonly BSD_4_CLAUSE_UC = new SpdxLicense('BSD-4-Clause-UC');
+
+  /**
+   * David M. Gay dtoa License
+   *
+   * @see https://github.com/SWI-Prolog/swipl-devel/blob/master/src/os/dtoa.c
+   */
+  public static readonly DTOA = new SpdxLicense('dtoa');
+
+  /**
+   * Unicode License Agreement - Data Files and Software (2015)
+   *
+   * @see https://web.archive.org/web/20151224134844/http://unicode.org/copyright.html
+   */
+  public static readonly UNICODE_DFS_2015 = new SpdxLicense('Unicode-DFS-2015');
+
+  /**
+   * TCP Wrappers License
+   *
+   * @see http://rc.quest.com/topics/openssh/license.php#tcpwrappers
+   */
+  public static readonly TCP_WRAPPERS = new SpdxLicense('TCP-wrappers');
+
+  /**
+   * MIT No Attribution
+   *
+   * @osiApproved
+   *
+   * @see https://github.com/aws/mit-0
+   */
+  public static readonly MIT_0 = new SpdxLicense('MIT-0');
+
+  /**
+   * SugarCRM Public License v1.1.3
+   *
+   * @see http://www.sugarcrm.com/crm/SPL
+   */
+  public static readonly SUGARCRM_1_1_3 = new SpdxLicense('SugarCRM-1.1.3');
+
+  /**
+   * iMatix Standard Function Library Agreement
+   *
+   * @see http://legacy.imatix.com/html/sfl/sfl4.htm#license
+   */
+  public static readonly I_MATIX = new SpdxLicense('iMatix');
+
+  /**
+   * Creative Commons Attribution 3.0 Austria
+   *
+   * @see https://creativecommons.org/licenses/by/3.0/at/legalcode
+   */
+  public static readonly CC_BY_3_0_AT = new SpdxLicense('CC-BY-3.0-AT');
+
+  /**
+   * Adobe Systems Incorporated Source Code License Agreement
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/AdobeLicense
+   */
+  public static readonly ADOBE_2006 = new SpdxLicense('Adobe-2006');
+
+  /**
+   * Common Lisp LOOP License
+   *
+   * @see https://gitlab.com/embeddable-common-lisp/ecl/-/blob/develop/src/lsp/loop.lsp
+   */
+  public static readonly LOOP = new SpdxLicense('LOOP');
+
+  /**
+   * MIT testregex Variant
+   *
+   * @see https://github.com/dotnet/runtime/blob/55e1ac7c07df62c4108d4acedf78f77574470ce5/src/libraries/System.Text.RegularExpressions/tests/FunctionalTests/AttRegexTests.cs#L12-L28
+   */
+  public static readonly MIT_TESTREGEX = new SpdxLicense('MIT-testregex');
+
+  /**
+   * eGenix.com Public License 1.1.0
+   *
+   * @see http://www.egenix.com/products/eGenix.com-Public-License-1.1.0.pdf
+   */
+  public static readonly E_GENIX = new SpdxLicense('eGenix');
+
+  /**
+   * Gnome GCR Documentation License
+   *
+   * @see https://github.com/GNOME/gcr/blob/master/docs/COPYING
+   */
+  public static readonly GCR_DOCS = new SpdxLicense('GCR-docs');
+
+  /**
+   * Attribution Assurance License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/attribution
+   */
+  public static readonly AAL = new SpdxLicense('AAL');
+
+  /**
+   * Cryptographic Autonomy License 1.0
+   *
+   * @osiApproved
+   *
+   * @see http://cryptographicautonomylicense.com/license-text.html
+   */
+  public static readonly CAL_1_0 = new SpdxLicense('CAL-1.0');
+
+  /**
+   * PHP License v3.0
+   *
+   * @osiApproved
+   *
+   * @see http://www.php.net/license/3_0.txt
+   */
+  public static readonly PHP_3_0 = new SpdxLicense('PHP-3.0');
+
+  /**
+   * hdparm License
+   *
+   * @see https://github.com/Distrotech/hdparm/blob/4517550db29a91420fb2b020349523b1b4512df2/LICENSE.TXT
+   */
+  public static readonly HDPARM = new SpdxLicense('hdparm');
+
+  /**
+   * OpenPBS v2.3 Software License
+   *
+   * @see https://github.com/adaptivecomputing/torque/blob/master/PBS_License.txt
+   */
+  public static readonly OPENPBS_2_3 = new SpdxLicense('OpenPBS-2.3');
+
+  /**
+   * Data licence Germany – attribution – version 2.0
+   *
+   * @see https://www.govdata.de/dl-de/by-2-0
+   */
+  public static readonly DL_DE_BY_2_0 = new SpdxLicense('DL-DE-BY-2.0');
+
+  /**
+   * GNU Free Documentation License v1.3 or later
+   *
+   * @see https://www.gnu.org/licenses/fdl-1.3.txt
+   */
+  public static readonly GFDL_1_3_OR_LATER = new SpdxLicense('GFDL-1.3-or-later');
+
+  /**
+   * CERN Open Hardware Licence v1.2
+   *
+   * @see https://www.ohwr.org/project/licenses/wikis/cern-ohl-v1.2
+   */
+  public static readonly CERN_OHL_1_2 = new SpdxLicense('CERN-OHL-1.2');
+
+  /**
+   * MIT License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/license/mit/
+   */
+  public static readonly MIT = new SpdxLicense('MIT');
+
+  /**
+   * XSkat License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/XSkat_License
+   */
+  public static readonly XSKAT = new SpdxLicense('XSkat');
+
+  /**
+   * Gutmann License
+   *
+   * @see https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.c
+   */
+  public static readonly GUTMANN = new SpdxLicense('Gutmann');
+
+  /**
+   * wxWindows Library License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/WXwindows
+   */
+  public static readonly WX_WINDOWS = new SpdxLicense('wxWindows');
+
+  /**
+   * Creative Commons Attribution Non Commercial Share Alike 2.5 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nc-sa/2.5/legalcode
+   */
+  public static readonly CC_BY_NC_SA_2_5 = new SpdxLicense('CC-BY-NC-SA-2.5');
+
+  /**
+   * Open Data Commons Public Domain Dedication & License 1.0
+   *
+   * @see http://opendatacommons.org/licenses/pddl/1.0/
+   */
+  public static readonly PDDL_1_0 = new SpdxLicense('PDDL-1.0');
+
+  /**
+   * The Unlicense
+   *
+   * @osiApproved
+   *
+   * @see https://unlicense.org/
+   */
+  public static readonly UNLICENSE = new SpdxLicense('Unlicense');
 
   /**
    * CUA Office Public License v1.0
@@ -2353,127 +1133,159 @@ export class SpdxLicense {
   public static readonly CUA_OPL_1_0 = new SpdxLicense('CUA-OPL-1.0');
 
   /**
-   * Creative Commons Attribution 3.0 Austria
+   * NCL Source Code License
    *
-   * @see https://creativecommons.org/licenses/by/3.0/at/legalcode
+   * @see https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/master/src/modules/module-filter-chain/pffft.c?ref_type=heads#L1-52
    */
-  public static readonly CC_BY_3_0_AT = new SpdxLicense('CC-BY-3.0-AT');
+  public static readonly NCL = new SpdxLicense('NCL');
 
   /**
-   * Do What The F*ck You Want To Public License
+   * GNU Free Documentation License v1.1 or later - invariants
    *
-   * @see http://www.wtfpl.net/about/
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
    */
-  public static readonly WTFPL = new SpdxLicense('WTFPL');
+  public static readonly GFDL_1_1_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.1-invariants-or-later');
 
   /**
-   * Brian Gladman 2-Clause License
-   *
-   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L140-L156
-   */
-  public static readonly BRIAN_GLADMAN_2_CLAUSE = new SpdxLicense('Brian-Gladman-2-Clause');
-
-  /**
-   * Creative Commons Attribution Share Alike 3.0 Germany
-   *
-   * @see https://creativecommons.org/licenses/by-sa/3.0/de/legalcode
-   */
-  public static readonly CC_BY_SA_3_0_DE = new SpdxLicense('CC-BY-SA-3.0-DE');
-
-  /**
-   * CMU    Mach - no notices-in-documentation variant
-   *
-   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L718-L728
-   */
-  public static readonly CMU_MACH_NODOC = new SpdxLicense('CMU-Mach-nodoc');
-
-  /**
-   * Computer Associates Trusted Open Source License 1.1
+   * CeCILL Free Software License Agreement v2.1
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/CATOSL-1.1
+   * @see http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
    */
-  public static readonly CATOSL_1_1 = new SpdxLicense('CATOSL-1.1');
+  public static readonly CECILL_2_1 = new SpdxLicense('CECILL-2.1');
 
   /**
-   * Xerox License
+   * PolyForm Small Business License 1.0.0
    *
-   * @see https://fedoraproject.org/wiki/Licensing/Xerox
+   * @see https://polyformproject.org/licenses/small-business/1.0.0
    */
-  public static readonly XEROX = new SpdxLicense('Xerox');
+  public static readonly POLYFORM_SMALL_BUSINESS_1_0_0 = new SpdxLicense('PolyForm-Small-Business-1.0.0');
 
   /**
-   * Open LDAP Public License v1.2
+   * Hewlett-Packard 1986 License
    *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=42b0383c50c299977b5893ee695cf4e486fb0dc7
+   * @see https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/machine/hppa/memchr.S;h=1cca3e5e8867aa4bffef1f75a5c1bba25c0c441e;hb=HEAD#l2
    */
-  public static readonly OLDAP_1_2 = new SpdxLicense('OLDAP-1.2');
+  public static readonly HP_1986 = new SpdxLicense('HP-1986');
 
   /**
-   * GNU Free Documentation License v1.2 only
+   * HPND with US Government export control warning
    *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
+   * @see https://www.kermitproject.org/ck90.html#source
    */
-  public static readonly GFDL_1_2_ONLY = new SpdxLicense('GFDL-1.2-only');
+  public static readonly HPND_EXPORT_US = new SpdxLicense('HPND-export-US');
 
   /**
-   * Fraunhofer FDK AAC Codec Library
+   * X11 swapped final paragraphs
    *
-   * @see https://fedoraproject.org/wiki/Licensing/FDK-AAC
+   * @see https://github.com/fedeinthemix/chez-srfi/blob/master/srfi/LICENSE
    */
-  public static readonly FDK_AAC = new SpdxLicense('FDK-AAC');
+  public static readonly X11_SWAPPED = new SpdxLicense('X11-swapped');
 
   /**
-   * CERN Open Hardware Licence v1.2
+   * Solderpad Hardware License v0.5
    *
-   * @see https://www.ohwr.org/project/licenses/wikis/cern-ohl-v1.2
+   * @see https://solderpad.org/licenses/SHL-0.5/
    */
-  public static readonly CERN_OHL_1_2 = new SpdxLicense('CERN-OHL-1.2');
+  public static readonly SHL_0_5 = new SpdxLicense('SHL-0.5');
 
   /**
-   * Open Market License
+   * Systemics BSD variant license
    *
-   * @see https://fedoraproject.org/wiki/Licensing/Open_Market_License
+   * @see https://metacpan.org/release/DPARIS/Crypt-DES-2.07/source/COPYRIGHT
    */
-  public static readonly OML = new SpdxLicense('OML');
+  public static readonly BSD_SYSTEMICS = new SpdxLicense('BSD-Systemics');
 
   /**
-   * Arphic Public License
+   * Community Data License Agreement Sharing 1.0
    *
-   * @see http://ftp.gnu.org/gnu/non-gnu/chinese-fonts-truetype/LICENSE
+   * @see https://cdla.io/sharing-1-0
    */
-  public static readonly ARPHIC_1999 = new SpdxLicense('Arphic-1999');
+  public static readonly CDLA_SHARING_1_0 = new SpdxLicense('CDLA-Sharing-1.0');
 
   /**
-   * Open Software License 1.1
+   * GNU Free Documentation License v1.1 or later
    *
-   * @see https://fedoraproject.org/wiki/Licensing/OSL1.1
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
    */
-  public static readonly OSL_1_1 = new SpdxLicense('OSL-1.1');
+  public static readonly GFDL_1_1_OR_LATER = new SpdxLicense('GFDL-1.1-or-later');
 
   /**
-   * Creative Commons Attribution Non Commercial No Derivatives 2.5 Generic
+   * Newsletr License
    *
-   * @see https://creativecommons.org/licenses/by-nc-nd/2.5/legalcode
+   * @see https://fedoraproject.org/wiki/Licensing/Newsletr
    */
-  public static readonly CC_BY_NC_ND_2_5 = new SpdxLicense('CC-BY-NC-ND-2.5');
+  public static readonly NEWSLETR = new SpdxLicense('Newsletr');
 
   /**
-   * Eiffel Forum License v1.0
+   * TMate Open Source License
+   *
+   * @see http://svnkit.com/license.html
+   */
+  public static readonly TMATE = new SpdxLicense('TMate');
+
+  /**
+   * EPICS Open License
+   *
+   * @see https://epics.anl.gov/license/open.php
+   */
+  public static readonly EPICS = new SpdxLicense('EPICS');
+
+  /**
+   * Sax Public Domain Notice
+   *
+   * @see http://www.saxproject.org/copying.html
+   */
+  public static readonly SAX_PD = new SpdxLicense('SAX-PD');
+
+  /**
+   * MIT Festival Variant
+   *
+   * @see https://github.com/festvox/flite/blob/master/COPYING
+   */
+  public static readonly MIT_FESTIVAL = new SpdxLicense('MIT-Festival');
+
+  /**
+   * GNU Library General Public License v2 or later
    *
    * @osiApproved
    *
-   * @see http://www.eiffel-nice.org/license/forum.txt
+   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html
    */
-  public static readonly EFL_1_0 = new SpdxLicense('EFL-1.0');
+  public static readonly LGPL_2_0_OR_LATER = new SpdxLicense('LGPL-2.0-or-later');
 
   /**
-   * GNU Free Documentation License v1.3 or later - no invariants
+   * Q Public License 1.0
    *
-   * @see https://www.gnu.org/licenses/fdl-1.3.txt
+   * @osiApproved
+   *
+   * @see http://doc.qt.nokia.com/3.3/license.html
    */
-  public static readonly GFDL_1_3_NO_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.3-no-invariants-or-later');
+  public static readonly QPL_1_0 = new SpdxLicense('QPL-1.0');
+
+  /**
+   * SSH short notice
+   *
+   * @see https://github.com/openssh/openssh-portable/blob/1b11ea7c58cd5c59838b5fa574cd456d6047b2d4/pathnames.h
+   */
+  public static readonly SSH_SHORT = new SpdxLicense('SSH-short');
+
+  /**
+   * Open Government Licence v1.0
+   *
+   * @see http://www.nationalarchives.gov.uk/doc/open-government-licence/version/1/
+   */
+  public static readonly OGL_UK_1_0 = new SpdxLicense('OGL-UK-1.0');
+
+  /**
+   * GNU General Public License v2.0 only
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+   */
+  public static readonly GPL_2_0_ONLY = new SpdxLicense('GPL-2.0-only');
 
   /**
    * GNU General Public License v3.0 w/GCC Runtime Library exception
@@ -2485,311 +1297,151 @@ export class SpdxLicense {
   public static readonly GPL_3_0_WITH_GCC_EXCEPTION = new SpdxLicense('GPL-3.0-with-GCC-exception');
 
   /**
-   * TORQUE v2.5+ Software License v1.1
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/TORQUEv1.1
-   */
-  public static readonly TORQUE_1_1 = new SpdxLicense('TORQUE-1.1');
-
-  /**
-   * GNU General Public License v2.0 w/Autoconf exception
-   *
-   * @see http://ac-archive.sourceforge.net/doc/copyright.html
-   */
-  public static readonly GPL_2_0_WITH_AUTOCONF_EXCEPTION = new SpdxLicense('GPL-2.0-with-autoconf-exception');
-
-  /**
-   * check-cvs License
-   *
-   * @see http://cvs.savannah.gnu.org/viewvc/cvs/ccvs/contrib/check_cvs.in?revision=1.1.4.3&view=markup&pathrev=cvs1-11-23#l2
-   */
-  public static readonly CHECK_CVS = new SpdxLicense('check-cvs');
-
-  /**
-   * Community Data License Agreement Permissive 2.0
-   *
-   * @see https://cdla.dev/permissive-2-0
-   */
-  public static readonly CDLA_PERMISSIVE_2_0 = new SpdxLicense('CDLA-Permissive-2.0');
-
-  /**
-   * HPND with US Government export control warning
-   *
-   * @see https://www.kermitproject.org/ck90.html#source
-   */
-  public static readonly HPND_EXPORT_US = new SpdxLicense('HPND-export-US');
-
-  /**
-   * Netscape Public License v1.1
-   *
-   * @see http://www.mozilla.org/MPL/NPL/1.1/
-   */
-  public static readonly NPL_1_1 = new SpdxLicense('NPL-1.1');
-
-  /**
-   * GL2PS License
-   *
-   * @see http://www.geuz.org/gl2ps/COPYING.GL2PS
-   */
-  public static readonly GL2_P_S = new SpdxLicense('GL2PS');
-
-  /**
-   * GNU General Public License v3.0 only
+   * Educational Community License v2.0
    *
    * @osiApproved
    *
-   * @see https://www.gnu.org/licenses/gpl-3.0-standalone.html
+   * @see https://opensource.org/licenses/ECL-2.0
    */
-  public static readonly GPL_3_0_ONLY = new SpdxLicense('GPL-3.0-only');
+  public static readonly ECL_2_0 = new SpdxLicense('ECL-2.0');
 
   /**
-   * copyleft-next 0.3.0
-   *
-   * @see https://github.com/copyleft-next/copyleft-next/blob/master/Releases/copyleft-next-0.3.0
-   */
-  public static readonly COPYLEFT_NEXT_0_3_0 = new SpdxLicense('copyleft-next-0.3.0');
-
-  /**
-   * gtkbook License
-   *
-   * @see https://github.com/slogan621/gtkbook
-   */
-  public static readonly GTKBOOK = new SpdxLicense('gtkbook');
-
-  /**
-   * GNU Library General Public License v2 or later
+   * Computer Associates Trusted Open Source License 1.1
    *
    * @osiApproved
    *
-   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html
+   * @see https://opensource.org/licenses/CATOSL-1.1
    */
-  public static readonly LGPL_2_0_PLUS = new SpdxLicense('LGPL-2.0+');
+  public static readonly CATOSL_1_1 = new SpdxLicense('CATOSL-1.1');
 
   /**
-   * PolyForm Noncommercial License 1.0.0
+   * Cornell Lossless JPEG License
    *
-   * @see https://polyformproject.org/licenses/noncommercial/1.0.0
+   * @see https://android.googlesource.com/platform/external/dng_sdk/+/refs/heads/master/source/dng_lossless_jpeg.cpp#16
    */
-  public static readonly POLYFORM_NONCOMMERCIAL_1_0_0 = new SpdxLicense('PolyForm-Noncommercial-1.0.0');
+  public static readonly CORNELL_LOSSLESS_JPEG = new SpdxLicense('Cornell-Lossless-JPEG');
 
   /**
-   * CeCILL Free Software License Agreement v1.1
+   * DOC License
    *
-   * @see http://www.cecill.info/licences/Licence_CeCILL_V1.1-US.html
+   * @see http://www.cs.wustl.edu/~schmidt/ACE-copying.html
    */
-  public static readonly CECILL_1_1 = new SpdxLicense('CECILL-1.1');
+  public static readonly DOC = new SpdxLicense('DOC');
 
   /**
-   * Historical Permission Notice and Disclaimer with MIT disclaimer
+   * RSA Message-Digest License
    *
-   * @see https://metacpan.org/release/NLNETLABS/Net-DNS-SEC-1.22/source/LICENSE
+   * @see http://www.faqs.org/rfcs/rfc1321.html
    */
-  public static readonly HPND_MIT_DISCLAIMER = new SpdxLicense('HPND-MIT-disclaimer');
+  public static readonly RSA_MD = new SpdxLicense('RSA-MD');
 
   /**
-   * GNU Free Documentation License v1.1 only - invariants
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
-   */
-  public static readonly GFDL_1_1_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.1-invariants-only');
-
-  /**
-   * Taiwan Open Government Data License, version 1.0
-   *
-   * @see https://data.gov.tw/license
-   */
-  public static readonly OGDL_TAIWAN_1_0 = new SpdxLicense('OGDL-Taiwan-1.0');
-
-  /**
-   * Creative Commons Attribution 2.5 Australia
-   *
-   * @see https://creativecommons.org/licenses/by/2.5/au/legalcode
-   */
-  public static readonly CC_BY_2_5_AU = new SpdxLicense('CC-BY-2.5-AU');
-
-  /**
-   * Creative Commons Attribution Share Alike 2.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-sa/2.0/legalcode
-   */
-  public static readonly CC_BY_SA_2_0 = new SpdxLicense('CC-BY-SA-2.0');
-
-  /**
-   * BSD-4-Clause (University of California-Specific)
-   *
-   * @see http://www.freebsd.org/copyright/license.html
-   */
-  public static readonly BSD_4_CLAUSE_UC = new SpdxLicense('BSD-4-Clause-UC');
-
-  /**
-   * Creative Commons Attribution Non Commercial 3.0 Germany
-   *
-   * @see https://creativecommons.org/licenses/by-nc/3.0/de/legalcode
-   */
-  public static readonly CC_BY_NC_3_0_DE = new SpdxLicense('CC-BY-NC-3.0-DE');
-
-  /**
-   * Creative Commons Attribution Non Commercial Share Alike 2.5 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nc-sa/2.5/legalcode
-   */
-  public static readonly CC_BY_NC_SA_2_5 = new SpdxLicense('CC-BY-NC-SA-2.5');
-
-  /**
-   * Creative Commons Attribution Non Commercial 4.0 International
-   *
-   * @see https://creativecommons.org/licenses/by-nc/4.0/legalcode
-   */
-  public static readonly CC_BY_NC_4_0 = new SpdxLicense('CC-BY-NC-4.0');
-
-  /**
-   * Plexus Classworlds License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Plexus_Classworlds_License
-   */
-  public static readonly PLEXUS = new SpdxLicense('Plexus');
-
-  /**
-   * Creative Commons Attribution No Derivatives 3.0 Germany
-   *
-   * @see https://creativecommons.org/licenses/by-nd/3.0/de/legalcode
-   */
-  public static readonly CC_BY_ND_3_0_DE = new SpdxLicense('CC-BY-ND-3.0-DE');
-
-  /**
-   * XSkat License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/XSkat_License
-   */
-  public static readonly XSKAT = new SpdxLicense('XSkat');
-
-  /**
-   * Community Specification License 1.0
-   *
-   * @see https://github.com/CommunitySpecification/1.0/blob/master/1._Community_Specification_License-v1.md
-   */
-  public static readonly COMMUNITY_SPEC_1_0 = new SpdxLicense('Community-Spec-1.0');
-
-  /**
-   * Adobe Systems Incorporated Source Code License Agreement
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/AdobeLicense
-   */
-  public static readonly ADOBE_2006 = new SpdxLicense('Adobe-2006');
-
-  /**
-   * Creative Commons Attribution 3.0 IGO
-   *
-   * @see https://creativecommons.org/licenses/by/3.0/igo/legalcode
-   */
-  public static readonly CC_BY_3_0_IGO = new SpdxLicense('CC-BY-3.0-IGO');
-
-  /**
-   * Scheme Widget Library (SWL) Software License Agreement
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/SWL
-   */
-  public static readonly SWL = new SpdxLicense('SWL');
-
-  /**
-   * xlock License
-   *
-   * @see https://fossies.org/linux/tiff/contrib/ras/ras2tif.c
-   */
-  public static readonly XLOCK = new SpdxLicense('xlock');
-
-  /**
-   * swrule License
-   *
-   * @see https://ctan.math.utah.edu/ctan/tex-archive/macros/generic/misc/swrule.sty
-   */
-  public static readonly SWRULE = new SpdxLicense('swrule');
-
-  /**
-   * Data licence Germany – attribution – version 2.0
-   *
-   * @see https://www.govdata.de/dl-de/by-2-0
-   */
-  public static readonly DL_DE_BY_2_0 = new SpdxLicense('DL-DE-BY-2.0');
-
-  /**
-   * SSH OpenSSH license
-   *
-   * @see https://github.com/openssh/openssh-portable/blob/1b11ea7c58cd5c59838b5fa574cd456d6047b2d4/LICENCE#L10
-   */
-  public static readonly SSH_OPENSSH = new SpdxLicense('SSH-OpenSSH');
-
-  /**
-   * diffmark license
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/diffmark
-   */
-  public static readonly DIFFMARK = new SpdxLicense('diffmark');
-
-  /**
-   * Academic Free License v2.0
+   * OCLC Research Public License 2.0
    *
    * @osiApproved
    *
-   * @see http://wayback.archive.org/web/20060924134533/http://www.opensource.org/licenses/afl-2.0.txt
+   * @see http://www.oclc.org/research/activities/software/license/v2final.htm
    */
-  public static readonly AFL_2_0 = new SpdxLicense('AFL-2.0');
+  public static readonly OCLC_2_0 = new SpdxLicense('OCLC-2.0');
 
   /**
-   * Historical Permission Notice and Disclaimer - Markus Kuhn variant
+   * GNU Affero General Public License v3.0 only
    *
-   * @see https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/agpl.txt
    */
-  public static readonly HPND_MARKUS_KUHN = new SpdxLicense('HPND-Markus-Kuhn');
+  public static readonly AGPL_3_0_ONLY = new SpdxLicense('AGPL-3.0-only');
 
   /**
-   * Creative Commons Attribution-NonCommercial-ShareAlike 2.0 France
+   * Open LDAP Public License v2.5
    *
-   * @see https://creativecommons.org/licenses/by-nc-sa/2.0/fr/legalcode
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=6852b9d90022e8593c98205413380536b1b5a7cf
    */
-  public static readonly CC_BY_NC_SA_2_0_FR = new SpdxLicense('CC-BY-NC-SA-2.0-FR');
+  public static readonly OLDAP_2_5 = new SpdxLicense('OLDAP-2.5');
 
   /**
-   * NRL License
+   * Creative Commons Attribution Share Alike 3.0 Germany
    *
-   * @see http://web.mit.edu/network/isakmp/nrllicense.html
+   * @see https://creativecommons.org/licenses/by-sa/3.0/de/legalcode
    */
-  public static readonly NRL = new SpdxLicense('NRL');
+  public static readonly CC_BY_SA_3_0_DE = new SpdxLicense('CC-BY-SA-3.0-DE');
 
   /**
-   * AML glslang variant License
+   * Artistic License 1.0 (Perl)
    *
-   * @see https://github.com/KhronosGroup/glslang/blob/main/LICENSE.txt#L949
+   * @osiApproved
+   *
+   * @see http://dev.perl.org/licenses/artistic.html
    */
-  public static readonly AML_GLSLANG = new SpdxLicense('AML-glslang');
+  public static readonly ARTISTIC_1_0_PERL = new SpdxLicense('Artistic-1.0-Perl');
 
   /**
-   * UCAR License
+   * Creative Commons Attribution Non Commercial No Derivatives 4.0 International
    *
-   * @see https://github.com/Unidata/UDUNITS-2/blob/master/COPYRIGHT
+   * @see https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
    */
-  public static readonly UCAR = new SpdxLicense('UCAR');
+  public static readonly CC_BY_NC_ND_4_0 = new SpdxLicense('CC-BY-NC-ND-4.0');
 
   /**
-   * BSD 4.3 TAHOE License
+   * BSD 3-Clause No Nuclear License 2014
    *
-   * @see https://github.com/389ds/389-ds-base/blob/main/ldap/include/sysexits-compat.h#L15
+   * @see https://java.net/projects/javaeetutorial/pages/BerkeleyLicense
    */
-  public static readonly BSD_4_3TAHOE = new SpdxLicense('BSD-4.3TAHOE');
+  public static readonly BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014 = new SpdxLicense('BSD-3-Clause-No-Nuclear-License-2014');
 
   /**
-   * Norwegian Licence for Open Government Data (NLOD) 2.0
+   * Martin Birgmeier License
    *
-   * @see http://data.norge.no/nlod/en/2.0
+   * @see https://github.com/Perl/perl5/blob/blead/util.c#L6136
    */
-  public static readonly NLOD_2_0 = new SpdxLicense('NLOD-2.0');
+  public static readonly MARTIN_BIRGMEIER = new SpdxLicense('Martin-Birgmeier');
 
   /**
-   * Affero General Public License v1.0
+   * European Union Public License 1.0
    *
-   * @see http://www.affero.org/oagpl.html
+   * @see http://ec.europa.eu/idabc/en/document/7330.html
    */
-  public static readonly AGPL_1_0 = new SpdxLicense('AGPL-1.0');
+  public static readonly EUPL_1_0 = new SpdxLicense('EUPL-1.0');
+
+  /**
+   * GNU General Public License v2.0 only
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+   */
+  public static readonly GPL_2_0 = new SpdxLicense('GPL-2.0');
+
+  /**
+   * McPhee Slideshow License
+   *
+   * @see https://mirror.las.iastate.edu/tex-archive/graphics/metapost/contrib/macros/slideshow/slideshow.mp
+   */
+  public static readonly MCPHEE_SLIDESHOW = new SpdxLicense('McPhee-slideshow');
+
+  /**
+   * Creative Commons Attribution Non Commercial No Derivatives 1.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nd-nc/1.0/legalcode
+   */
+  public static readonly CC_BY_NC_ND_1_0 = new SpdxLicense('CC-BY-NC-ND-1.0');
+
+  /**
+   * Blue Oak Model License 1.0.0
+   *
+   * @osiApproved
+   *
+   * @see https://blueoakcouncil.org/license/1.0.0
+   */
+  public static readonly BLUEOAK_1_0_0 = new SpdxLicense('BlueOak-1.0.0');
+
+  /**
+   * Open Data Commons Attribution License v1.0
+   *
+   * @see https://opendatacommons.org/licenses/by/1.0/
+   */
+  public static readonly ODC_BY_1_0 = new SpdxLicense('ODC-By-1.0');
 
   /**
    * Copyfree Open Innovation License
@@ -2799,11 +1451,371 @@ export class SpdxLicense {
   public static readonly COIL_1_0 = new SpdxLicense('COIL-1.0');
 
   /**
-   * Adobe Postscript AFM License
+   * Bitstream Vera Font License
    *
-   * @see https://fedoraproject.org/wiki/Licensing/AdobePostscriptAFM
+   * @see https://web.archive.org/web/20080207013128/http://www.gnome.org/fonts/
    */
-  public static readonly APAFML = new SpdxLicense('APAFML');
+  public static readonly BITSTREAM_VERA = new SpdxLicense('Bitstream-Vera');
+
+  /**
+   * JPL Image Use Policy
+   *
+   * @see https://www.jpl.nasa.gov/jpl-image-use-policy
+   */
+  public static readonly JPL_IMAGE = new SpdxLicense('JPL-image');
+
+  /**
+   * enna License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/MIT#enna
+   */
+  public static readonly MIT_ENNA = new SpdxLicense('MIT-enna');
+
+  /**
+   * BSD-Inferno-Nettverk
+   *
+   * @see https://www.inet.no/dante/LICENSE
+   */
+  public static readonly BSD_INFERNO_NETTVERK = new SpdxLicense('BSD-Inferno-Nettverk');
+
+  /**
+   * Common Development and Distribution License 1.1
+   *
+   * @see http://glassfish.java.net/public/CDDL+GPL_1_1.html
+   */
+  public static readonly CDDL_1_1 = new SpdxLicense('CDDL-1.1');
+
+  /**
+   * FSF Unlimited License (With License Retention and Warranty Disclaimer)
+   *
+   * @see https://lists.gnu.org/archive/html/autoconf/2012-04/msg00061.html
+   */
+  public static readonly FSFULLRWD = new SpdxLicense('FSFULLRWD');
+
+  /**
+   * GNU Free Documentation License v1.2 only - invariants
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
+   */
+  public static readonly GFDL_1_2_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.2-invariants-only');
+
+  /**
+   * Eiffel Forum License v1.0
+   *
+   * @osiApproved
+   *
+   * @see http://www.eiffel-nice.org/license/forum.txt
+   */
+  public static readonly EFL_1_0 = new SpdxLicense('EFL-1.0');
+
+  /**
+   * Entessa Public License v1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Entessa
+   */
+  public static readonly ENTESSA = new SpdxLicense('Entessa');
+
+  /**
+   * 3dfx Glide License
+   *
+   * @see http://www.users.on.net/~triforce/glidexp/COPYING.txt
+   */
+  public static readonly GLIDE = new SpdxLicense('Glide');
+
+  /**
+   * Creative Commons Attribution Non Commercial 3.0 Germany
+   *
+   * @see https://creativecommons.org/licenses/by-nc/3.0/de/legalcode
+   */
+  public static readonly CC_BY_NC_3_0_DE = new SpdxLicense('CC-BY-NC-3.0-DE');
+
+  /**
+   * Artistic License 1.0 w/clause 8
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Artistic-1.0
+   */
+  public static readonly ARTISTIC_1_0_CL8 = new SpdxLicense('Artistic-1.0-cl8');
+
+  /**
+   * W3C Software Notice and License (1998-07-20)
+   *
+   * @see http://www.w3.org/Consortium/Legal/copyright-software-19980720.html
+   */
+  public static readonly W3C_19980720 = new SpdxLicense('W3C-19980720');
+
+  /**
+   * Historical Permission Notice and Disclaimer - merchantability variant
+   *
+   * @see https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/misc/fini.c;hb=HEAD
+   */
+  public static readonly HPND_MERCHANTABILITY_VARIANT = new SpdxLicense('HPND-merchantability-variant');
+
+  /**
+   * Motosoto License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Motosoto
+   */
+  public static readonly MOTOSOTO = new SpdxLicense('Motosoto');
+
+  /**
+   * Open LDAP Public License v1.1
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=806557a5ad59804ef3a44d5abfbe91d706b0791f
+   */
+  public static readonly OLDAP_1_1 = new SpdxLicense('OLDAP-1.1');
+
+  /**
+   * Hewlett-Packard 1989 License
+   *
+   * @see https://github.com/bleargh45/Data-UUID/blob/master/LICENSE
+   */
+  public static readonly HP_1989 = new SpdxLicense('HP-1989');
+
+  /**
+   * IEC    Code Components End-user licence agreement
+   *
+   * @see https://www.iec.ch/webstore/custserv/pdf/CC-EULA.pdf
+   */
+  public static readonly IEC_CODE_COMPONENTS_EULA = new SpdxLicense('IEC-Code-Components-EULA');
+
+  /**
+   * Non-Commercial Government Licence
+   *
+   * @see http://www.nationalarchives.gov.uk/doc/non-commercial-government-licence/version/2/
+   */
+  public static readonly NCGL_UK_2_0 = new SpdxLicense('NCGL-UK-2.0');
+
+  /**
+   * Creative Commons Attribution 3.0 IGO
+   *
+   * @see https://creativecommons.org/licenses/by/3.0/igo/legalcode
+   */
+  public static readonly CC_BY_3_0_IGO = new SpdxLicense('CC-BY-3.0-IGO');
+
+  /**
+   * BSD Source Code Attribution
+   *
+   * @see https://github.com/robbiehanson/CocoaHTTPServer/blob/master/LICENSE.txt
+   */
+  public static readonly BSD_SOURCE_CODE = new SpdxLicense('BSD-Source-Code');
+
+  /**
+   * GNU Free Documentation License v1.1 only - no invariants
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   */
+  public static readonly GFDL_1_1_NO_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.1-no-invariants-only');
+
+  /**
+   * W3C Software Notice and License (2002-12-31)
+   *
+   * @osiApproved
+   *
+   * @see http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.html
+   */
+  public static readonly W3_C = new SpdxLicense('W3C');
+
+  /**
+   * magaz License
+   *
+   * @see https://mirrors.nic.cz/tex-archive/macros/latex/contrib/magaz/magaz.tex
+   */
+  public static readonly MAGAZ = new SpdxLicense('magaz');
+
+  /**
+   * libutil David Nugent License
+   *
+   * @see http://web.mit.edu/freebsd/head/lib/libutil/login_ok.3
+   */
+  public static readonly LIBUTIL_DAVID_NUGENT = new SpdxLicense('libutil-David-Nugent');
+
+  /**
+   * Academic Free License v2.1
+   *
+   * @osiApproved
+   *
+   * @see http://opensource.linux-mirror.org/licenses/afl-2.1.txt
+   */
+  public static readonly AFL_2_1 = new SpdxLicense('AFL-2.1');
+
+  /**
+   * Nara Institute of Science and Technology License (2003)
+   *
+   * @see https://enterprise.dejacode.com/licenses/public/naist-2003/#license-text
+   */
+  public static readonly NAIST_2003 = new SpdxLicense('NAIST-2003');
+
+  /**
+   * DocBook XML License
+   *
+   * @see https://github.com/docbook/xslt10-stylesheets/blob/efd62655c11cc8773708df7a843613fa1e932bf8/xsl/COPYING#L27
+   */
+  public static readonly DOCBOOK_XML = new SpdxLicense('DocBook-XML');
+
+  /**
+   * Licence Libre du Québec – Réciprocité forte version 1.1
+   *
+   * @osiApproved
+   *
+   * @see https://www.forge.gouv.qc.ca/participez/licence-logicielle/licence-libre-du-quebec-liliq-en-francais/licence-libre-du-quebec-reciprocite-forte-liliq-r-v1-1/
+   */
+  public static readonly LILIQ_RPLUS_1_1 = new SpdxLicense('LiLiQ-Rplus-1.1');
+
+  /**
+   * feh License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/MIT#feh
+   */
+  public static readonly MIT_FEH = new SpdxLicense('MIT-feh');
+
+  /**
+   * GNU Lesser General Public License v2.1 only
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
+   */
+  public static readonly LGPL_2_1 = new SpdxLicense('LGPL-2.1');
+
+  /**
+   * Michigan/Merit Networks License
+   *
+   * @see https://github.com/radcli/radcli/blob/master/COPYRIGHT#L64
+   */
+  public static readonly UMICH_MERIT = new SpdxLicense('UMich-Merit');
+
+  /**
+   * Creative Commons Attribution Non Commercial 3.0 Unported
+   *
+   * @see https://creativecommons.org/licenses/by-nc/3.0/legalcode
+   */
+  public static readonly CC_BY_NC_3_0 = new SpdxLicense('CC-BY-NC-3.0');
+
+  /**
+   * GNU General Public License v1.0 only
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html
+   */
+  public static readonly GPL_1_0 = new SpdxLicense('GPL-1.0');
+
+  /**
+   * NTP License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/NTP
+   */
+  public static readonly NTP = new SpdxLicense('NTP');
+
+  /**
+   * Frameworx Open License 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Frameworx-1.0
+   */
+  public static readonly FRAMEWORX_1_0 = new SpdxLicense('Frameworx-1.0');
+
+  /**
+   * BSD 2-Clause NetBSD License
+   *
+   * @see http://www.netbsd.org/about/redistribution.html#default
+   */
+  public static readonly BSD_2_CLAUSE_NETBSD = new SpdxLicense('BSD-2-Clause-NetBSD');
+
+  /**
+   * Historical Permission Notice and Disclaimer - sell variant
+   *
+   * @see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/sunrpc/auth_gss/gss_generic_token.c?h=v4.19
+   */
+  public static readonly HPND_SELL_VARIANT = new SpdxLicense('HPND-sell-variant');
+
+  /**
+   * Creative Commons Attribution 1.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by/1.0/legalcode
+   */
+  public static readonly CC_BY_1_0 = new SpdxLicense('CC-BY-1.0');
+
+  /**
+   * Adaptive Public License 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/APL-1.0
+   */
+  public static readonly APL_1_0 = new SpdxLicense('APL-1.0');
+
+  /**
+   * Do What The F*ck You Want To Public License
+   *
+   * @see http://www.wtfpl.net/about/
+   */
+  public static readonly WTFPL = new SpdxLicense('WTFPL');
+
+  /**
+   * Fuzzy Bitmap License
+   *
+   * @see https://github.com/SWI-Prolog/packages-xpce/blob/161a40cd82004f731ba48024f9d30af388a7edf5/src/img/gifwrite.c#L21-L26
+   */
+  public static readonly FBM = new SpdxLicense('FBM');
+
+  /**
+   * Clarified Artistic License
+   *
+   * @see http://gianluca.dellavedova.org/2011/01/03/clarified-artistic-license/
+   */
+  public static readonly CL_ARTISTIC = new SpdxLicense('ClArtistic');
+
+  /**
+   * SunPro License
+   *
+   * @see https://github.com/freebsd/freebsd-src/blob/main/lib/msun/src/e_acosh.c
+   */
+  public static readonly SUN_PRO = new SpdxLicense('SunPro');
+
+  /**
+   * Vovida Software License v1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/VSL-1.0
+   */
+  public static readonly VSL_1_0 = new SpdxLicense('VSL-1.0');
+
+  /**
+   * Creative Commons Attribution Non Commercial Share Alike 3.0 IGO
+   *
+   * @see https://creativecommons.org/licenses/by-nc-sa/3.0/igo/legalcode
+   */
+  public static readonly CC_BY_NC_SA_3_0_IGO = new SpdxLicense('CC-BY-NC-SA-3.0-IGO');
+
+  /**
+   * Net Boolean Public License v1
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=37b4b3f6cc4bf34e1d3dec61e69914b9819d8894
+   */
+  public static readonly NBPL_1_0 = new SpdxLicense('NBPL-1.0');
+
+  /**
+   * Open Publication License v1.0
+   *
+   * @see http://opencontent.org/openpub/
+   */
+  public static readonly OPUBL_1_0 = new SpdxLicense('OPUBL-1.0');
+
+  /**
+   * Creative Commons Attribution Non Commercial No Derivatives 2.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nc-nd/2.0/legalcode
+   */
+  public static readonly CC_BY_NC_ND_2_0 = new SpdxLicense('CC-BY-NC-ND-2.0');
 
   /**
    * Lawrence Berkeley National Labs BSD variant license
@@ -2815,55 +1827,230 @@ export class SpdxLicense {
   public static readonly BSD_3_CLAUSE_LBNL = new SpdxLicense('BSD-3-Clause-LBNL');
 
   /**
+   * Ruby License
+   *
+   * @see https://www.ruby-lang.org/en/about/license.txt
+   */
+  public static readonly RUBY = new SpdxLicense('Ruby');
+
+  /**
+   * Fair License
+   *
+   * @osiApproved
+   *
+   * @see https://web.archive.org/web/20150926120323/http://fairlicense.org/
+   */
+  public static readonly FAIR = new SpdxLicense('Fair');
+
+  /**
+   * Enlightenment License (e16)
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/MIT_With_Advertising
+   */
+  public static readonly MIT_ADVERTISING = new SpdxLicense('MIT-advertising');
+
+  /**
+   * Taiwan Open Government Data License, version 1.0
+   *
+   * @see https://data.gov.tw/license
+   */
+  public static readonly OGDL_TAIWAN_1_0 = new SpdxLicense('OGDL-Taiwan-1.0');
+
+  /**
+   * United    Kingdom Open Parliament Licence v3.0
+   *
+   * @see https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/
+   */
+  public static readonly OPL_UK_3_0 = new SpdxLicense('OPL-UK-3.0');
+
+  /**
+   * Mozilla Public License 2.0
+   *
+   * @osiApproved
+   *
+   * @see https://www.mozilla.org/MPL/2.0/
+   */
+  public static readonly MPL_2_0 = new SpdxLicense('MPL-2.0');
+
+  /**
+   * DocBook Stylesheet License
+   *
+   * @see http://www.docbook.org/xml/5.0/docbook-5.0.zip
+   */
+  public static readonly DOCBOOK_STYLESHEET = new SpdxLicense('DocBook-Stylesheet');
+
+  /**
+   * THOR Public License 1.0
+   *
+   * @see https://fedoraproject.org/wiki/Licensing:ThorPublicLicense
+   */
+  public static readonly TPL_1_0 = new SpdxLicense('TPL-1.0');
+
+  /**
+   * TAPR Open Hardware License v1.0
+   *
+   * @see https://www.tapr.org/OHL
+   */
+  public static readonly TAPR_OHL_1_0 = new SpdxLicense('TAPR-OHL-1.0');
+
+  /**
+   * UnixCrypt License
+   *
+   * @see https://foss.heptapod.net/python-libs/passlib/-/blob/branch/stable/LICENSE#L70
+   */
+  public static readonly UNIX_CRYPT = new SpdxLicense('UnixCrypt');
+
+  /**
+   * FreeBSD Documentation License
+   *
+   * @see https://www.freebsd.org/copyright/freebsd-doc-license/
+   */
+  public static readonly FREEBSD_DOC = new SpdxLicense('FreeBSD-DOC');
+
+  /**
+   * CMU    Mach - no notices-in-documentation variant
+   *
+   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L718-L728
+   */
+  public static readonly CMU_MACH_NODOC = new SpdxLicense('CMU-Mach-nodoc');
+
+  /**
+   * Creative Commons Attribution 3.0 Australia
+   *
+   * @see https://creativecommons.org/licenses/by/3.0/au/legalcode
+   */
+  public static readonly CC_BY_3_0_AU = new SpdxLicense('CC-BY-3.0-AU');
+
+  /**
+   * Zimbra Public License v1.4
+   *
+   * @see http://www.zimbra.com/legal/zimbra-public-license-1-4
+   */
+  public static readonly ZIMBRA_1_4 = new SpdxLicense('Zimbra-1.4');
+
+  /**
+   * BSD 3-Clause "New" or "Revised" License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/BSD-3-Clause
+   */
+  public static readonly BSD_3_CLAUSE = new SpdxLicense('BSD-3-Clause');
+
+  /**
+   * lsof License
+   *
+   * @see https://github.com/lsof-org/lsof/blob/master/COPYING
+   */
+  public static readonly LSOF = new SpdxLicense('lsof');
+
+  /**
+   * FreeImage Public License v1.0
+   *
+   * @see http://freeimage.sourceforge.net/freeimage-license.txt
+   */
+  public static readonly FREE_IMAGE = new SpdxLicense('FreeImage');
+
+  /**
+   * Open LDAP Public License v2.0 (or possibly 2.0A and 2.0B)
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=cbf50f4e1185a21abd4c0a54d3f4341fe28f36ea
+   */
+  public static readonly OLDAP_2_0 = new SpdxLicense('OLDAP-2.0');
+
+  /**
+   * Apple Public Source License 1.2
+   *
+   * @osiApproved
+   *
+   * @see http://www.samurajdata.se/opensource/mirror/licenses/apsl.php
+   */
+  public static readonly APSL_1_2 = new SpdxLicense('APSL-1.2');
+
+  /**
+   * Apple Public Source License 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Apple_Public_Source_License_1.0
+   */
+  public static readonly APSL_1_0 = new SpdxLicense('APSL-1.0');
+
+  /**
+   * Creative Commons Attribution-NonCommercial-ShareAlike 2.0 France
+   *
+   * @see https://creativecommons.org/licenses/by-nc-sa/2.0/fr/legalcode
+   */
+  public static readonly CC_BY_NC_SA_2_0_FR = new SpdxLicense('CC-BY-NC-SA-2.0-FR');
+
+  /**
+   * Deutsche Freie Software Lizenz
+   *
+   * @see http://www.dipp.nrw.de/d-fsl/lizenzen/
+   */
+  public static readonly D_FSL_1_0 = new SpdxLicense('D-FSL-1.0');
+
+  /**
+   * pnmstitch License
+   *
+   * @see https://sourceforge.net/p/netpbm/code/HEAD/tree/super_stable/editor/pnmstitch.c#l2
+   */
+  public static readonly PNMSTITCH = new SpdxLicense('pnmstitch');
+
+  /**
+   * Creative Commons Attribution Share Alike 2.0 England and Wales
+   *
+   * @see https://creativecommons.org/licenses/by-sa/2.0/uk/legalcode
+   */
+  public static readonly CC_BY_SA_2_0_UK = new SpdxLicense('CC-BY-SA-2.0-UK');
+
+  /**
+   * CERN Open Hardware Licence Version 2 - Weakly Reciprocal
+   *
+   * @osiApproved
+   *
+   * @see https://www.ohwr.org/project/cernohl/wikis/Documents/CERN-OHL-version-2
+   */
+  public static readonly CERN_OHL_W_2_0 = new SpdxLicense('CERN-OHL-W-2.0');
+
+  /**
+   * Lucent Public License v1.02
+   *
+   * @osiApproved
+   *
+   * @see http://plan9.bell-labs.com/plan9/license.html
+   */
+  public static readonly LPL_1_02 = new SpdxLicense('LPL-1.02');
+
+  /**
+   * CNRI Jython License
+   *
+   * @see http://www.jython.org/license.html
+   */
+  public static readonly CNRI_JYTHON = new SpdxLicense('CNRI-Jython');
+
+  /**
+   * BSD 2-Clause - first lines requirement
+   *
+   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L664-L690
+   */
+  public static readonly BSD_2_CLAUSE_FIRST_LINES = new SpdxLicense('BSD-2-Clause-first-lines');
+
+  /**
+   * Boost Software License 1.0
+   *
+   * @osiApproved
+   *
+   * @see http://www.boost.org/LICENSE_1_0.txt
+   */
+  public static readonly BSL_1_0 = new SpdxLicense('BSL-1.0');
+
+  /**
    * LZMA SDK License (versions 9.11 to 9.20)
    *
    * @see https://www.7-zip.org/sdk.html
    */
   public static readonly LZMA_SDK_9_11_TO_9_20 = new SpdxLicense('LZMA-SDK-9.11-to-9.20');
-
-  /**
-   * JPL Image Use Policy
-   *
-   * @see https://www.jpl.nasa.gov/jpl-image-use-policy
-   */
-  public static readonly JPL_IMAGE = new SpdxLicense('JPL-image');
-
-  /**
-   * Business Source License 1.1
-   *
-   * @see https://mariadb.com/bsl11/
-   */
-  public static readonly BUSL_1_1 = new SpdxLicense('BUSL-1.1');
-
-  /**
-   * Python Software Foundation License 2.0
-   *
-   * @see https://opensource.org/licenses/Python-2.0
-   */
-  public static readonly PSF_2_0 = new SpdxLicense('PSF-2.0');
-
-  /**
-   * Martin Birgmeier License
-   *
-   * @see https://github.com/Perl/perl5/blob/blead/util.c#L6136
-   */
-  public static readonly MARTIN_BIRGMEIER = new SpdxLicense('Martin-Birgmeier');
-
-  /**
-   * Python License 2.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Python-2.0
-   */
-  public static readonly PYTHON_2_0 = new SpdxLicense('Python-2.0');
-
-  /**
-   * Creative Commons Attribution 1.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by/1.0/legalcode
-   */
-  public static readonly CC_BY_1_0 = new SpdxLicense('CC-BY-1.0');
 
   /**
    * Condor Public License v1.1
@@ -2873,25 +2060,1109 @@ export class SpdxLicense {
   public static readonly CONDOR_1_1 = new SpdxLicense('Condor-1.1');
 
   /**
-   * LaTeX Project Public License v1.1
+   * Creative Commons Attribution 3.0 United States
    *
-   * @see http://www.latex-project.org/lppl/lppl-1-1.txt
+   * @see https://creativecommons.org/licenses/by/3.0/us/legalcode
    */
-  public static readonly LPPL_1_1 = new SpdxLicense('LPPL-1.1');
+  public static readonly CC_BY_3_0_US = new SpdxLicense('CC-BY-3.0-US');
 
   /**
-   * Matrix Template Library License
+   * CeCILL-C Free Software License Agreement
    *
-   * @see https://fedoraproject.org/wiki/Licensing/Matrix_Template_Library_License
+   * @see http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
    */
-  public static readonly MTLL = new SpdxLicense('MTLL');
+  public static readonly CECILL_C = new SpdxLicense('CECILL-C');
 
   /**
-   * BSD 3-Clause Flex variant
+   * diffmark license
    *
-   * @see https://github.com/westes/flex/blob/master/COPYING
+   * @see https://fedoraproject.org/wiki/Licensing/diffmark
    */
-  public static readonly BSD_3_CLAUSE_FLEX = new SpdxLicense('BSD-3-Clause-flex');
+  public static readonly DIFFMARK = new SpdxLicense('diffmark');
+
+  /**
+   * Historical Permission Notice and Disclaimer - Kevlin Henney variant
+   *
+   * @see https://github.com/mruby/mruby/blob/83d12f8d52522cdb7c8cc46fad34821359f453e6/mrbgems/mruby-dir/src/Win/dirent.c#L127-L140
+   */
+  public static readonly HPND_KEVLIN_HENNEY = new SpdxLicense('HPND-Kevlin-Henney');
+
+  /**
+   * GNU Free Documentation License v1.1
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   */
+  public static readonly GFDL_1_1 = new SpdxLicense('GFDL-1.1');
+
+  /**
+   * Standard ML of New Jersey License
+   *
+   * @see https://www.smlnj.org/license.html
+   */
+  public static readonly STANDARDML_NJ = new SpdxLicense('StandardML-NJ');
+
+  /**
+   * Reciprocal Public License 1.1
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/RPL-1.1
+   */
+  public static readonly RPL_1_1 = new SpdxLicense('RPL-1.1');
+
+  /**
+   * Hippocratic License 2.1
+   *
+   * @see https://firstdonoharm.dev/version/2/1/license.html
+   */
+  public static readonly HIPPOCRATIC_2_1 = new SpdxLicense('Hippocratic-2.1');
+
+  /**
+   * swrule License
+   *
+   * @see https://ctan.math.utah.edu/ctan/tex-archive/macros/generic/misc/swrule.sty
+   */
+  public static readonly SWRULE = new SpdxLicense('swrule');
+
+  /**
+   * Common Development and Distribution License 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/cddl1
+   */
+  public static readonly CDDL_1_0 = new SpdxLicense('CDDL-1.0');
+
+  /**
+   * Microsoft Reciprocal License
+   *
+   * @osiApproved
+   *
+   * @see http://www.microsoft.com/opensource/licenses.mspx
+   */
+  public static readonly MS_RL = new SpdxLicense('MS-RL');
+
+  /**
+   * Any OSI License - Perl Modules
+   *
+   * @see https://metacpan.org/release/JUERD/Exporter-Tidy-0.09/view/Tidy.pm#LICENSE
+   */
+  public static readonly ANY_OSI_PERL_MODULES = new SpdxLicense('any-OSI-perl-modules');
+
+  /**
+   * CNRI Python License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/CNRI-Python
+   */
+  public static readonly CNRI_PYTHON = new SpdxLicense('CNRI-Python');
+
+  /**
+   * Open LDAP Public License v2.3
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=d32cf54a32d581ab475d23c810b0a7fbaf8d63c3
+   */
+  public static readonly OLDAP_2_3 = new SpdxLicense('OLDAP-2.3');
+
+  /**
+   * Licence Libre du Québec – Permissive version 1.1
+   *
+   * @osiApproved
+   *
+   * @see https://forge.gouv.qc.ca/licence/fr/liliq-v1-1/
+   */
+  public static readonly LILIQ_P_1_1 = new SpdxLicense('LiLiQ-P-1.1');
+
+  /**
+   * Python License 2.0.1
+   *
+   * @see https://www.python.org/download/releases/2.0.1/license/
+   */
+  public static readonly PYTHON_2_0_1 = new SpdxLicense('Python-2.0.1');
+
+  /**
+   * MakeIndex License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/MakeIndex
+   */
+  public static readonly MAKE_INDEX = new SpdxLicense('MakeIndex');
+
+  /**
+   * Academic Free License v1.2
+   *
+   * @osiApproved
+   *
+   * @see http://opensource.linux-mirror.org/licenses/afl-1.2.txt
+   */
+  public static readonly AFL_1_2 = new SpdxLicense('AFL-1.2');
+
+  /**
+   * Creative Commons Attribution No Derivatives 2.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nd/2.0/legalcode
+   */
+  public static readonly CC_BY_ND_2_0 = new SpdxLicense('CC-BY-ND-2.0');
+
+  /**
+   * Fraunhofer FDK AAC Codec Library
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/FDK-AAC
+   */
+  public static readonly FDK_AAC = new SpdxLicense('FDK-AAC');
+
+  /**
+   * SL License
+   *
+   * @see https://github.com/mtoyoda/sl/blob/master/LICENSE
+   */
+  public static readonly SL = new SpdxLicense('SL');
+
+  /**
+   * Technische Universitaet Berlin License 1.0
+   *
+   * @see https://github.com/swh/ladspa/blob/7bf6f3799fdba70fda297c2d8fd9f526803d9680/gsm/COPYRIGHT
+   */
+  public static readonly TU_BERLIN_1_0 = new SpdxLicense('TU-Berlin-1.0');
+
+  /**
+   * GNU General Public License v1.0 or later
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html
+   */
+  public static readonly GPL_1_0_PLUS = new SpdxLicense('GPL-1.0+');
+
+  /**
+   * Saxpath License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Saxpath_License
+   */
+  public static readonly SAXPATH = new SpdxLicense('Saxpath');
+
+  /**
+   * dvipdfm License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/dvipdfm
+   */
+  public static readonly DVIPDFM = new SpdxLicense('dvipdfm');
+
+  /**
+   * BSD 2-Clause - Ian Darwin variant
+   *
+   * @see https://github.com/file/file/blob/master/COPYING
+   */
+  public static readonly BSD_2_CLAUSE_DARWIN = new SpdxLicense('BSD-2-Clause-Darwin');
+
+  /**
+   * Common Public Attribution License 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/CPAL-1.0
+   */
+  public static readonly CPAL_1_0 = new SpdxLicense('CPAL-1.0');
+
+  /**
+   * copyleft-next 0.3.1
+   *
+   * @see https://github.com/copyleft-next/copyleft-next/blob/master/Releases/copyleft-next-0.3.1
+   */
+  public static readonly COPYLEFT_NEXT_0_3_1 = new SpdxLicense('copyleft-next-0.3.1');
+
+  /**
+   * NetCDF license
+   *
+   * @see http://www.unidata.ucar.edu/software/netcdf/copyright.html
+   */
+  public static readonly NET_CD_F = new SpdxLicense('NetCDF');
+
+  /**
+   * Freetype Project License
+   *
+   * @see http://freetype.fis.uniroma2.it/FTL.TXT
+   */
+  public static readonly FTL = new SpdxLicense('FTL');
+
+  /**
+   * DocBook Schema License
+   *
+   * @see https://github.com/docbook/xslt10-stylesheets/blob/efd62655c11cc8773708df7a843613fa1e932bf8/xsl/assembly/schema/docbook51b7.rnc
+   */
+  public static readonly DOCBOOK_SCHEMA = new SpdxLicense('DocBook-Schema');
+
+  /**
+   * CERN Open Hardware Licence Version 2 - Strongly Reciprocal
+   *
+   * @osiApproved
+   *
+   * @see https://www.ohwr.org/project/cernohl/wikis/Documents/CERN-OHL-version-2
+   */
+  public static readonly CERN_OHL_S_2_0 = new SpdxLicense('CERN-OHL-S-2.0');
+
+  /**
+   * X11 License Distribution Modification Variant
+   *
+   * @see https://github.com/mirror/ncurses/blob/master/COPYING
+   */
+  public static readonly X11_DISTRIBUTE_MODIFICATIONS_VARIANT = new SpdxLicense('X11-distribute-modifications-variant');
+
+  /**
+   * copyleft-next 0.3.0
+   *
+   * @see https://github.com/copyleft-next/copyleft-next/blob/master/Releases/copyleft-next-0.3.0
+   */
+  public static readonly COPYLEFT_NEXT_0_3_0 = new SpdxLicense('copyleft-next-0.3.0');
+
+  /**
+   * X11 License
+   *
+   * @see http://www.xfree86.org/3.3.6/COPYRIGHT2.html#3
+   */
+  public static readonly X11 = new SpdxLicense('X11');
+
+  /**
+   * Creative Commons Attribution Non Commercial Share Alike 2.0 Germany
+   *
+   * @see https://creativecommons.org/licenses/by-nc-sa/2.0/de/legalcode
+   */
+  public static readonly CC_BY_NC_SA_2_0_DE = new SpdxLicense('CC-BY-NC-SA-2.0-DE');
+
+  /**
+   * GNU Free Documentation License v1.3 only
+   *
+   * @see https://www.gnu.org/licenses/fdl-1.3.txt
+   */
+  public static readonly GFDL_1_3_ONLY = new SpdxLicense('GFDL-1.3-only');
+
+  /**
+   * Bahyph License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Bahyph
+   */
+  public static readonly BAHYPH = new SpdxLicense('Bahyph');
+
+  /**
+   * GNU Lesser General Public License v3.0 or later
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/lgpl-3.0-standalone.html
+   */
+  public static readonly LGPL_3_0_OR_LATER = new SpdxLicense('LGPL-3.0-or-later');
+
+  /**
+   * Zope Public License 1.1
+   *
+   * @see http://old.zope.org/Resources/License/ZPL-1.1
+   */
+  public static readonly ZPL_1_1 = new SpdxLicense('ZPL-1.1');
+
+  /**
+   * gSOAP Public License v1.3b
+   *
+   * @see http://www.cs.fsu.edu/~engelen/license.html
+   */
+  public static readonly GSOAP_1_3B = new SpdxLicense('gSOAP-1.3b');
+
+  /**
+   * JasPer License
+   *
+   * @see http://www.ece.uvic.ca/~mdadams/jasper/LICENSE
+   */
+  public static readonly JASPER_2_0 = new SpdxLicense('JasPer-2.0');
+
+  /**
+   * Sendmail Open Source License v1.1
+   *
+   * @see https://github.com/trusteddomainproject/OpenDMARC/blob/master/LICENSE.Sendmail
+   */
+  public static readonly SENDMAIL_OPEN_SOURCE_1_1 = new SpdxLicense('Sendmail-Open-Source-1.1');
+
+  /**
+   * Business Source License 1.1
+   *
+   * @see https://mariadb.com/bsl11/
+   */
+  public static readonly BUSL_1_1 = new SpdxLicense('BUSL-1.1');
+
+  /**
+   * Eurosym License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Eurosym
+   */
+  public static readonly EUROSYM = new SpdxLicense('Eurosym');
+
+  /**
+   * ThirdEye License
+   *
+   * @see https://sourceware.org/cgit/binutils-gdb/tree/include/coff/symconst.h#n11
+   */
+  public static readonly THIRD_EYE = new SpdxLicense('ThirdEye');
+
+  /**
+   * Creative Commons Share Alike 1.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/sa/1.0/legalcode
+   */
+  public static readonly CC_SA_1_0 = new SpdxLicense('CC-SA-1.0');
+
+  /**
+   * Sybase Open Watcom Public License 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Watcom-1.0
+   */
+  public static readonly WATCOM_1_0 = new SpdxLicense('Watcom-1.0');
+
+  /**
+   * Caldera License
+   *
+   * @see http://www.lemis.com/grog/UNIX/ancient-source-all.pdf
+   */
+  public static readonly CALDERA = new SpdxLicense('Caldera');
+
+  /**
+   * The Parity Public License 7.0.0
+   *
+   * @see https://paritylicense.com/versions/7.0.0.html
+   */
+  public static readonly PARITY_7_0_0 = new SpdxLicense('Parity-7.0.0');
+
+  /**
+   * Secure Messaging Protocol Public License
+   *
+   * @see https://github.com/dcblake/SMP/blob/master/Documentation/License.txt
+   */
+  public static readonly SMPPL = new SpdxLicense('SMPPL');
+
+  /**
+   * Affero General Public License v1.0
+   *
+   * @see http://www.affero.org/oagpl.html
+   */
+  public static readonly AGPL_1_0 = new SpdxLicense('AGPL-1.0');
+
+  /**
+   * Mulan Permissive Software License, Version 2
+   *
+   * @osiApproved
+   *
+   * @see https://license.coscl.org.cn/MulanPSL2
+   */
+  public static readonly MULANPSL_2_0 = new SpdxLicense('MulanPSL-2.0');
+
+  /**
+   * Afmparse License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Afmparse
+   */
+  public static readonly AFMPARSE = new SpdxLicense('Afmparse');
+
+  /**
+   * GNU Free Documentation License v1.2 or later - no invariants
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
+   */
+  public static readonly GFDL_1_2_NO_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.2-no-invariants-or-later');
+
+  /**
+   * Lucida Bitmap Fonts License
+   *
+   * @see https://gitlab.freedesktop.org/xorg/font/bh-100dpi/-/blob/master/COPYING?ref_type=heads
+   */
+  public static readonly LUCIDA_BITMAP_FONTS = new SpdxLicense('Lucida-Bitmap-Fonts');
+
+  /**
+   * Detection Rule License 1.0
+   *
+   * @see https://github.com/Neo23x0/sigma/blob/master/LICENSE.Detection.Rules.md
+   */
+  public static readonly DRL_1_0 = new SpdxLicense('DRL-1.0');
+
+  /**
+   * Creative Commons Attribution Non Commercial 2.5 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nc/2.5/legalcode
+   */
+  public static readonly CC_BY_NC_2_5 = new SpdxLicense('CC-BY-NC-2.5');
+
+  /**
+   * GD License
+   *
+   * @see https://libgd.github.io/manuals/2.3.0/files/license-txt.html
+   */
+  public static readonly GD = new SpdxLicense('GD');
+
+  /**
+   * Zend License v2.0
+   *
+   * @see https://web.archive.org/web/20130517195954/http://www.zend.com/license/2_00.txt
+   */
+  public static readonly ZEND_2_0 = new SpdxLicense('Zend-2.0');
+
+  /**
+   * Cronyx License
+   *
+   * @see https://gitlab.freedesktop.org/xorg/font/alias/-/blob/master/COPYING
+   */
+  public static readonly CRONYX = new SpdxLicense('Cronyx');
+
+  /**
+   * TTYP0 License
+   *
+   * @see https://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/
+   */
+  public static readonly TTYP0 = new SpdxLicense('TTYP0');
+
+  /**
+   * Creative Commons Attribution No Derivatives 1.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nd/1.0/legalcode
+   */
+  public static readonly CC_BY_ND_1_0 = new SpdxLicense('CC-BY-ND-1.0');
+
+  /**
+   * Ferguson Twofish License
+   *
+   * @see https://github.com/wernerd/ZRTPCPP/blob/6b3cd8e6783642292bad0c21e3e5e5ce45ff3e03/cryptcommon/twofish.c#L113C3-L127
+   */
+  public static readonly FERGUSON_TWOFISH = new SpdxLicense('Ferguson-Twofish');
+
+  /**
+   * Scheme Language Report License
+   *
+   * @see undefined
+   */
+  public static readonly SCHEME_REPORT = new SpdxLicense('SchemeReport');
+
+  /**
+   * MIT Khronos - old variant
+   *
+   * @see https://github.com/KhronosGroup/SPIRV-Cross/blob/main/LICENSES/LicenseRef-KhronosFreeUse.txt
+   */
+  public static readonly MIT_KHRONOS_OLD = new SpdxLicense('MIT-Khronos-old');
+
+  /**
+   * LPD Documentation License
+   *
+   * @see https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md
+   */
+  public static readonly LPD_DOCUMENT = new SpdxLicense('LPD-document');
+
+  /**
+   * Universal Permissive License v1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/UPL
+   */
+  public static readonly UPL_1_0 = new SpdxLicense('UPL-1.0');
+
+  /**
+   * CeCILL Free Software License Agreement v1.1
+   *
+   * @see http://www.cecill.info/licences/Licence_CeCILL_V1.1-US.html
+   */
+  public static readonly CECILL_1_1 = new SpdxLicense('CECILL-1.1');
+
+  /**
+   * Crossword License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Crossword
+   */
+  public static readonly CROSSWORD = new SpdxLicense('Crossword');
+
+  /**
+   * Computational Use of Data Agreement v1.0
+   *
+   * @see https://github.com/microsoft/Computational-Use-of-Data-Agreement/blob/master/C-UDA-1.0.md
+   */
+  public static readonly C_UDA_1_0 = new SpdxLicense('C-UDA-1.0');
+
+  /**
+   * Hewlett-Packard BSD variant license
+   *
+   * @see https://github.com/zdohnal/hplip/blob/master/COPYING#L939
+   */
+  public static readonly BSD_3_CLAUSE_HP = new SpdxLicense('BSD-3-Clause-HP');
+
+  /**
+   * Apache License 1.0
+   *
+   * @see http://www.apache.org/licenses/LICENSE-1.0
+   */
+  public static readonly APACHE_1_0 = new SpdxLicense('Apache-1.0');
+
+  /**
+   * CERN Open Hardware Licence v1.1
+   *
+   * @see https://www.ohwr.org/project/licenses/wikis/cern-ohl-v1.1
+   */
+  public static readonly CERN_OHL_1_1 = new SpdxLicense('CERN-OHL-1.1');
+
+  /**
+   * Sun Industry Standards Source License v1.1
+   *
+   * @osiApproved
+   *
+   * @see http://www.openoffice.org/licenses/sissl_license.html
+   */
+  public static readonly SISSL = new SpdxLicense('SISSL');
+
+  /**
+   * Mozilla Public License 2.0 (no copyleft exception)
+   *
+   * @osiApproved
+   *
+   * @see https://www.mozilla.org/MPL/2.0/
+   */
+  public static readonly MPL_2_0_NO_COPYLEFT_EXCEPTION = new SpdxLicense('MPL-2.0-no-copyleft-exception');
+
+  /**
+   * Open Logistics Foundation License Version 1.3
+   *
+   * @osiApproved
+   *
+   * @see https://openlogisticsfoundation.org/licenses/
+   */
+  public static readonly OLFL_1_3 = new SpdxLicense('OLFL-1.3');
+
+  /**
+   * Inner Net License v2.0
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Inner_Net_License
+   */
+  public static readonly INNER_NET_2_0 = new SpdxLicense('Inner-Net-2.0');
+
+  /**
+   * GNU General Public License v1.0 only
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html
+   */
+  public static readonly GPL_1_0_ONLY = new SpdxLicense('GPL-1.0-only');
+
+  /**
+   * Licence Libre du Québec – Réciprocité version 1.1
+   *
+   * @osiApproved
+   *
+   * @see https://www.forge.gouv.qc.ca/participez/licence-logicielle/licence-libre-du-quebec-liliq-en-francais/licence-libre-du-quebec-reciprocite-liliq-r-v1-1/
+   */
+  public static readonly LILIQ_R_1_1 = new SpdxLicense('LiLiQ-R-1.1');
+
+  /**
+   * BSD 4.3 TAHOE License
+   *
+   * @see https://github.com/389ds/389-ds-base/blob/main/ldap/include/sysexits-compat.h#L15
+   */
+  public static readonly BSD_4_3TAHOE = new SpdxLicense('BSD-4.3TAHOE');
+
+  /**
+   * Academic Free License v2.0
+   *
+   * @osiApproved
+   *
+   * @see http://wayback.archive.org/web/20060924134533/http://www.opensource.org/licenses/afl-2.0.txt
+   */
+  public static readonly AFL_2_0 = new SpdxLicense('AFL-2.0');
+
+  /**
+   * GNU Free Documentation License v1.2 or later - invariants
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
+   */
+  public static readonly GFDL_1_2_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.2-invariants-or-later');
+
+  /**
+   * Creative Commons Attribution Non Commercial No Derivatives 2.5 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nc-nd/2.5/legalcode
+   */
+  public static readonly CC_BY_NC_ND_2_5 = new SpdxLicense('CC-BY-NC-ND-2.5');
+
+  /**
+   * Open LDAP Public License v2.4
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=cd1284c4a91a8a380d904eee68d1583f989ed386
+   */
+  public static readonly OLDAP_2_4 = new SpdxLicense('OLDAP-2.4');
+
+  /**
+   * Brian Gladman 3-Clause License
+   *
+   * @see https://github.com/SWI-Prolog/packages-clib/blob/master/sha1/brg_endian.h
+   */
+  public static readonly BRIAN_GLADMAN_3_CLAUSE = new SpdxLicense('Brian-Gladman-3-Clause');
+
+  /**
+   * gtkbook License
+   *
+   * @see https://github.com/slogan621/gtkbook
+   */
+  public static readonly GTKBOOK = new SpdxLicense('gtkbook');
+
+  /**
+   * SIL Open Font License 1.0 with no Reserved Font Name
+   *
+   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL10_web
+   */
+  public static readonly OFL_1_0_NO_RFN = new SpdxLicense('OFL-1.0-no-RFN');
+
+  /**
+   * Licence Art Libre 1.3
+   *
+   * @see https://artlibre.org/
+   */
+  public static readonly LAL_1_3 = new SpdxLicense('LAL-1.3');
+
+  /**
+   * threeparttable License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Threeparttable
+   */
+  public static readonly THREEPARTTABLE = new SpdxLicense('threeparttable');
+
+  /**
+   * Imlib2 License
+   *
+   * @see http://trac.enlightenment.org/e/browser/trunk/imlib2/COPYING
+   */
+  public static readonly IMLIB2 = new SpdxLicense('Imlib2');
+
+  /**
+   * Adobe Display PostScript License
+   *
+   * @see https://gitlab.freedesktop.org/xorg/xserver/-/blob/master/COPYING?ref_type=heads#L752
+   */
+  public static readonly ADOBE_DISPLAY_POSTSCRIPT = new SpdxLicense('Adobe-Display-PostScript');
+
+  /**
+   * X.Net License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Xnet
+   */
+  public static readonly XNET = new SpdxLicense('Xnet');
+
+  /**
+   * Open Software License 2.1
+   *
+   * @osiApproved
+   *
+   * @see http://web.archive.org/web/20050212003940/http://www.rosenlaw.com/osl21.htm
+   */
+  public static readonly OSL_2_1 = new SpdxLicense('OSL-2.1');
+
+  /**
+   * Open LDAP Public License v2.2
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=470b0c18ec67621c85881b2733057fecf4a1acc3
+   */
+  public static readonly OLDAP_2_2 = new SpdxLicense('OLDAP-2.2');
+
+  /**
+   * Microsoft Limited Public License
+   *
+   * @see https://www.openhub.net/licenses/mslpl
+   */
+  public static readonly MS_LPL = new SpdxLicense('MS-LPL');
+
+  /**
+   * Mup License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Mup
+   */
+  public static readonly MUP = new SpdxLicense('Mup');
+
+  /**
+   * GNU Lesser General Public License v3.0 only
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/lgpl-3.0-standalone.html
+   */
+  public static readonly LGPL_3_0 = new SpdxLicense('LGPL-3.0');
+
+  /**
+   * BSD 4.3 RENO License
+   *
+   * @see https://sourceware.org/git/?p=binutils-gdb.git;a=blob;f=libiberty/strcasecmp.c;h=131d81c2ce7881fa48c363dc5bf5fb302c61ce0b;hb=HEAD
+   */
+  public static readonly BSD_4_3RENO = new SpdxLicense('BSD-4.3RENO');
+
+  /**
+   * MIT Click License
+   *
+   * @see https://github.com/kohler/t1utils/blob/master/LICENSE
+   */
+  public static readonly MIT_CLICK = new SpdxLicense('MIT-Click');
+
+  /**
+   * W3C Software Notice and Document License (2015-05-13)
+   *
+   * @osiApproved
+   *
+   * @see https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
+   */
+  public static readonly W3C_20150513 = new SpdxLicense('W3C-20150513');
+
+  /**
+   * GNU General Public License v1.0 or later
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html
+   */
+  public static readonly GPL_1_0_OR_LATER = new SpdxLicense('GPL-1.0-or-later');
+
+  /**
+   * Open Software License 2.0
+   *
+   * @osiApproved
+   *
+   * @see http://web.archive.org/web/20041020171434/http://www.rosenlaw.com/osl2.0.html
+   */
+  public static readonly OSL_2_0 = new SpdxLicense('OSL-2.0');
+
+  /**
+   * Eclipse Public License 2.0
+   *
+   * @osiApproved
+   *
+   * @see https://www.eclipse.org/legal/epl-2.0
+   */
+  public static readonly EPL_2_0 = new SpdxLicense('EPL-2.0');
+
+  /**
+   * GNU Free Documentation License v1.3
+   *
+   * @see https://www.gnu.org/licenses/fdl-1.3.txt
+   */
+  public static readonly GFDL_1_3 = new SpdxLicense('GFDL-1.3');
+
+  /**
+   * ASWF Digital Assets License version 1.0
+   *
+   * @see https://github.com/AcademySoftwareFoundation/foundation/blob/main/digital_assets/aswf_digital_assets_license_v1.0.txt
+   */
+  public static readonly ASWF_DIGITAL_ASSETS_1_0 = new SpdxLicense('ASWF-Digital-Assets-1.0');
+
+  /**
+   * Apple Public Source License 1.1
+   *
+   * @osiApproved
+   *
+   * @see http://www.opensource.apple.com/source/IOSerialFamily/IOSerialFamily-7/APPLE_LICENSE
+   */
+  public static readonly APSL_1_1 = new SpdxLicense('APSL-1.1');
+
+  /**
+   * Historical Permission Notice and Disclaimer
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/HPND
+   */
+  public static readonly HPND = new SpdxLicense('HPND');
+
+  /**
+   * Linux Kernel Variant of OpenIB.org license
+   *
+   * @see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/infiniband/core/sa.h
+   */
+  public static readonly LINUX_OPENIB = new SpdxLicense('Linux-OpenIB');
+
+  /**
+   * Zeeff License
+   *
+   * @see ftp://ftp.tin.org/pub/news/utils/newsx/newsx-1.6.tar.gz
+   */
+  public static readonly ZEEFF = new SpdxLicense('Zeeff');
+
+  /**
+   * Open Government Licence v3.0
+   *
+   * @see http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+   */
+  public static readonly OGL_UK_3_0 = new SpdxLicense('OGL-UK-3.0');
+
+  /**
+   * Creative Commons Attribution No Derivatives 3.0 Germany
+   *
+   * @see https://creativecommons.org/licenses/by-nd/3.0/de/legalcode
+   */
+  public static readonly CC_BY_ND_3_0_DE = new SpdxLicense('CC-BY-ND-3.0-DE');
+
+  /**
+   * BSD 4 Clause Shortened
+   *
+   * @see https://metadata.ftp-master.debian.org/changelogs//main/a/arpwatch/arpwatch_2.1a15-7_copyright
+   */
+  public static readonly BSD_4_CLAUSE_SHORTENED = new SpdxLicense('BSD-4-Clause-Shortened');
+
+  /**
+   * BSD 2-Clause FreeBSD License
+   *
+   * @see http://www.freebsd.org/copyright/freebsd-license.html
+   */
+  public static readonly BSD_2_CLAUSE_FREEBSD = new SpdxLicense('BSD-2-Clause-FreeBSD');
+
+  /**
+   * gnuplot License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Gnuplot
+   */
+  public static readonly GNUPLOT = new SpdxLicense('gnuplot');
+
+  /**
+   * PNG Reference Library version 2
+   *
+   * @see http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
+   */
+  public static readonly LIBPNG_2_0 = new SpdxLicense('libpng-2.0');
+
+  /**
+   * Leptonica License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Leptonica
+   */
+  public static readonly LEPTONICA = new SpdxLicense('Leptonica');
+
+  /**
+   * Clips License
+   *
+   * @see https://github.com/DrItanium/maya/blob/master/LICENSE.CLIPS
+   */
+  public static readonly CLIPS = new SpdxLicense('Clips');
+
+  /**
+   * OpenSSL License
+   *
+   * @see http://www.openssl.org/source/license.html
+   */
+  public static readonly OPEN_SS_L = new SpdxLicense('OpenSSL');
+
+  /**
+   * Sendmail License
+   *
+   * @see http://www.sendmail.com/pdfs/open_source/sendmail_license.pdf
+   */
+  public static readonly SENDMAIL = new SpdxLicense('Sendmail');
+
+  /**
+   * NCBI Public Domain Notice
+   *
+   * @see https://github.com/ncbi/sra-tools/blob/e8e5b6af4edc460156ad9ce5902d0779cffbf685/LICENSE
+   */
+  public static readonly NCBI_PD = new SpdxLicense('NCBI-PD');
+
+  /**
+   * TrustedQSL License
+   *
+   * @see https://sourceforge.net/p/trustedqsl/tqsl/ci/master/tree/LICENSE.txt
+   */
+  public static readonly TRUSTED_QS_L = new SpdxLicense('TrustedQSL');
+
+  /**
+   * Catharon License
+   *
+   * @see https://github.com/scummvm/scummvm/blob/v2.8.0/LICENSES/CatharonLicense.txt
+   */
+  public static readonly CATHARON = new SpdxLicense('Catharon');
+
+  /**
+   * European Union Public License 1.2
+   *
+   * @osiApproved
+   *
+   * @see https://joinup.ec.europa.eu/page/eupl-text-11-12
+   */
+  public static readonly EUPL_1_2 = new SpdxLicense('EUPL-1.2');
+
+  /**
+   * Wsuipa License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Wsuipa
+   */
+  public static readonly WSUIPA = new SpdxLicense('Wsuipa');
+
+  /**
+   * Open Government Licence v2.0
+   *
+   * @see http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/
+   */
+  public static readonly OGL_UK_2_0 = new SpdxLicense('OGL-UK-2.0');
+
+  /**
+   * ISC Veillard variant
+   *
+   * @see https://raw.githubusercontent.com/GNOME/libxml2/4c2e7c651f6c2f0d1a74f350cbda95f7df3e7017/hash.c
+   */
+  public static readonly ISC_VEILLARD = new SpdxLicense('ISC-Veillard');
+
+  /**
+   * Creative Commons Attribution 3.0 Netherlands
+   *
+   * @see https://creativecommons.org/licenses/by/3.0/nl/legalcode
+   */
+  public static readonly CC_BY_3_0_NL = new SpdxLicense('CC-BY-3.0-NL');
+
+  /**
+   * AdaCore Doc License
+   *
+   * @see https://github.com/AdaCore/xmlada/blob/master/docs/index.rst
+   */
+  public static readonly ADACORE_DOC = new SpdxLicense('AdaCore-doc');
+
+  /**
+   * Affero General Public License v1.0 only
+   *
+   * @see http://www.affero.org/oagpl.html
+   */
+  public static readonly AGPL_1_0_ONLY = new SpdxLicense('AGPL-1.0-only');
+
+  /**
+   * GNU Lesser General Public License v3.0 or later
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/lgpl-3.0-standalone.html
+   */
+  public static readonly LGPL_3_0_PLUS = new SpdxLicense('LGPL-3.0+');
+
+  /**
+   * libselinux public domain notice
+   *
+   * @see https://github.com/SELinuxProject/selinux/blob/master/libselinux/LICENSE
+   */
+  public static readonly LIBSELINUX_1_0 = new SpdxLicense('libselinux-1.0');
+
+  /**
+   * Historical Permission Notice and Disclaimer - Fenneberg-Livingston variant
+   *
+   * @see https://github.com/FreeRADIUS/freeradius-client/blob/master/COPYRIGHT#L32
+   */
+  public static readonly HPND_FENNEBERG_LIVINGSTON = new SpdxLicense('HPND-Fenneberg-Livingston');
+
+  /**
+   * Xdebug License v 1.03
+   *
+   * @see https://github.com/xdebug/xdebug/blob/master/LICENSE
+   */
+  public static readonly XDEBUG_1_03 = new SpdxLicense('Xdebug-1.03');
+
+  /**
+   * Jam License
+   *
+   * @osiApproved
+   *
+   * @see https://www.boost.org/doc/libs/1_35_0/doc/html/jam.html
+   */
+  public static readonly JAM = new SpdxLicense('Jam');
+
+  /**
+   * GNU General Public License v2.0 w/Classpath exception
+   *
+   * @see https://www.gnu.org/software/classpath/license.html
+   */
+  public static readonly GPL_2_0_WITH_CLASSPATH_EXCEPTION = new SpdxLicense('GPL-2.0-with-classpath-exception');
+
+  /**
+   * check-cvs License
+   *
+   * @see http://cvs.savannah.gnu.org/viewvc/cvs/ccvs/contrib/check_cvs.in?revision=1.1.4.3&view=markup&pathrev=cvs1-11-23#l2
+   */
+  public static readonly CHECK_CVS = new SpdxLicense('check-cvs');
+
+  /**
+   * GNU Library General Public License v2 or later
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html
+   */
+  public static readonly LGPL_2_0_PLUS = new SpdxLicense('LGPL-2.0+');
+
+  /**
+   * AMD newlib License
+   *
+   * @see https://sourceware.org/git/?p=newlib-cygwin.git;a=blob;f=newlib/libc/sys/a29khif/_close.S;h=04f52ae00de1dafbd9055ad8d73c5c697a3aae7f;hb=HEAD
+   */
+  public static readonly AMD_NEWLIB = new SpdxLicense('AMD-newlib');
+
+  /**
+   * Creative Commons Attribution Non Commercial 1.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nc/1.0/legalcode
+   */
+  public static readonly CC_BY_NC_1_0 = new SpdxLicense('CC-BY-NC-1.0');
+
+  /**
+   * xinetd License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Xinetd_License
+   */
+  public static readonly XINETD = new SpdxLicense('xinetd');
+
+  /**
+   * BSD 4-Clause "Original" or "Old" License
+   *
+   * @see http://directory.fsf.org/wiki/License:BSD_4Clause
+   */
+  public static readonly BSD_4_CLAUSE = new SpdxLicense('BSD-4-Clause');
+
+  /**
+   * IBM PowerPC Initialization and Boot Software
+   *
+   * @see http://git.denx.de/?p=u-boot.git;a=blob;f=arch/powerpc/cpu/ppc4xx/miiphy.c;h=297155fdafa064b955e53e9832de93bfb0cfb85b;hb=9fab4bf4cc077c21e43941866f3f2c196f28670d
+   */
+  public static readonly IBM_PIBS = new SpdxLicense('IBM-pibs');
+
+  /**
+   * Apache License 2.0
+   *
+   * @osiApproved
+   *
+   * @see https://www.apache.org/licenses/LICENSE-2.0
+   */
+  public static readonly APACHE_2_0 = new SpdxLicense('Apache-2.0');
+
+  /**
+   * Linux man-pages - 1 paragraph
+   *
+   * @see https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man2/getcpu.2#n4
+   */
+  public static readonly LINUX_MAN_PAGES_1_PARA = new SpdxLicense('Linux-man-pages-1-para');
+
+  /**
+   * Code Project Open License 1.02
+   *
+   * @see http://www.codeproject.com/info/cpol10.aspx
+   */
+  public static readonly CPOL_1_02 = new SpdxLicense('CPOL-1.02');
+
+  /**
+   * BSD Source Code Attribution - beginning of file variant
+   *
+   * @see https://github.com/lattera/freebsd/blob/master/sys/cam/cam.c#L4
+   */
+  public static readonly BSD_SOURCE_BEGINNING_FILE = new SpdxLicense('BSD-Source-beginning-file');
+
+  /**
+   * CERN Open Hardware Licence Version 2 - Permissive
+   *
+   * @osiApproved
+   *
+   * @see https://www.ohwr.org/project/cernohl/wikis/Documents/CERN-OHL-version-2
+   */
+  public static readonly CERN_OHL_P_2_0 = new SpdxLicense('CERN-OHL-P-2.0');
+
+  /**
+   * OFFIS License
+   *
+   * @see https://sourceforge.net/p/xmedcon/code/ci/master/tree/libs/dicom/README
+   */
+  public static readonly OFFIS = new SpdxLicense('OFFIS');
 
   /**
    * GNU General Public License v2.0 or later
@@ -2901,6 +3172,1626 @@ export class SpdxLicense {
    * @see https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
    */
   public static readonly GPL_2_0_OR_LATER = new SpdxLicense('GPL-2.0-or-later');
+
+  /**
+   * radvd License
+   *
+   * @see https://github.com/radvd-project/radvd/blob/master/COPYRIGHT
+   */
+  public static readonly RADVD = new SpdxLicense('radvd');
+
+  /**
+   * Xfig License
+   *
+   * @see https://github.com/Distrotech/transfig/blob/master/transfig/transfig.c
+   */
+  public static readonly XFIG = new SpdxLicense('Xfig');
+
+  /**
+   * Multics License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Multics
+   */
+  public static readonly MULTICS = new SpdxLicense('Multics');
+
+  /**
+   * Academic Free License v1.1
+   *
+   * @osiApproved
+   *
+   * @see http://opensource.linux-mirror.org/licenses/afl-1.1.txt
+   */
+  public static readonly AFL_1_1 = new SpdxLicense('AFL-1.1');
+
+  /**
+   * Beerware License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Beerware
+   */
+  public static readonly BEERWARE = new SpdxLicense('Beerware');
+
+  /**
+   * Microsoft Public License
+   *
+   * @osiApproved
+   *
+   * @see http://www.microsoft.com/opensource/licenses.mspx
+   */
+  public static readonly MS_PL = new SpdxLicense('MS-PL');
+
+  /**
+   * ssh-keyscan License
+   *
+   * @see https://github.com/openssh/openssh-portable/blob/master/LICENCE#L82
+   */
+  public static readonly SSH_KEYSCAN = new SpdxLicense('ssh-keyscan');
+
+  /**
+   * Spencer License 99
+   *
+   * @see http://www.opensource.apple.com/source/tcl/tcl-5/tcl/generic/regfronts.c
+   */
+  public static readonly SPENCER_99 = new SpdxLicense('Spencer-99');
+
+  /**
+   * SIL Open Font License 1.1
+   *
+   * @osiApproved
+   *
+   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web
+   */
+  public static readonly OFL_1_1 = new SpdxLicense('OFL-1.1');
+
+  /**
+   * Baekmuk License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing:Baekmuk?rd=Licensing/Baekmuk
+   */
+  public static readonly BAEKMUK = new SpdxLicense('Baekmuk');
+
+  /**
+   * Qhull License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Qhull
+   */
+  public static readonly QHULL = new SpdxLicense('Qhull');
+
+  /**
+   * GNU Free Documentation License v1.2 or later
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
+   */
+  public static readonly GFDL_1_2_OR_LATER = new SpdxLicense('GFDL-1.2-or-later');
+
+  /**
+   * Creative Commons Attribution Non Commercial Share Alike 4.0 International
+   *
+   * @see https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+   */
+  public static readonly CC_BY_NC_SA_4_0 = new SpdxLicense('CC-BY-NC-SA-4.0');
+
+  /**
+   * Apple Public Source License 2.0
+   *
+   * @osiApproved
+   *
+   * @see http://www.opensource.apple.com/license/apsl/
+   */
+  public static readonly APSL_2_0 = new SpdxLicense('APSL-2.0');
+
+  /**
+   * VOSTROM Public License for Open Source
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/VOSTROM
+   */
+  public static readonly VOSTROM = new SpdxLicense('VOSTROM');
+
+  /**
+   * Net-SNMP License
+   *
+   * @see http://net-snmp.sourceforge.net/about/license.html
+   */
+  public static readonly NET_SNMP = new SpdxLicense('Net-SNMP');
+
+  /**
+   * Historical Permission Notice and Disclaimer - documentation variant
+   *
+   * @see https://gitlab.freedesktop.org/xorg/lib/libxext/-/blob/master/COPYING?ref_type=heads#L185-197
+   */
+  public static readonly HPND_DOC = new SpdxLicense('HPND-doc');
+
+  /**
+   * NRL License
+   *
+   * @see http://web.mit.edu/network/isakmp/nrllicense.html
+   */
+  public static readonly NRL = new SpdxLicense('NRL');
+
+  /**
+   * Time::ParseDate License
+   *
+   * @see https://metacpan.org/pod/Time::ParseDate#LICENSE
+   */
+  public static readonly TPDL = new SpdxLicense('TPDL');
+
+  /**
+   * Affero General Public License v1.0 or later
+   *
+   * @see http://www.affero.org/oagpl.html
+   */
+  public static readonly AGPL_1_0_OR_LATER = new SpdxLicense('AGPL-1.0-or-later');
+
+  /**
+   * Historical Permission Notice and Disclaimer - Markus Kuhn variant
+   *
+   * @see https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
+   */
+  public static readonly HPND_MARKUS_KUHN = new SpdxLicense('HPND-Markus-Kuhn');
+
+  /**
+   * LZMA SDK License (versions 9.22 and beyond)
+   *
+   * @see https://www.7-zip.org/sdk.html
+   */
+  public static readonly LZMA_SDK_9_22 = new SpdxLicense('LZMA-SDK-9.22');
+
+  /**
+   * Unicode License v3
+   *
+   * @osiApproved
+   *
+   * @see https://www.unicode.org/license.txt
+   */
+  public static readonly UNICODE_3_0 = new SpdxLicense('Unicode-3.0');
+
+  /**
+   * GNU General Public License v3.0 or later
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/gpl-3.0-standalone.html
+   */
+  public static readonly GPL_3_0_OR_LATER = new SpdxLicense('GPL-3.0-or-later');
+
+  /**
+   * OpenSSL License - standalone
+   *
+   * @see https://library.netapp.com/ecm/ecm_download_file/ECMP1196395
+   */
+  public static readonly OPENSSL_STANDALONE = new SpdxLicense('OpenSSL-standalone');
+
+  /**
+   * Zimbra Public License v1.3
+   *
+   * @see http://web.archive.org/web/20100302225219/http://www.zimbra.com/license/zimbra-public-license-1-3.html
+   */
+  public static readonly ZIMBRA_1_3 = new SpdxLicense('Zimbra-1.3');
+
+  /**
+   * xkeyboard-config Zinoviev License
+   *
+   * @see https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/blob/master/COPYING?ref_type=heads#L178
+   */
+  public static readonly XKEYBOARD_CONFIG_ZINOVIEV = new SpdxLicense('xkeyboard-config-Zinoviev');
+
+  /**
+   * GNU Free Documentation License v1.1 only - invariants
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   */
+  public static readonly GFDL_1_1_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.1-invariants-only');
+
+  /**
+   * Open Market License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Open_Market_License
+   */
+  public static readonly OML = new SpdxLicense('OML');
+
+  /**
+   * ANTLR Software Rights Notice
+   *
+   * @see http://www.antlr2.org/license.html
+   */
+  public static readonly ANTLR_PD = new SpdxLicense('ANTLR-PD');
+
+  /**
+   * Historical Permission Notice and Disclaimer with MIT disclaimer
+   *
+   * @see https://metacpan.org/release/NLNETLABS/Net-DNS-SEC-1.22/source/LICENSE
+   */
+  public static readonly HPND_MIT_DISCLAIMER = new SpdxLicense('HPND-MIT-disclaimer');
+
+  /**
+   * Dotseqn License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Dotseqn
+   */
+  public static readonly DOTSEQN = new SpdxLicense('Dotseqn');
+
+  /**
+   * Historical Permission Notice and Disclaimer - DEC variant
+   *
+   * @see https://gitlab.freedesktop.org/xorg/app/xkbcomp/-/blob/master/COPYING?ref_type=heads#L69
+   */
+  public static readonly HPND_DEC = new SpdxLicense('HPND-DEC');
+
+  /**
+   * GNU Library General Public License v2 only
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html
+   */
+  public static readonly LGPL_2_0_ONLY = new SpdxLicense('LGPL-2.0-only');
+
+  /**
+   * Creative Commons Attribution 2.5 Australia
+   *
+   * @see https://creativecommons.org/licenses/by/2.5/au/legalcode
+   */
+  public static readonly CC_BY_2_5_AU = new SpdxLicense('CC-BY-2.5-AU');
+
+  /**
+   * DEC 3-Clause License
+   *
+   * @see https://gitlab.freedesktop.org/xorg/xserver/-/blob/master/COPYING?ref_type=heads#L239
+   */
+  public static readonly DEC_3_CLAUSE = new SpdxLicense('DEC-3-Clause');
+
+  /**
+   * Q Public License 1.0 - INRIA 2004 variant
+   *
+   * @see https://github.com/maranget/hevea/blob/master/LICENSE
+   */
+  public static readonly QPL_1_0_INRIA_2004 = new SpdxLicense('QPL-1.0-INRIA-2004');
+
+  /**
+   * Intel Open Source License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Intel
+   */
+  public static readonly INTEL = new SpdxLicense('Intel');
+
+  /**
+   * NIST Public Domain Notice with license fallback
+   *
+   * @see https://github.com/usnistgov/jsip/blob/59700e6926cbe96c5cdae897d9a7d2656b42abe3/LICENSE
+   */
+  public static readonly NIST_PD_FALLBACK = new SpdxLicense('NIST-PD-fallback');
+
+  /**
+   * Creative Commons Attribution Non Commercial 4.0 International
+   *
+   * @see https://creativecommons.org/licenses/by-nc/4.0/legalcode
+   */
+  public static readonly CC_BY_NC_4_0 = new SpdxLicense('CC-BY-NC-4.0');
+
+  /**
+   * BSD 3-Clause No Nuclear Warranty
+   *
+   * @see https://jogamp.org/git/?p=gluegen.git;a=blob_plain;f=LICENSE.txt
+   */
+  public static readonly BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY = new SpdxLicense('BSD-3-Clause-No-Nuclear-Warranty');
+
+  /**
+   * Historical Permission Notice and Disclaimer - University of California variant
+   *
+   * @see https://core.tcl-lang.org/tk/file?name=compat/unistd.h
+   */
+  public static readonly HPND_UC = new SpdxLicense('HPND-UC');
+
+  /**
+   * MIT Tom Wu Variant
+   *
+   * @see https://github.com/chromium/octane/blob/master/crypto.js
+   */
+  public static readonly MIT_WU = new SpdxLicense('MIT-Wu');
+
+  /**
+   * Kastrup License
+   *
+   * @see https://ctan.math.utah.edu/ctan/tex-archive/macros/generic/kastrup/binhex.dtx
+   */
+  public static readonly KASTRUP = new SpdxLicense('Kastrup');
+
+  /**
+   * CMU License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing:MIT?rd=Licensing/MIT#CMU_Style
+   */
+  public static readonly MIT_CMU = new SpdxLicense('MIT-CMU');
+
+  /**
+   * Data licence Germany – zero – version 2.0
+   *
+   * @see https://www.govdata.de/dl-de/zero-2-0
+   */
+  public static readonly DL_DE_ZERO_2_0 = new SpdxLicense('DL-DE-ZERO-2.0');
+
+  /**
+   * NIST Software License
+   *
+   * @see https://github.com/open-quantum-safe/liboqs/blob/40b01fdbb270f8614fde30e65d30e9da18c02393/src/common/rand/rand_nist.c#L1-L15
+   */
+  public static readonly NIST_SOFTWARE = new SpdxLicense('NIST-Software');
+
+  /**
+   * Spencer License 94
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Henry_Spencer_Reg-Ex_Library_License
+   */
+  public static readonly SPENCER_94 = new SpdxLicense('Spencer-94');
+
+  /**
+   * Creative Commons Attribution 2.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by/2.0/legalcode
+   */
+  public static readonly CC_BY_2_0 = new SpdxLicense('CC-BY-2.0');
+
+  /**
+   * European Union Public License 1.1
+   *
+   * @osiApproved
+   *
+   * @see https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
+   */
+  public static readonly EUPL_1_1 = new SpdxLicense('EUPL-1.1');
+
+  /**
+   * HPND with US Government export control warning and modification rqmt
+   *
+   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L1157-L1182
+   */
+  public static readonly HPND_EXPORT_US_MODIFY = new SpdxLicense('HPND-export-US-modify');
+
+  /**
+   * Generic XTS License
+   *
+   * @see https://github.com/mhogomchungu/zuluCrypt/blob/master/external_libraries/tcplay/generic_xts.c
+   */
+  public static readonly GENERIC_XTS = new SpdxLicense('generic-xts');
+
+  /**
+   * No Limit Public License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/NLPL
+   */
+  public static readonly NLPL = new SpdxLicense('NLPL');
+
+  /**
+   * University of Illinois/NCSA Open Source License
+   *
+   * @osiApproved
+   *
+   * @see http://otm.illinois.edu/uiuc_openSource
+   */
+  public static readonly NCSA = new SpdxLicense('NCSA');
+
+  /**
+   * Python Software Foundation License 2.0
+   *
+   * @see https://opensource.org/licenses/Python-2.0
+   */
+  public static readonly PSF_2_0 = new SpdxLicense('PSF-2.0');
+
+  /**
+   * Linux man-pages Copyleft Variant
+   *
+   * @see https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man2/set_mempolicy.2#n5
+   */
+  public static readonly LINUX_MAN_PAGES_COPYLEFT_VAR = new SpdxLicense('Linux-man-pages-copyleft-var');
+
+  /**
+   * Open Software License 1.1
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/OSL1.1
+   */
+  public static readonly OSL_1_1 = new SpdxLicense('OSL-1.1');
+
+  /**
+   * mpi Permissive License
+   *
+   * @see https://sources.debian.org/src/openmpi/4.1.0-10/ompi/debuggers/msgq_interface.h/?hl=19#L19
+   */
+  public static readonly MPI_PERMISSIVE = new SpdxLicense('mpi-permissive');
+
+  /**
+   * Glulxe License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Glulxe
+   */
+  public static readonly GLULXE = new SpdxLicense('Glulxe');
+
+  /**
+   * Licence Art Libre 1.2
+   *
+   * @see http://artlibre.org/licence/lal/licence-art-libre-12/
+   */
+  public static readonly LAL_1_2 = new SpdxLicense('LAL-1.2');
+
+  /**
+   * SMAIL General Public License
+   *
+   * @see https://sources.debian.org/copyright/license/debianutils/4.11.2/
+   */
+  public static readonly SMAIL_GPL = new SpdxLicense('SMAIL-GPL');
+
+  /**
+   * NASA Open Source Agreement 1.3
+   *
+   * @osiApproved
+   *
+   * @see http://ti.arc.nasa.gov/opensource/nosa/
+   */
+  public static readonly NASA_1_3 = new SpdxLicense('NASA-1.3');
+
+  /**
+   * Sun Public License v1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/SPL-1.0
+   */
+  public static readonly SPL_1_0 = new SpdxLicense('SPL-1.0');
+
+  /**
+   * BSD Advertising Acknowledgement License
+   *
+   * @see https://github.com/python-excel/xlrd/blob/master/LICENSE#L33
+   */
+  public static readonly BSD_ADVERTISING_ACKNOWLEDGEMENT = new SpdxLicense('BSD-Advertising-Acknowledgement');
+
+  /**
+   * BSD 3-Clause Modification
+   *
+   * @see https://fedoraproject.org/wiki/Licensing:BSD#Modification_Variant
+   */
+  public static readonly BSD_3_CLAUSE_MODIFICATION = new SpdxLicense('BSD-3-Clause-Modification');
+
+  /**
+   * 3D Slicer License v1.0
+   *
+   * @see https://slicer.org/LICENSE
+   */
+  public static readonly THREE_D_SLICER_1_0 = new SpdxLicense('3D-Slicer-1.0');
+
+  /**
+   * Netscape Public License v1.1
+   *
+   * @see http://www.mozilla.org/MPL/NPL/1.1/
+   */
+  public static readonly NPL_1_1 = new SpdxLicense('NPL-1.1');
+
+  /**
+   * GNU General Public License v2.0 w/GCC Runtime Library exception
+   *
+   * @see https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/libgcc1.c;h=762f5143fc6eed57b6797c82710f3538aa52b40b;hb=cb143a3ce4fb417c68f5fa2691a1b1b1053dfba9#l10
+   */
+  public static readonly GPL_2_0_WITH_GCC_EXCEPTION = new SpdxLicense('GPL-2.0-with-GCC-exception');
+
+  /**
+   * Independent JPEG Group License - short
+   *
+   * @see https://sourceforge.net/p/xmedcon/code/ci/master/tree/libs/ljpg/
+   */
+  public static readonly IJG_SHORT = new SpdxLicense('IJG-short');
+
+  /**
+   * Creative Commons Attribution 4.0 International
+   *
+   * @see https://creativecommons.org/licenses/by/4.0/legalcode
+   */
+  public static readonly CC_BY_4_0 = new SpdxLicense('CC-BY-4.0');
+
+  /**
+   * ulem License
+   *
+   * @see https://mirrors.ctan.org/macros/latex/contrib/ulem/README
+   */
+  public static readonly ULEM = new SpdxLicense('ulem');
+
+  /**
+   * BSD 3-Clause Sun Microsystems
+   *
+   * @see https://github.com/xmlark/msv/blob/b9316e2f2270bc1606952ea4939ec87fbba157f3/xsdlib/src/main/java/com/sun/msv/datatype/regexp/InternalImpl.java
+   */
+  public static readonly BSD_3_CLAUSE_SUN = new SpdxLicense('BSD-3-Clause-Sun');
+
+  /**
+   * Sax Public Domain Notice 2.0
+   *
+   * @see http://www.saxproject.org/copying.html
+   */
+  public static readonly SAX_PD_2_0 = new SpdxLicense('SAX-PD-2.0');
+
+  /**
+   * TORQUE v2.5+ Software License v1.1
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/TORQUEv1.1
+   */
+  public static readonly TORQUE_1_1 = new SpdxLicense('TORQUE-1.1');
+
+  /**
+   * Technische Universitaet Berlin License 2.0
+   *
+   * @see https://github.com/CorsixTH/deps/blob/fd339a9f526d1d9c9f01ccf39e438a015da50035/licences/libgsm.txt
+   */
+  public static readonly TU_BERLIN_2_0 = new SpdxLicense('TU-Berlin-2.0');
+
+  /**
+   * Borceux license
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Borceux
+   */
+  public static readonly BORCEUX = new SpdxLicense('Borceux');
+
+  /**
+   * GNU General Public License v3.0 or later
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/gpl-3.0-standalone.html
+   */
+  public static readonly GPL_3_0_PLUS = new SpdxLicense('GPL-3.0+');
+
+  /**
+   * BSD Zero Clause License
+   *
+   * @osiApproved
+   *
+   * @see http://landley.net/toybox/license.html
+   */
+  public static readonly ZERO_BSD = new SpdxLicense('0BSD');
+
+  /**
+   * Mackerras 3-Clause License
+   *
+   * @see https://github.com/ppp-project/ppp/blob/master/pppd/chap_ms.c#L6-L28
+   */
+  public static readonly MACKERRAS_3_CLAUSE = new SpdxLicense('Mackerras-3-Clause');
+
+  /**
+   * GNU Free Documentation License v1.3 or later - invariants
+   *
+   * @see https://www.gnu.org/licenses/fdl-1.3.txt
+   */
+  public static readonly GFDL_1_3_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.3-invariants-or-later');
+
+  /**
+   * Knuth CTAN License
+   *
+   * @see https://ctan.org/license/knuth
+   */
+  public static readonly KNUTH_CTAN = new SpdxLicense('Knuth-CTAN');
+
+  /**
+   * Standard ML of New Jersey License
+   *
+   * @see https://www.smlnj.org/license.html
+   */
+  public static readonly SMLNJ = new SpdxLicense('SMLNJ');
+
+  /**
+   * Non-Profit Open Software License 3.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/NOSL3.0
+   */
+  public static readonly NPOSL_3_0 = new SpdxLicense('NPOSL-3.0');
+
+  /**
+   * Open LDAP Public License v1.4
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=c9f95c2f3f2ffb5e0ae55fe7388af75547660941
+   */
+  public static readonly OLDAP_1_4 = new SpdxLicense('OLDAP-1.4');
+
+  /**
+   * Intel ACPI Software License Agreement
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Intel_ACPI_Software_License_Agreement
+   */
+  public static readonly INTEL_ACPI = new SpdxLicense('Intel-ACPI');
+
+  /**
+   * Adobe Glyph List License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/MIT#AdobeGlyph
+   */
+  public static readonly ADOBE_GLYPH = new SpdxLicense('Adobe-Glyph');
+
+  /**
+   * BSD with attribution
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/BSD_with_Attribution
+   */
+  public static readonly BSD_3_CLAUSE_ATTRIBUTION = new SpdxLicense('BSD-3-Clause-Attribution');
+
+  /**
+   * metamail License
+   *
+   * @see https://github.com/Dual-Life/mime-base64/blob/master/Base64.xs#L12
+   */
+  public static readonly METAMAIL = new SpdxLicense('metamail');
+
+  /**
+   * Zed License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Zed
+   */
+  public static readonly ZED = new SpdxLicense('Zed');
+
+  /**
+   * Sun PPP License (2000)
+   *
+   * @see https://github.com/ppp-project/ppp/blob/master/modules/ppp_ahdlc.c#L7-L19
+   */
+  public static readonly SUN_PPP_2000 = new SpdxLicense('Sun-PPP-2000');
+
+  /**
+   * SGI Free Software License B v1.0
+   *
+   * @see http://oss.sgi.com/projects/FreeB/SGIFreeSWLicB.1.0.html
+   */
+  public static readonly SGI_B_1_0 = new SpdxLicense('SGI-B-1.0');
+
+  /**
+   * xlock License
+   *
+   * @see https://fossies.org/linux/tiff/contrib/ras/ras2tif.c
+   */
+  public static readonly XLOCK = new SpdxLicense('xlock');
+
+  /**
+   * GNU Affero General Public License v3.0
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/agpl.txt
+   */
+  public static readonly AGPL_3_0 = new SpdxLicense('AGPL-3.0');
+
+  /**
+   * SCEA Shared Source License
+   *
+   * @see http://research.scea.com/scea_shared_source_license.html
+   */
+  public static readonly SCEA = new SpdxLicense('SCEA');
+
+  /**
+   * Artistic License 2.0
+   *
+   * @osiApproved
+   *
+   * @see http://www.perlfoundation.org/artistic_license_2_0
+   */
+  public static readonly ARTISTIC_2_0 = new SpdxLicense('Artistic-2.0');
+
+  /**
+   * ICU License
+   *
+   * @osiApproved
+   *
+   * @see http://source.icu-project.org/repos/icu/icu/trunk/license.html
+   */
+  public static readonly ICU = new SpdxLicense('ICU');
+
+  /**
+   * Creative Commons Attribution 2.5 Generic
+   *
+   * @see https://creativecommons.org/licenses/by/2.5/legalcode
+   */
+  public static readonly CC_BY_2_5 = new SpdxLicense('CC-BY-2.5');
+
+  /**
+   * Solderpad Hardware License, Version 0.51
+   *
+   * @see https://solderpad.org/licenses/SHL-0.51/
+   */
+  public static readonly SHL_0_51 = new SpdxLicense('SHL-0.51');
+
+  /**
+   * LaTeX Project Public License v1.3a
+   *
+   * @see http://www.latex-project.org/lppl/lppl-1-3a.txt
+   */
+  public static readonly LPPL_1_3A = new SpdxLicense('LPPL-1.3a');
+
+  /**
+   * Community Data License Agreement Permissive 1.0
+   *
+   * @see https://cdla.io/permissive-1-0
+   */
+  public static readonly CDLA_PERMISSIVE_1_0 = new SpdxLicense('CDLA-Permissive-1.0');
+
+  /**
+   * Eiffel Forum License v2.0
+   *
+   * @osiApproved
+   *
+   * @see http://www.eiffel-nice.org/license/eiffel-forum-license-2.html
+   */
+  public static readonly EFL_2_0 = new SpdxLicense('EFL-2.0');
+
+  /**
+   * Utah Raster Toolkit Run Length Encoded License
+   *
+   * @see https://sourceforge.net/p/netpbm/code/HEAD/tree/super_stable/converter/other/pnmtorle.c
+   */
+  public static readonly URT_RLE = new SpdxLicense('URT-RLE');
+
+  /**
+   * Historical Permission Notice and Disclaimer - sell regexpr variant
+   *
+   * @see https://gitlab.com/bacula-org/bacula/-/blob/Branch-11.0/bacula/LICENSE-FOSS?ref_type=heads#L245
+   */
+  public static readonly HPND_SELL_REGEXPR = new SpdxLicense('HPND-sell-regexpr');
+
+  /**
+   * GNU Free Documentation License v1.3 or later - no invariants
+   *
+   * @see https://www.gnu.org/licenses/fdl-1.3.txt
+   */
+  public static readonly GFDL_1_3_NO_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.3-no-invariants-or-later');
+
+  /**
+   * AMD's plpa_map.c License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/AMD_plpa_map_License
+   */
+  public static readonly AMDPLPA = new SpdxLicense('AMDPLPA');
+
+  /**
+   * Bitstream Charter Font License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Charter#License_Text
+   */
+  public static readonly BITSTREAM_CHARTER = new SpdxLicense('Bitstream-Charter');
+
+  /**
+   * Python ldap License
+   *
+   * @see https://github.com/python-ldap/python-ldap/blob/main/LICENCE
+   */
+  public static readonly PYTHON_LDAP = new SpdxLicense('python-ldap');
+
+  /**
+   * Creative Commons Attribution Share Alike 3.0 Austria
+   *
+   * @see https://creativecommons.org/licenses/by-sa/3.0/at/legalcode
+   */
+  public static readonly CC_BY_SA_3_0_AT = new SpdxLicense('CC-BY-SA-3.0-AT');
+
+  /**
+   * OGC Software License, Version 1.0
+   *
+   * @see https://www.ogc.org/ogc/software/1.0
+   */
+  public static readonly OGC_1_0 = new SpdxLicense('OGC-1.0');
+
+  /**
+   * Creative Commons Attribution Share Alike 2.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-sa/2.0/legalcode
+   */
+  public static readonly CC_BY_SA_2_0 = new SpdxLicense('CC-BY-SA-2.0');
+
+  /**
+   * PADL License
+   *
+   * @see https://git.openldap.org/openldap/openldap/-/blob/master/libraries/libldap/os-local.c?ref_type=heads#L19-23
+   */
+  public static readonly PADL = new SpdxLicense('PADL');
+
+  /**
+   * NICTA Public Software License, Version 1.0
+   *
+   * @see https://opensource.apple.com/source/mDNSResponder/mDNSResponder-320.10/mDNSPosix/nss_ReadMe.txt
+   */
+  public static readonly NICTA_1_0 = new SpdxLicense('NICTA-1.0');
+
+  /**
+   * Lucent Public License Version 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/LPL-1.0
+   */
+  public static readonly LPL_1_0 = new SpdxLicense('LPL-1.0');
+
+  /**
+   * LaTeX Project Public License v1.1
+   *
+   * @see http://www.latex-project.org/lppl/lppl-1-1.txt
+   */
+  public static readonly LPPL_1_1 = new SpdxLicense('LPPL-1.1');
+
+  /**
+   * Common Documentation License 1.0
+   *
+   * @see http://www.opensource.apple.com/cdl/
+   */
+  public static readonly CDL_1_0 = new SpdxLicense('CDL-1.0');
+
+  /**
+   * Boehm-Demers-Weiser GC License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing:MIT#Another_Minimal_variant_(found_in_libatomic_ops)
+   */
+  public static readonly BOEHM_GC = new SpdxLicense('Boehm-GC');
+
+  /**
+   * Sun PPP License
+   *
+   * @see https://github.com/ppp-project/ppp/blob/master/pppd/eap.c#L7-L16
+   */
+  public static readonly SUN_PPP = new SpdxLicense('Sun-PPP');
+
+  /**
+   * Open LDAP Public License v2.2.1
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=4bc786f34b50aa301be6f5600f58a980070f481e
+   */
+  public static readonly OLDAP_2_2_1 = new SpdxLicense('OLDAP-2.2.1');
+
+  /**
+   * GNU Affero General Public License v3.0 or later
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/agpl.txt
+   */
+  public static readonly AGPL_3_0_OR_LATER = new SpdxLicense('AGPL-3.0-or-later');
+
+  /**
+   * Open LDAP Public License v2.6
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=1cae062821881f41b73012ba816434897abf4205
+   */
+  public static readonly OLDAP_2_6 = new SpdxLicense('OLDAP-2.6');
+
+  /**
+   * BSD 3-Clause No Nuclear License
+   *
+   * @see http://download.oracle.com/otn-pub/java/licenses/bsd.txt
+   */
+  public static readonly BSD_3_CLAUSE_NO_NUCLEAR_LICENSE = new SpdxLicense('BSD-3-Clause-No-Nuclear-License');
+
+  /**
+   * BSD Protection License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/BSD_Protection_License
+   */
+  public static readonly BSD_PROTECTION = new SpdxLicense('BSD-Protection');
+
+  /**
+   * Open CASCADE Technology Public License
+   *
+   * @see http://www.opencascade.com/content/occt-public-license
+   */
+  public static readonly OCCT_PL = new SpdxLicense('OCCT-PL');
+
+  /**
+   * GNU General Public License v2.0 w/Font exception
+   *
+   * @see https://www.gnu.org/licenses/gpl-faq.html#FontException
+   */
+  public static readonly GPL_2_0_WITH_FONT_EXCEPTION = new SpdxLicense('GPL-2.0-with-font-exception');
+
+  /**
+   * Yahoo! Public License v1.0
+   *
+   * @see http://www.zimbra.com/license/yahoo_public_license_1.0.html
+   */
+  public static readonly YPL_1_0 = new SpdxLicense('YPL-1.0');
+
+  /**
+   * MIPS License
+   *
+   * @see https://sourceware.org/cgit/binutils-gdb/tree/include/coff/sym.h#n11
+   */
+  public static readonly MIPS = new SpdxLicense('MIPS');
+
+  /**
+   * SGI Free Software License B v2.0
+   *
+   * @see http://oss.sgi.com/projects/FreeB/SGIFreeSWLicB.2.0.pdf
+   */
+  public static readonly SGI_B_2_0 = new SpdxLicense('SGI-B-2.0');
+
+  /**
+   * MIT Open Group variant
+   *
+   * @see https://gitlab.freedesktop.org/xorg/app/iceauth/-/blob/master/COPYING
+   */
+  public static readonly MIT_OPEN_GROUP = new SpdxLicense('MIT-open-group');
+
+  /**
+   * Apple MIT License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Apple_MIT_License
+   */
+  public static readonly AML = new SpdxLicense('AML');
+
+  /**
+   * Open Software License 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/OSL-1.0
+   */
+  public static readonly OSL_1_0 = new SpdxLicense('OSL-1.0');
+
+  /**
+   * GNU Free Documentation License v1.3 only - invariants
+   *
+   * @see https://www.gnu.org/licenses/fdl-1.3.txt
+   */
+  public static readonly GFDL_1_3_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.3-invariants-only');
+
+  /**
+   * bzip2 and libbzip2 License v1.0.5
+   *
+   * @see https://sourceware.org/bzip2/1.0.5/bzip2-manual-1.0.5.html
+   */
+  public static readonly BZIP2_1_0_5 = new SpdxLicense('bzip2-1.0.5');
+
+  /**
+   * Symlinks License
+   *
+   * @see https://www.mail-archive.com/debian-bugs-rc@lists.debian.org/msg11494.html
+   */
+  public static readonly SYMLINKS = new SpdxLicense('Symlinks');
+
+  /**
+   * Ruby pty extension license
+   *
+   * @see https://github.com/ruby/ruby/blob/9f6deaa6888a423720b4b127b5314f0ad26cc2e6/ext/pty/pty.c#L775-L786
+   */
+  public static readonly RUBY_PTY = new SpdxLicense('Ruby-pty');
+
+  /**
+   * UCAR License
+   *
+   * @see https://github.com/Unidata/UDUNITS-2/blob/master/COPYRIGHT
+   */
+  public static readonly UCAR = new SpdxLicense('UCAR');
+
+  /**
+   * Simple Public License 2.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/SimPL-2.0
+   */
+  public static readonly SIMPL_2_0 = new SpdxLicense('SimPL-2.0');
+
+  /**
+   * PolyForm Noncommercial License 1.0.0
+   *
+   * @see https://polyformproject.org/licenses/noncommercial/1.0.0
+   */
+  public static readonly POLYFORM_NONCOMMERCIAL_1_0_0 = new SpdxLicense('PolyForm-Noncommercial-1.0.0');
+
+  /**
+   * SIL Open Font License 1.1 with no Reserved Font Name
+   *
+   * @osiApproved
+   *
+   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web
+   */
+  public static readonly OFL_1_1_NO_RFN = new SpdxLicense('OFL-1.1-no-RFN');
+
+  /**
+   * Furuseth License
+   *
+   * @see https://git.openldap.org/openldap/openldap/-/blob/master/COPYRIGHT?ref_type=heads#L39-51
+   */
+  public static readonly FURUSETH = new SpdxLicense('Furuseth');
+
+  /**
+   * Mackerras 3-Clause - acknowledgment variant
+   *
+   * @see https://github.com/ppp-project/ppp/blob/master/pppd/auth.c#L6-L28
+   */
+  public static readonly MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT = new SpdxLicense('Mackerras-3-Clause-acknowledgment');
+
+  /**
+   * Creative    Commons Public Domain Mark 1.0 Universal
+   *
+   * @see https://creativecommons.org/publicdomain/mark/1.0/
+   */
+  public static readonly CC_PDM_1_0 = new SpdxLicense('CC-PDM-1.0');
+
+  /**
+   * GNU Lesser General Public License v2.1 or later
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
+   */
+  public static readonly LGPL_2_1_PLUS = new SpdxLicense('LGPL-2.1+');
+
+  /**
+   * zlib License
+   *
+   * @osiApproved
+   *
+   * @see http://www.zlib.net/zlib_license.html
+   */
+  public static readonly ZLIB = new SpdxLicense('Zlib');
+
+  /**
+   * BSD 2-Clause with views sentence
+   *
+   * @see http://www.freebsd.org/copyright/freebsd-license.html
+   */
+  public static readonly BSD_2_CLAUSE_VIEWS = new SpdxLicense('BSD-2-Clause-Views');
+
+  /**
+   * Interbase Public License v1.0
+   *
+   * @see https://web.archive.org/web/20060319014854/http://info.borland.com/devsupport/interbase/opensource/IPL.html
+   */
+  public static readonly INTERBASE_1_0 = new SpdxLicense('Interbase-1.0');
+
+  /**
+   * GNU Library General Public License v2 only
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html
+   */
+  public static readonly LGPL_2_0 = new SpdxLicense('LGPL-2.0');
+
+  /**
+   * GNU Lesser General Public License v3.0 only
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/lgpl-3.0-standalone.html
+   */
+  public static readonly LGPL_3_0_ONLY = new SpdxLicense('LGPL-3.0-only');
+
+  /**
+   * Creative Commons Attribution Non Commercial Share Alike 3.0 Unported
+   *
+   * @see https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
+   */
+  public static readonly CC_BY_NC_SA_3_0 = new SpdxLicense('CC-BY-NC-SA-3.0');
+
+  /**
+   * MIT License Modern Variant
+   *
+   * @osiApproved
+   *
+   * @see https://fedoraproject.org/wiki/Licensing:MIT#Modern_Variants
+   */
+  public static readonly MIT_MODERN_VARIANT = new SpdxLicense('MIT-Modern-Variant');
+
+  /**
+   * Unicode Terms of Use
+   *
+   * @see http://web.archive.org/web/20140704074106/http://www.unicode.org/copyright.html
+   */
+  public static readonly UNICODE_TOU = new SpdxLicense('Unicode-TOU');
+
+  /**
+   * Adobe Postscript AFM License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/AdobePostscriptAFM
+   */
+  public static readonly APAFML = new SpdxLicense('APAFML');
+
+  /**
+   * TCL/TK License
+   *
+   * @see http://www.tcl.tk/software/tcltk/license.html
+   */
+  public static readonly TCL = new SpdxLicense('TCL');
+
+  /**
+   * Xerox License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Xerox
+   */
+  public static readonly XEROX = new SpdxLicense('Xerox');
+
+  /**
+   * FSF Unlimited License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/FSF_Unlimited_License
+   */
+  public static readonly FSFUL = new SpdxLicense('FSFUL');
+
+  /**
+   * FSF All Permissive License (without Warranty)
+   *
+   * @see https://git.savannah.gnu.org/cgit/wget.git/tree/util/trunc.c?h=v1.21.3&id=40747a11e44ced5a8ac628a41f879ced3e2ebce9#n6
+   */
+  public static readonly FSFAP_NO_WARRANTY_DISCLAIMER = new SpdxLicense('FSFAP-no-warranty-disclaimer');
+
+  /**
+   * Artistic License 1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Artistic-1.0
+   */
+  public static readonly ARTISTIC_1_0 = new SpdxLicense('Artistic-1.0');
+
+  /**
+   * ImageMagick License
+   *
+   * @see http://www.imagemagick.org/script/license.php
+   */
+  public static readonly IMAGE_MAGICK = new SpdxLicense('ImageMagick');
+
+  /**
+   * Brian Gladman 2-Clause License
+   *
+   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L140-L156
+   */
+  public static readonly BRIAN_GLADMAN_2_CLAUSE = new SpdxLicense('Brian-Gladman-2-Clause');
+
+  /**
+   * BitTorrent Open Source License v1.1
+   *
+   * @see http://directory.fsf.org/wiki/License:BitTorrentOSL1.1
+   */
+  public static readonly BITTORRENT_1_1 = new SpdxLicense('BitTorrent-1.1');
+
+  /**
+   * GNU General Public License v3.0 only
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/gpl-3.0-standalone.html
+   */
+  public static readonly GPL_3_0_ONLY = new SpdxLicense('GPL-3.0-only');
+
+  /**
+   * Linux man-pages Copyleft
+   *
+   * @see https://www.kernel.org/doc/man-pages/licenses.html
+   */
+  public static readonly LINUX_MAN_PAGES_COPYLEFT = new SpdxLicense('Linux-man-pages-copyleft');
+
+  /**
+   * NTP No Attribution
+   *
+   * @see https://github.com/tytso/e2fsprogs/blob/master/lib/et/et_name.c
+   */
+  public static readonly NTP_0 = new SpdxLicense('NTP-0');
+
+  /**
+   * curl License
+   *
+   * @see https://github.com/bagder/curl/blob/master/COPYING
+   */
+  public static readonly CURL = new SpdxLicense('curl');
+
+  /**
+   * MIT +no-false-attribs license
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/MITNFA
+   */
+  public static readonly MITNFA = new SpdxLicense('MITNFA');
+
+  /**
+   * libtiff License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/libtiff
+   */
+  public static readonly LIBTIFF = new SpdxLicense('libtiff');
+
+  /**
+   * Erlang Public License v1.1
+   *
+   * @see http://www.erlang.org/EPLICENSE
+   */
+  public static readonly ERLPL_1_1 = new SpdxLicense('ErlPL-1.1');
+
+  /**
+   * Adobe Utopia Font License
+   *
+   * @see https://gitlab.freedesktop.org/xorg/font/adobe-utopia-100dpi/-/blob/master/COPYING?ref_type=heads
+   */
+  public static readonly ADOBE_UTOPIA = new SpdxLicense('Adobe-Utopia');
+
+  /**
+   * Haskell Language Report License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Haskell_Language_Report_License
+   */
+  public static readonly HASKELL_REPORT = new SpdxLicense('HaskellReport');
+
+  /**
+   * ISC License
+   *
+   * @osiApproved
+   *
+   * @see https://www.isc.org/licenses/
+   */
+  public static readonly ISC = new SpdxLicense('ISC');
+
+  /**
+   * Naumen Public License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/Naumen
+   */
+  public static readonly NAUMEN = new SpdxLicense('Naumen');
+
+  /**
+   * Creative Commons Attribution Share Alike 1.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-sa/1.0/legalcode
+   */
+  public static readonly CC_BY_SA_1_0 = new SpdxLicense('CC-BY-SA-1.0');
+
+  /**
+   * Etalab Open License 2.0
+   *
+   * @see https://github.com/DISIC/politique-de-contribution-open-source/blob/master/LICENSE.pdf
+   */
+  public static readonly ETALAB_2_0 = new SpdxLicense('etalab-2.0');
+
+  /**
+   * MPEG Software Simulation
+   *
+   * @see https://sourceforge.net/p/netpbm/code/HEAD/tree/super_stable/converter/ppm/ppmtompeg/jrevdct.c#l1189
+   */
+  public static readonly MPEG_SSG = new SpdxLicense('MPEG-SSG');
+
+  /**
+   * CFITSIO License
+   *
+   * @see https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/f_user/node9.html
+   */
+  public static readonly CFITSIO = new SpdxLicense('CFITSIO');
+
+  /**
+   * Mulan Permissive Software License, Version 1
+   *
+   * @see https://license.coscl.org.cn/MulanPSL/
+   */
+  public static readonly MULANPSL_1_0 = new SpdxLicense('MulanPSL-1.0');
+
+  /**
+   * GNU General Public License v2.0 or later
+   *
+   * @osiApproved
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+   */
+  public static readonly GPL_2_0_PLUS = new SpdxLicense('GPL-2.0+');
+
+  /**
+   * BSD-2-Clause Plus Patent License
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/BSDplusPatent
+   */
+  public static readonly BSD_2_CLAUSE_PATENT = new SpdxLicense('BSD-2-Clause-Patent');
+
+  /**
+   * Creative Commons Public Domain Dedication and Certification
+   *
+   * @see https://creativecommons.org/licenses/publicdomain/
+   */
+  public static readonly CC_PDDC = new SpdxLicense('CC-PDDC');
+
+  /**
+   * Transitive Grace Period Public Licence 1.0
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/TGPPL
+   */
+  public static readonly TGPPL_1_0 = new SpdxLicense('TGPPL-1.0');
+
+  /**
+   * snprintf License
+   *
+   * @see https://github.com/openssh/openssh-portable/blob/master/openbsd-compat/bsd-snprintf.c#L2
+   */
+  public static readonly SNPRINTF = new SpdxLicense('snprintf');
+
+  /**
+   * Nunit License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Nunit
+   */
+  public static readonly NUNIT = new SpdxLicense('Nunit');
+
+  /**
+   * Boehm-Demers-Weiser GC License (without fee)
+   *
+   * @see https://github.com/MariaDB/server/blob/11.6/libmysqld/lib_sql.cc
+   */
+  public static readonly BOEHM_GC_WITHOUT_FEE = new SpdxLicense('Boehm-GC-without-fee');
+
+  /**
+   * Pixar License
+   *
+   * @see https://github.com/PixarAnimationStudios/OpenSubdiv/raw/v3_5_0/LICENSE.txt
+   */
+  public static readonly PIXAR = new SpdxLicense('Pixar');
+
+  /**
+   * Historical Permission Notice and Disclaimer - Netrek variant
+   *
+   * @see undefined
+   */
+  public static readonly HPND_NETREK = new SpdxLicense('HPND-Netrek');
+
+  /**
+   * Minpack License
+   *
+   * @see http://www.netlib.org/minpack/disclaimer
+   */
+  public static readonly MINPACK = new SpdxLicense('Minpack');
+
+  /**
+   * GNU Free Documentation License v1.1 only
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   */
+  public static readonly GFDL_1_1_ONLY = new SpdxLicense('GFDL-1.1-only');
+
+  /**
+   * Historical Permission Notice and Disclaimer    - INRIA-IMAG variant
+   *
+   * @see https://github.com/ppp-project/ppp/blob/master/pppd/ipv6cp.c#L75-L83
+   */
+  public static readonly HPND_INRIA_IMAG = new SpdxLicense('HPND-INRIA-IMAG');
+
+  /**
+   * App::s2p License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/App-s2p
+   */
+  public static readonly APP_S2P = new SpdxLicense('App-s2p');
+
+  /**
+   * BSD 3-Clause acpica variant
+   *
+   * @see https://github.com/acpica/acpica/blob/master/source/common/acfileio.c#L119
+   */
+  public static readonly BSD_3_CLAUSE_ACPICA = new SpdxLicense('BSD-3-Clause-acpica');
+
+  /**
+   * Open Group Test Suite License
+   *
+   * @osiApproved
+   *
+   * @see http://www.opengroup.org/testing/downloads/The_Open_Group_TSL.txt
+   */
+  public static readonly OGTSL = new SpdxLicense('OGTSL');
+
+  /**
+   * Open Data Commons Open Database License v1.0
+   *
+   * @see http://www.opendatacommons.org/licenses/odbl/1.0/
+   */
+  public static readonly ODBL_1_0 = new SpdxLicense('ODbL-1.0');
+
+  /**
+   * Creative Commons Attribution No Derivatives 3.0 Unported
+   *
+   * @see https://creativecommons.org/licenses/by-nd/3.0/legalcode
+   */
+  public static readonly CC_BY_ND_3_0 = new SpdxLicense('CC-BY-ND-3.0');
+
+  /**
+   * Creative Commons Attribution Share Alike 2.5 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-sa/2.5/legalcode
+   */
+  public static readonly CC_BY_SA_2_5 = new SpdxLicense('CC-BY-SA-2.5');
+
+  /**
+   * Open LDAP Public License v2.7
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=47c2415c1df81556eeb39be6cad458ef87c534a2
+   */
+  public static readonly OLDAP_2_7 = new SpdxLicense('OLDAP-2.7');
+
+  /**
+   * Upstream Compatibility License v1.0
+   *
+   * @osiApproved
+   *
+   * @see https://opensource.org/licenses/UCL-1.0
+   */
+  public static readonly UCL_1_0 = new SpdxLicense('UCL-1.0');
+
+  /**
+   * Matrix Template Library License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Matrix_Template_Library_License
+   */
+  public static readonly MTLL = new SpdxLicense('MTLL');
+
+  /**
+   * HPND with US Government export control and 2 disclaimers
+   *
+   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L111-L133
+   */
+  public static readonly HPND_EXPORT2_US = new SpdxLicense('HPND-export2-US');
+
+  /**
+   * SIL Open Font License 1.0 with Reserved Font Name
+   *
+   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL10_web
+   */
+  public static readonly OFL_1_0_RFN = new SpdxLicense('OFL-1.0-RFN');
+
+  /**
+   * Zope Public License 2.0
+   *
+   * @osiApproved
+   *
+   * @see http://old.zope.org/Resources/License/ZPL-2.0
+   */
+  public static readonly ZPL_2_0 = new SpdxLicense('ZPL-2.0');
+
+  /**
+   * bcrypt Solar Designer License
+   *
+   * @see https://github.com/bcrypt-ruby/bcrypt-ruby/blob/master/ext/mri/crypt_blowfish.c
+   */
+  public static readonly BCRYPT_SOLAR_DESIGNER = new SpdxLicense('bcrypt-Solar-Designer');
+
+  /**
+   * Creative Commons Attribution Non Commercial Share Alike 3.0 Germany
+   *
+   * @see https://creativecommons.org/licenses/by-nc-sa/3.0/de/legalcode
+   */
+  public static readonly CC_BY_NC_SA_3_0_DE = new SpdxLicense('CC-BY-NC-SA-3.0-DE');
+
+  /**
+   * GNU Free Documentation License v1.1 or later - no invariants
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.1.txt
+   */
+  public static readonly GFDL_1_1_NO_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.1-no-invariants-or-later');
+
+  /**
+   * Creative Commons Attribution-ShareAlike 3.0 IGO
+   *
+   * @see https://creativecommons.org/licenses/by-sa/3.0/igo/legalcode
+   */
+  public static readonly CC_BY_SA_3_0_IGO = new SpdxLicense('CC-BY-SA-3.0-IGO');
+
+  /**
+   * Apache License 1.1
+   *
+   * @osiApproved
+   *
+   * @see http://apache.org/licenses/LICENSE-1.1
+   */
+  public static readonly APACHE_1_1 = new SpdxLicense('Apache-1.1');
+
+  /**
+   * GNU General Public License v2.0 w/Autoconf exception
+   *
+   * @see http://ac-archive.sourceforge.net/doc/copyright.html
+   */
+  public static readonly GPL_2_0_WITH_AUTOCONF_EXCEPTION = new SpdxLicense('GPL-2.0-with-autoconf-exception');
+
+  /**
+   * Caldera License (without preamble)
+   *
+   * @see https://github.com/apache/apr/blob/trunk/LICENSE#L298C6-L298C29
+   */
+  public static readonly CALDERA_NO_PREAMBLE = new SpdxLicense('Caldera-no-preamble');
+
+  /**
+   * Server Side Public License, v 1
+   *
+   * @see https://www.mongodb.com/licensing/server-side-public-license
+   */
+  public static readonly SSPL_1_0 = new SpdxLicense('SSPL-1.0');
+
+  /**
+   * Detection Rule License 1.1
+   *
+   * @see https://github.com/SigmaHQ/Detection-Rule-License/blob/6ec7fbde6101d101b5b5d1fcb8f9b69fbc76c04a/LICENSE.Detection.Rules.md
+   */
+  public static readonly DRL_1_1 = new SpdxLicense('DRL-1.1');
+
+  /**
+   * Linux man-pages Copyleft - 2 paragraphs
+   *
+   * @see https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man2/move_pages.2#n5
+   */
+  public static readonly LINUX_MAN_PAGES_COPYLEFT_2_PARA = new SpdxLicense('Linux-man-pages-copyleft-2-para');
+
+  /**
+   * Open LDAP Public License v2.0.1
+   *
+   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=b6d68acd14e51ca3aab4428bf26522aa74873f0e
+   */
+  public static readonly OLDAP_2_0_1 = new SpdxLicense('OLDAP-2.0.1');
+
+  /**
+   * ANTLR Software Rights Notice with license fallback
+   *
+   * @see http://www.antlr2.org/license.html
+   */
+  public static readonly ANTLR_PD_FALLBACK = new SpdxLicense('ANTLR-PD-fallback');
+
+  /**
+   * Community Data License Agreement Permissive 2.0
+   *
+   * @see https://cdla.dev/permissive-2-0
+   */
+  public static readonly CDLA_PERMISSIVE_2_0 = new SpdxLicense('CDLA-Permissive-2.0');
+
+  /**
+   * HIDAPI License
+   *
+   * @see https://github.com/signal11/hidapi/blob/master/LICENSE-orig.txt
+   */
+  public static readonly HIDAPI = new SpdxLicense('HIDAPI');
+
+  /**
+   * bzip2 and libbzip2 License v1.0.6
+   *
+   * @see https://sourceware.org/git/?p=bzip2.git;a=blob;f=LICENSE;hb=bzip2-1.0.6
+   */
+  public static readonly BZIP2_1_0_6 = new SpdxLicense('bzip2-1.0.6');
+
+  /**
+   * GL2PS License
+   *
+   * @see http://www.geuz.org/gl2ps/COPYING.GL2PS
+   */
+  public static readonly GL2_P_S = new SpdxLicense('GL2PS');
+
+  /**
+   * Trusster Open Source License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/TOSL
+   */
+  public static readonly TOSL = new SpdxLicense('TOSL');
+
+  /**
+   * Abstyles License
+   *
+   * @see https://fedoraproject.org/wiki/Licensing/Abstyles
+   */
+  public static readonly ABSTYLES = new SpdxLicense('Abstyles');
+
+  /**
+   * TermReadKey License
+   *
+   * @see https://github.com/jonathanstowe/TermReadKey/blob/master/README#L9-L10
+   */
+  public static readonly TERM_READ_KEY = new SpdxLicense('TermReadKey');
+
+  /**
+   * GNU Free Documentation License v1.2
+   *
+   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
+   */
+  public static readonly GFDL_1_2 = new SpdxLicense('GFDL-1.2');
+
+  /**
+   * xzoom License
+   *
+   * @see https://metadata.ftp-master.debian.org/changelogs//main/x/xzoom/xzoom_0.3-27_copyright
+   */
+  public static readonly XZOOM = new SpdxLicense('xzoom');
 
   /**
    * PostgreSQL License
@@ -2919,52 +4810,41 @@ export class SpdxLicense {
   public static readonly CNRI_PYTHON_GPL_COMPATIBLE = new SpdxLicense('CNRI-Python-GPL-Compatible');
 
   /**
-   * European Union Public License 1.0
+   * Widget Workshop License
    *
-   * @see http://ec.europa.eu/idabc/en/document/7330.html
+   * @see https://github.com/novnc/noVNC/blob/master/core/crypto/des.js#L24
    */
-  public static readonly EUPL_1_0 = new SpdxLicense('EUPL-1.0');
+  public static readonly WIDGET_WORKSHOP = new SpdxLicense('Widget-Workshop');
 
   /**
-   * libutil David Nugent License
+   * libpng License
    *
-   * @see http://web.mit.edu/freebsd/head/lib/libutil/login_ok.3
+   * @see http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
    */
-  public static readonly LIBUTIL_DAVID_NUGENT = new SpdxLicense('libutil-David-Nugent');
+  public static readonly LIBPNG = new SpdxLicense('Libpng');
 
   /**
-   * GNU Lesser General Public License v2.1 only
+   * Historical Permission Notice and Disclaimer - sell xserver variant with MIT disclaimer
+   *
+   * @see https://gitlab.freedesktop.org/xorg/xserver/-/blob/master/COPYING?ref_type=heads#L1781
+   */
+  public static readonly HPND_SELL_MIT_DISCLAIMER_XSERVER = new SpdxLicense('HPND-sell-MIT-disclaimer-xserver');
+
+  /**
+   * Creative Commons Attribution Non Commercial Share Alike 1.0 Generic
+   *
+   * @see https://creativecommons.org/licenses/by-nc-sa/1.0/legalcode
+   */
+  public static readonly CC_BY_NC_SA_1_0 = new SpdxLicense('CC-BY-NC-SA-1.0');
+
+  /**
+   * Python License 2.0
    *
    * @osiApproved
    *
-   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
+   * @see https://opensource.org/licenses/Python-2.0
    */
-  public static readonly LGPL_2_1 = new SpdxLicense('LGPL-2.1');
-
-  /**
-   * Abstyles License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Abstyles
-   */
-  public static readonly ABSTYLES = new SpdxLicense('Abstyles');
-
-  /**
-   * GNU Lesser General Public License v3.0 or later
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/lgpl-3.0-standalone.html
-   */
-  public static readonly LGPL_3_0_OR_LATER = new SpdxLicense('LGPL-3.0-or-later');
-
-  /**
-   * Mozilla Public License 2.0 (no copyleft exception)
-   *
-   * @osiApproved
-   *
-   * @see https://www.mozilla.org/MPL/2.0/
-   */
-  public static readonly MPL_2_0_NO_COPYLEFT_EXCEPTION = new SpdxLicense('MPL-2.0-no-copyleft-exception');
+  public static readonly PYTHON_2_0 = new SpdxLicense('Python-2.0');
 
   /**
    * Systemics W3Works BSD variant license
@@ -2974,374 +4854,25 @@ export class SpdxLicense {
   public static readonly BSD_SYSTEMICS_W3WORKS = new SpdxLicense('BSD-Systemics-W3Works');
 
   /**
-   * Open Government Licence v2.0
+   * LaTeX Project Public License v1.0
    *
-   * @see http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/
+   * @see http://www.latex-project.org/lppl/lppl-1-0.txt
    */
-  public static readonly OGL_UK_2_0 = new SpdxLicense('OGL-UK-2.0');
+  public static readonly LPPL_1_0 = new SpdxLicense('LPPL-1.0');
 
   /**
-   * Creative Commons Attribution Non Commercial 2.5 Generic
+   * Yahoo! Public License v1.1
    *
-   * @see https://creativecommons.org/licenses/by-nc/2.5/legalcode
+   * @see http://www.zimbra.com/license/yahoo_public_license_1.1.html
    */
-  public static readonly CC_BY_NC_2_5 = new SpdxLicense('CC-BY-NC-2.5');
+  public static readonly YPL_1_1 = new SpdxLicense('YPL-1.1');
 
   /**
-   * ulem License
+   * Scheme Widget Library (SWL) Software License Agreement
    *
-   * @see https://mirrors.ctan.org/macros/latex/contrib/ulem/README
+   * @see https://fedoraproject.org/wiki/Licensing/SWL
    */
-  public static readonly ULEM = new SpdxLicense('ulem');
-
-  /**
-   * CERN Open Hardware Licence Version 2 - Permissive
-   *
-   * @osiApproved
-   *
-   * @see https://www.ohwr.org/project/cernohl/wikis/Documents/CERN-OHL-version-2
-   */
-  public static readonly CERN_OHL_P_2_0 = new SpdxLicense('CERN-OHL-P-2.0');
-
-  /**
-   * TAPR Open Hardware License v1.0
-   *
-   * @see https://www.tapr.org/OHL
-   */
-  public static readonly TAPR_OHL_1_0 = new SpdxLicense('TAPR-OHL-1.0');
-
-  /**
-   * GNU General Public License v2.0 only
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
-   */
-  public static readonly GPL_2_0_ONLY = new SpdxLicense('GPL-2.0-only');
-
-  /**
-   * Open LDAP Public License v2.3
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=d32cf54a32d581ab475d23c810b0a7fbaf8d63c3
-   */
-  public static readonly OLDAP_2_3 = new SpdxLicense('OLDAP-2.3');
-
-  /**
-   * Kastrup License
-   *
-   * @see https://ctan.math.utah.edu/ctan/tex-archive/macros/generic/kastrup/binhex.dtx
-   */
-  public static readonly KASTRUP = new SpdxLicense('Kastrup');
-
-  /**
-   * Mulan Permissive Software License, Version 1
-   *
-   * @see https://license.coscl.org.cn/MulanPSL/
-   */
-  public static readonly MULANPSL_1_0 = new SpdxLicense('MulanPSL-1.0');
-
-  /**
-   * SGI OpenGL License
-   *
-   * @see https://gitlab.freedesktop.org/mesa/glw/-/blob/master/README?ref_type=heads
-   */
-  public static readonly SGI_OPENGL = new SpdxLicense('SGI-OpenGL');
-
-  /**
-   * BSD 3-Clause "New" or "Revised" License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/BSD-3-Clause
-   */
-  public static readonly BSD_3_CLAUSE = new SpdxLicense('BSD-3-Clause');
-
-  /**
-   * CeCILL Free Software License Agreement v2.0
-   *
-   * @see http://www.cecill.info/licences/Licence_CeCILL_V2-en.html
-   */
-  public static readonly CECILL_2_0 = new SpdxLicense('CECILL-2.0');
-
-  /**
-   * IPA Font License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/IPA
-   */
-  public static readonly IPA = new SpdxLicense('IPA');
-
-  /**
-   * TermReadKey License
-   *
-   * @see https://github.com/jonathanstowe/TermReadKey/blob/master/README#L9-L10
-   */
-  public static readonly TERM_READ_KEY = new SpdxLicense('TermReadKey');
-
-  /**
-   * Michigan/Merit Networks License
-   *
-   * @see https://github.com/radcli/radcli/blob/master/COPYRIGHT#L64
-   */
-  public static readonly UMICH_MERIT = new SpdxLicense('UMich-Merit');
-
-  /**
-   * Historical Permission Notice and Disclaimer - sell variant
-   *
-   * @see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/sunrpc/auth_gss/gss_generic_token.c?h=v4.19
-   */
-  public static readonly HPND_SELL_VARIANT = new SpdxLicense('HPND-sell-variant');
-
-  /**
-   * CMU License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing:MIT?rd=Licensing/MIT#CMU_Style
-   */
-  public static readonly MIT_CMU = new SpdxLicense('MIT-CMU');
-
-  /**
-   * Utah Raster Toolkit Run Length Encoded License
-   *
-   * @see https://sourceforge.net/p/netpbm/code/HEAD/tree/super_stable/converter/other/pnmtorle.c
-   */
-  public static readonly URT_RLE = new SpdxLicense('URT-RLE');
-
-  /**
-   * IBM PowerPC Initialization and Boot Software
-   *
-   * @see http://git.denx.de/?p=u-boot.git;a=blob;f=arch/powerpc/cpu/ppc4xx/miiphy.c;h=297155fdafa064b955e53e9832de93bfb0cfb85b;hb=9fab4bf4cc077c21e43941866f3f2c196f28670d
-   */
-  public static readonly IBM_PIBS = new SpdxLicense('IBM-pibs');
-
-  /**
-   * Affero General Public License v1.0 or later
-   *
-   * @see http://www.affero.org/oagpl.html
-   */
-  public static readonly AGPL_1_0_OR_LATER = new SpdxLicense('AGPL-1.0-or-later');
-
-  /**
-   * SSLeay License - standalone
-   *
-   * @see https://www.tq-group.com/filedownloads/files/software-license-conditions/OriginalSSLeay/OriginalSSLeay.pdf
-   */
-  public static readonly SSLEAY_STANDALONE = new SpdxLicense('SSLeay-standalone');
-
-  /**
-   * Spencer License 99
-   *
-   * @see http://www.opensource.apple.com/source/tcl/tcl-5/tcl/generic/regfronts.c
-   */
-  public static readonly SPENCER_99 = new SpdxLicense('Spencer-99');
-
-  /**
-   * Bitstream Vera Font License
-   *
-   * @see https://web.archive.org/web/20080207013128/http://www.gnome.org/fonts/
-   */
-  public static readonly BITSTREAM_VERA = new SpdxLicense('Bitstream-Vera');
-
-  /**
-   * GNU Lesser General Public License v2.1 or later
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
-   */
-  public static readonly LGPL_2_1_OR_LATER = new SpdxLicense('LGPL-2.1-or-later');
-
-  /**
-   * BSD-Inferno-Nettverk
-   *
-   * @see https://www.inet.no/dante/LICENSE
-   */
-  public static readonly BSD_INFERNO_NETTVERK = new SpdxLicense('BSD-Inferno-Nettverk');
-
-  /**
-   * BSD 3-Clause Open MPI variant
-   *
-   * @see https://www.open-mpi.org/community/license.php
-   */
-  public static readonly BSD_3_CLAUSE_OPEN_MPI = new SpdxLicense('BSD-3-Clause-Open-MPI');
-
-  /**
-   * Barr License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Barr
-   */
-  public static readonly BARR = new SpdxLicense('Barr');
-
-  /**
-   * Open LDAP Public License v2.5
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=6852b9d90022e8593c98205413380536b1b5a7cf
-   */
-  public static readonly OLDAP_2_5 = new SpdxLicense('OLDAP-2.5');
-
-  /**
-   * Sendmail License
-   *
-   * @see http://www.sendmail.com/pdfs/open_source/sendmail_license.pdf
-   */
-  public static readonly SENDMAIL = new SpdxLicense('Sendmail');
-
-  /**
-   * SSH short notice
-   *
-   * @see https://github.com/openssh/openssh-portable/blob/1b11ea7c58cd5c59838b5fa574cd456d6047b2d4/pathnames.h
-   */
-  public static readonly SSH_SHORT = new SpdxLicense('SSH-short');
-
-  /**
-   * curl License
-   *
-   * @see https://github.com/bagder/curl/blob/master/COPYING
-   */
-  public static readonly CURL = new SpdxLicense('curl');
-
-  /**
-   * Saxpath License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Saxpath_License
-   */
-  public static readonly SAXPATH = new SpdxLicense('Saxpath');
-
-  /**
-   * SGI Free Software License B v2.0
-   *
-   * @see http://oss.sgi.com/projects/FreeB/SGIFreeSWLicB.2.0.pdf
-   */
-  public static readonly SGI_B_2_0 = new SpdxLicense('SGI-B-2.0');
-
-  /**
-   * Unicode Terms of Use
-   *
-   * @see http://web.archive.org/web/20140704074106/http://www.unicode.org/copyright.html
-   */
-  public static readonly UNICODE_TOU = new SpdxLicense('Unicode-TOU');
-
-  /**
-   * Attribution Assurance License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/attribution
-   */
-  public static readonly AAL = new SpdxLicense('AAL');
-
-  /**
-   * BSD with Attribution and HPND disclaimer
-   *
-   * @see https://github.com/cyrusimap/cyrus-sasl/blob/master/COPYING
-   */
-  public static readonly BSD_ATTRIBUTION_HPND_DISCLAIMER = new SpdxLicense('BSD-Attribution-HPND-disclaimer');
-
-  /**
-   * Latex2e with translated notice permission
-   *
-   * @see https://git.savannah.gnu.org/cgit/indent.git/tree/doc/indent.texi?id=a74c6b4ee49397cf330b333da1042bffa60ed14f#n74
-   */
-  public static readonly LATEX2E_TRANSLATED_NOTICE = new SpdxLicense('Latex2e-translated-notice');
-
-  /**
-   * Lucent Public License v1.02
-   *
-   * @osiApproved
-   *
-   * @see http://plan9.bell-labs.com/plan9/license.html
-   */
-  public static readonly LPL_1_02 = new SpdxLicense('LPL-1.02');
-
-  /**
-   * BSD 3-Clause No Nuclear Warranty
-   *
-   * @see https://jogamp.org/git/?p=gluegen.git;a=blob_plain;f=LICENSE.txt
-   */
-  public static readonly BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY = new SpdxLicense('BSD-3-Clause-No-Nuclear-Warranty');
-
-  /**
-   * Creative Commons Attribution Share Alike 4.0 International
-   *
-   * @see https://creativecommons.org/licenses/by-sa/4.0/legalcode
-   */
-  public static readonly CC_BY_SA_4_0 = new SpdxLicense('CC-BY-SA-4.0');
-
-  /**
-   * Mulan Permissive Software License, Version 2
-   *
-   * @osiApproved
-   *
-   * @see https://license.coscl.org.cn/MulanPSL2
-   */
-  public static readonly MULANPSL_2_0 = new SpdxLicense('MulanPSL-2.0');
-
-  /**
-   * Vovida Software License v1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/VSL-1.0
-   */
-  public static readonly VSL_1_0 = new SpdxLicense('VSL-1.0');
-
-  /**
-   * Clarified Artistic License
-   *
-   * @see http://gianluca.dellavedova.org/2011/01/03/clarified-artistic-license/
-   */
-  public static readonly CL_ARTISTIC = new SpdxLicense('ClArtistic');
-
-  /**
-   * GNU General Public License v1.0 or later
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html
-   */
-  public static readonly GPL_1_0_PLUS = new SpdxLicense('GPL-1.0+');
-
-  /**
-   * Non-Commercial Government Licence
-   *
-   * @see http://www.nationalarchives.gov.uk/doc/non-commercial-government-licence/version/2/
-   */
-  public static readonly NCGL_UK_2_0 = new SpdxLicense('NCGL-UK-2.0');
-
-  /**
-   * Brian Gladman 3-Clause License
-   *
-   * @see https://github.com/SWI-Prolog/packages-clib/blob/master/sha1/brg_endian.h
-   */
-  public static readonly BRIAN_GLADMAN_3_CLAUSE = new SpdxLicense('Brian-Gladman-3-Clause');
-
-  /**
-   * xkeyboard-config Zinoviev License
-   *
-   * @see https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/blob/master/COPYING?ref_type=heads#L178
-   */
-  public static readonly XKEYBOARD_CONFIG_ZINOVIEV = new SpdxLicense('xkeyboard-config-Zinoviev');
-
-  /**
-   * ISC Veillard variant
-   *
-   * @see https://raw.githubusercontent.com/GNOME/libxml2/4c2e7c651f6c2f0d1a74f350cbda95f7df3e7017/hash.c
-   */
-  public static readonly ISC_VEILLARD = new SpdxLicense('ISC-Veillard');
-
-  /**
-   * Ferguson Twofish License
-   *
-   * @see https://github.com/wernerd/ZRTPCPP/blob/6b3cd8e6783642292bad0c21e3e5e5ce45ff3e03/cryptcommon/twofish.c#L113C3-L127
-   */
-  public static readonly FERGUSON_TWOFISH = new SpdxLicense('Ferguson-Twofish');
-
-  /**
-   * Motosoto License
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/Motosoto
-   */
-  public static readonly MOTOSOTO = new SpdxLicense('Motosoto');
+  public static readonly SWL = new SpdxLicense('SWL');
 
   /**
    * Giftware License
@@ -3351,325 +4882,105 @@ export class SpdxLicense {
   public static readonly GIFTWARE = new SpdxLicense('Giftware');
 
   /**
-   * Open LDAP Public License v2.0 (or possibly 2.0A and 2.0B)
+   * CeCILL-B Free Software License Agreement
    *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=cbf50f4e1185a21abd4c0a54d3f4341fe28f36ea
+   * @see http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
    */
-  public static readonly OLDAP_2_0 = new SpdxLicense('OLDAP-2.0');
+  public static readonly CECILL_B = new SpdxLicense('CECILL-B');
 
   /**
-   * Creative Commons Attribution Non Commercial Share Alike 2.0 England and Wales
-   *
-   * @see https://creativecommons.org/licenses/by-nc-sa/2.0/uk/legalcode
-   */
-  public static readonly CC_BY_NC_SA_2_0_UK = new SpdxLicense('CC-BY-NC-SA-2.0-UK');
-
-  /**
-   * GNU Library General Public License v2 only
+   * OSET Public License version 2.1
    *
    * @osiApproved
    *
-   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html
+   * @see http://www.osetfoundation.org/public-license
    */
-  public static readonly LGPL_2_0 = new SpdxLicense('LGPL-2.0');
+  public static readonly OSET_PL_2_1 = new SpdxLicense('OSET-PL-2.1');
 
   /**
-   * BSD 4-Clause "Original" or "Old" License
+   * GNU General Public License v3.0 w/Autoconf exception
    *
-   * @see http://directory.fsf.org/wiki/License:BSD_4Clause
+   * @see https://www.gnu.org/licenses/autoconf-exception-3.0.html
    */
-  public static readonly BSD_4_CLAUSE = new SpdxLicense('BSD-4-Clause');
+  public static readonly GPL_3_0_WITH_AUTOCONF_EXCEPTION = new SpdxLicense('GPL-3.0-with-autoconf-exception');
 
   /**
-   * Creative Commons Attribution Non Commercial No Derivatives 1.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nd-nc/1.0/legalcode
-   */
-  public static readonly CC_BY_NC_ND_1_0 = new SpdxLicense('CC-BY-NC-ND-1.0');
-
-  /**
-   * PolyForm Small Business License 1.0.0
-   *
-   * @see https://polyformproject.org/licenses/small-business/1.0.0
-   */
-  public static readonly POLYFORM_SMALL_BUSINESS_1_0_0 = new SpdxLicense('PolyForm-Small-Business-1.0.0');
-
-  /**
-   * FSF Unlimited License (With License Retention and Warranty Disclaimer)
-   *
-   * @see https://lists.gnu.org/archive/html/autoconf/2012-04/msg00061.html
-   */
-  public static readonly FSFULLRWD = new SpdxLicense('FSFULLRWD');
-
-  /**
-   * GNU Free Documentation License v1.3 only
-   *
-   * @see https://www.gnu.org/licenses/fdl-1.3.txt
-   */
-  public static readonly GFDL_1_3_ONLY = new SpdxLicense('GFDL-1.3-only');
-
-  /**
-   * Open LDAP Public License v2.1
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=b0d176738e96a0d3b9f85cb51e140a86f21be715
-   */
-  public static readonly OLDAP_2_1 = new SpdxLicense('OLDAP-2.1');
-
-  /**
-   * Q Public License 1.0
+   * Cryptographic Autonomy License 1.0 (Combined Work Exception)
    *
    * @osiApproved
    *
-   * @see http://doc.qt.nokia.com/3.3/license.html
+   * @see http://cryptographicautonomylicense.com/license-text.html
    */
-  public static readonly QPL_1_0 = new SpdxLicense('QPL-1.0');
+  public static readonly CAL_1_0_COMBINED_WORK_EXCEPTION = new SpdxLicense('CAL-1.0-Combined-Work-Exception');
 
   /**
-   * Linux man-pages Copyleft - 2 paragraphs
+   * HPND sell variant with MIT disclaimer - reverse
    *
-   * @see https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man2/move_pages.2#n5
+   * @see https://github.com/sigmavirus24/x11-ssh-askpass/blob/master/dynlist.c
    */
-  public static readonly LINUX_MAN_PAGES_COPYLEFT_2_PARA = new SpdxLicense('Linux-man-pages-copyleft-2-para');
+  public static readonly HPND_SELL_VARIANT_MIT_DISCLAIMER_REV = new SpdxLicense('HPND-sell-variant-MIT-disclaimer-rev');
 
   /**
-   * SGP4 Permission Notice
+   * JSON License
    *
-   * @see https://celestrak.org/publications/AIAA/2006-6753/faq.php
+   * @see http://www.json.org/license.html
    */
-  public static readonly SGP4 = new SpdxLicense('SGP4');
+  public static readonly JSON = new SpdxLicense('JSON');
 
   /**
-   * Historical Permission Notice and Disclaimer - Kevlin Henney variant
-   *
-   * @see https://github.com/mruby/mruby/blob/83d12f8d52522cdb7c8cc46fad34821359f453e6/mrbgems/mruby-dir/src/Win/dirent.c#L127-L140
-   */
-  public static readonly HPND_KEVLIN_HENNEY = new SpdxLicense('HPND-Kevlin-Henney');
-
-  /**
-   * Apache License 1.0
-   *
-   * @see http://www.apache.org/licenses/LICENSE-1.0
-   */
-  public static readonly APACHE_1_0 = new SpdxLicense('Apache-1.0');
-
-  /**
-   * GNU Free Documentation License v1.2 or later - invariants
+   * GNU Free Documentation License v1.2 only
    *
    * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
    */
-  public static readonly GFDL_1_2_INVARIANTS_OR_LATER = new SpdxLicense('GFDL-1.2-invariants-or-later');
+  public static readonly GFDL_1_2_ONLY = new SpdxLicense('GFDL-1.2-only');
 
   /**
-   * Multics License
+   * pkgconf License
+   *
+   * @see https://github.com/pkgconf/pkgconf/blob/master/cli/main.c#L8
+   */
+  public static readonly PKGCONF = new SpdxLicense('pkgconf');
+
+  /**
+   * Unicode License Agreement - Data Files and Software (2016)
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/Multics
+   * @see https://www.unicode.org/license.txt
    */
-  public static readonly MULTICS = new SpdxLicense('Multics');
+  public static readonly UNICODE_DFS_2016 = new SpdxLicense('Unicode-DFS-2016');
 
   /**
-   * BSD Advertising Acknowledgement License
-   *
-   * @see https://github.com/python-excel/xlrd/blob/master/LICENSE#L33
-   */
-  public static readonly BSD_ADVERTISING_ACKNOWLEDGEMENT = new SpdxLicense('BSD-Advertising-Acknowledgement');
-
-  /**
-   * hdparm License
-   *
-   * @see https://github.com/Distrotech/hdparm/blob/4517550db29a91420fb2b020349523b1b4512df2/LICENSE.TXT
-   */
-  public static readonly HDPARM = new SpdxLicense('hdparm');
-
-  /**
-   * Lucent Public License Version 1.0
+   * PHP License v3.01
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/LPL-1.0
+   * @see http://www.php.net/license/3_01.txt
    */
-  public static readonly LPL_1_0 = new SpdxLicense('LPL-1.0');
+  public static readonly PHP_3_01 = new SpdxLicense('PHP-3.01');
 
   /**
-   * Spencer License 86
+   * SQLite Blessing
    *
-   * @see https://fedoraproject.org/wiki/Licensing/Henry_Spencer_Reg-Ex_Library_License
+   * @see https://www.sqlite.org/src/artifact/e33a4df7e32d742a?ln=4-9
    */
-  public static readonly SPENCER_86 = new SpdxLicense('Spencer-86');
+  public static readonly BLESSING = new SpdxLicense('blessing');
 
   /**
-   * NTP License
+   * RealNetworks Public Source License v1.0
    *
    * @osiApproved
    *
-   * @see https://opensource.org/licenses/NTP
+   * @see https://helixcommunity.org/content/rpsl
    */
-  public static readonly NTP = new SpdxLicense('NTP');
+  public static readonly RPSL_1_0 = new SpdxLicense('RPSL-1.0');
 
   /**
-   * Nunit License
+   * BitTorrent Open Source License v1.0
    *
-   * @see https://fedoraproject.org/wiki/Licensing/Nunit
+   * @see http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/licenses/BitTorrent?r1=1.1&r2=1.1.1.1&diff_format=s
    */
-  public static readonly NUNIT = new SpdxLicense('Nunit');
-
-  /**
-   * GNU Free Documentation License v1.3 or later
-   *
-   * @see https://www.gnu.org/licenses/fdl-1.3.txt
-   */
-  public static readonly GFDL_1_3_OR_LATER = new SpdxLicense('GFDL-1.3-or-later');
-
-  /**
-   * GNU General Public License v2.0 only
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
-   */
-  public static readonly GPL_2_0 = new SpdxLicense('GPL-2.0');
-
-  /**
-   * HTML Tidy License
-   *
-   * @see https://github.com/htacg/tidy-html5/blob/next/README/LICENSE.md
-   */
-  public static readonly HTMLTIDY = new SpdxLicense('HTMLTIDY');
-
-  /**
-   * Apple Public Source License 1.1
-   *
-   * @osiApproved
-   *
-   * @see http://www.opensource.apple.com/source/IOSerialFamily/IOSerialFamily-7/APPLE_LICENSE
-   */
-  public static readonly APSL_1_1 = new SpdxLicense('APSL-1.1');
-
-  /**
-   * Noweb License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Noweb
-   */
-  public static readonly NOWEB = new SpdxLicense('Noweb');
-
-  /**
-   * Community Data License Agreement Permissive 1.0
-   *
-   * @see https://cdla.io/permissive-1-0
-   */
-  public static readonly CDLA_PERMISSIVE_1_0 = new SpdxLicense('CDLA-Permissive-1.0');
-
-  /**
-   * LaTeX Project Public License v1.3a
-   *
-   * @see http://www.latex-project.org/lppl/lppl-1-3a.txt
-   */
-  public static readonly LPPL_1_3A = new SpdxLicense('LPPL-1.3a');
-
-  /**
-   * Open Publication License v1.0
-   *
-   * @see http://opencontent.org/openpub/
-   */
-  public static readonly OPUBL_1_0 = new SpdxLicense('OPUBL-1.0');
-
-  /**
-   * Open Software License 2.1
-   *
-   * @osiApproved
-   *
-   * @see http://web.archive.org/web/20050212003940/http://www.rosenlaw.com/osl21.htm
-   */
-  public static readonly OSL_2_1 = new SpdxLicense('OSL-2.1');
-
-  /**
-   * IEC    Code Components End-user licence agreement
-   *
-   * @see https://www.iec.ch/webstore/custserv/pdf/CC-EULA.pdf
-   */
-  public static readonly IEC_CODE_COMPONENTS_EULA = new SpdxLicense('IEC-Code-Components-EULA');
-
-  /**
-   * Creative Commons Attribution 2.5 Generic
-   *
-   * @see https://creativecommons.org/licenses/by/2.5/legalcode
-   */
-  public static readonly CC_BY_2_5 = new SpdxLicense('CC-BY-2.5');
-
-  /**
-   * ISC License
-   *
-   * @osiApproved
-   *
-   * @see https://www.isc.org/licenses/
-   */
-  public static readonly ISC = new SpdxLicense('ISC');
-
-  /**
-   * Red Hat eCos Public License v1.1
-   *
-   * @see http://ecos.sourceware.org/old-license.html
-   */
-  public static readonly RHECOS_1_1 = new SpdxLicense('RHeCos-1.1');
-
-  /**
-   * Microsoft Public License
-   *
-   * @osiApproved
-   *
-   * @see http://www.microsoft.com/opensource/licenses.mspx
-   */
-  public static readonly MS_PL = new SpdxLicense('MS-PL');
-
-  /**
-   * BSD Source Code Attribution - beginning of file variant
-   *
-   * @see https://github.com/lattera/freebsd/blob/master/sys/cam/cam.c#L4
-   */
-  public static readonly BSD_SOURCE_BEGINNING_FILE = new SpdxLicense('BSD-Source-beginning-file');
-
-  /**
-   * Linux Kernel Variant of OpenIB.org license
-   *
-   * @see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/infiniband/core/sa.h
-   */
-  public static readonly LINUX_OPENIB = new SpdxLicense('Linux-OpenIB');
-
-  /**
-   * Symlinks License
-   *
-   * @see https://www.mail-archive.com/debian-bugs-rc@lists.debian.org/msg11494.html
-   */
-  public static readonly SYMLINKS = new SpdxLicense('Symlinks');
-
-  /**
-   * softSurfer License
-   *
-   * @see https://github.com/mm2/Little-CMS/blob/master/src/cmssm.c#L207
-   */
-  public static readonly SOFT_SURFER = new SpdxLicense('softSurfer');
-
-  /**
-   * OpenPBS v2.3 Software License
-   *
-   * @see https://github.com/adaptivecomputing/torque/blob/master/PBS_License.txt
-   */
-  public static readonly OPENPBS_2_3 = new SpdxLicense('OpenPBS-2.3');
-
-  /**
-   * Creative Commons Attribution Non Commercial Share Alike 2.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode
-   */
-  public static readonly CC_BY_NC_SA_2_0 = new SpdxLicense('CC-BY-NC-SA-2.0');
-
-  /**
-   * CMU Mach License
-   *
-   * @see https://www.cs.cmu.edu/~410/licenses.html
-   */
-  public static readonly CMU_MACH = new SpdxLicense('CMU-Mach');
+  public static readonly BITTORRENT_1_0 = new SpdxLicense('BitTorrent-1.0');
 
   /**
    * Sun Industry Standards Source License v1.2
@@ -3679,98 +4990,20 @@ export class SpdxLicense {
   public static readonly SISSL_1_2 = new SpdxLicense('SISSL-1.2');
 
   /**
-   * TCL/TK License
-   *
-   * @see http://www.tcl.tk/software/tcltk/license.html
-   */
-  public static readonly TCL = new SpdxLicense('TCL');
-
-  /**
-   * GNU Affero General Public License v3.0 only
+   * GNU General Public License v3.0 only
    *
    * @osiApproved
    *
-   * @see https://www.gnu.org/licenses/agpl.txt
+   * @see https://www.gnu.org/licenses/gpl-3.0-standalone.html
    */
-  public static readonly AGPL_3_0_ONLY = new SpdxLicense('AGPL-3.0-only');
+  public static readonly GPL_3_0 = new SpdxLicense('GPL-3.0');
 
   /**
-   * Linux man-pages Copyleft
+   * Independent JPEG Group License
    *
-   * @see https://www.kernel.org/doc/man-pages/licenses.html
+   * @see http://dev.w3.org/cvsweb/Amaya/libjpeg/Attic/README?rev=1.2
    */
-  public static readonly LINUX_MAN_PAGES_COPYLEFT = new SpdxLicense('Linux-man-pages-copyleft');
-
-  /**
-   * Data licence Germany – zero – version 2.0
-   *
-   * @see https://www.govdata.de/dl-de/zero-2-0
-   */
-  public static readonly DL_DE_ZERO_2_0 = new SpdxLicense('DL-DE-ZERO-2.0');
-
-  /**
-   * Amazon Digital Services License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/AmazonDigitalServicesLicense
-   */
-  public static readonly ADSL = new SpdxLicense('ADSL');
-
-  /**
-   * Mozilla Public License 1.0
-   *
-   * @osiApproved
-   *
-   * @see http://www.mozilla.org/MPL/MPL-1.0.html
-   */
-  public static readonly MPL_1_0 = new SpdxLicense('MPL-1.0');
-
-  /**
-   * Licence Libre du Québec – Réciprocité forte version 1.1
-   *
-   * @osiApproved
-   *
-   * @see https://www.forge.gouv.qc.ca/participez/licence-logicielle/licence-libre-du-quebec-liliq-en-francais/licence-libre-du-quebec-reciprocite-forte-liliq-r-v1-1/
-   */
-  public static readonly LILIQ_RPLUS_1_1 = new SpdxLicense('LiLiQ-Rplus-1.1');
-
-  /**
-   * Apache License 2.0
-   *
-   * @osiApproved
-   *
-   * @see https://www.apache.org/licenses/LICENSE-2.0
-   */
-  public static readonly APACHE_2_0 = new SpdxLicense('Apache-2.0');
-
-  /**
-   * GNU General Public License v2.0 or later
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
-   */
-  public static readonly GPL_2_0_PLUS = new SpdxLicense('GPL-2.0+');
-
-  /**
-   * Widget Workshop License
-   *
-   * @see https://github.com/novnc/noVNC/blob/master/core/crypto/des.js#L24
-   */
-  public static readonly WIDGET_WORKSHOP = new SpdxLicense('Widget-Workshop');
-
-  /**
-   * Solderpad Hardware License, Version 0.51
-   *
-   * @see https://solderpad.org/licenses/SHL-0.51/
-   */
-  public static readonly SHL_0_51 = new SpdxLicense('SHL-0.51');
-
-  /**
-   * Zed License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Zed
-   */
-  public static readonly ZED = new SpdxLicense('Zed');
+  public static readonly IJG = new SpdxLicense('IJG');
 
   /**
    * Open Government Licence - Canada
@@ -3780,182 +5013,25 @@ export class SpdxLicense {
   public static readonly OGL_CANADA_2_0 = new SpdxLicense('OGL-Canada-2.0');
 
   /**
-   * NASA Open Source Agreement 1.3
+   * Creative Commons Attribution No Derivatives 2.5 Generic
    *
-   * @osiApproved
-   *
-   * @see http://ti.arc.nasa.gov/opensource/nosa/
+   * @see https://creativecommons.org/licenses/by-nd/2.5/legalcode
    */
-  public static readonly NASA_1_3 = new SpdxLicense('NASA-1.3');
+  public static readonly CC_BY_ND_2_5 = new SpdxLicense('CC-BY-ND-2.5');
 
   /**
-   * IBM Public License v1.0
+   * Historical Permission Notice and Disclaimer - Pbmplus variant
    *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/IPL-1.0
+   * @see https://sourceforge.net/p/netpbm/code/HEAD/tree/super_stable/netpbm.c#l8
    */
-  public static readonly IPL_1_0 = new SpdxLicense('IPL-1.0');
+  public static readonly HPND_PBMPLUS = new SpdxLicense('HPND-Pbmplus');
 
   /**
-   * w3m License
+   * Creative Commons Attribution Non Commercial No Derivatives 3.0 Germany
    *
-   * @see https://github.com/tats/w3m/blob/master/COPYING
+   * @see https://creativecommons.org/licenses/by-nc-nd/3.0/de/legalcode
    */
-  public static readonly W3_M = new SpdxLicense('w3m');
-
-  /**
-   * Standard ML of New Jersey License
-   *
-   * @see https://www.smlnj.org/license.html
-   */
-  public static readonly STANDARDML_NJ = new SpdxLicense('StandardML-NJ');
-
-  /**
-   * Open Software License 1.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/OSL-1.0
-   */
-  public static readonly OSL_1_0 = new SpdxLicense('OSL-1.0');
-
-  /**
-   * Baekmuk License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing:Baekmuk?rd=Licensing/Baekmuk
-   */
-  public static readonly BAEKMUK = new SpdxLicense('Baekmuk');
-
-  /**
-   * CERN Open Hardware Licence Version 2 - Strongly Reciprocal
-   *
-   * @osiApproved
-   *
-   * @see https://www.ohwr.org/project/cernohl/wikis/Documents/CERN-OHL-version-2
-   */
-  public static readonly CERN_OHL_S_2_0 = new SpdxLicense('CERN-OHL-S-2.0');
-
-  /**
-   * Knuth CTAN License
-   *
-   * @see https://ctan.org/license/knuth
-   */
-  public static readonly KNUTH_CTAN = new SpdxLicense('Knuth-CTAN');
-
-  /**
-   * RSA Message-Digest License
-   *
-   * @see http://www.faqs.org/rfcs/rfc1321.html
-   */
-  public static readonly RSA_MD = new SpdxLicense('RSA-MD');
-
-  /**
-   * VOSTROM Public License for Open Source
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/VOSTROM
-   */
-  public static readonly VOSTROM = new SpdxLicense('VOSTROM');
-
-  /**
-   * LaTeX Project Public License v1.2
-   *
-   * @see http://www.latex-project.org/lppl/lppl-1-2.txt
-   */
-  public static readonly LPPL_1_2 = new SpdxLicense('LPPL-1.2');
-
-  /**
-   * X11 License
-   *
-   * @see http://www.xfree86.org/3.3.6/COPYRIGHT2.html#3
-   */
-  public static readonly X11 = new SpdxLicense('X11');
-
-  /**
-   * Freetype Project License
-   *
-   * @see http://freetype.fis.uniroma2.it/FTL.TXT
-   */
-  public static readonly FTL = new SpdxLicense('FTL');
-
-  /**
-   * Independent JPEG Group License - short
-   *
-   * @see https://sourceforge.net/p/xmedcon/code/ci/master/tree/libs/ljpg/
-   */
-  public static readonly IJG_SHORT = new SpdxLicense('IJG-short');
-
-  /**
-   * Open CASCADE Technology Public License
-   *
-   * @see http://www.opencascade.com/content/occt-public-license
-   */
-  public static readonly OCCT_PL = new SpdxLicense('OCCT-PL');
-
-  /**
-   * CrystalStacker License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing:CrystalStacker?rd=Licensing/CrystalStacker
-   */
-  public static readonly CRYSTAL_STACKER = new SpdxLicense('CrystalStacker');
-
-  /**
-   * EPICS Open License
-   *
-   * @see https://epics.anl.gov/license/open.php
-   */
-  public static readonly EPICS = new SpdxLicense('EPICS');
-
-  /**
-   * W3C Software Notice and Document License (2015-05-13)
-   *
-   * @see https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
-   */
-  public static readonly W3C_20150513 = new SpdxLicense('W3C-20150513');
-
-  /**
-   * Sun Industry Standards Source License v1.1
-   *
-   * @osiApproved
-   *
-   * @see http://www.openoffice.org/licenses/sissl_license.html
-   */
-  public static readonly SISSL = new SpdxLicense('SISSL');
-
-  /**
-   * MIT +no-false-attribs license
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/MITNFA
-   */
-  public static readonly MITNFA = new SpdxLicense('MITNFA');
-
-  /**
-   * GNU General Public License v1.0 only
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html
-   */
-  public static readonly GPL_1_0_ONLY = new SpdxLicense('GPL-1.0-only');
-
-  /**
-   * Ruby License
-   *
-   * @see https://www.ruby-lang.org/en/about/license.txt
-   */
-  public static readonly RUBY = new SpdxLicense('Ruby');
-
-  /**
-   * Common Development and Distribution License 1.1
-   *
-   * @see http://glassfish.java.net/public/CDDL+GPL_1_1.html
-   */
-  public static readonly CDDL_1_1 = new SpdxLicense('CDDL-1.1');
-
-  /**
-   * BSD 2-Clause NetBSD License
-   *
-   * @see http://www.netbsd.org/about/redistribution.html#default
-   */
-  public static readonly BSD_2_CLAUSE_NETBSD = new SpdxLicense('BSD-2-Clause-NetBSD');
+  public static readonly CC_BY_NC_ND_3_0_DE = new SpdxLicense('CC-BY-NC-ND-3.0-DE');
 
   /**
    * Reciprocal Public License 1.5
@@ -3967,793 +5043,20 @@ export class SpdxLicense {
   public static readonly RPL_1_5 = new SpdxLicense('RPL-1.5');
 
   /**
-   * Historical Permission Notice and Disclaimer - sell xserver variant with MIT disclaimer
-   *
-   * @see https://gitlab.freedesktop.org/xorg/xserver/-/blob/master/COPYING?ref_type=heads#L1781
-   */
-  public static readonly HPND_SELL_MIT_DISCLAIMER_XSERVER = new SpdxLicense('HPND-sell-MIT-disclaimer-xserver');
-
-  /**
-   * Technische Universitaet Berlin License 2.0
-   *
-   * @see https://github.com/CorsixTH/deps/blob/fd339a9f526d1d9c9f01ccf39e438a015da50035/licences/libgsm.txt
-   */
-  public static readonly TU_BERLIN_2_0 = new SpdxLicense('TU-Berlin-2.0');
-
-  /**
-   * Licence Libre du Québec – Permissive version 1.1
+   * Nokia Open Source License
    *
    * @osiApproved
    *
-   * @see https://forge.gouv.qc.ca/licence/fr/liliq-v1-1/
+   * @see https://opensource.org/licenses/nokia
    */
-  public static readonly LILIQ_P_1_1 = new SpdxLicense('LiLiQ-P-1.1');
+  public static readonly NOKIA = new SpdxLicense('Nokia');
 
   /**
-   * Eiffel Forum License v2.0
+   * Historical Permission Notice and Disclaimer - documentation sell variant
    *
-   * @osiApproved
-   *
-   * @see http://www.eiffel-nice.org/license/eiffel-forum-license-2.html
-   */
-  public static readonly EFL_2_0 = new SpdxLicense('EFL-2.0');
-
-  /**
-   * Apple Public Source License 1.0
-   *
-   * @osiApproved
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Apple_Public_Source_License_1.0
-   */
-  public static readonly APSL_1_0 = new SpdxLicense('APSL-1.0');
-
-  /**
-   * Q Public License 1.0 - INRIA 2004 variant
-   *
-   * @see https://github.com/maranget/hevea/blob/master/LICENSE
-   */
-  public static readonly QPL_1_0_INRIA_2004 = new SpdxLicense('QPL-1.0-INRIA-2004');
-
-  /**
-   * GNU Free Documentation License v1.3
-   *
-   * @see https://www.gnu.org/licenses/fdl-1.3.txt
-   */
-  public static readonly GFDL_1_3 = new SpdxLicense('GFDL-1.3');
-
-  /**
-   * BSD 2-Clause with views sentence
-   *
-   * @see http://www.freebsd.org/copyright/freebsd-license.html
-   */
-  public static readonly BSD_2_CLAUSE_VIEWS = new SpdxLicense('BSD-2-Clause-Views');
-
-  /**
-   * Creative Commons Attribution No Derivatives 2.5 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nd/2.5/legalcode
-   */
-  public static readonly CC_BY_ND_2_5 = new SpdxLicense('CC-BY-ND-2.5');
-
-  /**
-   * TMate Open Source License
-   *
-   * @see http://svnkit.com/license.html
-   */
-  public static readonly TMATE = new SpdxLicense('TMate');
-
-  /**
-   * Cornell Lossless JPEG License
-   *
-   * @see https://android.googlesource.com/platform/external/dng_sdk/+/refs/heads/master/source/dng_lossless_jpeg.cpp#16
-   */
-  public static readonly CORNELL_LOSSLESS_JPEG = new SpdxLicense('Cornell-Lossless-JPEG');
-
-  /**
-   * MIT Open Group variant
-   *
-   * @see https://gitlab.freedesktop.org/xorg/app/iceauth/-/blob/master/COPYING
-   */
-  public static readonly MIT_OPEN_GROUP = new SpdxLicense('MIT-open-group');
-
-  /**
-   * Creative Commons Attribution No Derivatives 3.0 Unported
-   *
-   * @see https://creativecommons.org/licenses/by-nd/3.0/legalcode
-   */
-  public static readonly CC_BY_ND_3_0 = new SpdxLicense('CC-BY-ND-3.0');
-
-  /**
-   * Creative Commons Attribution No Derivatives 4.0 International
-   *
-   * @see https://creativecommons.org/licenses/by-nd/4.0/legalcode
-   */
-  public static readonly CC_BY_ND_4_0 = new SpdxLicense('CC-BY-ND-4.0');
-
-  /**
-   * The Parity Public License 6.0.0
-   *
-   * @see https://paritylicense.com/versions/6.0.0.html
-   */
-  public static readonly PARITY_6_0_0 = new SpdxLicense('Parity-6.0.0');
-
-  /**
-   * Apple Public Source License 1.2
-   *
-   * @osiApproved
-   *
-   * @see http://www.samurajdata.se/opensource/mirror/licenses/apsl.php
-   */
-  public static readonly APSL_1_2 = new SpdxLicense('APSL-1.2');
-
-  /**
-   * Community Data License Agreement Sharing 1.0
-   *
-   * @see https://cdla.io/sharing-1-0
-   */
-  public static readonly CDLA_SHARING_1_0 = new SpdxLicense('CDLA-Sharing-1.0');
-
-  /**
-   * DSDP License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/DSDP
-   */
-  public static readonly DSDP = new SpdxLicense('DSDP');
-
-  /**
-   * Creative Commons Attribution Non Commercial No Derivatives 4.0 International
-   *
-   * @see https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
-   */
-  public static readonly CC_BY_NC_ND_4_0 = new SpdxLicense('CC-BY-NC-ND-4.0');
-
-  /**
-   * Computational Use of Data Agreement v1.0
-   *
-   * @see https://github.com/microsoft/Computational-Use-of-Data-Agreement/blob/master/C-UDA-1.0.md
-   */
-  public static readonly C_UDA_1_0 = new SpdxLicense('C-UDA-1.0');
-
-  /**
-   * Scheme Language Report License
-   *
-   * @see undefined
-   */
-  public static readonly SCHEME_REPORT = new SpdxLicense('SchemeReport');
-
-  /**
-   * copyleft-next 0.3.1
-   *
-   * @see https://github.com/copyleft-next/copyleft-next/blob/master/Releases/copyleft-next-0.3.1
-   */
-  public static readonly COPYLEFT_NEXT_0_3_1 = new SpdxLicense('copyleft-next-0.3.1');
-
-  /**
-   * Intel ACPI Software License Agreement
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Intel_ACPI_Software_License_Agreement
-   */
-  public static readonly INTEL_ACPI = new SpdxLicense('Intel-ACPI');
-
-  /**
-   * BSD 2-Clause - Ian Darwin variant
-   *
-   * @see https://github.com/file/file/blob/master/COPYING
-   */
-  public static readonly BSD_2_CLAUSE_DARWIN = new SpdxLicense('BSD-2-Clause-Darwin');
-
-  /**
-   * Open Logistics Foundation License Version 1.3
-   *
-   * @osiApproved
-   *
-   * @see https://openlogisticsfoundation.org/licenses/
-   */
-  public static readonly OLFL_1_3 = new SpdxLicense('OLFL-1.3');
-
-  /**
-   * ImageMagick License
-   *
-   * @see http://www.imagemagick.org/script/license.php
-   */
-  public static readonly IMAGE_MAGICK = new SpdxLicense('ImageMagick');
-
-  /**
-   * BSD 4.3 RENO License
-   *
-   * @see https://sourceware.org/git/?p=binutils-gdb.git;a=blob;f=libiberty/strcasecmp.c;h=131d81c2ce7881fa48c363dc5bf5fb302c61ce0b;hb=HEAD
-   */
-  public static readonly BSD_4_3RENO = new SpdxLicense('BSD-4.3RENO');
-
-  /**
-   * Python License 2.0.1
-   *
-   * @see https://www.python.org/download/releases/2.0.1/license/
-   */
-  public static readonly PYTHON_2_0_1 = new SpdxLicense('Python-2.0.1');
-
-  /**
-   * zlib/libpng License with Acknowledgement
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/ZlibWithAcknowledgement
-   */
-  public static readonly ZLIB_ACKNOWLEDGEMENT = new SpdxLicense('zlib-acknowledgement');
-
-  /**
-   * Zimbra Public License v1.3
-   *
-   * @see http://web.archive.org/web/20100302225219/http://www.zimbra.com/license/zimbra-public-license-1-3.html
-   */
-  public static readonly ZIMBRA_1_3 = new SpdxLicense('Zimbra-1.3');
-
-  /**
-   * Creative Commons Attribution 3.0 Unported
-   *
-   * @see https://creativecommons.org/licenses/by/3.0/legalcode
-   */
-  public static readonly CC_BY_3_0 = new SpdxLicense('CC-BY-3.0');
-
-  /**
-   * GNU Library General Public License v2 only
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html
-   */
-  public static readonly LGPL_2_0_ONLY = new SpdxLicense('LGPL-2.0-only');
-
-  /**
-   * OpenSSL License
-   *
-   * @see http://www.openssl.org/source/license.html
-   */
-  public static readonly OPEN_SS_L = new SpdxLicense('OpenSSL');
-
-  /**
-   * Open LDAP Public License v1.1
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=806557a5ad59804ef3a44d5abfbe91d706b0791f
-   */
-  public static readonly OLDAP_1_1 = new SpdxLicense('OLDAP-1.1');
-
-  /**
-   * OCLC Research Public License 2.0
-   *
-   * @osiApproved
-   *
-   * @see http://www.oclc.org/research/activities/software/license/v2final.htm
-   */
-  public static readonly OCLC_2_0 = new SpdxLicense('OCLC-2.0');
-
-  /**
-   * metamail License
-   *
-   * @see https://github.com/Dual-Life/mime-base64/blob/master/Base64.xs#L12
-   */
-  public static readonly METAMAIL = new SpdxLicense('metamail');
-
-  /**
-   * SIL Open Font License 1.0 with Reserved Font Name
-   *
-   * @see http://scripts.sil.org/cms/scripts/page.php?item_id=OFL10_web
-   */
-  public static readonly OFL_1_0_RFN = new SpdxLicense('OFL-1.0-RFN');
-
-  /**
-   * BSD Protection License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/BSD_Protection_License
-   */
-  public static readonly BSD_PROTECTION = new SpdxLicense('BSD-Protection');
-
-  /**
-   * Blue Oak Model License 1.0.0
-   *
-   * @osiApproved
-   *
-   * @see https://blueoakcouncil.org/license/1.0.0
-   */
-  public static readonly BLUEOAK_1_0_0 = new SpdxLicense('BlueOak-1.0.0');
-
-  /**
-   * GNU Free Documentation License v1.3 only - invariants
-   *
-   * @see https://www.gnu.org/licenses/fdl-1.3.txt
-   */
-  public static readonly GFDL_1_3_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.3-invariants-only');
-
-  /**
-   * Historical Permission Notice and Disclaimer - sell regexpr variant
-   *
-   * @see https://gitlab.com/bacula-org/bacula/-/blob/Branch-11.0/bacula/LICENSE-FOSS?ref_type=heads#L245
-   */
-  public static readonly HPND_SELL_REGEXPR = new SpdxLicense('HPND-sell-regexpr');
-
-  /**
-   * Mozilla Public License 2.0
-   *
-   * @osiApproved
-   *
-   * @see https://www.mozilla.org/MPL/2.0/
-   */
-  public static readonly MPL_2_0 = new SpdxLicense('MPL-2.0');
-
-  /**
-   * Trusster Open Source License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/TOSL
-   */
-  public static readonly TOSL = new SpdxLicense('TOSL');
-
-  /**
-   * GNU Library General Public License v2 or later
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html
-   */
-  public static readonly LGPL_2_0_OR_LATER = new SpdxLicense('LGPL-2.0-or-later');
-
-  /**
-   * Good Luck With That Public License
-   *
-   * @see https://github.com/me-shaon/GLWTPL/commit/da5f6bc734095efbacb442c0b31e33a65b9d6e85
-   */
-  public static readonly GLWTPL = new SpdxLicense('GLWTPL');
-
-  /**
-   * FSF Unlimited License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/FSF_Unlimited_License
-   */
-  public static readonly FSFUL = new SpdxLicense('FSFUL');
-
-  /**
-   * Hewlett-Packard 1989 License
-   *
-   * @see https://github.com/bleargh45/Data-UUID/blob/master/LICENSE
-   */
-  public static readonly HP_1989 = new SpdxLicense('HP-1989');
-
-  /**
-   * Open Software License 2.0
-   *
-   * @osiApproved
-   *
-   * @see http://web.archive.org/web/20041020171434/http://www.rosenlaw.com/osl2.0.html
-   */
-  public static readonly OSL_2_0 = new SpdxLicense('OSL-2.0');
-
-  /**
-   * Ricoh Source Code Public License
-   *
-   * @osiApproved
-   *
-   * @see http://wayback.archive.org/web/20060715140826/http://www.risource.org/RPL/RPL-1.0A.shtml
-   */
-  public static readonly RSCPL = new SpdxLicense('RSCPL');
-
-  /**
-   * Python ldap License
-   *
-   * @see https://github.com/python-ldap/python-ldap/blob/main/LICENCE
-   */
-  public static readonly PYTHON_LDAP = new SpdxLicense('python-ldap');
-
-  /**
-   * Creative Commons Attribution Non Commercial Share Alike 3.0 Germany
-   *
-   * @see https://creativecommons.org/licenses/by-nc-sa/3.0/de/legalcode
-   */
-  public static readonly CC_BY_NC_SA_3_0_DE = new SpdxLicense('CC-BY-NC-SA-3.0-DE');
-
-  /**
-   * Spencer License 94
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Henry_Spencer_Reg-Ex_Library_License
-   */
-  public static readonly SPENCER_94 = new SpdxLicense('Spencer-94');
-
-  /**
-   * Eurosym License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Eurosym
-   */
-  public static readonly EUROSYM = new SpdxLicense('Eurosym');
-
-  /**
-   * Sax Public Domain Notice 2.0
-   *
-   * @see http://www.saxproject.org/copying.html
-   */
-  public static readonly SAX_PD_2_0 = new SpdxLicense('SAX-PD-2.0');
-
-  /**
-   * ANTLR Software Rights Notice
-   *
-   * @see http://www.antlr2.org/license.html
-   */
-  public static readonly ANTLR_PD = new SpdxLicense('ANTLR-PD');
-
-  /**
-   * X11 License Distribution Modification Variant
-   *
-   * @see https://github.com/mirror/ncurses/blob/master/COPYING
-   */
-  public static readonly X11_DISTRIBUTE_MODIFICATIONS_VARIANT = new SpdxLicense('X11-distribute-modifications-variant');
-
-  /**
-   * Creative Commons Attribution Non Commercial 2.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nc/2.0/legalcode
-   */
-  public static readonly CC_BY_NC_2_0 = new SpdxLicense('CC-BY-NC-2.0');
-
-  /**
-   * Open Data Commons Open Database License v1.0
-   *
-   * @see http://www.opendatacommons.org/licenses/odbl/1.0/
-   */
-  public static readonly ODBL_1_0 = new SpdxLicense('ODbL-1.0');
-
-  /**
-   * OpenVision License
-   *
-   * @see https://github.com/krb5/krb5/blob/krb5-1.21.2-final/NOTICE#L66-L98
-   */
-  public static readonly OPEN_VISION = new SpdxLicense('OpenVision');
-
-  /**
-   * Rdisc License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Rdisc_License
-   */
-  public static readonly RDISC = new SpdxLicense('Rdisc');
-
-  /**
-   * Erlang Public License v1.1
-   *
-   * @see http://www.erlang.org/EPLICENSE
-   */
-  public static readonly ERLPL_1_1 = new SpdxLicense('ErlPL-1.1');
-
-  /**
-   * JasPer License
-   *
-   * @see http://www.ece.uvic.ca/~mdadams/jasper/LICENSE
-   */
-  public static readonly JASPER_2_0 = new SpdxLicense('JasPer-2.0');
-
-  /**
-   * GNU Free Documentation License v1.2 or later
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
-   */
-  public static readonly GFDL_1_2_OR_LATER = new SpdxLicense('GFDL-1.2-or-later');
-
-  /**
-   * MIT Festival Variant
-   *
-   * @see https://github.com/festvox/flite/blob/master/COPYING
-   */
-  public static readonly MIT_FESTIVAL = new SpdxLicense('MIT-Festival');
-
-  /**
-   * BSD 3-Clause Sun Microsystems
-   *
-   * @see https://github.com/xmlark/msv/blob/b9316e2f2270bc1606952ea4939ec87fbba157f3/xsdlib/src/main/java/com/sun/msv/datatype/regexp/InternalImpl.java
-   */
-  public static readonly BSD_3_CLAUSE_SUN = new SpdxLicense('BSD-3-Clause-Sun');
-
-  /**
-   * OpenSSL License - standalone
-   *
-   * @see https://library.netapp.com/ecm/ecm_download_file/ECMP1196395
-   */
-  public static readonly OPENSSL_STANDALONE = new SpdxLicense('OpenSSL-standalone');
-
-  /**
-   * Sun PPP License
-   *
-   * @see https://github.com/ppp-project/ppp/blob/master/pppd/eap.c#L7-L16
-   */
-  public static readonly SUN_PPP = new SpdxLicense('Sun-PPP');
-
-  /**
-   * Academic Free License v3.0
-   *
-   * @osiApproved
-   *
-   * @see http://www.rosenlaw.com/AFL3.0.htm
-   */
-  public static readonly AFL_3_0 = new SpdxLicense('AFL-3.0');
-
-  /**
-   * Boost Software License 1.0
-   *
-   * @osiApproved
-   *
-   * @see http://www.boost.org/LICENSE_1_0.txt
-   */
-  public static readonly BSL_1_0 = new SpdxLicense('BSL-1.0');
-
-  /**
-   * GNU General Public License v1.0 only
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html
-   */
-  public static readonly GPL_1_0 = new SpdxLicense('GPL-1.0');
-
-  /**
-   * BitTorrent Open Source License v1.0
-   *
-   * @see http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/licenses/BitTorrent?r1=1.1&r2=1.1.1.1&diff_format=s
-   */
-  public static readonly BITTORRENT_1_0 = new SpdxLicense('BitTorrent-1.0');
-
-  /**
-   * OFFIS License
-   *
-   * @see https://sourceforge.net/p/xmedcon/code/ci/master/tree/libs/dicom/README
-   */
-  public static readonly OFFIS = new SpdxLicense('OFFIS');
-
-  /**
-   * Furuseth License
-   *
-   * @see https://git.openldap.org/openldap/openldap/-/blob/master/COPYRIGHT?ref_type=heads#L39-51
-   */
-  public static readonly FURUSETH = new SpdxLicense('Furuseth');
-
-  /**
-   * Mackerras 3-Clause - acknowledgment variant
-   *
-   * @see https://github.com/ppp-project/ppp/blob/master/pppd/auth.c#L6-L28
-   */
-  public static readonly MACKERRAS_3_CLAUSE_ACKNOWLEDGMENT = new SpdxLicense('Mackerras-3-Clause-acknowledgment');
-
-  /**
-   * zlib License
-   *
-   * @osiApproved
-   *
-   * @see http://www.zlib.net/zlib_license.html
-   */
-  public static readonly ZLIB = new SpdxLicense('Zlib');
-
-  /**
-   * Mup License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Mup
-   */
-  public static readonly MUP = new SpdxLicense('Mup');
-
-  /**
-   * MIT Tom Wu Variant
-   *
-   * @see https://github.com/chromium/octane/blob/master/crypto.js
-   */
-  public static readonly MIT_WU = new SpdxLicense('MIT-Wu');
-
-  /**
-   * Hippocratic License 2.1
-   *
-   * @see https://firstdonoharm.dev/version/2/1/license.html
-   */
-  public static readonly HIPPOCRATIC_2_1 = new SpdxLicense('Hippocratic-2.1');
-
-  /**
-   * Creative Commons Attribution Non Commercial Share Alike 4.0 International
-   *
-   * @see https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
-   */
-  public static readonly CC_BY_NC_SA_4_0 = new SpdxLicense('CC-BY-NC-SA-4.0');
-
-  /**
-   * GNU Free Documentation License v1.2 only - invariants
-   *
-   * @see https://www.gnu.org/licenses/old-licenses/fdl-1.2.txt
-   */
-  public static readonly GFDL_1_2_INVARIANTS_ONLY = new SpdxLicense('GFDL-1.2-invariants-only');
-
-  /**
-   * Wsuipa License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Wsuipa
-   */
-  public static readonly WSUIPA = new SpdxLicense('Wsuipa');
-
-  /**
-   * Reciprocal Public License 1.1
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/RPL-1.1
-   */
-  public static readonly RPL_1_1 = new SpdxLicense('RPL-1.1');
-
-  /**
-   * Creative Commons Attribution No Derivatives 2.0 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-nd/2.0/legalcode
-   */
-  public static readonly CC_BY_ND_2_0 = new SpdxLicense('CC-BY-ND-2.0');
-
-  /**
-   * CERN Open Hardware Licence v1.1
-   *
-   * @see https://www.ohwr.org/project/licenses/wikis/cern-ohl-v1.1
-   */
-  public static readonly CERN_OHL_1_1 = new SpdxLicense('CERN-OHL-1.1');
-
-  /**
-   * Newsletr License
-   *
-   * @see https://fedoraproject.org/wiki/Licensing/Newsletr
-   */
-  public static readonly NEWSLETR = new SpdxLicense('Newsletr');
-
-  /**
-   * Simple Public License 2.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/SimPL-2.0
-   */
-  public static readonly SIMPL_2_0 = new SpdxLicense('SimPL-2.0');
-
-  /**
-   * SQLite Blessing
-   *
-   * @see https://www.sqlite.org/src/artifact/e33a4df7e32d742a?ln=4-9
-   */
-  public static readonly BLESSING = new SpdxLicense('blessing');
-
-  /**
-   * Open LDAP Public License v2.4
-   *
-   * @see http://www.openldap.org/devel/gitweb.cgi?p=openldap.git;a=blob;f=LICENSE;hb=cd1284c4a91a8a380d904eee68d1583f989ed386
-   */
-  public static readonly OLDAP_2_4 = new SpdxLicense('OLDAP-2.4');
-
-  /**
-   * DEC 3-Clause License
-   *
-   * @see https://gitlab.freedesktop.org/xorg/xserver/-/blob/master/COPYING?ref_type=heads#L239
-   */
-  public static readonly DEC_3_CLAUSE = new SpdxLicense('DEC-3-Clause');
-
-  /**
-   * Licence Art Libre 1.2
-   *
-   * @see http://artlibre.org/licence/lal/licence-art-libre-12/
-   */
-  public static readonly LAL_1_2 = new SpdxLicense('LAL-1.2');
-
-  /**
-   * PHP License v3.0
-   *
-   * @osiApproved
-   *
-   * @see http://www.php.net/license/3_0.txt
-   */
-  public static readonly PHP_3_0 = new SpdxLicense('PHP-3.0');
-
-  /**
-   * Detection Rule License 1.0
-   *
-   * @see https://github.com/Neo23x0/sigma/blob/master/LICENSE.Detection.Rules.md
-   */
-  public static readonly DRL_1_0 = new SpdxLicense('DRL-1.0');
-
-  /**
-   * Historical Permission Notice and Disclaimer
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/HPND
-   */
-  public static readonly HPND = new SpdxLicense('HPND');
-
-  /**
-   * W3C Software Notice and License (1998-07-20)
-   *
-   * @see http://www.w3.org/Consortium/Legal/copyright-software-19980720.html
-   */
-  public static readonly W3C_19980720 = new SpdxLicense('W3C-19980720');
-
-  /**
-   * Creative Commons Attribution Share Alike 2.5 Generic
-   *
-   * @see https://creativecommons.org/licenses/by-sa/2.5/legalcode
-   */
-  public static readonly CC_BY_SA_2_5 = new SpdxLicense('CC-BY-SA-2.5');
-
-  /**
-   * Apache License 1.1
-   *
-   * @osiApproved
-   *
-   * @see http://apache.org/licenses/LICENSE-1.1
-   */
-  public static readonly APACHE_1_1 = new SpdxLicense('Apache-1.1');
-
-  /**
-   * Academic Free License v1.2
-   *
-   * @osiApproved
-   *
-   * @see http://opensource.linux-mirror.org/licenses/afl-1.2.txt
-   */
-  public static readonly AFL_1_2 = new SpdxLicense('AFL-1.2');
-
-  /**
-   * Zope Public License 2.0
-   *
-   * @osiApproved
-   *
-   * @see http://old.zope.org/Resources/License/ZPL-2.0
-   */
-  public static readonly ZPL_2_0 = new SpdxLicense('ZPL-2.0');
-
-  /**
-   * Cryptographic Autonomy License 1.0
-   *
-   * @osiApproved
-   *
-   * @see http://cryptographicautonomylicense.com/license-text.html
-   */
-  public static readonly CAL_1_0 = new SpdxLicense('CAL-1.0');
-
-  /**
-   * GNU Affero General Public License v3.0
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/agpl.txt
-   */
-  public static readonly AGPL_3_0 = new SpdxLicense('AGPL-3.0');
-
-  /**
-   * Interbase Public License v1.0
-   *
-   * @see https://web.archive.org/web/20060319014854/http://info.borland.com/devsupport/interbase/opensource/IPL.html
-   */
-  public static readonly INTERBASE_1_0 = new SpdxLicense('Interbase-1.0');
-
-  /**
-   * gSOAP Public License v1.3b
-   *
-   * @see http://www.cs.fsu.edu/~engelen/license.html
-   */
-  public static readonly GSOAP_1_3B = new SpdxLicense('gSOAP-1.3b');
-
-  /**
-   * Artistic License 1.0 (Perl)
-   *
-   * @osiApproved
-   *
-   * @see http://dev.perl.org/licenses/artistic.html
-   */
-  public static readonly ARTISTIC_1_0_PERL = new SpdxLicense('Artistic-1.0-Perl');
-
-  /**
-   * Non-Profit Open Software License 3.0
-   *
-   * @osiApproved
-   *
-   * @see https://opensource.org/licenses/NOSL3.0
-   */
-  public static readonly NPOSL_3_0 = new SpdxLicense('NPOSL-3.0');
-
-  /**
-   * GNU Lesser General Public License v3.0 only
-   *
-   * @osiApproved
-   *
-   * @see https://www.gnu.org/licenses/lgpl-3.0-standalone.html
+   * @see https://gitlab.freedesktop.org/xorg/lib/libxtst/-/blob/master/COPYING?ref_type=heads#L108-117
    */
-  public static readonly LGPL_3_0 = new SpdxLicense('LGPL-3.0');
+  public static readonly HPND_DOC_SELL = new SpdxLicense('HPND-doc-sell');
 
   /** Packages that have not been licensed */
   public static readonly UNLICENSED = new SpdxLicense('UNLICENSED');
@@ -4769,150 +5072,151 @@ export class SpdxLicense {
   /** All OSI-Approved SPDX Licenses */
   public static osiApproved(): SpdxLicense[] {
     return [
-      SpdxLicense.SPL_1_0,
-      SpdxLicense.JAM,
-      SpdxLicense.PHP_3_01,
-      SpdxLicense.LGPL_2_1_PLUS,
-      SpdxLicense.W3_C,
-      SpdxLicense.OSET_PL_2_1,
-      SpdxLicense.MIR_O_S,
-      SpdxLicense.EUPL_1_1,
-      SpdxLicense.EUPL_1_2,
-      SpdxLicense.ECL_1_0,
-      SpdxLicense.MIT_MODERN_VARIANT,
-      SpdxLicense.NCSA,
-      SpdxLicense.UNLICENSE,
-      SpdxLicense.LILIQ_R_1_1,
-      SpdxLicense.OSL_3_0,
-      SpdxLicense.ZERO_BSD,
-      SpdxLicense.OFL_1_1_RFN,
-      SpdxLicense.WATCOM_1_0,
-      SpdxLicense.LGPL_3_0_ONLY,
-      SpdxLicense.LPPL_1_3C,
-      SpdxLicense.ENTESSA,
-      SpdxLicense.UCL_1_0,
-      SpdxLicense.FAIR,
-      SpdxLicense.AFL_1_1,
-      SpdxLicense.GPL_3_0_OR_LATER,
-      SpdxLicense.MIT,
-      SpdxLicense.XNET,
-      SpdxLicense.NOKIA,
-      SpdxLicense.OLDAP_2_8,
-      SpdxLicense.EPL_2_0,
-      SpdxLicense.APSL_2_0,
-      SpdxLicense.FRAMEWORX_1_0,
-      SpdxLicense.ICU,
-      SpdxLicense.CDDL_1_0,
-      SpdxLicense.CAL_1_0_COMBINED_WORK_EXCEPTION,
-      SpdxLicense.OFL_1_1,
-      SpdxLicense.UPL_1_0,
-      SpdxLicense.RPSL_1_0,
-      SpdxLicense.CECILL_2_1,
-      SpdxLicense.LGPL_2_1_ONLY,
-      SpdxLicense.CPL_1_0,
-      SpdxLicense.MPL_1_1,
-      SpdxLicense.INTEL,
-      SpdxLicense.EUDATAGRID,
-      SpdxLicense.BSD_2_CLAUSE_PATENT,
-      SpdxLicense.GPL_3_0_PLUS,
-      SpdxLicense.OGTSL,
-      SpdxLicense.CNRI_PYTHON,
-      SpdxLicense.AFL_2_1,
-      SpdxLicense.NAUMEN,
-      SpdxLicense.ARTISTIC_2_0,
-      SpdxLicense.CPAL_1_0,
-      SpdxLicense.ECL_2_0,
-      SpdxLicense.APL_1_0,
-      SpdxLicense.AGPL_3_0_OR_LATER,
-      SpdxLicense.EPL_1_0,
-      SpdxLicense.BSD_2_CLAUSE,
-      SpdxLicense.GPL_3_0,
-      SpdxLicense.ARTISTIC_1_0_CL8,
-      SpdxLicense.CERN_OHL_W_2_0,
-      SpdxLicense.MIT_0,
-      SpdxLicense.SLEEPYCAT,
-      SpdxLicense.NGPL,
-      SpdxLicense.LGPL_3_0_PLUS,
-      SpdxLicense.OFL_1_1_NO_RFN,
-      SpdxLicense.WX_WINDOWS,
-      SpdxLicense.ARTISTIC_1_0,
-      SpdxLicense.MS_RL,
-      SpdxLicense.UNICODE_3_0,
-      SpdxLicense.UNICODE_DFS_2016,
-      SpdxLicense.ZPL_2_1,
-      SpdxLicense.BSD_1_CLAUSE,
-      SpdxLicense.CUA_OPL_1_0,
-      SpdxLicense.CATOSL_1_1,
-      SpdxLicense.EFL_1_0,
-      SpdxLicense.GPL_3_0_WITH_GCC_EXCEPTION,
-      SpdxLicense.GPL_3_0_ONLY,
-      SpdxLicense.LGPL_2_0_PLUS,
-      SpdxLicense.AFL_2_0,
-      SpdxLicense.BSD_3_CLAUSE_LBNL,
-      SpdxLicense.PYTHON_2_0,
-      SpdxLicense.GPL_2_0_OR_LATER,
-      SpdxLicense.POSTGRE_SQ_L,
-      SpdxLicense.LGPL_2_1,
-      SpdxLicense.LGPL_3_0_OR_LATER,
-      SpdxLicense.MPL_2_0_NO_COPYLEFT_EXCEPTION,
-      SpdxLicense.CERN_OHL_P_2_0,
-      SpdxLicense.GPL_2_0_ONLY,
-      SpdxLicense.BSD_3_CLAUSE,
-      SpdxLicense.IPA,
-      SpdxLicense.LGPL_2_1_OR_LATER,
-      SpdxLicense.AAL,
-      SpdxLicense.LPL_1_02,
-      SpdxLicense.MULANPSL_2_0,
-      SpdxLicense.VSL_1_0,
-      SpdxLicense.MOTOSOTO,
-      SpdxLicense.LGPL_2_0,
-      SpdxLicense.QPL_1_0,
-      SpdxLicense.MULTICS,
-      SpdxLicense.LPL_1_0,
-      SpdxLicense.NTP,
-      SpdxLicense.GPL_2_0,
-      SpdxLicense.APSL_1_1,
-      SpdxLicense.OSL_2_1,
-      SpdxLicense.ISC,
-      SpdxLicense.MS_PL,
-      SpdxLicense.AGPL_3_0_ONLY,
-      SpdxLicense.MPL_1_0,
-      SpdxLicense.LILIQ_RPLUS_1_1,
-      SpdxLicense.APACHE_2_0,
-      SpdxLicense.GPL_2_0_PLUS,
-      SpdxLicense.NASA_1_3,
-      SpdxLicense.IPL_1_0,
-      SpdxLicense.OSL_1_0,
-      SpdxLicense.CERN_OHL_S_2_0,
-      SpdxLicense.SISSL,
-      SpdxLicense.RPL_1_5,
-      SpdxLicense.LILIQ_P_1_1,
-      SpdxLicense.EFL_2_0,
-      SpdxLicense.APSL_1_0,
-      SpdxLicense.APSL_1_2,
-      SpdxLicense.OLFL_1_3,
-      SpdxLicense.LGPL_2_0_ONLY,
-      SpdxLicense.OCLC_2_0,
-      SpdxLicense.BLUEOAK_1_0_0,
-      SpdxLicense.MPL_2_0,
-      SpdxLicense.LGPL_2_0_OR_LATER,
-      SpdxLicense.OSL_2_0,
       SpdxLicense.RSCPL,
+      SpdxLicense.LPPL_1_3C,
+      SpdxLicense.OLDAP_2_8,
+      SpdxLicense.MIR_O_S,
+      SpdxLicense.IPL_1_0,
+      SpdxLicense.MPL_1_1,
+      SpdxLicense.OSL_3_0,
+      SpdxLicense.MPL_1_0,
+      SpdxLicense.ECL_1_0,
+      SpdxLicense.CPL_1_0,
+      SpdxLicense.IPA,
+      SpdxLicense.LGPL_2_1_ONLY,
+      SpdxLicense.BSD_2_CLAUSE,
+      SpdxLicense.OFL_1_1_RFN,
+      SpdxLicense.EPL_1_0,
+      SpdxLicense.LGPL_2_1_OR_LATER,
+      SpdxLicense.BSD_1_CLAUSE,
+      SpdxLicense.ZPL_2_1,
+      SpdxLicense.NGPL,
+      SpdxLicense.EUDATAGRID,
+      SpdxLicense.SLEEPYCAT,
       SpdxLicense.AFL_3_0,
-      SpdxLicense.BSL_1_0,
-      SpdxLicense.ZLIB,
-      SpdxLicense.RPL_1_1,
-      SpdxLicense.SIMPL_2_0,
-      SpdxLicense.PHP_3_0,
-      SpdxLicense.HPND,
-      SpdxLicense.APACHE_1_1,
-      SpdxLicense.AFL_1_2,
-      SpdxLicense.ZPL_2_0,
+      SpdxLicense.MIT_0,
+      SpdxLicense.AAL,
       SpdxLicense.CAL_1_0,
-      SpdxLicense.AGPL_3_0,
+      SpdxLicense.PHP_3_0,
+      SpdxLicense.MIT,
+      SpdxLicense.WX_WINDOWS,
+      SpdxLicense.UNLICENSE,
+      SpdxLicense.CUA_OPL_1_0,
+      SpdxLicense.CECILL_2_1,
+      SpdxLicense.LGPL_2_0_OR_LATER,
+      SpdxLicense.QPL_1_0,
+      SpdxLicense.GPL_2_0_ONLY,
+      SpdxLicense.GPL_3_0_WITH_GCC_EXCEPTION,
+      SpdxLicense.ECL_2_0,
+      SpdxLicense.CATOSL_1_1,
+      SpdxLicense.OCLC_2_0,
+      SpdxLicense.AGPL_3_0_ONLY,
       SpdxLicense.ARTISTIC_1_0_PERL,
-      SpdxLicense.NPOSL_3_0,
+      SpdxLicense.GPL_2_0,
+      SpdxLicense.BLUEOAK_1_0_0,
+      SpdxLicense.EFL_1_0,
+      SpdxLicense.ENTESSA,
+      SpdxLicense.ARTISTIC_1_0_CL8,
+      SpdxLicense.MOTOSOTO,
+      SpdxLicense.W3_C,
+      SpdxLicense.AFL_2_1,
+      SpdxLicense.LILIQ_RPLUS_1_1,
+      SpdxLicense.LGPL_2_1,
+      SpdxLicense.NTP,
+      SpdxLicense.FRAMEWORX_1_0,
+      SpdxLicense.APL_1_0,
+      SpdxLicense.VSL_1_0,
+      SpdxLicense.BSD_3_CLAUSE_LBNL,
+      SpdxLicense.FAIR,
+      SpdxLicense.MPL_2_0,
+      SpdxLicense.BSD_3_CLAUSE,
+      SpdxLicense.APSL_1_2,
+      SpdxLicense.APSL_1_0,
+      SpdxLicense.CERN_OHL_W_2_0,
+      SpdxLicense.LPL_1_02,
+      SpdxLicense.BSL_1_0,
+      SpdxLicense.RPL_1_1,
+      SpdxLicense.CDDL_1_0,
+      SpdxLicense.MS_RL,
+      SpdxLicense.CNRI_PYTHON,
+      SpdxLicense.LILIQ_P_1_1,
+      SpdxLicense.AFL_1_2,
+      SpdxLicense.CPAL_1_0,
+      SpdxLicense.CERN_OHL_S_2_0,
+      SpdxLicense.LGPL_3_0_OR_LATER,
+      SpdxLicense.WATCOM_1_0,
+      SpdxLicense.MULANPSL_2_0,
+      SpdxLicense.UPL_1_0,
+      SpdxLicense.SISSL,
+      SpdxLicense.MPL_2_0_NO_COPYLEFT_EXCEPTION,
+      SpdxLicense.OLFL_1_3,
+      SpdxLicense.LILIQ_R_1_1,
+      SpdxLicense.AFL_2_0,
+      SpdxLicense.XNET,
+      SpdxLicense.OSL_2_1,
       SpdxLicense.LGPL_3_0,
+      SpdxLicense.W3C_20150513,
+      SpdxLicense.OSL_2_0,
+      SpdxLicense.EPL_2_0,
+      SpdxLicense.APSL_1_1,
+      SpdxLicense.HPND,
+      SpdxLicense.EUPL_1_2,
+      SpdxLicense.LGPL_3_0_PLUS,
+      SpdxLicense.JAM,
+      SpdxLicense.LGPL_2_0_PLUS,
+      SpdxLicense.APACHE_2_0,
+      SpdxLicense.CERN_OHL_P_2_0,
+      SpdxLicense.GPL_2_0_OR_LATER,
+      SpdxLicense.MULTICS,
+      SpdxLicense.AFL_1_1,
+      SpdxLicense.MS_PL,
+      SpdxLicense.OFL_1_1,
+      SpdxLicense.APSL_2_0,
+      SpdxLicense.UNICODE_3_0,
+      SpdxLicense.GPL_3_0_OR_LATER,
+      SpdxLicense.LGPL_2_0_ONLY,
+      SpdxLicense.INTEL,
+      SpdxLicense.EUPL_1_1,
+      SpdxLicense.NCSA,
+      SpdxLicense.NASA_1_3,
+      SpdxLicense.SPL_1_0,
+      SpdxLicense.GPL_3_0_PLUS,
+      SpdxLicense.ZERO_BSD,
+      SpdxLicense.NPOSL_3_0,
+      SpdxLicense.AGPL_3_0,
+      SpdxLicense.ARTISTIC_2_0,
+      SpdxLicense.ICU,
+      SpdxLicense.EFL_2_0,
+      SpdxLicense.LPL_1_0,
+      SpdxLicense.AGPL_3_0_OR_LATER,
+      SpdxLicense.OSL_1_0,
+      SpdxLicense.SIMPL_2_0,
+      SpdxLicense.OFL_1_1_NO_RFN,
+      SpdxLicense.LGPL_2_1_PLUS,
+      SpdxLicense.ZLIB,
+      SpdxLicense.LGPL_2_0,
+      SpdxLicense.LGPL_3_0_ONLY,
+      SpdxLicense.MIT_MODERN_VARIANT,
+      SpdxLicense.ARTISTIC_1_0,
+      SpdxLicense.GPL_3_0_ONLY,
+      SpdxLicense.ISC,
+      SpdxLicense.NAUMEN,
+      SpdxLicense.GPL_2_0_PLUS,
+      SpdxLicense.BSD_2_CLAUSE_PATENT,
+      SpdxLicense.OGTSL,
+      SpdxLicense.UCL_1_0,
+      SpdxLicense.ZPL_2_0,
+      SpdxLicense.APACHE_1_1,
+      SpdxLicense.POSTGRE_SQ_L,
+      SpdxLicense.PYTHON_2_0,
+      SpdxLicense.OSET_PL_2_1,
+      SpdxLicense.CAL_1_0_COMBINED_WORK_EXCEPTION,
+      SpdxLicense.UNICODE_DFS_2016,
+      SpdxLicense.PHP_3_01,
+      SpdxLicense.RPSL_1_0,
+      SpdxLicense.GPL_3_0,
+      SpdxLicense.RPL_1_5,
+      SpdxLicense.NOKIA,
     ];
   }
 
@@ -4928,76 +5232,79 @@ export class SpdxLicense {
   /** The BSD family of licenses */
   public static bsd(): SpdxLicense[] {
     return [
+      SpdxLicense.BSD_3_CLAUSE_CLEAR,
+      SpdxLicense.BSD_2_CLAUSE,
+      SpdxLicense.BSD_ATTRIBUTION_HPND_DISCLAIMER,
+      SpdxLicense.BSD_3_CLAUSE_FLEX,
+      SpdxLicense.BSD_1_CLAUSE,
+      SpdxLicense.BSD_3_CLAUSE_NO_MILITARY_LICENSE,
+      SpdxLicense.BSD_3_CLAUSE_OPEN_MPI,
+      SpdxLicense.BSD_4_CLAUSE_UC,
+      SpdxLicense.BSD_SYSTEMICS,
+      SpdxLicense.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014,
+      SpdxLicense.BSD_INFERNO_NETTVERK,
       SpdxLicense.BSD_SOURCE_CODE,
+      SpdxLicense.BSD_2_CLAUSE_NETBSD,
+      SpdxLicense.BSD_3_CLAUSE_LBNL,
+      SpdxLicense.BSD_3_CLAUSE,
+      SpdxLicense.BSD_2_CLAUSE_FIRST_LINES,
+      SpdxLicense.BSD_2_CLAUSE_DARWIN,
+      SpdxLicense.BSD_3_CLAUSE_HP,
+      SpdxLicense.BSD_4_3TAHOE,
+      SpdxLicense.BSD_4_3RENO,
       SpdxLicense.BSD_4_CLAUSE_SHORTENED,
       SpdxLicense.BSD_2_CLAUSE_FREEBSD,
-      SpdxLicense.ZERO_BSD,
-      SpdxLicense.BSD_3_CLAUSE_MODIFICATION,
-      SpdxLicense.BSD_3_CLAUSE_ATTRIBUTION,
-      SpdxLicense.BSD_3_CLAUSE_HP,
-      SpdxLicense.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE,
-      SpdxLicense.BSD_2_CLAUSE_PATENT,
-      SpdxLicense.BSD_3_CLAUSE_NO_MILITARY_LICENSE,
-      SpdxLicense.BSD_2_CLAUSE,
-      SpdxLicense.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE_2014,
-      SpdxLicense.BSD_3_CLAUSE_CLEAR,
-      SpdxLicense.BSD_SYSTEMICS,
-      SpdxLicense.BSD_3_CLAUSE_ACPICA,
-      SpdxLicense.BSD_1_CLAUSE,
-      SpdxLicense.BSD_4_CLAUSE_UC,
-      SpdxLicense.BSD_4_3TAHOE,
-      SpdxLicense.BSD_3_CLAUSE_LBNL,
-      SpdxLicense.BSD_3_CLAUSE_FLEX,
-      SpdxLicense.BSD_SYSTEMICS_W3WORKS,
-      SpdxLicense.BSD_3_CLAUSE,
-      SpdxLicense.BSD_INFERNO_NETTVERK,
-      SpdxLicense.BSD_3_CLAUSE_OPEN_MPI,
-      SpdxLicense.BSD_ATTRIBUTION_HPND_DISCLAIMER,
-      SpdxLicense.BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY,
       SpdxLicense.BSD_4_CLAUSE,
-      SpdxLicense.BSD_ADVERTISING_ACKNOWLEDGEMENT,
       SpdxLicense.BSD_SOURCE_BEGINNING_FILE,
-      SpdxLicense.BSD_2_CLAUSE_NETBSD,
-      SpdxLicense.BSD_2_CLAUSE_VIEWS,
-      SpdxLicense.BSD_2_CLAUSE_DARWIN,
-      SpdxLicense.BSD_4_3RENO,
-      SpdxLicense.BSD_PROTECTION,
+      SpdxLicense.BSD_3_CLAUSE_NO_NUCLEAR_WARRANTY,
+      SpdxLicense.BSD_ADVERTISING_ACKNOWLEDGEMENT,
+      SpdxLicense.BSD_3_CLAUSE_MODIFICATION,
       SpdxLicense.BSD_3_CLAUSE_SUN,
+      SpdxLicense.ZERO_BSD,
+      SpdxLicense.BSD_3_CLAUSE_ATTRIBUTION,
+      SpdxLicense.BSD_3_CLAUSE_NO_NUCLEAR_LICENSE,
+      SpdxLicense.BSD_PROTECTION,
+      SpdxLicense.BSD_2_CLAUSE_VIEWS,
+      SpdxLicense.BSD_2_CLAUSE_PATENT,
+      SpdxLicense.BSD_3_CLAUSE_ACPICA,
+      SpdxLicense.BSD_SYSTEMICS_W3WORKS,
     ];
   }
 
   /** The CDDL family of licenses */
   public static cddl(): SpdxLicense[] {
     return [
-      SpdxLicense.CDDL_1_0,
       SpdxLicense.CDDL_1_1,
+      SpdxLicense.CDDL_1_0,
     ];
   }
 
   /** The EPL family of licenses */
   public static epl(): SpdxLicense[] {
     return [
-      SpdxLicense.EPL_2_0,
       SpdxLicense.EPL_1_0,
+      SpdxLicense.EPL_2_0,
     ];
   }
 
   /** The MIT family of licenses */
   public static mit(): SpdxLicense[] {
     return [
-      SpdxLicense.AML,
-      SpdxLicense.MIT_FEH,
-      SpdxLicense.MIT_MODERN_VARIANT,
-      SpdxLicense.MIT_ADVERTISING,
-      SpdxLicense.MIT,
-      SpdxLicense.MIT_ENNA,
       SpdxLicense.MIT_0,
       SpdxLicense.MIT_TESTREGEX,
-      SpdxLicense.MIT_CMU,
-      SpdxLicense.MITNFA,
-      SpdxLicense.MIT_OPEN_GROUP,
+      SpdxLicense.MIT,
       SpdxLicense.MIT_FESTIVAL,
+      SpdxLicense.MIT_ENNA,
+      SpdxLicense.MIT_FEH,
+      SpdxLicense.MIT_ADVERTISING,
+      SpdxLicense.MIT_KHRONOS_OLD,
+      SpdxLicense.MIT_CLICK,
       SpdxLicense.MIT_WU,
+      SpdxLicense.MIT_CMU,
+      SpdxLicense.MIT_OPEN_GROUP,
+      SpdxLicense.AML,
+      SpdxLicense.MIT_MODERN_VARIANT,
+      SpdxLicense.MITNFA,
     ];
   }
 
@@ -5005,9 +5312,9 @@ export class SpdxLicense {
   public static mpl(): SpdxLicense[] {
     return [
       SpdxLicense.MPL_1_1,
-      SpdxLicense.MPL_2_0_NO_COPYLEFT_EXCEPTION,
       SpdxLicense.MPL_1_0,
       SpdxLicense.MPL_2_0,
+      SpdxLicense.MPL_2_0_NO_COPYLEFT_EXCEPTION,
     ];
   }
   //#endregion
