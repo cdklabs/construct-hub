@@ -85,7 +85,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     await loadLastTransactionMarker(stagingBucket, npm);
 
   // The last written marker seq id.
-  let updatedMarker: string | number = 40000000; // initialMarker;
+  let updatedMarker = initialMarker;
 
   // The slowest batch processing time so far (starts at 30 seconds). This is how much time should
   // be left before timeout if a new batch is to be fetched.
