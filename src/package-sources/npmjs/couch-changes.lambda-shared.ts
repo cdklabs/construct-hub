@@ -59,43 +59,39 @@ export class CouchChanges extends EventEmitter {
     changesUrl.searchParams.set('limit', batchSize.toFixed());
     changesUrl.searchParams.set('since', since.toString());
 
-    const result = (await this.https(
-      'get',
-      changesUrl
-    )) as unknown as DatabaseChanges;
+    const result = (await this.https('get', changesUrl)) as any;
 
-    // add metadata docs to each change and filter out changes where metadata is empty
-    const filteredResults: DatabaseChange[] = [];
-    for (const change of result.results) {
-      console.log(JSON.stringify(change));
-      const metadata = await this.metadata(change.id);
+    const last_seq = result.last_seq;
+    const results = await this.fetchAndFilterAllMetadata(result.results);
 
-      // Only include changes where metadata is not an empty object
-      if (Object.keys(metadata).length > 0) {
-        change.doc = metadata;
-        filteredResults.push(change);
-      } else {
-        console.log(
-          `Filtering out change for ${change.id} due to empty metadata`
-        );
-      }
-    }
-
-    // Replace the original results with the filtered ones
-    result.results = filteredResults;
-
-    return result;
+    return {
+      last_seq,
+      results,
+    };
   }
 
-  private async metadata(id: string) {
-    const metadataUrl = new URL(id, NPM_REGISTRY_URL);
-    console.log(`Fetching metadata for ${id}: ${metadataUrl}`);
-    try {
-      return await this.https('get', metadataUrl);
-    } catch (e) {
-      console.error(`Failed to fetch metadata for ${id}: ${e}`);
-      return {};
+  private async fetchAndFilterMetadata(change: DatabaseChange) {
+    // Filter out deleted packages or null ids
+    if (change.deleted || !change.id) {
+      console.log(`Skipping ${change.id}: deleted or null id`);
+      return;
     }
+
+    const metadataUrl = new URL(change.id, NPM_REGISTRY_URL);
+    console.log(`Fetching metadata for ${change.id}: ${metadataUrl}`);
+    const meta = await this.https('get', metadataUrl);
+    change.doc = meta; // add metadata to the change object
+    return change;
+  }
+
+  private async fetchAndFilterAllMetadata(
+    changes: DatabaseChange[]
+  ): Promise<DatabaseChange[]> {
+    return (
+      await Promise.all(
+        changes.map((change) => this.fetchAndFilterMetadata(change))
+      )
+    ).filter((change): change is DatabaseChange => change !== undefined);
   }
 
   /**
@@ -229,7 +225,7 @@ export interface DatabaseChanges {
   /**
    * The changes that are part of this batch.
    */
-  results: readonly DatabaseChange[];
+  readonly results: readonly DatabaseChange[];
 }
 
 export interface DatabaseChange {
