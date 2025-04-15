@@ -6,6 +6,8 @@ import { URL } from 'url';
 import { createGunzip } from 'zlib';
 import * as JSONStream from 'JSONStream';
 
+const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
+
 /**
  * A utility class that helps with traversing CouchDB database changes streams
  * in a promise-based, page-by-page manner.
@@ -13,6 +15,7 @@ import * as JSONStream from 'JSONStream';
 export class CouchChanges extends EventEmitter {
   private readonly agent: Agent;
   private readonly baseUrl: URL;
+  private readonly databaseUrl: URL;
 
   /**
    * @param baseUrl  the CouchDB endpoint URL.
@@ -27,7 +30,8 @@ export class CouchChanges extends EventEmitter {
       maxSockets: 4,
       timeout: 60_000,
     });
-    this.baseUrl = new URL(database, baseUrl);
+    this.baseUrl = new URL(baseUrl);
+    this.databaseUrl = new URL(database, baseUrl);
   }
 
   /**
@@ -51,17 +55,43 @@ export class CouchChanges extends EventEmitter {
   ): Promise<DatabaseChanges> {
     const batchSize = opts?.batchSize ?? 100;
 
-    const changesUrl = new URL('_changes', this.baseUrl);
-    changesUrl.searchParams.set('include_docs', 'true');
+    const changesUrl = new URL('_changes', this.databaseUrl);
     changesUrl.searchParams.set('limit', batchSize.toFixed());
-    changesUrl.searchParams.set('selector', '_filter');
-    changesUrl.searchParams.set('seq_interval', batchSize.toFixed());
     changesUrl.searchParams.set('since', since.toString());
-    changesUrl.searchParams.set('timeout', '20000' /* ms */);
 
-    const filter = { name: { $gt: null } };
+    const result = (await this.https('get', changesUrl)) as any;
 
-    return this.https('post', changesUrl, filter) as any;
+    const last_seq = result.last_seq;
+    const results = await this.fetchAndFilterAllMetadata(result.results);
+
+    return {
+      last_seq,
+      results,
+    };
+  }
+
+  private async fetchAndFilterMetadata(change: DatabaseChange) {
+    // Filter out deleted packages or null ids
+    if (change.deleted || !change.id) {
+      console.log(`Skipping ${change.id}: deleted or null id`);
+      return;
+    }
+
+    const metadataUrl = new URL(change.id, NPM_REGISTRY_URL);
+    console.log(`Fetching metadata for ${change.id}: ${metadataUrl}`);
+    const meta = await this.https('get', metadataUrl);
+    change.doc = meta; // add metadata to the change object
+    return change;
+  }
+
+  private async fetchAndFilterAllMetadata(
+    changes: DatabaseChange[]
+  ): Promise<DatabaseChange[]> {
+    return (
+      await Promise.all(
+        changes.map((change) => this.fetchAndFilterMetadata(change))
+      )
+    ).filter((change): change is DatabaseChange => change !== undefined);
   }
 
   /**
@@ -95,11 +125,14 @@ export class CouchChanges extends EventEmitter {
       const headers: OutgoingHttpHeaders = {
         Accept: 'application/json',
         'Accept-Encoding': 'gzip',
+        'npm-replication-opt-in': 'true', // can be deleted after May 29: https://github.com/orgs/community/discussions/152515
       };
       if (body) {
         headers['Content-Type'] = 'application/json';
       }
-      console.log(`Request: ${method.toUpperCase()} ${url}`);
+      console.log(
+        `Request: ${method.toUpperCase()} ${url}, ${JSON.stringify(headers)}`
+      );
       const req = request(
         url,
         {
@@ -221,7 +254,7 @@ export interface DatabaseChange {
   /**
    * If present, the resolved document after the change has been applied.
    */
-  readonly doc?: { readonly [key: string]: unknown };
+  doc?: { readonly [key: string]: unknown };
 }
 
 export interface DatabaseInfos {
