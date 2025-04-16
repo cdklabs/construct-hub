@@ -15,12 +15,13 @@ const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
 export class CouchChanges extends EventEmitter {
   private readonly agent: Agent;
   private readonly baseUrl: URL;
+  private readonly database: string;
 
   /**
    * @param baseUrl  the CouchDB endpoint URL.
    * @param database the name of the database for which changes are fetched.
    */
-  public constructor(baseUrl: string, _database: string) {
+  public constructor(baseUrl: string, database: string) {
     super();
     // Setting up for keep-alive connections.
     this.agent = new Agent({
@@ -30,6 +31,7 @@ export class CouchChanges extends EventEmitter {
       timeout: 60_000,
     });
     this.baseUrl = new URL(baseUrl);
+    this.database = database;
   }
 
   /**
@@ -53,7 +55,7 @@ export class CouchChanges extends EventEmitter {
   ): Promise<DatabaseChanges> {
     const batchSize = opts?.batchSize ?? 100;
 
-    const changesUrl = new URL('registry/_changes', this.baseUrl);
+    const changesUrl = new URL(this.database, this.baseUrl);
     changesUrl.searchParams.set('limit', batchSize.toFixed());
     changesUrl.searchParams.set('since', since.toString());
 

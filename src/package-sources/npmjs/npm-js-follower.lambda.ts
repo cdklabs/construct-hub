@@ -79,7 +79,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
   const denyList = await DenyListClient.newClient();
   const licenseList = await LicenseListClient.newClient();
 
-  const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry');
+  const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry/_changes');
 
   const { marker: initialMarker, knownVersions } =
     await loadLastTransactionMarker(stagingBucket, npm);
