@@ -15,7 +15,7 @@ const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
 export class CouchChanges extends EventEmitter {
   private readonly agent: Agent;
   private readonly baseUrl: URL;
-  private readonly databaseUrl: URL;
+  private readonly database: string;
 
   /**
    * @param baseUrl  the CouchDB endpoint URL.
@@ -31,7 +31,7 @@ export class CouchChanges extends EventEmitter {
       timeout: 60_000,
     });
     this.baseUrl = new URL(baseUrl);
-    this.databaseUrl = new URL(database, baseUrl);
+    this.database = database;
   }
 
   /**
@@ -55,7 +55,7 @@ export class CouchChanges extends EventEmitter {
   ): Promise<DatabaseChanges> {
     const batchSize = opts?.batchSize ?? 100;
 
-    const changesUrl = new URL('_changes', this.databaseUrl);
+    const changesUrl = new URL(this.database, this.baseUrl);
     changesUrl.searchParams.set('limit', batchSize.toFixed());
     changesUrl.searchParams.set('since', since.toString());
 
@@ -85,8 +85,10 @@ export class CouchChanges extends EventEmitter {
       change.doc = meta; // add metadata to the change object
       return change;
     } catch (e: any) {
-      if (e.errorMessage.includes('HTTP 404')) {
-        console.log(`Skipping ${change.id} because of 404 error:\n${e}`);
+      if (e.message?.includes('HTTP 404')) {
+        console.log(
+          `Skipping ${change.id} because of HTTP 404 (Not Found) error`
+        );
         return;
       }
       throw e;
