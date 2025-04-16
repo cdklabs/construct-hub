@@ -79,9 +79,18 @@ export class CouchChanges extends EventEmitter {
 
     const metadataUrl = new URL(change.id, NPM_REGISTRY_URL);
     console.log(`Fetching metadata for ${change.id}: ${metadataUrl}`);
-    const meta = await this.https('get', metadataUrl);
-    change.doc = meta; // add metadata to the change object
-    return change;
+
+    try {
+      const meta = await this.https('get', metadataUrl);
+      change.doc = meta; // add metadata to the change object
+      return change;
+    } catch (e: any) {
+      if (e.errorMessage.includes('HTTP 404')) {
+        console.log(`Skipping ${change.id} because of 404 error:\n${e}`);
+        return;
+      }
+      throw e;
+    }
   }
 
   private async fetchAndFilterAllMetadata(
@@ -130,9 +139,7 @@ export class CouchChanges extends EventEmitter {
       if (body) {
         headers['Content-Type'] = 'application/json';
       }
-      console.log(
-        `Request: ${method.toUpperCase()} ${url}, ${JSON.stringify(headers)}`
-      );
+
       const req = request(
         url,
         {
