@@ -121,6 +121,7 @@ export class NpmJs implements IPackageSource {
       storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
         blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
         enforceSSL: true,
+        versioned: true, // we store state in this bucket; versions backup old state
         lifecycleRules: [
           {
             prefix: S3KeyPrefix.STAGED_KEY_PREFIX,
