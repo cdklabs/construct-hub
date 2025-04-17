@@ -38,6 +38,7 @@ import type {
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
 import { ReStagePackageVersion } from './npmjs/re-stage-package-version';
+import { S3 } from 'aws-cdk-lib/aws-ses-actions';
 
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid
@@ -121,14 +122,14 @@ export class NpmJs implements IPackageSource {
       storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
         blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
         enforceSSL: true,
-        versioned: true, // we store state in this bucket; versions backup old state
         lifecycleRules: [
           {
             prefix: S3KeyPrefix.STAGED_KEY_PREFIX,
             expiration: Duration.days(30),
           },
           {
-            noncurrentVersionExpiration: Duration.days(30),
+            prefix: 'backups',
+            expiration: Duration.days(30),
           },
         ],
       });

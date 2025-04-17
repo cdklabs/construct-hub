@@ -108,6 +108,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       metrics.setProperty('EndSeq', updatedMarker);
 
       const startTime = Date.now();
+      let foundVersions = false;
 
       try {
         const batch = changes.results as readonly Change[];
@@ -152,6 +153,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           console.log(
             `Identified ${versionInfos.length} relevant package version update(s)`
           );
+          foundVersions = versionInfos.length > 0;
           metrics.putMetric(
             MetricName.RELEVANT_PACKAGE_VERSIONS,
             versionInfos.length,
@@ -189,7 +191,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
           context,
           stagingBucket,
           updatedMarker,
-          knownVersions
+          knownVersions,
+          foundVersions
         );
         console.log('Successfully updated marker');
       } finally {
@@ -303,30 +306,43 @@ async function saveLastTransactionMarker(
   context: Context,
   stagingBucket: string,
   marker: string | number,
-  knownVersions: Map<string, Date>
+  knownVersions: Map<string, Date>,
+  foundVersions: boolean
 ) {
-  console.log(`Updating last transaction marker to ${marker}`);
-  return putObject(
-    context,
-    stagingBucket,
-    MARKER_FILE_NAME,
-    JSON.stringify(
-      { marker, knownVersions },
-      (_, value) => {
-        if (value instanceof Date) {
-          return value.toISOString();
-        } else if (value instanceof Map) {
-          return Object.fromEntries(value);
-        } else {
-          return value;
-        }
-      },
-      2
-    ),
-    {
-      ContentType: 'application/json',
-    }
+  const contents = JSON.stringify(
+    { marker, knownVersions },
+    (_, value) => {
+      if (value instanceof Date) {
+        return value.toISOString();
+      } else if (value instanceof Map) {
+        return Object.fromEntries(value);
+      } else {
+        return value;
+      }
+    },
+    2
   );
+
+  // store a snapshot of the object to a different location
+  // ONLY if knownVersions has changed.
+  // this is useful for recovering from a marker being lost
+  if (foundVersions) {
+    console.log(`Storing backup file since knownVersions is updated`);
+    await putObject(
+      context,
+      stagingBucket,
+      `backups/${Date.now()}/${MARKER_FILE_NAME}}`,
+      contents,
+      {
+        ContentType: 'application/json',
+      }
+    );
+  }
+
+  console.log(`Updating last transaction marker to ${marker}`);
+  return putObject(context, stagingBucket, MARKER_FILE_NAME, contents, {
+    ContentType: 'application/json',
+  });
 }
 //#endregion
 
