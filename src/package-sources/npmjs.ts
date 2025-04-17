@@ -127,6 +127,9 @@ export class NpmJs implements IPackageSource {
             prefix: S3KeyPrefix.STAGED_KEY_PREFIX,
             expiration: Duration.days(30),
           },
+          {
+            noncurrentVersionExpiration: Duration.days(30),
+          },
         ],
       });
     bucket.grantRead(ingestion);
