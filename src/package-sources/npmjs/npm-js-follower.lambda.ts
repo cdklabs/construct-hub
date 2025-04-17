@@ -277,7 +277,7 @@ async function loadLastTransactionMarker(
       console.warn(
         `Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`
       );
-      return { marker: '0', knownVersions: data.knownVersion };
+      return { marker: '0', knownVersions: data.knownVersions };
     }
 
     return data;
