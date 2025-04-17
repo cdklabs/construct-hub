@@ -38,7 +38,6 @@ import type {
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
 import { ReStagePackageVersion } from './npmjs/re-stage-package-version';
-import { S3 } from 'aws-cdk-lib/aws-ses-actions';
 
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid
