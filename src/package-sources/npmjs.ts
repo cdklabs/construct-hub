@@ -590,7 +590,7 @@ export class NpmJs implements IPackageSource {
     const period = Duration.minutes(5);
 
     const alarm = new MathExpression({
-      expression: 'MAX([mDwell, mTTC]))',
+      expression: 'MAX([mDwell, mTTC])',
       period,
       usingMetrics: {
         mDwell: canary.metricDwellTime(),
