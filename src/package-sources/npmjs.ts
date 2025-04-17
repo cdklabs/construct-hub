@@ -590,20 +590,11 @@ export class NpmJs implements IPackageSource {
     const period = Duration.minutes(5);
 
     const alarm = new MathExpression({
-      // When the npm replica is sufficiently behind the primary, the package source will not be
-      // able to register new canary package versions within the SLA. In such cases, there is
-      // nothing that can be done except for waiting until the replica has finally caught up. We
-      // hence suppress the alarm if the replica lag is getting within 3 evaluation periods of the
-      // visibility SLA.
-      expression: `IF(FILL(mLag, REPEAT) < ${Math.max(
-        visibilitySla.toSeconds() - 3 * period.toSeconds(),
-        3 * period.toSeconds()
-      )}, MAX([mDwell, mTTC]))`,
+      expression: 'MAX([mDwell, mTTC]))',
       period,
       usingMetrics: {
         mDwell: canary.metricDwellTime(),
         mTTC: canary.metricTimeToCatalog(),
-        mLag: canary.metricEstimatedNpmReplicaLag(),
       },
     }).createAlarm(canary, 'Alarm', {
       alarmName: `${canary.node.path}/SLA-Breached`,
@@ -708,24 +699,6 @@ export class NpmJs implements IPackageSource {
           canary.metricTrackedVersionCount({ label: 'Tracked Version Count' }),
         ],
         rightYAxis: { min: 0 },
-      }),
-      new GraphWidget({
-        height: 6,
-        width: 12,
-        title: 'Observed lag of replicate.npmjs.com',
-        left: [
-          canary.metricEstimatedNpmReplicaLag({
-            label: `Replica lag (${packageName})`,
-          }),
-        ],
-        leftAnnotations: [
-          {
-            color: '#ffa500',
-            label: visibilitySla.toHumanString(),
-            value: visibilitySla.toSeconds(),
-          },
-        ],
-        leftYAxis: { min: 0 },
       }),
     ];
   }
