@@ -20,6 +20,7 @@ import {
   MetricName,
   MARKER_FILE_NAME,
   METRICS_NAMESPACE,
+  KNOWN_VERSIONS_FILE_NAME,
 } from './constants.lambda-shared';
 import { CouchChanges, DatabaseChange } from './couch-changes.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
@@ -81,11 +82,11 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry/_changes');
 
-  const { marker: initialMarker, knownVersions } =
-    await loadLastTransactionMarker(stagingBucket, npm);
+  const initialMarker = await loadLastTransactionMarker(stagingBucket, npm);
+  const knownVersions = await loadLastKnownVersions(stagingBucket);
 
   // The last written marker seq id.
-  let updatedMarker = initialMarker;
+  let updatedMarker: string | number = 62928688; // initialMarker;
 
   // The slowest batch processing time so far (starts at 30 seconds). This is how much time should
   // be left before timeout if a new batch is to be fetched.
@@ -187,14 +188,13 @@ export async function handler(event: ScheduledEvent, context: Context) {
         }
 
         // Updating the S3 stored marker with the new seq id as communicated by nano.
-        await saveLastTransactionMarker(
-          context,
-          stagingBucket,
-          updatedMarker,
-          knownVersions,
-          foundVersions
-        );
+        await saveLastTransactionMarker(context, stagingBucket, updatedMarker);
         console.log('Successfully updated marker');
+        // Update the known versions only if its changed
+        if (foundVersions) {
+          await saveLastKnownVersions(context, stagingBucket, knownVersions);
+          console.log('Successfully updated known versions');
+        }
       } finally {
         // Markers may not always be numeric (but in practice they are now), so we protect against that...
         if (typeof updatedMarker === 'number' || /^\d+$/.test(updatedMarker)) {
@@ -229,88 +229,133 @@ export async function handler(event: ScheduledEvent, context: Context) {
   return { initialMarker, updatedMarker };
 }
 
-//#region Last transaction marker
 /**
- * Loads the last transaction marker from S3.
+ * Common function to load data from an S3 file with error handling
  *
- * @param registry a Nano database corresponding to the Npmjs.com CouchDB instance.
- *
- * @returns the value of the last transaction marker and the map of package names + versions to the last modification
- *          of that package version that was processed.
+ * @param stagingBucket The S3 bucket name
+ * @param key The file key in the bucket
+ * @param warningMessage Message to log when file doesn't exist
+ * @returns The decompressed file content as string, or null if file doesn't exist
  */
-async function loadLastTransactionMarker(
+async function loadContentFromS3(
   stagingBucket: string,
-  registry: CouchChanges
-): Promise<{ marker: string | number; knownVersions: Map<string, Date> }> {
+  key: string,
+  warningMessage: string
+): Promise<string | null> {
   try {
     const response = await S3_CLIENT.send(
       new GetObjectCommand({
         Bucket: stagingBucket,
-        Key: MARKER_FILE_NAME,
+        Key: key,
       })
     );
     if (!response.Body) {
-      throw new Error('Transaction Marker Response Body is empty');
+      throw new Error(`Response Body for ${key} is empty`);
     }
-    const body = await decompressContent(
-      response.Body,
-      response.ContentEncoding
-    );
-    let data = JSON.parse(body, (key, value) => {
-      if (key !== 'knownVersions') {
-        return value;
-      }
-      const map = new Map<string, Date>();
-      for (const [pkgVersion, iso] of Object.entries(value)) {
-        if (typeof iso === 'string' || typeof iso === 'number') {
-          map.set(pkgVersion, new Date(iso));
-        } else {
-          console.error(`Ignoring invalid entry: ${pkgVersion} => ${iso}`);
-        }
-      }
-      return map;
-    });
-    if (typeof data === 'number') {
-      data = { marker: data.toFixed(), knownVersions: new Map() };
-    }
-    console.log(`Read last transaction marker: ${data.marker}`);
-
-    const dbUpdateSeq = (await registry.info()).update_seq;
-    if (dbUpdateSeq < data.marker) {
-      console.warn(
-        `Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`
-      );
-      return { marker: '0', knownVersions: data.knownVersions };
-    }
-
-    return data;
+    return await decompressContent(response.Body, response.ContentEncoding);
   } catch (error: any) {
     if (error instanceof NoSuchKey || error.name === 'NoSuchKey') {
-      console.warn(
-        `Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`
-      );
-      return { marker: '0', knownVersions: new Map() };
+      console.warn(warningMessage);
+      return null;
     }
     // re-throw unexpected errors
     throw error;
   }
 }
 
+//#region Last known versions and marker
 /**
- * Updates the last transaction marker in S3.
+ * Loads the last known versions from S3.
  *
- * @param marker the last transaction marker value
+ * @returns the value of the last known versions.
+ */
+async function loadLastKnownVersions(
+  stagingBucket: string
+): Promise<Map<string, Date>> {
+  const warningMessage = `Known versions object (s3://${stagingBucket}/${KNOWN_VERSIONS_FILE_NAME}) does not exist, starting from scratch`;
+  const content = await loadContentFromS3(
+    stagingBucket,
+    KNOWN_VERSIONS_FILE_NAME,
+    warningMessage
+  );
+
+  // Known Versions does not exist, starting from scratch
+  if (content === null) {
+    return new Map<string, Date>();
+  }
+
+  // Known Versions exists, generating map from the data
+  const data: { [key: string]: string } = JSON.parse(content, (_, value) => {
+    if (typeof value === 'string') {
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) return date;
+    }
+    return value;
+  });
+
+  console.log(`Loaded last known versions data`);
+
+  return new Map(Object.entries(data).map(([k, v]) => [k, new Date(v)]));
+}
+
+/**
+ * Loads the last transaction marker from S3.
+ *
+ * @param registry a Nano database corresponding to the Npmjs.com CouchDB instance.
+ *
+ * @returns the value of the last transaction marker.
+ */
+async function loadLastTransactionMarker(
+  stagingBucket: string,
+  registry: CouchChanges
+): Promise<string | number> {
+  const warningMessage = `Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`;
+  const content = await loadContentFromS3(
+    stagingBucket,
+    MARKER_FILE_NAME,
+    warningMessage
+  );
+
+  // Last transaction marker does not exist
+  if (content === null) {
+    return '0';
+  }
+
+  let data: number | { marker: string | number } = JSON.parse(
+    content,
+    (_, value) => {
+      return value;
+    }
+  );
+  if (typeof data === 'number') {
+    data = { marker: data.toFixed() };
+  }
+
+  console.log(`Read last transaction marker: ${data.marker}`);
+
+  const dbUpdateSeq = (await registry.info()).update_seq;
+  if (dbUpdateSeq < data.marker) {
+    console.warn(
+      `Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`
+    );
+    return '0';
+  }
+
+  return data.marker;
+}
+
+/**
+ * Updates the last known versions in S3.
+ *
  * @param knownVersions the map of package name + version to last modified timestamp of packages that have been processed.
  */
-async function saveLastTransactionMarker(
+async function saveLastKnownVersions(
   context: Context,
   stagingBucket: string,
-  marker: string | number,
-  knownVersions: Map<string, Date>,
-  foundVersions: boolean
+  knownVersions: Map<string, Date>
 ) {
   const contents = JSON.stringify(
-    { marker, knownVersions },
+    { knownVersions },
     (_, value) => {
       if (value instanceof Date) {
         return value.toISOString();
@@ -323,22 +368,23 @@ async function saveLastTransactionMarker(
     2
   );
 
-  // store a snapshot of the object to a different location
-  // ONLY if knownVersions has changed.
-  // this is useful for recovering from a marker being lost
-  if (foundVersions) {
-    console.log(`Storing backup file since knownVersions is updated`);
-    await putObject(
-      context,
-      stagingBucket,
-      `backups/${Date.now()}/${MARKER_FILE_NAME}}`,
-      contents,
-      {
-        ContentType: 'application/json',
-      }
-    );
-  }
+  console.log(`Known versions changed, updating...`);
+  return putObject(context, stagingBucket, KNOWN_VERSIONS_FILE_NAME, contents, {
+    ContentType: 'application/json',
+  });
+}
 
+/**
+ * Updates the last transaction marker in S3.
+ *
+ * @param marker the last transaction marker value
+ */
+async function saveLastTransactionMarker(
+  context: Context,
+  stagingBucket: string,
+  marker: string | number
+) {
+  const contents = JSON.stringify({ marker });
   console.log(`Updating last transaction marker to ${marker}`);
   return putObject(context, stagingBucket, MARKER_FILE_NAME, contents, {
     ContentType: 'application/json',

@@ -34,3 +34,8 @@ export const enum S3KeyPrefix {
  * The name of the object that contains the last transaction marker.
  */
 export const MARKER_FILE_NAME = 'couchdb-last-transaction-id.2';
+
+/**
+ * The name of the object that contains the list of known versions.
+ */
+export const KNOWN_VERSIONS_FILE_NAME = 'couchdb-known-versions.2';
