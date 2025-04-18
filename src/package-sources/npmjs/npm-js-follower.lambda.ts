@@ -82,8 +82,19 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry/_changes');
 
-  const initialMarker = await loadLastTransactionMarker(stagingBucket, npm);
-  const knownVersions = await loadLastKnownVersions(stagingBucket);
+  let updateKnownVersions = false;
+
+  let { marker: initialMarker, knownVersions } =
+    await loadLastTransactionMarker(stagingBucket, npm);
+
+  // For legacy reasons, knownVersions could come from the transaction marker file
+  // If it does, then we take that as knownVersions but will migrate knownVersions
+  // to the modern file location
+  if (!knownVersions) {
+    knownVersions = await loadLastKnownVersions(stagingBucket);
+  } else {
+    updateKnownVersions = true;
+  }
 
   // The last written marker seq id.
   let updatedMarker = initialMarker;
@@ -190,8 +201,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
         // Updating the S3 stored marker with the new seq id as communicated by nano.
         await saveLastTransactionMarker(context, stagingBucket, updatedMarker);
         console.log('Successfully updated marker');
+
         // Update the known versions only if its changed
-        if (foundVersions) {
+        if (updateKnownVersions || foundVersions) {
           await saveLastKnownVersions(context, stagingBucket, knownVersions);
           console.log('Successfully updated known versions');
         }
@@ -308,7 +320,7 @@ async function loadLastKnownVersions(
 async function loadLastTransactionMarker(
   stagingBucket: string,
   registry: CouchChanges
-): Promise<string | number> {
+): Promise<{ marker: string | number; knownVersions?: Map<string, Date> }> {
   const warningMessage = `Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`;
   const content = await loadContentFromS3(
     stagingBucket,
@@ -318,15 +330,29 @@ async function loadLastTransactionMarker(
 
   // Last transaction marker does not exist
   if (content === null) {
-    return '0';
+    return { marker: '0' };
   }
 
-  let data: number | { marker: string | number } = JSON.parse(
-    content,
-    (_, value) => {
+  // For legacy reasons, it's possible that knownVersions is in this file,
+  // and it's possible that the data is a number
+  type transactionMarkerType =
+    | number
+    | { marker: string | number; knownVersions?: Map<string, Date> };
+  let data: transactionMarkerType = JSON.parse(content, (key, value) => {
+    if (key !== 'knownVersions') {
       return value;
     }
-  );
+    const map = new Map<string, Date>();
+    for (const [pkgVersion, iso] of Object.entries(value)) {
+      if (typeof iso === 'string' || typeof iso === 'number') {
+        map.set(pkgVersion, new Date(iso));
+      } else {
+        console.error(`Ignoring invalid entry: ${pkgVersion} => ${iso}`);
+      }
+    }
+    return map;
+  });
+
   if (typeof data === 'number') {
     data = { marker: data.toFixed() };
   }
@@ -338,10 +364,10 @@ async function loadLastTransactionMarker(
     console.warn(
       `Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`
     );
-    return '0';
+    return { marker: '0' };
   }
 
-  return data.marker;
+  return data;
 }
 
 /**
