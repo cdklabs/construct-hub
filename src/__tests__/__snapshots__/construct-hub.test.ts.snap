@@ -681,7 +681,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\n[button:Stager](/lambda/home#/functions/",
+              "?prefix=couchdb-last-transaction-id.2)\\n[button:Known Versions](/s3/object/",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+              },
+              "?prefix=couchdb-known-versions.2)\\n[button:Stager](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -9589,8 +9593,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -9607,6 +9622,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Value": "true",
           },
         ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
@@ -9673,7 +9691,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "569334c19b9e47f7062cf7c15a6633558fb627bd0a94fd2c2a53ddb97bb4499e.zip",
+          "S3Key": "f90d4dfdee7dbc4eecf1c8a840433a3d13bb0718b0e2ef48af4bf0a754adeac1.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -10314,6 +10332,43 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-known-versions.2",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -10661,8 +10716,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -10672,6 +10738,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
@@ -13828,7 +13897,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\n[button:Stager](/lambda/home#/functions/",
+              "?prefix=couchdb-last-transaction-id.2)\\n[button:Known Versions](/s3/object/",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+              },
+              "?prefix=couchdb-known-versions.2)\\n[button:Stager](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -23110,8 +23183,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -23128,6 +23212,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Value": "true",
           },
         ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
@@ -23194,7 +23281,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "569334c19b9e47f7062cf7c15a6633558fb627bd0a94fd2c2a53ddb97bb4499e.zip",
+          "S3Key": "f90d4dfdee7dbc4eecf1c8a840433a3d13bb0718b0e2ef48af4bf0a754adeac1.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -23835,6 +23922,43 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-known-versions.2",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -24182,8 +24306,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -24193,6 +24328,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
@@ -27295,7 +27433,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\n[button:Stager](/lambda/home#/functions/",
+              "?prefix=couchdb-last-transaction-id.2)\\n[button:Known Versions](/s3/object/",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+              },
+              "?prefix=couchdb-known-versions.2)\\n[button:Stager](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -36203,8 +36345,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -36221,6 +36374,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Value": "true",
           },
         ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
@@ -36287,7 +36443,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "569334c19b9e47f7062cf7c15a6633558fb627bd0a94fd2c2a53ddb97bb4499e.zip",
+          "S3Key": "f90d4dfdee7dbc4eecf1c8a840433a3d13bb0718b0e2ef48af4bf0a754adeac1.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -36928,6 +37084,43 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-known-versions.2",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -37275,8 +37468,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -37286,6 +37490,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
@@ -40528,7 +40735,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\n[button:Stager](/lambda/home#/functions/",
+              "?prefix=couchdb-last-transaction-id.2)\\n[button:Known Versions](/s3/object/",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+              },
+              "?prefix=couchdb-known-versions.2)\\n[button:Stager](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -49445,8 +49656,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -49463,6 +49685,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Value": "true",
           },
         ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
@@ -49529,7 +49754,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "569334c19b9e47f7062cf7c15a6633558fb627bd0a94fd2c2a53ddb97bb4499e.zip",
+          "S3Key": "f90d4dfdee7dbc4eecf1c8a840433a3d13bb0718b0e2ef48af4bf0a754adeac1.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -50157,6 +50382,43 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-known-versions.2",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -50504,8 +50766,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -50515,6 +50788,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
@@ -53944,7 +54220,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\n[button:Stager](/lambda/home#/functions/",
+              "?prefix=couchdb-last-transaction-id.2)\\n[button:Known Versions](/s3/object/",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+              },
+              "?prefix=couchdb-known-versions.2)\\n[button:Stager](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -62668,8 +62948,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -62686,6 +62977,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Value": "true",
           },
         ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
@@ -62752,7 +63046,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "569334c19b9e47f7062cf7c15a6633558fb627bd0a94fd2c2a53ddb97bb4499e.zip",
+          "S3Key": "f90d4dfdee7dbc4eecf1c8a840433a3d13bb0718b0e2ef48af4bf0a754adeac1.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -63393,6 +63687,43 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-known-versions.2",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -63740,8 +64071,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Status": "Enabled",
             },
             {
-              "ExpirationInDays": 30,
-              "Prefix": "backups",
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
           ],
@@ -63751,6 +64093,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
