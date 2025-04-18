@@ -9,6 +9,7 @@ import {
   Metric,
   MetricOptions,
   Statistic,
+  TextWidget,
   TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
@@ -698,6 +699,16 @@ export class NpmJs implements IPackageSource {
           canary.metricTrackedVersionCount({ label: 'Tracked Version Count' }),
         ],
         rightYAxis: { min: 0 },
+      }),
+      new TextWidget({
+        height: 6,
+        width: 12,
+        markdown: [
+          'Observed lag of replicate.npmjs.com',
+          '',
+          '----',
+          'replica lag is no longer available due to NPM protocol changes',
+        ].join('\n'),
       }),
     ];
   }
