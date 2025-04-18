@@ -704,8 +704,9 @@ export class NpmJs implements IPackageSource {
         height: 6,
         width: 12,
         markdown: [
-          `### Observed lag of replicate.npmjs.com`,
+          'Observed lag of replicate.npmjs.com',
           '',
+          '----',
           'replica lag is no longer available due to NPM protocol changes',
         ].join('\n'),
       }),
