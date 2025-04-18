@@ -229,6 +229,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
   return { initialMarker, updatedMarker };
 }
 
+//#region Last known versions and marker
 /**
  * Common function to load data from an S3 file with error handling
  *
@@ -263,7 +264,6 @@ async function loadContentFromS3(
   }
 }
 
-//#region Last known versions and marker
 /**
  * Loads the last known versions from S3.
  *
