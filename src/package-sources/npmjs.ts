@@ -123,10 +123,7 @@ export class NpmJs implements IPackageSource {
       storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
         blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
         enforceSSL: true,
-<<<<<<< HEAD
         versioned: true,
-=======
->>>>>>> main
         lifecycleRules: [
           {
             prefix: S3KeyPrefix.STAGED_KEY_PREFIX,
