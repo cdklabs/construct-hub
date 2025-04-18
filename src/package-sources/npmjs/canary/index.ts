@@ -86,26 +86,6 @@ export class NpmJsPackageCanary extends Construct {
   }
 
   /**
-   * The estimated lag between the npm registry replica (replcate.npmjs.com) and
-   * the primary registry (registry.npmjs.com).
-   *
-   * IMPORTANT NOTE: This is based on the difference in modified timestamps for
-   * the probe package between the two and hence has a granularly no better than
-   * the publishing interval of this. Since the construct-hub-probe package is
-   * only published every 3 hours approximately, this metric has a resolution
-   * that is strictly worse than 3 hours.
-   */
-  public metricEstimatedNpmReplicaLag(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
-      metricName: MetricName.NPM_REPLICA_LAG,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
-  /**
    * A metric tracking whether the npm registry replica (replicate.npmjs.com)
    * is down. The value is 1 when the replica is detected to be down, and 0
    * when the replica is detected to be up.

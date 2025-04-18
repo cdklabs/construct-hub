@@ -30,14 +30,6 @@ export const enum MetricName {
   TRACKED_VERSION_COUNT = 'TrackedVersionCount',
 
   /**
-   * The estimated lag between the npm registry replica (replicate.npmjs.com)
-   * and the primary registry (registry.npmjs.com). This cannot be measured
-   * directly because the primary does not expose the relevant CouchDB endpoints,
-   * so we use the probe package to get a low-resolution view of this.
-   */
-  NPM_REPLICA_LAG = 'EstimatedNpmReplicaLag',
-
-  /**
    * A metric tracking whether the npm registry replica (replicate.npmjs.com)
    * is down. The value is 1 when the replica is detected to be down, and 0
    * when the replica is detected to be up.

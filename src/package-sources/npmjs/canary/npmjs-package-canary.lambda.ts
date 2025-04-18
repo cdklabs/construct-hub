@@ -25,7 +25,7 @@ const REPLICA_REQUEST_TIMEOUT_MS = 30_000;
 /**
  * This package canary monitors the availability of the versions of a specified
  * package in the ConstructHub catalog. It publishes metrics that help
- * understand how much time passes between a pakcage appearing in the public
+ * understand how much time passes between a package appearing in the public
  * registry and it's availability in the ConstructHub instance.
  *
  * From the moment a package has been published, and until it appeared in
@@ -74,8 +74,6 @@ export async function handler(event: unknown): Promise<void> {
     updateLatestIfNeeded(state, latest);
 
     try {
-      const replicaLag = await stateService.npmReplicaLagSeconds(packageName);
-
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
         metrics.setDimensions({});
@@ -89,16 +87,6 @@ export async function handler(event: unknown): Promise<void> {
           (await stateService.isNpmReplicaDown()) ? 1 : 0,
           Unit.None
         );
-
-        // If we weren't able to calculate the replica's lag, then simply
-        // don't report the metric.
-        if (replicaLag !== undefined) {
-          metrics.putMetric(
-            MetricName.NPM_REPLICA_LAG,
-            replicaLag,
-            Unit.Seconds
-          );
-        }
       })();
 
       for (const versionState of [
@@ -384,63 +372,6 @@ export class CanaryStateService {
     }
   }
 
-  /**
-   * Estimate how far behind the NPM replica is compared to the live NPM
-   * registry. If the NPM replica is down, return undefined.
-   */
-  public async npmReplicaLagSeconds(
-    packageName: string
-  ): Promise<number | undefined> {
-    const encodedPackageName = encodeURIComponent(packageName);
-
-    console.log(`Measuring NPM replica lag using ${packageName}...`);
-
-    const primaryDate = await getModifiedTimestamp(`registry.npmjs.org`);
-
-    let replicaDate;
-    try {
-      replicaDate = await getModifiedTimestamp(
-        `replicate.npmjs.com/registry`,
-        REPLICA_REQUEST_TIMEOUT_MS
-      );
-    } catch (e) {
-      if (e instanceof Error && e.message.includes('HTTP 504')) {
-        console.log(
-          `Warning: error fetching replicate.npmjs.com: ${e.toString()}`
-        );
-        // There is no value to report
-        return undefined;
-      } else {
-        throw e;
-      }
-    }
-
-    const deltaMs = primaryDate.getTime() - replicaDate.getTime();
-
-    console.log(`Timestamp on primary: ${primaryDate.toISOString()}`);
-    console.log(
-      `Timestamp on replica: ${replicaDate.toISOString()} (${
-        deltaMs / 3_600_000
-      } hours behind)`
-    );
-
-    // We return in seconds... The millisecond resolution is silly here since the probe package is
-    // only published approximately once every three hours. We use seconds only because this is the
-    // largest available time unit in CloudWatch.
-    return deltaMs / 1_000;
-
-    async function getModifiedTimestamp(
-      baseUrl: string,
-      timeoutMillis?: number
-    ) {
-      const isoDate = await getJSON(
-        `https://${baseUrl}/${encodedPackageName}`,
-        { jsonPath: ['time', 'modified'], timeoutMillis }
-      );
-      return new Date(isoDate);
-    }
-  }
-
   private key(packageName: string): string {
     return `${ObjectKey.STATE_PREFIX}${packageName}${ObjectKey.STATE_SUFFIX}`;
   }
@@ -534,6 +465,7 @@ function getJSON(
           headers: {
             Accept: 'application/json',
             'Accept-Encoding': 'identity',
+            'npm-replication-opt-in': 'true', // can be deleted after May 29: https://github.com/orgs/community/discussions/152515
           },
           timeout: timeoutMillis,
         },
