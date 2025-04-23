@@ -82,11 +82,14 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry/_changes');
 
-  let {
+  const {
     marker: initialMarker,
     knownVersions,
-    legacyKnownVersionsFile: writeKnownVersionsFile, // if we are using the legacy file, tell this lambda invocation to migrate to the modern file
-  } = await loadCachedFiles(stagingBucket, npm);
+    didLoadVersionsFromLegacy,
+  } = await loadFollowerPosition(stagingBucket, npm);
+
+  // If we loaded from the old location, write to the new
+  let writeKnownVersionsFile = didLoadVersionsFromLegacy;
 
   // The last written marker seq id.
   let updatedMarker = initialMarker;
@@ -193,35 +196,14 @@ export async function handler(event: ScheduledEvent, context: Context) {
         // Updating the S3 stored marker with the new seq id and known versions concurrently
         await Promise.all([
           // always save the transaction marker
-          saveLastTransactionMarker(context, stagingBucket, updatedMarker).then(
-            () => console.log('Successfully updated marker')
-          ),
-
+          saveLastTransactionMarker(context, stagingBucket, updatedMarker),
           // conditionally save known versions
           ...(writeKnownVersionsFile
-            ? [
-                saveLastKnownVersions(
-                  context,
-                  stagingBucket,
-                  knownVersions
-                ).then(() =>
-                  console.log('Successfully updated known versions')
-                ),
-              ]
+            ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
             : []),
         ]);
       } finally {
-        // Markers may not always be numeric (but in practice they are now), so we protect against that...
-        if (typeof updatedMarker === 'number' || /^\d+$/.test(updatedMarker)) {
-          metrics.putMetric(
-            MetricName.LAST_SEQ,
-            typeof updatedMarker === 'number'
-              ? updatedMarker
-              : parseInt(updatedMarker),
-            Unit.None
-          );
-        }
-
+        metrics.putMetric(MetricName.LAST_SEQ, updatedMarker, Unit.None);
         metrics.putMetric(
           MetricName.BATCH_PROCESSING_TIME,
           Date.now() - startTime,
@@ -279,32 +261,35 @@ async function loadContentFromS3(
   }
 }
 
-async function loadCachedFiles(
+async function loadFollowerPosition(
   stagingBucket: string,
   registry: CouchChanges
 ): Promise<{
   marker: number;
   knownVersions: Map<string, Date>;
-  legacyKnownVersionsFile: boolean;
+  didLoadVersionsFromLegacy: boolean;
 }> {
-  const markerFile = await loadLastTransactionMarker(stagingBucket, registry);
+  const [markerFile, knownVersions] = await Promise.all([
+    loadLastTransactionMarker(stagingBucket, registry),
+    loadLastKnownVersions(stagingBucket),
+  ]);
 
-  // For legacy reasons, knownVersions could come from the transaction marker file
-  // If it does, then we take that as knownVersions but will migrate knownVersions
-  // to the modern file location
-  if (!markerFile.knownVersions) {
+  if (!knownVersions) {
+    // For legacy reasons, knownVersions could come from the transaction marker file
+    // If it does, then we take that as knownVersions but will migrate knownVersions
+    // to the modern file location
     return {
       marker: markerFile.marker,
-      knownVersions: await loadLastKnownVersions(stagingBucket),
-      legacyKnownVersionsFile: false,
-    };
-  } else {
-    return {
-      marker: markerFile.marker,
-      knownVersions: markerFile.knownVersions,
-      legacyKnownVersionsFile: true,
+      knownVersions: markerFile.knownVersions ?? new Map(),
+      didLoadVersionsFromLegacy: true,
     };
   }
+
+  return {
+    marker: markerFile.marker,
+    knownVersions,
+    didLoadVersionsFromLegacy: false,
+  };
 }
 
 /**
@@ -314,7 +299,7 @@ async function loadCachedFiles(
  */
 async function loadLastKnownVersions(
   stagingBucket: string
-): Promise<Map<string, Date>> {
+): Promise<Map<string, Date> | undefined> {
   const warningMessage = `Known versions object (s3://${stagingBucket}/${KNOWN_VERSIONS_FILE_NAME}) does not exist, starting from scratch`;
   const content = await loadContentFromS3(
     stagingBucket,
@@ -324,21 +309,15 @@ async function loadLastKnownVersions(
 
   // Known Versions does not exist, starting from scratch
   if (content === null) {
-    return new Map<string, Date>();
+    return undefined;
   }
 
   // Known Versions exists, generating map from the data
-  const data: { [key: string]: string } = JSON.parse(content, (_, value) => {
-    if (typeof value === 'string') {
-      const date = new Date(value);
-      if (!isNaN(date.getTime())) return date;
-    }
-    return value;
-  });
+  const contentsObj: KnownVersionsFileSchema = JSON.parse(content);
 
   console.log(`Loaded last known versions data`);
 
-  return new Map(Object.entries(data).map(([k, v]) => [k, new Date(v)]));
+  return dateMapFromObj(contentsObj.knownVersions);
 }
 
 /**
@@ -364,44 +343,31 @@ async function loadLastTransactionMarker(
     return { marker: 0 };
   }
 
-  // For legacy reasons, it's possible that knownVersions is in this file,
-  // and it's possible that the data is a number
-  type transactionMarkerType =
-    | number
-    | { marker: number; knownVersions?: Map<string, Date> };
-  let data: transactionMarkerType = JSON.parse(content, (key, value) => {
-    if (key === 'marker') {
-      return Number(value);
-    } else if (key === 'knownVersions') {
-      const map = new Map<string, Date>();
-      for (const [pkgVersion, iso] of Object.entries(value)) {
-        if (typeof iso === 'string' || typeof iso === 'number') {
-          map.set(pkgVersion, new Date(iso));
-        } else {
-          console.error(`Ignoring invalid entry: ${pkgVersion} => ${iso}`);
-        }
-      }
-      return map;
-    }
-    // Return other values as is (this the root object)
-    return value;
-  });
+  const parsedFile: MarkerFileSchema = JSON.parse(content);
 
-  if (typeof data === 'number') {
-    data = { marker: data };
+  let marker: number;
+  let knownVersions: Map<string, Date> | undefined;
+  if (typeof parsedFile === 'number') {
+    marker = parsedFile;
+  } else {
+    marker = Number(parsedFile.marker);
+    knownVersions = parsedFile.knownVersions
+      ? dateMapFromObj(parsedFile.knownVersions)
+      : undefined;
   }
 
-  console.log(`Read last transaction marker: ${data.marker}`);
+  // amazonq-ignore-next-line
+  console.log(`Read last transaction marker: ${marker}`);
 
   const dbUpdateSeq = Number((await registry.info()).update_seq);
-  if (dbUpdateSeq < data.marker) {
+  if (dbUpdateSeq < marker) {
     console.warn(
       `Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`
     );
     return { marker: 0 };
   }
 
-  return data;
+  return { marker, knownVersions };
 }
 
 /**
@@ -414,24 +380,21 @@ async function saveLastKnownVersions(
   stagingBucket: string,
   knownVersions: Map<string, Date>
 ) {
-  const contents = JSON.stringify(
-    { knownVersions },
-    (_, value) => {
-      if (value instanceof Date) {
-        return value.toISOString();
-      } else if (value instanceof Map) {
-        return Object.fromEntries(value);
-      } else {
-        return value;
-      }
-    },
-    2
-  );
+  const contentsObj: KnownVersionsFileSchema = {
+    knownVersions: objFromDateMap(knownVersions),
+  };
 
   console.log(`Known versions changed, updating...`);
-  return putObject(context, stagingBucket, KNOWN_VERSIONS_FILE_NAME, contents, {
-    ContentType: 'application/json',
-  });
+  await putObject(
+    context,
+    stagingBucket,
+    KNOWN_VERSIONS_FILE_NAME,
+    JSON.stringify(contentsObj, undefined, 2),
+    {
+      ContentType: 'application/json',
+    }
+  );
+  console.log('Successfully updated known versions');
 }
 
 /**
@@ -442,13 +405,14 @@ async function saveLastKnownVersions(
 async function saveLastTransactionMarker(
   context: Context,
   stagingBucket: string,
-  marker: string | number
+  marker: number
 ) {
   const contents = JSON.stringify({ marker });
   console.log(`Updating last transaction marker to ${marker}`);
-  return putObject(context, stagingBucket, MARKER_FILE_NAME, contents, {
+  await putObject(context, stagingBucket, MARKER_FILE_NAME, contents, {
     ContentType: 'application/json',
   });
+  console.log('Successfully updated marker');
 }
 //#endregion
 
@@ -666,6 +630,18 @@ function getRelevantVersionInfos(
   }
 }
 
+function objFromDateMap(xs: Map<string, Date>): Record<string, string> {
+  return Object.fromEntries(
+    Array.from(xs).map(([k, v]) => [k, v.toISOString()])
+  );
+}
+
+function dateMapFromObj(
+  xs: Record<string, string | number>
+): Map<string, Date> {
+  return new Map(Object.entries(xs).map(([k, v]) => [k, new Date(v)]));
+}
+
 /**
  * The scheme of a package version in the update. Includes the package.json keys, as well as some additional npm metadata
  * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
@@ -701,6 +677,25 @@ interface UpdatedVersion {
    * The CouchDB transaction number for the update.
    */
   readonly seq?: string | number;
+}
+
+/**
+ * We are accounting for a good bit of legacy data modeling here
+ *
+ * The file can be a just a number, or a combination of a sequence number (which
+ * is potentially encoded as a string) and a set of known versions and the dates
+ * we first saw them. The date can be encoded as an ISO string, or a timestamp
+ * number.
+ */
+type MarkerFileSchema =
+  | number
+  | {
+      marker: number | string;
+      knownVersions?: Record<string, string | number>;
+    };
+
+interface KnownVersionsFileSchema {
+  knownVersions: Record<string, string>;
 }
 
 interface Document {
