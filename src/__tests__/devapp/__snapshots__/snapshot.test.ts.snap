@@ -3,6 +3,92 @@
 exports[`golden snapshot 1`] = `
 {
   "Mappings": {
+    "CloudwatchlambdainsightsversionMap": {
+      "af-south-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:af-south-1:012438385374:layer:LambdaInsightsExtension:28",
+      },
+      "ap-east-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-east-1:519774774795:layer:LambdaInsightsExtension:28",
+      },
+      "ap-northeast-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-northeast-1:580247275435:layer:LambdaInsightsExtension:60",
+      },
+      "ap-northeast-2": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-northeast-2:580247275435:layer:LambdaInsightsExtension:37",
+      },
+      "ap-northeast-3": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-northeast-3:194566237122:layer:LambdaInsightsExtension:19",
+      },
+      "ap-south-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-south-1:580247275435:layer:LambdaInsightsExtension:36",
+      },
+      "ap-south-2": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-south-2:891564319516:layer:LambdaInsightsExtension:10",
+      },
+      "ap-southeast-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-southeast-1:580247275435:layer:LambdaInsightsExtension:38",
+      },
+      "ap-southeast-2": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-southeast-2:580247275435:layer:LambdaInsightsExtension:38",
+      },
+      "ap-southeast-3": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ap-southeast-3:439286490199:layer:LambdaInsightsExtension:14",
+      },
+      "ca-central-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:ca-central-1:580247275435:layer:LambdaInsightsExtension:37",
+      },
+      "cn-north-1": {
+        "1x0x229x0xx86x64": "arn:aws-cn:lambda:cn-north-1:488211338238:layer:LambdaInsightsExtension:29",
+      },
+      "cn-northwest-1": {
+        "1x0x229x0xx86x64": "arn:aws-cn:lambda:cn-northwest-1:488211338238:layer:LambdaInsightsExtension:29",
+      },
+      "eu-central-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:eu-central-1:580247275435:layer:LambdaInsightsExtension:38",
+      },
+      "eu-central-2": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:eu-central-2:033019950311:layer:LambdaInsightsExtension:11",
+      },
+      "eu-north-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:eu-north-1:580247275435:layer:LambdaInsightsExtension:35",
+      },
+      "eu-south-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:eu-south-1:339249233099:layer:LambdaInsightsExtension:28",
+      },
+      "eu-south-2": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:eu-south-2:352183217350:layer:LambdaInsightsExtension:12",
+      },
+      "eu-west-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:eu-west-1:580247275435:layer:LambdaInsightsExtension:38",
+      },
+      "eu-west-2": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:eu-west-2:580247275435:layer:LambdaInsightsExtension:38",
+      },
+      "eu-west-3": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:eu-west-3:580247275435:layer:LambdaInsightsExtension:37",
+      },
+      "me-central-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:me-central-1:732604637566:layer:LambdaInsightsExtension:11",
+      },
+      "me-south-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:me-south-1:285320876703:layer:LambdaInsightsExtension:28",
+      },
+      "sa-east-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:sa-east-1:580247275435:layer:LambdaInsightsExtension:37",
+      },
+      "us-east-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:us-east-1:580247275435:layer:LambdaInsightsExtension:38",
+      },
+      "us-east-2": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:us-east-2:580247275435:layer:LambdaInsightsExtension:38",
+      },
+      "us-west-1": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:us-west-1:580247275435:layer:LambdaInsightsExtension:38",
+      },
+      "us-west-2": {
+        "1x0x229x0xx86x64": "arn:aws:lambda:us-west-2:580247275435:layer:LambdaInsightsExtension:38",
+      },
+    },
     "ServiceprincipalMap": {
       "af-south-1": {
         "states": "states.af-south-1.amazonaws.com",
@@ -649,7 +735,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\n[button:Stager](/lambda/home#/functions/",
+              "?prefix=couchdb-last-transaction-id.2)\\n[button:Known Versions](/s3/object/",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+              },
+              "?prefix=couchdb-known-versions.2)\\n[button:Stager](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -733,11 +823,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell Time","stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time to Catalog","stat":"Maximum"}],["ConstructHub/PackageCanary","TrackedVersionCount",{"label":"Tracked Version Count","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA (5 minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Observed lag of replicate.npmjs.com","region":"",
-              {
-                "Ref": "AWS::Region",
-              },
-              "","metrics":[["ConstructHub/PackageCanary","EstimatedNpmReplicaLag",{"label":"Replica lag (construct-hub-probe)","stat":"Maximum"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"5 minutes","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell Time","stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time to Catalog","stat":"Maximum"}],["ConstructHub/PackageCanary","TrackedVersionCount",{"label":"Tracked Version Count","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA (5 minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"text","width":12,"height":6,"x":0,"y":77,"properties":{"markdown":"Observed lag of replicate.npmjs.com\\n\\n----\\nreplica lag is no longer available due to NPM protocol changes"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -1961,7 +2047,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ebcf337b5dfcbf57429e15454fbbe9554cffd95e96a4e060fdfc76b44086d7f6.zip",
+          "S3Key": "7c282b26324985d18bb04eaadcdd67d02e44a9ed58b82f356501ac922c1875d6.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -2157,7 +2243,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ee04b5ef0f785ff625c3e54dba9fa778da65703cb8981eb7fb1890865b8c52fa.zip",
+          "S3Key": "effddf6414475afda0fff9307e347fbfff63c899ec8c931db25e36858786d42f.zip",
         },
         "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
         "Environment": {
@@ -2435,7 +2521,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "34be3b61b989054de0d3759bdb3362f8c55bd3e2319a7b811cce431e4ff504bc.zip",
+          "S3Key": "867c32b695c5b53034787b16dea0c6be7965b9cfdbfcbf7482a831ca0864b9d1.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -2665,7 +2751,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "7dfd761d4a7e668e16c0c9d028bf4afddb98877f65fbfd8797f66c6dc6dc39a0.zip",
+          "S3Key": "2b5560904a019e7f7abc79c3d68755827d5f983efcb085a3a1787a183a3ae3b1.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -3109,7 +3195,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "bd40bd9dd3db8b17a4d13356d266079455518827cbc9ef26beeb8f7f18724423.zip",
+          "S3Key": "03042b0cd5589bd763e6426eba32d3001520ecd361bc62911f98dd0f2fe100d4.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -3279,7 +3365,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "{"StartAt":"Has a ContinuationToken?","States":{"Has a ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)Try1000"}],"Default":"S3.ListObjectsV2(FirstPage)Try1000"},"S3.ListObjectsV2(FirstPage)Try1000":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try900"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -3287,7 +3373,7 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","Prefix":"data/"}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              "","Prefix":"data/","MaxKeys":1000}},"Is there more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Give room for on-demand work"}],"Default":"Process Result"},"S3.ListObjectsV2(NextPage)Try1000":{"Next":"Is there more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try900"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -3295,7 +3381,79 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":1000}},"S3.ListObjectsV2(NextPage)Try900":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try800"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":900}},"S3.ListObjectsV2(NextPage)Try800":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try700"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":800}},"S3.ListObjectsV2(NextPage)Try700":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try600"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":700}},"S3.ListObjectsV2(NextPage)Try600":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try500"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":600}},"S3.ListObjectsV2(NextPage)Try500":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try400"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":500}},"S3.ListObjectsV2(NextPage)Try400":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try300"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":400}},"S3.ListObjectsV2(NextPage)Try300":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try200"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":300}},"S3.ListObjectsV2(NextPage)Try200":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(NextPage)Try100"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":200}},"S3.ListObjectsV2(NextPage)Try100":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/","MaxKeys":100}},"Process Result":{"Type":"Map","ResultPath":null,"End":true,"InputPath":"$.response.Contents[*][?(@.Key =~ /^.*/metadata.json$/)]","Iterator":{"StartAt":"Send for reprocessing","States":{"Send for reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -3322,7 +3480,79 @@ Direct link to the function: /lambda/home#/functions/",
               {
                 "Ref": "AWS::AccountId",
               },
-              ":stateMachine:dev.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"}},"TimeoutSeconds":3600}",
+              ":stateMachine:dev.ConstructHub.Ingestion.ReprocessWorkflow"}},"Give room for on-demand work":{"Type":"Wait","Seconds":15,"Next":"Continue as new"},"S3.ListObjectsV2(FirstPage)Try900":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try800"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":900}},"S3.ListObjectsV2(FirstPage)Try800":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try700"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":800}},"S3.ListObjectsV2(FirstPage)Try700":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try600"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":700}},"S3.ListObjectsV2(FirstPage)Try600":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try500"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":600}},"S3.ListObjectsV2(FirstPage)Try500":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try400"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":500}},"S3.ListObjectsV2(FirstPage)Try400":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try300"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":400}},"S3.ListObjectsV2(FirstPage)Try300":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try200"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":300}},"S3.ListObjectsV2(FirstPage)Try200":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Catch":[{"ErrorEquals":["States.DataLimitExceeded"],"ResultPath":null,"Next":"S3.ListObjectsV2(FirstPage)Try100"}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":200}},"S3.ListObjectsV2(FirstPage)Try100":{"End":true,"Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Prefix":"data/","MaxKeys":100}}},"TimeoutSeconds":3600}",
             ],
           ],
         },
@@ -3481,6 +3711,42 @@ Direct link to the function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubIngestionReprocessingFailureAlarm43C9C02F": {
+      "Properties": {
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "The Reprocessing workflow is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+Direct link to the state machine: /states/home#/statemachines/view/",
+              {
+                "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+              },
+            ],
+          ],
+        },
+        "AlarmName": "dev/ConstructHub/Ingestion/ReprocessWorkflow/Failure",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "StateMachineArn",
+            "Value": {
+              "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ExecutionsFailed",
+        "Namespace": "AWS/States",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 1,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubIngestionServiceRole6380BAB6": {
       "Properties": {
@@ -3868,7 +4134,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "d3ca21d895dcec7594aa5663ff2f41d01b98f1a8f9204ade6165acf68cebb8d2.zip",
+          "S3Key": "4fd4cfbd51ecebc2c5bead75336d48e236c3ec5406cff858ff6171d555da2128.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -4656,7 +4922,7 @@ Direct link to function: /lambda/home#/functions/",
           },
         ],
         "SourceObjectKeys": [
-          "ee57c3c2c87eefd3a5a6cbcd848e46c0b37f428afd7bcd5a2fdc0f3e9e9da430.zip",
+          "ba2c42b4614a88c72a0a91a75f389fb962da98b479ae5c6b4009169243cf15c0.zip",
         ],
       },
       "Type": "Custom::CDKBucketDeployment",
@@ -5408,7 +5674,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "73fdb9cd579072f35b694dbba2356879b9c2f50872b0808dbbf24f9e3c670b68.zip",
+          "S3Key": "fdcf5d8663541382901b6aa905137e77ea5f91bdb3d59dcf8e10c95c5bf67024.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -5719,7 +5985,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a8764034b64d962cbef15dc5ea06ac30df5c2d6fc02602f55e1b203373f87bdc.zip",
+          "S3Key": "f71ebaa72c2917e474d145bb516590f82700fce9b9ecdbabf8a7961365a678a6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -6079,7 +6345,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b70b53db3dcacb8c6e24b28ee2733bf06af4916489470f7ebbe8a447bf51df5c.zip",
+          "S3Key": "6ef23248ab932394a2ce488a313588a317bda35226a7d7258d42fc305ee908fd.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -6231,7 +6497,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "60b9ebe2e79576feaddb71aa147776af6e637ed7ba4091e635ba8ccfa09293d8.zip",
+          "S3Key": "1da9a2b231f592cecc09053f9b97977aff026383eff755066407ba807d92442c.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -9683,7 +9949,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3d9fbb9592e94b8f9b4bfee6b599da7b2604d064219e6b1039bf9301ab5583f9.zip",
+          "S3Key": "77d3180d8b9c209ac37bf6b6de3f670df79162b21a73cfe04c89cc98a1309c2b.zip",
         },
         "Description": "ReleaseNotes generator",
         "Environment": {
@@ -9834,7 +10100,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "db25d20e055c1e20ddcfb77d708e4bd845b5816d259b155e42cc3d0d0b7b518a.zip",
+          "S3Key": "d572b94c7e6dd2a279b79ffe0d09b51314d4c49ca1a5c4c194c3beaa6e027321.zip",
         },
         "Description": "ReleaseNotes get message from the worker queue",
         "Environment": {
@@ -10105,7 +10371,7 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "350642f2ff11758018a5651e08963c16011d8312d938edd616d35dddb1b2cef6.zip",
+          "S3Key": "436143e034362111b9d7ac3f0e27a27ecede35478e937a93f8cd24d9aa27b32c.zip",
         },
         "Description": "backend/release-notes/release-notes-trigger.lambda.ts",
         "Environment": {
@@ -10608,6 +10874,22 @@ Direct link to the function: /lambda/home#/functions/",
               "Prefix": "staged/",
               "Status": "Enabled",
             },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -10622,6 +10904,9 @@ Direct link to the function: /lambda/home#/functions/",
             "Value": "true",
           },
         ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
@@ -10688,7 +10973,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5141f7d86e6542112a9f58ba1713299f8fdfc49616f414b363b813670e6c2768.zip",
+          "S3Key": "e3736954cfae5e5a70f14339471add737ac28f13bdf9986cb929dc10c5fb7d7f.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -10742,7 +11027,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "181388aaa69a1d2c2625c71b8a2998427eee2c1ecc1c8053f068d3f01baeefa4.zip",
+          "S3Key": "4e2a09029ac0f6275c3694ac9ef2a662151822f192141e804082e07b28d157e8.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -10794,7 +11079,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 4,
         "Metrics": [
           {
-            "Expression": "IF(FILL(mLag, REPEAT) < 900, MAX([mDwell, mTTC]))",
+            "Expression": "MAX([mDwell, mTTC])",
             "Id": "expr_1",
           },
           {
@@ -10814,18 +11099,6 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "MetricStat": {
               "Metric": {
                 "MetricName": "TimeToCatalog",
-                "Namespace": "ConstructHub/PackageCanary",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
-            },
-            "ReturnData": false,
-          },
-          {
-            "Id": "mLag",
-            "MetricStat": {
-              "Metric": {
-                "MetricName": "EstimatedNpmReplicaLag",
                 "Namespace": "ConstructHub/PackageCanary",
               },
               "Period": 300,
@@ -11335,6 +11608,43 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-known-versions.2",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -11441,7 +11751,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b14d5a3eff1e5b2e1cff1107b32cbc7a151862c15be8fb5081ed9b4889481bc5.zip",
+          "S3Key": "3783992f175064d9d9d7a430a5705ca94149e044a38e110463a1460338f4b958.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -11681,6 +11991,22 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Prefix": "staged/",
               "Status": "Enabled",
             },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-last-transaction-id.2",
+              "Status": "Enabled",
+            },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Prefix": "couchdb-known-versions.2",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -11688,6 +12014,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
@@ -11753,7 +12082,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a4fbfbb6d0697d41f48b310f73e541d39145a7bb60c1f46eabb15de59ec6b16b.zip",
+          "S3Key": "a26f29fd3d69e88478c54ea04ba180e37aa5f7fdafad0b783feccb32a99319f5.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -11962,7 +12291,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "295c94d55ede08699cfff5a5aafdd2d0c390b68883f56eb98d9cced69eed15f0.zip",
+          "S3Key": "df1a5608f9d41c89c4514967f8dbff2b85a9e077087a07ccf57e48e3172faee1.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -15160,7 +15489,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3abc9b990fb0c0400ef9c0c8a7b9bdf40cd8ec2fb3490ed1fc078b8dc780f76d.zip",
+          "S3Key": "e54a611041552ee57bc35487a127197683a1b02f65d502e8056c7d49f0f48062.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -15531,7 +15860,7 @@ function handler(event) {
       },
       "Type": "AWS::Lambda::LayerVersion",
     },
-    "ConstructHubWebAppDeployWebsiteConfigCustomResource2D18C708": {
+    "ConstructHubWebAppDeployWebsiteConfigCustomResource512MiB4C7388FC": {
       "DeletionPolicy": "Delete",
       "Properties": {
         "DestinationBucketName": {
@@ -15543,7 +15872,7 @@ function handler(event) {
         "Prune": false,
         "ServiceToken": {
           "Fn::GetAtt": [
-            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92",
             "Arn",
           ],
         },
@@ -15570,7 +15899,7 @@ function handler(event) {
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubWebAppDeployWebsiteCustomResourceE6DF98C9": {
+    "ConstructHubWebAppDeployWebsiteCustomResource512MiBD91626A0": {
       "DeletionPolicy": "Delete",
       "Properties": {
         "DestinationBucketName": {
@@ -15582,7 +15911,7 @@ function handler(event) {
         "Prune": false,
         "ServiceToken": {
           "Fn::GetAtt": [
-            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92",
             "Arn",
           ],
         },
@@ -15592,7 +15921,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "cfeb64a21b1bb5d2d1d9f1c76c63615906363b832b15503a5fcdca3ee49bbfa7.zip",
+          "409bb9e6490bb6580ea7992c2ebffc2ed63a4cae97fd1ed71d2b686ab5f6a371.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -15908,11 +16237,11 @@ function handler(event) {
         },
         "Tags": [
           {
-            "Key": "aws-cdk:cr-owned:74149cf2",
+            "Key": "aws-cdk:cr-owned:6208d675",
             "Value": "true",
           },
           {
-            "Key": "aws-cdk:cr-owned:d7894bf2",
+            "Key": "aws-cdk:cr-owned:a320458c",
             "Value": "true",
           },
         ],
@@ -15992,6 +16321,195 @@ function handler(event) {
         },
       },
       "Type": "AWS::S3::BucketPolicy",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92": {
+      "DependsOn": [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiBServiceRoleDefaultPolicy96C3E726",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiBServiceRoleBA21DBC1",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem",
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": [
+          {
+            "Ref": "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1",
+          },
+          {
+            "Fn::FindInMap": [
+              "CloudwatchlambdainsightsversionMap",
+              {
+                "Ref": "AWS::Region",
+              },
+              "1x0x229x0xx86x64",
+            ],
+          },
+        ],
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiBServiceRoleBA21DBC1",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.9",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiBServiceRoleBA21DBC1": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiBServiceRoleDefaultPolicy96C3E726": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      {
+                        "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      {
+                        "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubWebAppWebsiteBucket4B2B9DB2",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubWebAppWebsiteBucket4B2B9DB2",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "cloudfront:GetInvalidation",
+                "cloudfront:CreateInvalidation",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiBServiceRoleDefaultPolicy96C3E726",
+        "Roles": [
+          {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiBServiceRoleBA21DBC1",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
       "DependsOn": [
@@ -16214,51 +16732,6 @@ function handler(event) {
                 },
               ],
             },
-            {
-              "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
-                "cloudfront:GetInvalidation",
-                "cloudfront:CreateInvalidation",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
           ],
           "Version": "2012-10-17",
         },
@@ -16421,7 +16894,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "bcdb07deea0b4c88daaaab805069f0033579a98543958b54f9fca9758de14c0e.zip",
+          "S3Key": "d9a81347606353a65bad638cba239733e0b1678d806ed5b2f395e8bc14bcbf5d.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -16847,7 +17320,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "65cf3f1c3d8e699b3a0dfd25d15e1eb0967290c9bfc46d231740311c1265b87a.zip",
+          "S3Key": "368f5caa69ead30ac3efd5fa5b76573d2370207979e58a33d2d59d7e45c39120.zip",
         },
         "Description": "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler",
         "Handler": "index.handler",
