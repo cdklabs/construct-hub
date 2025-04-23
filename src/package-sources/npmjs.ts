@@ -23,6 +23,7 @@ import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { NpmJsPackageCanary } from './npmjs/canary';
 import {
+  KNOWN_VERSIONS_FILE_NAME,
   MARKER_FILE_NAME,
   METRICS_NAMESPACE,
   MetricName,
@@ -122,10 +123,23 @@ export class NpmJs implements IPackageSource {
       storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
         blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
         enforceSSL: true,
+        versioned: true,
         lifecycleRules: [
           {
             prefix: S3KeyPrefix.STAGED_KEY_PREFIX,
             expiration: Duration.days(30),
+          },
+          // Permanently delete marker file updates after 1 day (we don't need these)
+          {
+            prefix: MARKER_FILE_NAME,
+            noncurrentVersionExpiration: Duration.days(1),
+            expiredObjectDeleteMarker: true,
+          },
+          // Permanently delete known version backups after 30 days
+          {
+            prefix: KNOWN_VERSIONS_FILE_NAME,
+            noncurrentVersionExpiration: Duration.days(30),
+            expiredObjectDeleteMarker: true,
           },
         ],
       });
@@ -174,6 +188,7 @@ export class NpmJs implements IPackageSource {
     });
 
     bucket.grantReadWrite(follower, MARKER_FILE_NAME);
+    bucket.grantReadWrite(follower, KNOWN_VERSIONS_FILE_NAME);
     denyList?.grantRead(follower);
     licenseList.grantRead(follower);
     stager.grantInvoke(follower);
@@ -225,6 +240,10 @@ export class NpmJs implements IPackageSource {
           primary: true,
         },
         { name: 'Marker Object', url: s3ObjectUrl(bucket, MARKER_FILE_NAME) },
+        {
+          name: 'Known Versions',
+          url: s3ObjectUrl(bucket, KNOWN_VERSIONS_FILE_NAME),
+        },
         { name: 'Stager', url: lambdaFunctionUrl(stager) },
         { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
       ],
