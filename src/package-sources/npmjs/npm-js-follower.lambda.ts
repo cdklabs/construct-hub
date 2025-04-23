@@ -159,13 +159,14 @@ export async function handler(event: ScheduledEvent, context: Context) {
           console.log(
             `Identified ${versionInfos.length} relevant package version update(s)`
           );
-          writeKnownVersionsFile =
-            writeKnownVersionsFile ?? versionInfos.length > 0;
           metrics.putMetric(
             MetricName.RELEVANT_PACKAGE_VERSIONS,
             versionInfos.length,
             Unit.Count
           );
+
+          // If we have versionInfos, we already added them to the knownVersions map and we should save it again
+          writeKnownVersionsFile ||= versionInfos.length > 0;
 
           // Process all remaining updates
           await Promise.all(
