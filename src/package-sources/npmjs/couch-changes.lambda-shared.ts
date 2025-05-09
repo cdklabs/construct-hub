@@ -1,12 +1,16 @@
 import { EventEmitter } from 'events';
 import { OutgoingHttpHeaders } from 'http';
-import { Agent, request } from 'https';
+import { Agent, request, RequestOptions } from 'https';
 import { Readable } from 'stream';
 import { URL } from 'url';
 import { createGunzip } from 'zlib';
 import * as JSONStream from 'JSONStream';
 
 const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
+
+const REQUEST_DEADLINE_MS = 30_000;
+
+const REQUEST_ATTEMPT_TIMEOUT_MS = 5_000;
 
 /**
  * A utility class that helps with traversing CouchDB database changes streams
@@ -28,6 +32,9 @@ export class CouchChanges extends EventEmitter {
       keepAlive: true,
       keepAliveMsecs: 5_000,
       maxSockets: 4,
+
+      // This timeout is separate from the request timeout, and is here to
+      // prevent stalled/idle connections
       timeout: 60_000,
     });
     this.baseUrl = new URL(baseUrl);
@@ -120,102 +127,103 @@ export class CouchChanges extends EventEmitter {
    *
    * @returns the JSON-decoded response body.
    */
-  private https(
-    method: string,
+  private async https(
+    method: 'get' | 'post',
     url: URL,
-    body?: { [key: string]: unknown },
-    attempt = 1
+    body?: { [key: string]: unknown }
   ): Promise<{ [key: string]: unknown }> {
-    return new Promise((ok, ko) => {
-      const retry = () =>
-        setTimeout(() => {
-          console.log(`Retrying ${method.toUpperCase()} ${url}`);
-          this.https(method, url, body, attempt + 1).then(ok, ko);
-        }, Math.min(500 * attempt, 5_000));
+    const headers: OutgoingHttpHeaders = {
+      Accept: 'application/json',
+      'Accept-Encoding': 'gzip',
+      'npm-replication-opt-in': 'true', // can be deleted after May 29: https://github.com/orgs/community/discussions/152515
+    };
+    if (body) {
+      headers['Content-Type'] = 'application/json';
+    }
 
-      const headers: OutgoingHttpHeaders = {
-        Accept: 'application/json',
-        'Accept-Encoding': 'gzip',
-        'npm-replication-opt-in': 'true', // can be deleted after May 29: https://github.com/orgs/community/discussions/152515
-      };
-      if (body) {
-        headers['Content-Type'] = 'application/json';
-      }
+    const requestOptions: RequestOptions = {
+      agent: this.agent,
+      headers,
+      method,
+      port: 443,
+      servername: url.hostname,
+      // This just leads to a 'timeout' event
+      timeout: REQUEST_ATTEMPT_TIMEOUT_MS,
+    };
 
-      const req = request(
-        url,
-        {
-          agent: this.agent,
-          headers,
-          method,
-          port: 443,
-          servername: url.hostname,
-        },
-        (res) => {
-          if (res.statusCode == null) {
-            const error = new Error(
-              `[FATAL] Request failed: ${method.toUpperCase()} ${url}`
-            );
-            Error.captureStackTrace(error);
-            return ko(error);
-          }
-
-          console.log(
-            `Response: ${method.toUpperCase()} ${url} => HTTP ${
-              res.statusCode
-            } (${res.statusMessage})`
-          );
-
-          // Transient (server) errors:
-          if (res.statusCode >= 500 && res.statusCode < 600) {
-            console.error(
-              `[RETRYABLE] HTTP ${res.statusCode} (${
-                res.statusMessage
-              }) - ${method.toUpperCase()} ${url}`
-            );
-            // Call again after a short back-off
-            return retry();
-          }
-          // Permanent (client) errors:
-          if (res.statusCode >= 400 && res.statusCode < 500) {
-            const error = new Error(
-              `[FATAL] HTTP ${res.statusCode} (${
-                res.statusMessage
-              }) - ${method.toUpperCase()} ${url}`
-            );
-            Error.captureStackTrace(error);
-            return ko(error);
-          }
-
-          const onError = (err: Error & { code?: string }) => {
-            if (err.code === 'ECONNRESET') {
-              // Transient networking problem?
-              console.error(
-                `[RETRYABLE] ${err.code} - ${method.toUpperCase()} ${url}`
-              );
-              retry();
-            } else {
-              Error.captureStackTrace(err);
-              console.log('[NON-RETRYABLE]', err);
-              ko(err);
+    const deadline = Date.now() + REQUEST_DEADLINE_MS;
+    let maxDelay = 100;
+    while (true) {
+      try {
+        return await new Promise((ok, ko) => {
+          const req = request(url, requestOptions, (res) => {
+            if (res.statusCode == null) {
+              throw new RetryableError('No status code available');
             }
-          };
 
-          res.once('error', onError);
+            // Server errors. We can't know whether these are really retryable but we usually pretend that they are.
+            if (res.statusCode >= 500 && res.statusCode < 600) {
+              throw new RetryableError(
+                `HTTP ${res.statusCode} ${res.statusMessage}`
+              );
+            }
 
-          const json = JSONStream.parse(true);
-          json.once('data', ok);
-          json.once('error', onError);
+            // Permanent (client) errors:
+            if (res.statusCode >= 400 && res.statusCode < 500) {
+              throw new Error(`HTTP ${res.statusCode} ${res.statusMessage}`);
+            }
 
-          const plainPayload =
-            res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
-          plainPayload.pipe(json, { end: true });
-          plainPayload.once('error', onError);
+            console.log(
+              `Response: ${method.toUpperCase()} ${url} => HTTP ${
+                res.statusCode
+              } (${res.statusMessage})`
+            );
+
+            res.once('error', ko);
+
+            const json = JSONStream.parse(true);
+            json.once('data', ok);
+            json.once('error', ko);
+
+            const plainPayload =
+              res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
+            plainPayload.pipe(json, { end: true });
+            plainPayload.once('error', ko);
+          });
+
+          req.on('error', ko);
+          req.on('timeout', () => {
+            req.destroy(
+              new RetryableError(
+                `Timeout after ${REQUEST_ATTEMPT_TIMEOUT_MS}ms, aborting request`
+              )
+            );
+          });
+
+          req.end(body && JSON.stringify(body, null, 2));
+        });
+      } catch (e: any) {
+        if (Date.now() > deadline || !isRetryableError(e)) {
+          throw e;
         }
-      );
-      req.end(body && JSON.stringify(body, null, 2));
-    });
+
+        console.error(`[RETRYABLE] ${method} ${url}: ${e}`);
+
+        await sleep(Math.floor(Math.random() * maxDelay));
+        maxDelay *= 2;
+      }
+    }
   }
+}
+
+class RetryableError extends Error {}
+
+function isRetryableError(e: Error): boolean {
+  return e instanceof RetryableError || (e as any).code === 'ECONNRESET';
+}
+
+async function sleep(ms: number) {
+  return new Promise((ok) => setTimeout(ok, ms));
 }
 
 export interface DatabaseChanges {
