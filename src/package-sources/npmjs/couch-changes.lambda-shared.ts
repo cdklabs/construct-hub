@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { OutgoingHttpHeaders } from 'http';
+import { IncomingMessage, OutgoingHttpHeaders } from 'http';
 import { Agent, request, RequestOptions } from 'https';
 import { Readable } from 'stream';
 import { URL } from 'url';
@@ -155,53 +155,30 @@ export class CouchChanges extends EventEmitter {
     let maxDelay = 100;
     while (true) {
       try {
-        return await new Promise((ok, ko) => {
-          const req = request(url, requestOptions, (res) => {
-            if (res.statusCode == null) {
-              throw new RetryableError('No status code available');
-            }
+        const res = await requestPromise(url, requestOptions, body);
+        if (res.statusCode == null) {
+          throw new RetryableError('No status code available');
+        }
 
-            // Server errors. We can't know whether these are really retryable but we usually pretend that they are.
-            if (res.statusCode >= 500 && res.statusCode < 600) {
-              throw new RetryableError(
-                `HTTP ${res.statusCode} ${res.statusMessage}`
-              );
-            }
+        // Server errors. We can't know whether these are really retryable but we usually pretend that they are.
+        if (res.statusCode >= 500 && res.statusCode < 600) {
+          throw new RetryableError(
+            `HTTP ${res.statusCode} ${res.statusMessage}`
+          );
+        }
 
-            // Permanent (client) errors:
-            if (res.statusCode >= 400 && res.statusCode < 500) {
-              throw new Error(`HTTP ${res.statusCode} ${res.statusMessage}`);
-            }
+        // Permanent (client) errors:
+        if (res.statusCode >= 400 && res.statusCode < 500) {
+          throw new Error(`HTTP ${res.statusCode} ${res.statusMessage}`);
+        }
 
-            console.log(
-              `Response: ${method.toUpperCase()} ${url} => HTTP ${
-                res.statusCode
-              } (${res.statusMessage})`
-            );
+        console.log(
+          `Response: ${method.toUpperCase()} ${url} => HTTP ${
+            res.statusCode
+          } (${res.statusMessage})`
+        );
 
-            res.once('error', ko);
-
-            const json = JSONStream.parse(true);
-            json.once('data', ok);
-            json.once('error', ko);
-
-            const plainPayload =
-              res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
-            plainPayload.pipe(json, { end: true });
-            plainPayload.once('error', ko);
-          });
-
-          req.on('error', ko);
-          req.on('timeout', () => {
-            req.destroy(
-              new RetryableError(
-                `Timeout after ${REQUEST_ATTEMPT_TIMEOUT_MS}ms, aborting request`
-              )
-            );
-          });
-
-          req.end(body && JSON.stringify(body, null, 2));
-        });
+        return await readResponseJson(res);
       } catch (e: any) {
         if (Date.now() > deadline || !isRetryableError(e)) {
           throw e;
@@ -214,6 +191,45 @@ export class CouchChanges extends EventEmitter {
       }
     }
   }
+}
+
+/**
+ * A Promisified version of `https.request()` that also handles timeout events
+ */
+function requestPromise(
+  url: URL,
+  options: RequestOptions,
+  body?: Record<string, unknown>
+) {
+  return new Promise<IncomingMessage>((ok, ko) => {
+    const req = request(url, options ?? {}, ok);
+    req.on('error', ko);
+    req.on('timeout', () => {
+      req.destroy(
+        new RetryableError(
+          `Timeout after ${REQUEST_ATTEMPT_TIMEOUT_MS}ms, aborting request`
+        )
+      );
+    });
+    req.end(body && JSON.stringify(body, null, 2));
+  });
+}
+
+function readResponseJson(
+  res: IncomingMessage
+): Promise<Record<string, unknown>> {
+  return new Promise((ok, ko) => {
+    res.once('error', ko);
+
+    const json = JSONStream.parse(true);
+    json.once('data', ok);
+    json.once('error', ko);
+
+    const plainPayload =
+      res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
+    plainPayload.pipe(json, { end: true });
+    plainPayload.once('error', ko);
+  });
 }
 
 class RetryableError extends Error {}
