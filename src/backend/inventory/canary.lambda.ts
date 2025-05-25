@@ -5,6 +5,7 @@ import {
   PutObjectCommand,
   PutObjectCommandOutput,
 } from '@aws-sdk/client-s3';
+import { NodeJsRuntimeStreamingBlobPayloadOutputTypes } from '@smithy/types';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import { SemVer } from 'semver';
@@ -792,7 +793,10 @@ export class AwsInventoryHost implements IInventoryHost {
         `Object key "${continuationObjectKey}" not found in bucket "${this.scratchworkBucket}".`
       );
     }
-    const body = await decompressContent(res.Body, res.ContentEncoding);
+    const body = await decompressContent(
+      res.Body as NodeJsRuntimeStreamingBlobPayloadOutputTypes,
+      res.ContentEncoding
+    );
 
     if (!body) {
       throw new Error(

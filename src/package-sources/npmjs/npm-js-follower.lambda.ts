@@ -6,7 +6,10 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
 } from '@aws-sdk/client-s3';
-import type { StreamingBlobPayloadInputTypes } from '@smithy/types';
+import type {
+  NodeJsRuntimeStreamingBlobPayloadOutputTypes,
+  StreamingBlobPayloadInputTypes,
+} from '@smithy/types';
 import {
   metricScope,
   Configuration,
@@ -251,7 +254,10 @@ async function loadContentFromS3(
     if (!response.Body) {
       throw new Error(`Response Body for ${key} is empty`);
     }
-    return await decompressContent(response.Body, response.ContentEncoding);
+    return await decompressContent(
+      response.Body as NodeJsRuntimeStreamingBlobPayloadOutputTypes,
+      response.ContentEncoding
+    );
   } catch (error: any) {
     if (error instanceof NoSuchKey || error.name === 'NoSuchKey') {
       console.warn(warningMessage);
