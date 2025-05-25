@@ -1,4 +1,5 @@
 import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { NodeJsRuntimeStreamingBlobPayloadOutputTypes } from '@smithy/types';
 import { sort as semverSort } from 'semver';
 import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { decompressContent } from '../shared/compress-content.lambda-shared';
@@ -34,7 +35,10 @@ export async function handler({
     if (!res.Body) {
       throw new Error('Response Body is empty');
     }
-    const body = await decompressContent(res.Body, res.ContentEncoding);
+    const body = await decompressContent(
+      res.Body as NodeJsRuntimeStreamingBlobPayloadOutputTypes,
+      res.ContentEncoding
+    );
 
     const list = Array.from(
       (JSON.parse(body) as string[])
