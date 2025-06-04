@@ -900,6 +900,9 @@
     "eslint": {
       "name": "eslint",
       "description": "Runs eslint against the codebase",
+      "env": {
+        "ESLINT_USE_FLAT_CONFIG": "false"
+      },
       "steps": [
         {
           "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ test src/__tests__ projenrc .projenrc.ts",
@@ -1093,7 +1096,7 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=latest --peer --dep=dev,peer,prod,optional --filter=cdklabs-projen-project-types,projen"
+          "exec": "npx npm-check-updates@16 --upgrade --target=latest --peer --no-deprecated --dep=dev,peer,prod,optional --filter=cdklabs-projen-project-types,projen"
         },
         {
           "exec": "yarn install --check-files"
@@ -1117,7 +1120,7 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev --filter=@aws-sdk/client-cloudwatch,@aws-sdk/client-codeartifact,@aws-sdk/client-ecs,@aws-sdk/client-lambda,@aws-sdk/client-s3,@aws-sdk/client-sfn,@aws-sdk/client-sqs,@jsii/spec,@octokit/rest,@smithy/types,@smithy/util-retry,@smithy/util-stream,@types/aws-lambda,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/streamx,@types/tar-stream,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk-client-mock,aws-sdk-client-mock-jest,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,chalk,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,JSONStream,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,uuid,yaml"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev --filter=@aws-sdk/client-cloudwatch,@aws-sdk/client-codeartifact,@aws-sdk/client-ecs,@aws-sdk/client-lambda,@aws-sdk/client-s3,@aws-sdk/client-sfn,@aws-sdk/client-sqs,@jsii/spec,@octokit/rest,@smithy/types,@smithy/util-retry,@smithy/util-stream,@types/aws-lambda,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/streamx,@types/tar-stream,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk-client-mock,aws-sdk-client-mock-jest,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,chalk,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,JSONStream,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,uuid,yaml"
         },
         {
           "exec": "yarn install --check-files"
