@@ -42,7 +42,7 @@ export class CouchChanges extends EventEmitter {
   }
 
   /**
-   * @returns summary informations about the database.
+   * @returns summary information about the database.
    */
   public async info(): Promise<DatabaseInfos> {
     return (await this.https('get', this.baseUrl)) as any;
@@ -73,7 +73,8 @@ export class CouchChanges extends EventEmitter {
 
     return {
       last_seq,
-      results,
+      actionableResults: results,
+      totalCount: result.results.length,
     };
   }
 
@@ -250,15 +251,16 @@ export interface DatabaseChanges {
   readonly last_seq: string | number;
 
   /**
-   * The amount of pending changes from the server. This value is not always
-   * returned by the servers.
+   * The actionable changes that are part of this batch.
+   * This has deleted and unreachable packages removed.
    */
-  readonly pending?: number;
+  readonly actionableResults: readonly DatabaseChange[];
 
   /**
-   * The changes that are part of this batch.
+   * The total count of changes in this batch. This includes unprocessable changes.
+   * 0 indicates we are up to date with "now".
    */
-  readonly results: readonly DatabaseChange[];
+  readonly totalCount: number;
 }
 
 export interface DatabaseChange {
