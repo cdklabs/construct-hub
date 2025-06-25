@@ -12,7 +12,7 @@ export class PruneTest extends lambda.Function {
       description: '__tests__/backend/deny-list/mocks/prune-test.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/prune-test.lambda.bundle')),
     });

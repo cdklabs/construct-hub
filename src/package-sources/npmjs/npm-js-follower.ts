@@ -12,7 +12,7 @@ export class NpmJsFollower extends lambda.Function {
       description: 'package-sources/npmjs/npm-js-follower.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/npm-js-follower.lambda.bundle')),
     });
