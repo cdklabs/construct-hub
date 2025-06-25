@@ -68,7 +68,6 @@ const project = new CdklabsConstructLibrary({
     'feed',
     'fs-extra',
     'got',
-    'JSONStream',
     'semver',
     'spdx-license-list',
     'streamx',
