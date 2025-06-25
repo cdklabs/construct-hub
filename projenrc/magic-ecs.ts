@@ -215,22 +215,12 @@ function newEcsTask(
   // Based off amazonlinux:2023 for... reasons. Slim node images don't work here.
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2023');
   df.line();
-  // Install node the regular way...
+  // Install node and other dependencies using dnf
+  df.line(`RUN dnf update -y \\`);
   df.line(
-    `RUN yum install https://rpm.nodesource.com/pub_${nodeVersion}.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y \\`
+    `    && dnf install -y nodejs${nodeVersion} nodejs${nodeVersion}-npm git lsof \\`
   );
-  df.line('    && yum install nodejs -y \\');
-  // @see https://github.com/nodesource/distributions/blob/e42782301931c357cec2a09e1246d7849e084345/scripts/rpm/setup_22.x#L75-L76
-  df.line(
-    '    --setopt=nodesource-nodejs.gpgkey=https://rpm.nodesource.com/gpgkey/ns-operations-public.key \\'
-  );
-  df.line('    --setopt=nodesource-nodejs.module_hotfixes=1 \\');
-  df.line('    && yum update -y \\');
-  df.line('    && yum upgrade -y \\');
-  df.line('    && yum install -y git lsof nodejs \\');
-  // Clean up the yum cache in the interest of image size
-  df.line('    && yum clean all \\');
-  df.line('    && rm -rf /var/cache/yum');
+  df.line(`    && dnf clean all`);
   df.line();
   df.line('COPY . /bundle');
   df.line();
