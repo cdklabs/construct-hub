@@ -12,7 +12,7 @@ export class ReStagePackageVersion extends lambda.Function {
       description: 'package-sources/npmjs/re-stage-package-version.lambda.ts',
       ...props,
       architecture: lambda.Architecture.ARM_64,
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/re-stage-package-version.lambda.bundle')),
     });

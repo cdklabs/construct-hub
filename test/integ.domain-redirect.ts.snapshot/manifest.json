@@ -1,5 +1,5 @@
 {
-  "version": "36.0.0",
+  "version": "44.0.0",
   "artifacts": {
     "DomainRedirectIntegrationTest.assets": {
       "type": "cdk:asset-manifest",
@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/2093f6fb1960b3a480aa2c8cbcac87bb5d8c3e1e1444e03030ba61149f2ae3db.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/d0f7a783cce5196a44b2b83c85be411280764cb001c0f67a4e7693fc78d77241.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -34,10 +34,143 @@
         "DomainRedirectIntegrationTest.assets"
       ],
       "metadata": {
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "domainName": "*",
+              "hostedZone": "*"
+            }
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "timeout": "*",
+              "role": "*",
+              "code": "*",
+              "handler": "*",
+              "runtime": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 0
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              },
+              "managedPolicies": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/ImportServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
         "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
           }
         ],
         "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/ServiceRole/DefaultPolicy/Resource": [
@@ -52,10 +185,33 @@
             "data": "MyDomainRedirectCertificateCertificateRequestorFunctionD2A136F7"
           }
         ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorResource": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": "*"
+          }
+        ],
         "/DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorResource/Default": [
           {
             "type": "aws:cdk:logicalId",
             "data": "MyDomainRedirectCertificateCertificateRequestorResourceFBF8557C"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/Distribution": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "domainNames": "*",
+              "defaultBehavior": {
+                "origin": "*"
+              },
+              "certificate": "*",
+              "minimumProtocolVersion": "TLSv1.2_2018"
+            }
           }
         ],
         "/DomainRedirectIntegrationTest/MyDomainRedirect/Distribution/Resource": [
@@ -64,16 +220,62 @@
             "data": "MyDomainRedirectDistributionCF05BA92"
           }
         ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/ARecord": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "zone": "*",
+              "target": "*",
+              "comment": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "zone": "*",
+              "target": "*",
+              "comment": "*"
+            }
+          }
+        ],
         "/DomainRedirectIntegrationTest/MyDomainRedirect/ARecord/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "MyDomainRedirectARecordB42CD602"
           }
         ],
+        "/DomainRedirectIntegrationTest/MyDomainRedirect/AaaaRecord": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "zone": "*",
+              "target": "*",
+              "comment": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "zone": "*",
+              "target": "*",
+              "comment": "*"
+            }
+          }
+        ],
         "/DomainRedirectIntegrationTest/MyDomainRedirect/AaaaRecord/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "MyDomainRedirectAaaaRecord9897C577"
+          }
+        ],
+        "/DomainRedirectIntegrationTest/DomainRedirectBucketsA177hj/RedirectBucket-constructs.dev": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "websiteRedirect": {
+                "hostName": "*"
+              }
+            }
           }
         ],
         "/DomainRedirectIntegrationTest/DomainRedirectBucketsA177hj/RedirectBucket-constructs.dev/Resource": [
@@ -157,5 +359,6 @@
         "file": "tree.json"
       }
     }
-  }
+  },
+  "minimumCliVersion": "2.1019.2"
 }

@@ -24,7 +24,8 @@ import * as uuid from 'uuid';
 function newLambdaHandler(
   project: TypeScriptProject,
   entrypoint: string,
-  trigger: boolean
+  trigger: boolean,
+  nodeVersion: string
 ) {
   if (!entrypoint.startsWith(project.srcdir)) {
     throw new Error(`${entrypoint} must be under ${project.srcdir}`);
@@ -99,7 +100,7 @@ function newLambdaHandler(
     }
   }
   ts.line('architecture: lambda.Architecture.ARM_64,');
-  ts.line('runtime: lambda.Runtime.NODEJS_20_X,');
+  ts.line(`runtime: lambda.Runtime.NODEJS_${nodeVersion}_X,`);
   ts.line("handler: 'index.handler',");
   ts.line(
     `code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`
@@ -136,7 +137,7 @@ function newLambdaHandler(
     'esbuild',
     '--bundle',
     entry,
-    '--target="node20"',
+    `--target="node${nodeVersion}"`,
     '--platform="node"',
     `--outfile="${outfile}"`,
     '--external:aws-sdk',
@@ -162,7 +163,10 @@ function newLambdaHandler(
 /**
  * Auto-discovers all lambda functions.
  */
-export function discoverLambdas(project: TypeScriptProject) {
+export function discoverLambdas(
+  project: TypeScriptProject,
+  nodeVersion: string
+) {
   const entrypoints = new Array<string>();
 
   // allow .lambda code to import dev-deps (since they are only needed during bundling)
@@ -175,7 +179,7 @@ export function discoverLambdas(project: TypeScriptProject) {
 
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     const trigger = basename(entry).startsWith('trigger.');
-    newLambdaHandler(project, entry, trigger);
+    newLambdaHandler(project, entry, trigger, nodeVersion);
     entrypoints.push(entry);
   }
 
@@ -185,7 +189,7 @@ export function discoverLambdas(project: TypeScriptProject) {
       'esbuild',
       '--bundle',
       ...entrypoints,
-      '--target="node20',
+      `--target="node${nodeVersion}`,
       '--platform="node"',
       `--outbase="${project.srcdir}"`,
       `--outdir="${project.libdir}"`,
