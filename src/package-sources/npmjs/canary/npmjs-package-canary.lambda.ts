@@ -1,4 +1,5 @@
 import * as https from 'https';
+import { json } from 'node:stream/consumers';
 import { Readable } from 'stream';
 import { createGunzip } from 'zlib';
 import {
@@ -7,7 +8,6 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
-import * as JSONStream from 'JSONStream';
 import {
   METRICS_NAMESPACE,
   MetricName,
@@ -345,14 +345,16 @@ export class CanaryStateService {
    */
   public async latest(packageName: string): Promise<CanaryState['latest']> {
     console.log(`Fetching latest version information from NPM: ${packageName}`);
-    const version = await getJSON(
-      `https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`,
-      { jsonPath: ['version'] }
-    );
-    const publishedAt = await getJSON(
-      `https://registry.npmjs.org/${encodeURIComponent(packageName)}`,
-      { jsonPath: ['time', version] }
-    );
+    const version = (
+      await getJSON(
+        `https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`
+      )
+    ).version;
+    const publishedAt = (
+      await getJSON(
+        `https://registry.npmjs.org/${encodeURIComponent(packageName)}`
+      )
+    ).time[version];
 
     console.log(
       `Package: ${packageName} | Version : ${version} | Published At: ${publishedAt}`
@@ -452,10 +454,7 @@ interface CanaryState {
  */
 function getJSON(
   url: string,
-  {
-    jsonPath,
-    timeoutMillis,
-  }: { jsonPath?: string[]; timeoutMillis?: number } = {}
+  { timeoutMillis }: { jsonPath?: string[]; timeoutMillis?: number } = {}
 ): Promise<any> {
   return new Promise((ok, ko) => {
     https
@@ -492,13 +491,11 @@ function getJSON(
             );
           });
 
-          const json = JSONStream.parse(jsonPath);
-          json.once('data', ok);
-          json.once('error', ko);
-
           const plainPayload =
             res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
-          plainPayload.pipe(json, { end: true });
+          return json(plainPayload)
+            .then((parsed) => ok(parsed as any))
+            .catch((err) => ko(err));
         }
       )
       .once('timeout', () => {

@@ -1,10 +1,10 @@
 import { EventEmitter } from 'events';
 import { IncomingMessage, OutgoingHttpHeaders } from 'http';
 import { Agent, request, RequestOptions } from 'https';
+import { json } from 'node:stream/consumers';
 import { Readable } from 'stream';
 import { URL } from 'url';
 import { createGunzip } from 'zlib';
-import * as JSONStream from 'JSONStream';
 
 const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
 
@@ -226,14 +226,12 @@ function readResponseJson(
   return new Promise((ok, ko) => {
     res.once('error', ko);
 
-    const json = JSONStream.parse(true);
-    json.once('data', ok);
-    json.once('error', ko);
-
     const plainPayload =
       res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
-    plainPayload.pipe(json, { end: true });
-    plainPayload.once('error', ko);
+
+    return json(plainPayload)
+      .then((parsed) => ok(parsed as any))
+      .catch((err) => ko(err));
   });
 }
 
