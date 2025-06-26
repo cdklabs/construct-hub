@@ -12,6 +12,10 @@ const REQUEST_DEADLINE_MS = 30_000;
 
 const REQUEST_ATTEMPT_TIMEOUT_MS = 5_000;
 
+const DEFAULT_BATCH_SIZE = 100;
+
+const MAX_CONNS_PER_HOST = 100;
+
 /**
  * A utility class that helps with traversing CouchDB database changes streams
  * in a promise-based, page-by-page manner.
@@ -31,7 +35,7 @@ export class CouchChanges extends EventEmitter {
     this.agent = new Agent({
       keepAlive: true,
       keepAliveMsecs: 5_000,
-      maxSockets: 4,
+      maxSockets: MAX_CONNS_PER_HOST,
 
       // This timeout is separate from the request timeout, and is here to
       // prevent stalled/idle connections
@@ -60,7 +64,7 @@ export class CouchChanges extends EventEmitter {
     since: string | number,
     opts?: { readonly batchSize?: number }
   ): Promise<DatabaseChanges> {
-    const batchSize = opts?.batchSize ?? 100;
+    const batchSize = opts?.batchSize ?? DEFAULT_BATCH_SIZE;
 
     const changesUrl = new URL(this.database, this.baseUrl);
     changesUrl.searchParams.set('limit', batchSize.toFixed());
@@ -208,7 +212,7 @@ function requestPromise(
     req.on('timeout', () => {
       req.destroy(
         new RetryableError(
-          `Timeout after ${REQUEST_ATTEMPT_TIMEOUT_MS}ms, aborting request`
+          `Timeout after ${options.timeout}ms, aborting request`
         )
       );
     });

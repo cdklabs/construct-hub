@@ -139,7 +139,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
           }
         }
 
-        console.log(`Received a batch of ${batch.length} element(s)`);
+        console.log(
+          `Received a batch of ${changes.totalCount} element(s), ${batch.length} after filtering`
+        );
         metrics.putMetric(MetricName.CHANGE_COUNT, batch.length, Unit.Count);
 
         if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
