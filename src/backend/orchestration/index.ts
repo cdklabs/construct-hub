@@ -244,7 +244,7 @@ export class Orchestration extends Construct {
         ].join('\n'),
         comparisonOperator:
           ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 1,
+        evaluationPeriods: 5,
         threshold: 1,
       })
     );
@@ -468,9 +468,8 @@ export class Orchestration extends Construct {
       this.stateMachine
         .metricFailed()
         .createAlarm(this, 'OrchestrationFailed', {
-          alarmName: `${this.stateMachine.node.path}/${
-            this.stateMachine.metricFailed().metricName
-          }`,
+          alarmName: `${this.stateMachine.node.path}/${this.stateMachine.metricFailed().metricName
+            }`,
           alarmDescription: [
             'Backend orchestration failed!',
             '',
