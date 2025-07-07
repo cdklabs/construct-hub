@@ -6,6 +6,7 @@ import {
   Metric,
   MetricOptions,
   Statistic,
+  TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { SubnetSelection, Vpc, ISecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, ICluster } from 'aws-cdk-lib/aws-ecs';
@@ -244,8 +245,10 @@ export class Orchestration extends Construct {
         ].join('\n'),
         comparisonOperator:
           ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 5,
+        evaluationPeriods: 2,
         threshold: 1,
+        // SQS does not emit metrics if the queue has been empty for a while, which is GOOD.
+        treatMissingData: TreatMissingData.NOT_BREACHING,
       })
     );
 
