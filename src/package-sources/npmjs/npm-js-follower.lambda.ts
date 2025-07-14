@@ -577,9 +577,13 @@ function getRelevantVersionInfos(
       }
     }
 
-    for (const version of unpublishedVersions) {
+    if (unpublishedVersions.length > 0) {
       console.log(
-        `[${change.seq}] Could not find info for "${version}". Was it un-published?`
+        `[${
+          change.seq
+        }] Could not find info for the following versions. Were they un-published?\n${unpublishedVersions.join(
+          ',\n'
+        )}`
       );
     }
   }
