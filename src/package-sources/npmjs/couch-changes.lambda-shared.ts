@@ -1,16 +1,20 @@
 import { EventEmitter } from 'events';
 import { IncomingMessage, OutgoingHttpHeaders } from 'http';
 import { Agent, request, RequestOptions } from 'https';
+import { json } from 'node:stream/consumers';
 import { Readable } from 'stream';
 import { URL } from 'url';
 import { createGunzip } from 'zlib';
-import * as JSONStream from 'JSONStream';
 
 const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
 
 const REQUEST_DEADLINE_MS = 30_000;
 
 const REQUEST_ATTEMPT_TIMEOUT_MS = 5_000;
+
+const DEFAULT_BATCH_SIZE = 100;
+
+const MAX_CONNS_PER_HOST = 100;
 
 /**
  * A utility class that helps with traversing CouchDB database changes streams
@@ -31,7 +35,7 @@ export class CouchChanges extends EventEmitter {
     this.agent = new Agent({
       keepAlive: true,
       keepAliveMsecs: 5_000,
-      maxSockets: 4,
+      maxSockets: MAX_CONNS_PER_HOST,
 
       // This timeout is separate from the request timeout, and is here to
       // prevent stalled/idle connections
@@ -42,7 +46,7 @@ export class CouchChanges extends EventEmitter {
   }
 
   /**
-   * @returns summary informations about the database.
+   * @returns summary information about the database.
    */
   public async info(): Promise<DatabaseInfos> {
     return (await this.https('get', this.baseUrl)) as any;
@@ -60,7 +64,7 @@ export class CouchChanges extends EventEmitter {
     since: string | number,
     opts?: { readonly batchSize?: number }
   ): Promise<DatabaseChanges> {
-    const batchSize = opts?.batchSize ?? 100;
+    const batchSize = opts?.batchSize ?? DEFAULT_BATCH_SIZE;
 
     const changesUrl = new URL(this.database, this.baseUrl);
     changesUrl.searchParams.set('limit', batchSize.toFixed());
@@ -73,7 +77,8 @@ export class CouchChanges extends EventEmitter {
 
     return {
       last_seq,
-      results,
+      actionableResults: results,
+      totalCount: result.results.length,
     };
   }
 
@@ -207,7 +212,7 @@ function requestPromise(
     req.on('timeout', () => {
       req.destroy(
         new RetryableError(
-          `Timeout after ${REQUEST_ATTEMPT_TIMEOUT_MS}ms, aborting request`
+          `Timeout after ${options.timeout}ms, aborting request`
         )
       );
     });
@@ -221,14 +226,12 @@ function readResponseJson(
   return new Promise((ok, ko) => {
     res.once('error', ko);
 
-    const json = JSONStream.parse(true);
-    json.once('data', ok);
-    json.once('error', ko);
-
     const plainPayload =
       res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
-    plainPayload.pipe(json, { end: true });
-    plainPayload.once('error', ko);
+
+    return json(plainPayload)
+      .then((parsed) => ok(parsed as any))
+      .catch((err) => ko(err));
   });
 }
 
@@ -250,15 +253,16 @@ export interface DatabaseChanges {
   readonly last_seq: string | number;
 
   /**
-   * The amount of pending changes from the server. This value is not always
-   * returned by the servers.
+   * The actionable changes that are part of this batch.
+   * This has deleted and unreachable packages removed.
    */
-  readonly pending?: number;
+  readonly actionableResults: readonly DatabaseChange[];
 
   /**
-   * The changes that are part of this batch.
+   * The total count of changes in this batch. This includes unprocessable changes.
+   * 0 indicates we are up to date with "now".
    */
-  readonly results: readonly DatabaseChange[];
+  readonly totalCount: number;
 }
 
 export interface DatabaseChange {

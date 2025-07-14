@@ -7,7 +7,7 @@ import { discoverLambdas } from './projenrc/magic-lambda';
 import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
 import { addVpcAllowListManagement } from './projenrc/vps-allow-list';
 
-const cdkVersion = '2.120.0';
+const cdkVersion = '2.189.0';
 const peerDeps = [
   `@aws-cdk/aws-servicecatalogappregistry-alpha@${cdkVersion}-alpha.0`,
   `aws-cdk-lib@^${cdkVersion}`,
@@ -68,7 +68,6 @@ const project = new CdklabsConstructLibrary({
     'feed',
     'fs-extra',
     'got',
-    'JSONStream',
     'semver',
     'spdx-license-list',
     'streamx',
@@ -236,16 +235,17 @@ project.gitignore.exclude('**/.DS_Store');
 addVpcAllowListManagement(project);
 addDevApp(project);
 
+const NODE_VERSION = '22';
 project.addDevDeps('glob');
-project.addDevDeps('@types/node@^20');
-discoverLambdas(project);
-discoverEcsTasks(project);
+project.addDevDeps(`@types/node@^${NODE_VERSION}`);
+discoverLambdas(project, NODE_VERSION);
+discoverEcsTasks(project, NODE_VERSION);
 
 // use custom version number of integ-runner
 project.deps.removeDependency('@aws-cdk/integ-runner');
 project.deps.removeDependency('@aws-cdk/integ-tests-alpha');
 project.addDevDeps(
-  `@aws-cdk/integ-runner@${cdkVersion}-alpha.0`,
+  `@aws-cdk/integ-runner@latest`,
   `@aws-cdk/integ-tests-alpha@${cdkVersion}-alpha.0`
 );
 
@@ -255,6 +255,7 @@ const bundleWorkerPool = [
   relative(__dirname, join('projenrc', 'bundle-javascript-for-ecs.exec.ts')),
   'node_modules/jsii-rosetta/lib/translate_all_worker.js',
   `lib/backend/transliterator/transliterator.ecs-entrypoint.bundle/translate_all_worker.js`,
+  `--nodeVersion=${NODE_VERSION}`,
 ].join(' ');
 project.tasks.tryFind('bundle:transliterator')?.exec(bundleWorkerPool);
 project.tasks

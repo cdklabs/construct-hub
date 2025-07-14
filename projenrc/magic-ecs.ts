@@ -4,13 +4,16 @@ import * as glob from 'glob';
 import { SourceCode } from 'projen';
 import { TypeScriptProject } from 'projen/lib/typescript';
 
-export const ECS_TASK_NODE_VERSION = '20';
 const BUNDLE_DIR_ENV = 'BUNDLE_DIR';
 const ECS_TASK_MEMORY_LIMIT_DEFINITIONS: { [key: string]: number } = {
   'backend/transliterator/transliterator.ecstask.ts': 8192,
 };
 
-function newEcsTask(project: TypeScriptProject, entrypoint: string) {
+function newEcsTask(
+  project: TypeScriptProject,
+  entrypoint: string,
+  nodeVersion: string
+) {
   if (!entrypoint.startsWith(project.srcdir)) {
     throw new Error(`${entrypoint} must be under ${project.srcdir}`);
   }
@@ -212,22 +215,12 @@ function newEcsTask(project: TypeScriptProject, entrypoint: string) {
   // Based off amazonlinux:2023 for... reasons. Slim node images don't work here.
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2023');
   df.line();
-  // Install node the regular way...
+  // Install node and other dependencies using dnf
+  df.line(`RUN dnf update -y \\`);
   df.line(
-    `RUN yum install https://rpm.nodesource.com/pub_${ECS_TASK_NODE_VERSION}.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y \\`
+    `    && dnf install -y nodejs${nodeVersion} nodejs${nodeVersion}-npm git lsof \\`
   );
-  df.line('    && yum install nodejs -y \\');
-  // @see https://github.com/nodesource/distributions/blob/e42782301931c357cec2a09e1246d7849e084345/scripts/rpm/setup_22.x#L75-L76
-  df.line(
-    '    --setopt=nodesource-nodejs.gpgkey=https://rpm.nodesource.com/gpgkey/ns-operations-public.key \\'
-  );
-  df.line('    --setopt=nodesource-nodejs.module_hotfixes=1 \\');
-  df.line('    && yum update -y \\');
-  df.line('    && yum upgrade -y \\');
-  df.line('    && yum install -y git lsof nodejs \\');
-  // Clean up the yum cache in the interest of image size
-  df.line('    && yum clean all \\');
-  df.line('    && rm -rf /var/cache/yum');
+  df.line(`    && dnf clean all`);
   df.line();
   df.line('COPY . /bundle');
   df.line();
@@ -255,6 +248,7 @@ function newEcsTask(project: TypeScriptProject, entrypoint: string) {
     ),
     ecsMain,
     `${outdir}/${dockerEntry}`,
+    `--nodeVersion=${nodeVersion}`,
   ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Fargate bundle from ${entry}`,
@@ -274,7 +268,10 @@ function newEcsTask(project: TypeScriptProject, entrypoint: string) {
   console.error(`${base}: bundle watch task "${bundleWatch.name}"`);
 }
 
-export function discoverEcsTasks(project: TypeScriptProject) {
+export function discoverEcsTasks(
+  project: TypeScriptProject,
+  nodeVersion: string
+) {
   const entrypoints = new Array<string>();
 
   // allow .fargate code to import dev-deps (since they are only needed during bundling)
@@ -282,7 +279,7 @@ export function discoverEcsTasks(project: TypeScriptProject) {
   project.eslint?.allowDevDeps('src/**/*.ecs-entrypoint.ts');
 
   for (const entry of glob.sync('src/**/*.ecstask.ts')) {
-    newEcsTask(project, entry);
+    newEcsTask(project, entry, nodeVersion);
     entrypoints.push(entry);
   }
 
@@ -294,7 +291,7 @@ export function discoverEcsTasks(project: TypeScriptProject) {
       ...entrypoints.map((file) =>
         file.replace('ecstask.ts', 'ecs-entrypoint.ts')
       ),
-      `--target="node${ECS_TASK_NODE_VERSION}"`,
+      `--target="node${nodeVersion}"`,
       '--platform="node"',
       `--outbase="${project.srcdir}"`,
       `--outdir="${project.libdir}"`,

@@ -120,7 +120,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       const startTime = Date.now();
 
       try {
-        const batch = changes.results as readonly Change[];
+        const batch = changes.actionableResults as readonly Change[];
 
         // The most recent "modified" timestamp observed in the batch.
         let lastModified: Date | undefined;
@@ -139,14 +139,16 @@ export async function handler(event: ScheduledEvent, context: Context) {
           }
         }
 
-        console.log(`Received a batch of ${batch.length} element(s)`);
+        console.log(
+          `Received a batch of ${changes.totalCount} element(s), ${batch.length} after filtering`
+        );
         metrics.putMetric(MetricName.CHANGE_COUNT, batch.length, Unit.Count);
 
         if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
           console.log(
             `Skipping batch as the latest modification is ${lastModified}, which is pre-Constructs`
           );
-        } else if (batch.length === 0) {
+        } else if (changes.totalCount === 0) {
           console.log('Received 0 changes, caught up to "now", exiting...');
           shouldContinue = false;
         } else {

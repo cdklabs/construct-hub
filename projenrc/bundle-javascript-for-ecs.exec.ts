@@ -1,31 +1,42 @@
 import { basename, dirname, posix } from 'path';
+import { parseArgs } from 'util';
 import { Instance as Chalk } from 'chalk';
 import * as esbuild from 'esbuild';
-import { ECS_TASK_NODE_VERSION } from './magic-ecs';
 
 const chalk = new Chalk({
   level: process.env.NO_COLOR ? 0 : 1,
 });
 
-async function main(args: string[]) {
-  const [entrypoint, outfile, maybeWatch] = args;
+async function main({
+  positionals,
+  values,
+}: {
+  positionals: string[];
+  values: {
+    watch: boolean;
+    nodeVersion: string;
+  };
+}) {
+  const [entrypoint, outfile] = positionals;
   if (!outfile) {
     throw new Error(
-      'Usage: bundle-javascript.exec.ts <ENTRYPOINT> <OUTFILE> [--watch]'
+      'Usage: bundle-javascript.exec.ts <ENTRYPOINT> <OUTFILE> [--watch] [--nodeVersion=...]'
     );
   }
 
-  if (maybeWatch && maybeWatch !== '--watch') {
-    throw new Error('3rd argument must be --watch if present');
+  // node version must be an even number
+  if (parseInt(values.nodeVersion) % 2 !== 0) {
+    throw new Error(
+      `Provided --nodeVersion is unsupported, got: ${values.nodeVersion}`
+    );
   }
-  const doWatch = maybeWatch == '--watch';
 
   const context = await esbuild.context({
     bundle: true,
     entryPoints: [entrypoint],
     outfile,
     sourcemap: true,
-    target: `node${ECS_TASK_NODE_VERSION}`,
+    target: `node${values.nodeVersion}`,
     platform: 'node',
     metafile: true,
 
@@ -39,7 +50,7 @@ async function main(args: string[]) {
   });
 
   try {
-    if (doWatch) {
+    if (values.watch) {
       await context.watch();
     } else {
       const result = await context.rebuild();
@@ -133,7 +144,15 @@ function containsAwsCdkLib(result: esbuild.BuildResult<{ metafile: true }>) {
   );
 }
 
-main(process.argv.slice(2)).catch((e) => {
+main(
+  parseArgs({
+    allowPositionals: true,
+    options: {
+      watch: { type: 'boolean', default: false },
+      nodeVersion: { type: 'string', default: '22' },
+    },
+  })
+).catch((e) => {
   console.error(e);
   process.exitCode = 1;
 });
