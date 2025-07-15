@@ -529,6 +529,7 @@ function getRelevantVersionInfos(
       Unit.Count
     );
 
+    const unpublishedVersions: string[] = [];
     for (const [version, modified] of packageVersionUpdates) {
       const knownKey = `${change.doc.name}@${version}`;
       const known = knownVersions.get(knownKey);
@@ -536,9 +537,7 @@ function getRelevantVersionInfos(
         const infos = change.doc.versions[version];
         if (infos == null) {
           // Could be the version in question was un-published.
-          console.log(
-            `[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`
-          );
+          unpublishedVersions.push(knownKey);
         } else if (isConstructLibrary(infos)) {
           // skip if this package is denied
           const denied = denyList.lookup(infos.name, infos.version);
@@ -578,6 +577,16 @@ function getRelevantVersionInfos(
         }
         // Else this is not a construct library, so we'll just ignore it...
       }
+    }
+
+    if (unpublishedVersions.length > 0) {
+      console.log(
+        `[${
+          change.seq
+        }] Could not find info for the following versions. Were they un-published?\n${unpublishedVersions.join(
+          ',\n'
+        )}`
+      );
     }
   }
   return result;
