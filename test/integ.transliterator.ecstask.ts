@@ -24,6 +24,7 @@ const transliterator = new Transliterator(stack, 'Transliterator', {
   bucket,
   monitoring: {
     addHighSeverityAlarm: () => {},
+    addMediumSeverityAlarm: () => {},
     addLowSeverityAlarm: () => {},
   },
 });

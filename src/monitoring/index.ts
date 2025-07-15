@@ -27,6 +27,7 @@ export interface MonitoringProps {
 export class Monitoring extends Construct implements IMonitoring {
   private alarmActions?: AlarmActions;
   private _highSeverityAlarms: cw.AlarmBase[];
+  private _mediumSeverityAlarms: cw.AlarmBase[];
   private _lowSeverityAlarms: cw.AlarmBase[];
 
   /**
@@ -55,6 +56,7 @@ export class Monitoring extends Construct implements IMonitoring {
 
     this._highSeverityAlarms = [];
     this._lowSeverityAlarms = [];
+    this._mediumSeverityAlarms = [];
 
     this.highSeverityDashboard = new cw.Dashboard(
       this,
@@ -103,8 +105,26 @@ export class Monitoring extends Construct implements IMonitoring {
     this._lowSeverityAlarms.push(alarm);
   }
 
+  public addMediumSeverityAlarm(_title: string, alarm: cw.AlarmBase) {
+    const actionArn = this.alarmActions?.mediumSeverity;
+    if (actionArn) {
+      alarm.addAlarmAction({
+        bind: () => ({ alarmActionArn: actionArn }),
+      });
+    }
+    const action = this.alarmActions?.mediumSeverityAction;
+    if (action) {
+      alarm.addAlarmAction(action);
+    }
+    this._mediumSeverityAlarms.push(alarm);
+  }
+
   public get highSeverityAlarms() {
     return [...this._highSeverityAlarms];
+  }
+
+  public get mediumSeverityAlarms() {
+    return [...this._mediumSeverityAlarms];
   }
 
   public get lowSeverityAlarms() {

@@ -108,10 +108,14 @@ test('monitoring exposes a list of high severity alarms', () => {
   const alarm2 = topic
     .metricSMSMonthToDateSpentUSD()
     .createAlarm(stack, 'Alarm2', { threshold: 100, evaluationPeriods: 1 });
+  const alarm3 = topic
+    .metricSMSMonthToDateSpentUSD()
+    .createAlarm(stack, 'Alarm3', { threshold: 500, evaluationPeriods: 1 });
 
   // WHEN
   monitoring.addHighSeverityAlarm('My Alarm', alarm1);
   monitoring.addLowSeverityAlarm('My Other Alarm', alarm2);
+  monitoring.addMediumSeverityAlarm('My Third Alarm', alarm3);
 
   expect(monitoring.highSeverityAlarms.map((alarm) => alarm.alarmArn)).toEqual([
     alarm1.alarmArn,
@@ -119,6 +123,9 @@ test('monitoring exposes a list of high severity alarms', () => {
   expect(monitoring.lowSeverityAlarms.map((alarm) => alarm.alarmArn)).toEqual([
     alarm2.alarmArn,
   ]);
+  expect(
+    monitoring.mediumSeverityAlarms.map((alarm) => alarm.alarmArn)
+  ).toEqual([alarm3.alarmArn]);
 });
 
 test('web canaries can ping URLs and raise high severity alarms', () => {
@@ -228,5 +235,34 @@ test('high-severity alarm actions are registered', () => {
   // THEN
   Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
     AlarmActions: [highSeverity, highSeverityActionArn],
+  });
+});
+
+test('medium-severity alarm actions are registered', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    evaluationPeriods: 1,
+    metric: new Metric({
+      metricName: 'FakeMetricName',
+      namespace: 'FakeNamespace',
+    }),
+    threshold: 0,
+  });
+
+  const mediumSeverity = 'fake::arn::of::an::action';
+  const mediumSeverityActionArn = 'fake::arn::of::bound:alarm::action';
+  const mediumSeverityAction: IAlarmAction = {
+    bind: () => ({ alarmActionArn: mediumSeverityActionArn }),
+  };
+
+  // WHEN
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { mediumSeverity, mediumSeverityAction },
+  }).addMediumSeverityAlarm('Alarm', alarm);
+
+  // THEN
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmActions: [mediumSeverity, mediumSeverityActionArn],
   });
 });
