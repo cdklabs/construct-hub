@@ -1730,7 +1730,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c49d356cac773d491c5f7ac148995a1181498a8e289429f8612a7f7e3814f535.zip",
+          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -2099,7 +2099,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "87fd6d83b378c0e7e310ced7530a067da8eb2047fd50c943386dcccc992e9773.zip",
+          "S3Key": "c5a7e4c4f9cb7ff8301c656c21b15cb923d1c8f71199f9aa2209f55c7c50837c.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -2295,7 +2295,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a77474b10be8695809a485155c176a2f51b2ec196755ab4c27034d7dcd31e06a.zip",
+          "S3Key": "ecb9042968c9b129ea6643150db411111ab64f6c0df5704a809179eee3694f13.zip",
         },
         "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
         "Environment": {
@@ -2573,7 +2573,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ab8e2b788142b09bab1990b0bdfcf52d63ed63fab2915d0d8d59d13a68f6a884.zip",
+          "S3Key": "ae20216bad9a98e9e000bf389f3c7a5fd1c178f05fc10c18c0788b95e5af571b.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -2803,7 +2803,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b72321a1fbb20d77a6bb6bf0c400cb85ad597704e09ce60bb39328b513018e96.zip",
+          "S3Key": "f0b5164117103b54ce362cffca246918504d062e4dff7673602f62842acd97b9.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -3036,7 +3036,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c49d356cac773d491c5f7ac148995a1181498a8e289429f8612a7f7e3814f535.zip",
+          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -3248,7 +3248,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "cde1699d2da813518d04bda4995a26298226d429db6cc6b9be17d0020dc7a84a.zip",
+          "S3Key": "da9733a76d65e742f9109839af1a20cb7ebefac8d06fc8c3591d67d8369c7a3f.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -4179,7 +4179,7 @@ Direct link to the state machine: /states/home#/statemachines/view/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0a75de088be81b531f74a190f5d9aa5d451010170ac48f39307711279891d7c1.zip",
+          "S3Key": "9990ec2bb3709aedf379e50e52595f064b1c44198a586004409cf54eccd4f10c.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -4855,7 +4855,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c49d356cac773d491c5f7ac148995a1181498a8e289429f8612a7f7e3814f535.zip",
+          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -5628,7 +5628,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30,"MaxAttempts":2,"BackoffRate":2}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":900,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":null,"Resource":"arn:",
+              "{"StartAt":"Track Execution Infos","States":{"Track Execution Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare doc-gen ECS Command"},"Prepare doc-gen ECS Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate docs"},"Generate docs":{"Next":"Check whether catalog needs udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":45,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30,"MaxAttempts":2,"BackoffRate":2}],"Catch":[{"ErrorEquals":["UnprocessablePackageError","jsii-docgen.NpmError.ETARGET"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send to Dead Letter Queue"}],"Type":"Task","TimeoutSeconds":900,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":null,"Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -5711,7 +5711,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "29f72caa38b1b96e986b2c4bd8c556241feef1ed7a54700833fcfc97bda87a14.zip",
+          "S3Key": "a15b865e7e354cd5c517fed1af2fc3138e804ccf5b4bee7c41eddec7af41f7d3.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -6022,7 +6022,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "395363e77677b07c17b78a3422675b1a438ff3c23477b8c1d7fdd7cc84ceb8b5.zip",
+          "S3Key": "4c2f19698adb490fe4ec6d9c47a6df2a555f6624281c83ced28e0d172082e50e.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -6383,7 +6383,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ce2fbb5e442aefc009b63cb92e9a607d790296505c884bdc9ba982d01f13a96c.zip",
+          "S3Key": "5966abdae61cbf589017a887953de31cb7c5d61a47458ef6fc866deee3a03aac.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -6535,7 +6535,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8d35799d55f6c38f6b3701e7faff53afe299b33b5ba165fee0cddaa6e2b90302.zip",
+          "S3Key": "3f2d8a1942a0e178f7ebc1e39e44fa907e81fb55c0f50dcabc21e626658c80cc.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -7355,7 +7355,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:9667bf864e0ef4e94a9308e67f13cf6abb2ab58dcb41ef54e171c68f8fe7081d",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:84029dd6f8c3aa27755299b53632dd263d6d30e2aeff5edcfe30631a1268571e",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -9958,7 +9958,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5bf04277ec7e6070aad8925af90391ea2b557b5a0f5e599b95ecf080325ab9e2.zip",
+          "S3Key": "e72b4ed2da9599366f2a84937446451db45068d579038b5ec3620ebffedfccb0.zip",
         },
         "Description": "ReleaseNotes generator",
         "Environment": {
@@ -10109,7 +10109,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "d6ae40fa3e10510b315b6b59f88ef7db58791e0f88f33683a2b226b4a5c353ad.zip",
+          "S3Key": "3587b1e389140c1e71a51b1016d68bf9f748eba78a158cfe5f77d15b2ae0c504.zip",
         },
         "Description": "ReleaseNotes get message from the worker queue",
         "Environment": {
@@ -10380,7 +10380,7 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "7ca51239726dfe6fdbf2ed92669ee254b9de8e287c7a2bdf117c9621f3458678.zip",
+          "S3Key": "539e6d6c3e7d4332b3d284376fe74ffce8d98548488f80c5ef46c9febfc05d82.zip",
         },
         "Description": "backend/release-notes/release-notes-trigger.lambda.ts",
         "Environment": {
@@ -10974,7 +10974,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3b37fc1a4ee30ec2fd3b17a67f7d8a4854e3416060a5381ee49d0abd659a55b4.zip",
+          "S3Key": "01ce997c1d6f6cc871af0d7441fab0ccb08f638d891114aa01aac64a3456be61.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -11028,7 +11028,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3e436e6fde544678ac79e6641d84bf69a4ff826a5d4b60827ac3a01721bf976d.zip",
+          "S3Key": "29e78215fa58dbf8262a36fb2d6c23e7f7dec1b0bcf7a9bbe54c6b1589e8407c.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -11752,7 +11752,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "d8bd20a4d6470f4dcd3894935a4bebb91aac6262e2387a5b5228a0299dcacf26.zip",
+          "S3Key": "82dc554e83d06042d4c20d4e3532ada47c6d05eb8644f4afdb92fb4228dc8b5c.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -12083,7 +12083,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "162e29481ea79698e2d1493ef48664f78cb8ed1c17240405256b0e2f28682158.zip",
+          "S3Key": "33c4c9af564419db234b2356a76050637c6073fe54d8c2ed7715ee42cccf366d.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -12292,7 +12292,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "fc2574c6b61ee12d3edbc5fc9ccf17e149c7bd3bc9add400316d2b332cb14e11.zip",
+          "S3Key": "e93c93f09d7655ef452accd15566fb190fc95923eb772db5000ecac801160ef5.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -15510,7 +15510,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "92ab209014c72b3d8eb39d3a797f5aec77d6cabac614f608e7dead517c2dd6bb.zip",
+          "S3Key": "a1b428cef83f5c764c982cda06f64f842d7ddf3bff9ffab71c33cd31295e8748.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -15863,7 +15863,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c49d356cac773d491c5f7ac148995a1181498a8e289429f8612a7f7e3814f535.zip",
+          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -15875,7 +15875,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c49d356cac773d491c5f7ac148995a1181498a8e289429f8612a7f7e3814f535.zip",
+          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -16933,7 +16933,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "4b237d90f168f2516912eeee3758d568b6ee55772dd34bb17d5f55c4c0678652.zip",
+          "S3Key": "b7644ac27954176c42cb358b1d78a5016288312c838bc060dd7cf6b59d4d5e92.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -17359,7 +17359,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "accaa7a0d2738713442e187b728321574f0f1618ed7bd791b2afa285db3e668b.zip",
+          "S3Key": "78b67c66fac35f6c57cca4e13943d25e0a8c80637706df6ba907d1f36f24c2d6.zip",
         },
         "Description": "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler",
         "Handler": "index.handler",
