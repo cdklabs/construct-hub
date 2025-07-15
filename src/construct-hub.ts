@@ -350,13 +350,13 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     // Create an internal CodeArtifact repository if we run in network-controlled mode, or if a domain is provided.
     const codeArtifact =
       isolation === Isolation.NO_INTERNET_ACCESS ||
-      props.codeArtifactDomain != null
+        props.codeArtifactDomain != null
         ? new Repository(this, 'CodeArtifact', {
-            description: 'Proxy to npmjs.com for ConstructHub',
-            domainName: props.codeArtifactDomain?.name,
-            domainExists: props.codeArtifactDomain != null,
-            upstreams: props.codeArtifactDomain?.upstreams,
-          })
+          description: 'Proxy to npmjs.com for ConstructHub',
+          domainName: props.codeArtifactDomain?.name,
+          domainExists: props.codeArtifactDomain != null,
+          upstreams: props.codeArtifactDomain?.upstreams,
+        })
         : undefined;
     const { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups } = this.createVpc(
       isolation,
@@ -563,6 +563,17 @@ export class ConstructHub extends Construct implements iam.IGrantable {
    * customer-visible impact, or handling is not time-sensitive. They indicate
    * that something unusual (not necessarily bad) is happening.
    */
+  public get mediumSeverityAlarms(): cw.IAlarm[] {
+    // Note: the array is already returned by-copy by Monitoring, so not copying again.
+    return this.monitoring.mediumSeverityAlarms;
+  }
+
+  /**
+   * Returns a list of all low-severity alarms from this ConstructHub instance.
+   * These do not necessitate immediate attention, as they do not have direct
+   * customer-visible impact, or handling is not time-sensitive. They indicate
+   * that something unusual (not necessarily bad) is happening.
+   */
   public get lowSeverityAlarms(): cw.IAlarm[] {
     // Note: the array is already returned by-copy by Monitoring, so not copying again.
     return this.monitoring.lowSeverityAlarms;
@@ -572,7 +583,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
    * Returns a list of all alarms configured by this ConstructHub instance.
    */
   public get allAlarms(): cw.IAlarm[] {
-    return [...this.highSeverityAlarms, ...this.lowSeverityAlarms];
+    return [...this.highSeverityAlarms, ...this.lowSeverityAlarms, ...this.mediumSeverityAlarms];
   }
 
   public get grantPrincipal(): iam.IPrincipal {

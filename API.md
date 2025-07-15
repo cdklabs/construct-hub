@@ -94,6 +94,7 @@ Any object.
 | <code><a href="#construct-hub.ConstructHub.property.highSeverityAlarms">highSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all high-severity alarms from this ConstructHub instance. |
 | <code><a href="#construct-hub.ConstructHub.property.ingestionQueue">ingestionQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | *No description.* |
 | <code><a href="#construct-hub.ConstructHub.property.lowSeverityAlarms">lowSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all low-severity alarms from this ConstructHub instance. |
+| <code><a href="#construct-hub.ConstructHub.property.mediumSeverityAlarms">mediumSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all low-severity alarms from this ConstructHub instance. |
 | <code><a href="#construct-hub.ConstructHub.property.regenerateAllDocumentationPerPackage">regenerateAllDocumentationPerPackage</a></code> | <code>aws-cdk-lib.aws_stepfunctions.IStateMachine</code> | The function operators can use to reprocess a specific package version through the backend data pipeline. |
 
 ---
@@ -163,6 +164,22 @@ public readonly ingestionQueue: IQueue;
 
 ```typescript
 public readonly lowSeverityAlarms: IAlarm[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
+
+Returns a list of all low-severity alarms from this ConstructHub instance.
+
+These do not necessitate immediate attention, as they do not have direct
+customer-visible impact, or handling is not time-sensitive. They indicate
+that something unusual (not necessarily bad) is happening.
+
+---
+
+##### `mediumSeverityAlarms`<sup>Required</sup> <a name="mediumSeverityAlarms" id="construct-hub.ConstructHub.property.mediumSeverityAlarms"></a>
+
+```typescript
+public readonly mediumSeverityAlarms: IAlarm[];
 ```
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
@@ -327,6 +344,8 @@ const alarmActions: AlarmActions = { ... }
 | --- | --- | --- |
 | <code><a href="#construct-hub.AlarmActions.property.highSeverity">highSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of high-severity alarms. |
 | <code><a href="#construct-hub.AlarmActions.property.highSeverityAction">highSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of high-severity alarms. |
+| <code><a href="#construct-hub.AlarmActions.property.mediumSeverity">mediumSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of medium-severity alarms. |
+| <code><a href="#construct-hub.AlarmActions.property.mediumSeverityAction">mediumSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of medium-severity alarms. |
 | <code><a href="#construct-hub.AlarmActions.property.normalSeverity">normalSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of normal severity. |
 | <code><a href="#construct-hub.AlarmActions.property.normalSeverityAction">normalSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of normal severity. |
 
@@ -357,6 +376,38 @@ public readonly highSeverityAction: IAlarmAction;
 - *Type:* aws-cdk-lib.aws_cloudwatch.IAlarmAction
 
 The CloudWatch alarm action to take for alarms of high-severity alarms.
+
+This must be an ARN that can be used with CloudWatch alarms.
+
+> [https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions)
+
+---
+
+##### `mediumSeverity`<sup>Optional</sup> <a name="mediumSeverity" id="construct-hub.AlarmActions.property.mediumSeverity"></a>
+
+```typescript
+public readonly mediumSeverity: string;
+```
+
+- *Type:* string
+
+The ARN of the CloudWatch alarm action to take for alarms of medium-severity alarms.
+
+This must be an ARN that can be used with CloudWatch alarms.
+
+> [https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions)
+
+---
+
+##### `mediumSeverityAction`<sup>Optional</sup> <a name="mediumSeverityAction" id="construct-hub.AlarmActions.property.mediumSeverityAction"></a>
+
+```typescript
+public readonly mediumSeverityAction: IAlarmAction;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarmAction
+
+The CloudWatch alarm action to take for alarms of medium-severity alarms.
 
 This must be an ARN that can be used with CloudWatch alarms.
 
@@ -13679,6 +13730,7 @@ ConstructHub monitoring features exposed to extension points.
 | --- | --- |
 | <code><a href="#construct-hub.IMonitoring.addHighSeverityAlarm">addHighSeverityAlarm</a></code> | Adds a high-severity alarm. |
 | <code><a href="#construct-hub.IMonitoring.addLowSeverityAlarm">addLowSeverityAlarm</a></code> | Adds a low-severity alarm. |
+| <code><a href="#construct-hub.IMonitoring.addMediumSeverityAlarm">addMediumSeverityAlarm</a></code> | Adds a medium-severity alarm. |
 
 ---
 
@@ -13729,6 +13781,33 @@ a user-friendly title for the alarm (not currently used).
 ---
 
 ###### `alarm`<sup>Required</sup> <a name="alarm" id="construct-hub.IMonitoring.addLowSeverityAlarm.parameter.alarm"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.AlarmBase
+
+the alarm to be added.
+
+---
+
+##### `addMediumSeverityAlarm` <a name="addMediumSeverityAlarm" id="construct-hub.IMonitoring.addMediumSeverityAlarm"></a>
+
+```typescript
+public addMediumSeverityAlarm(title: string, alarm: AlarmBase): void
+```
+
+Adds a medium-severity alarm.
+
+If this alarm goes off, the action specified in
+`mediumSeverityAlarmAction` is triggered.
+
+###### `title`<sup>Required</sup> <a name="title" id="construct-hub.IMonitoring.addMediumSeverityAlarm.parameter.title"></a>
+
+- *Type:* string
+
+a user-friendly title for the alarm (not currently used).
+
+---
+
+###### `alarm`<sup>Required</sup> <a name="alarm" id="construct-hub.IMonitoring.addMediumSeverityAlarm.parameter.alarm"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.AlarmBase
 
