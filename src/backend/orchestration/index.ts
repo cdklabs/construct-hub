@@ -433,10 +433,7 @@ export class Orchestration extends Construct {
             maxAttempts: 2,
           })
           .addCatch(ignore, {
-            errors: [
-              UNPROCESSABLE_PACKAGE_ERROR_NAME,
-              'jsii-docgen.NpmError.ETARGET', // if the package isn't available in NPM, it's probably an issue on their side
-            ],
+            errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME],
           })
           .addCatch(sendToDeadLetterQueue, {
             errors: ['States.Timeout'],
@@ -476,9 +473,8 @@ export class Orchestration extends Construct {
       this.stateMachine
         .metricFailed()
         .createAlarm(this, 'OrchestrationFailed', {
-          alarmName: `${this.stateMachine.node.path}/${
-            this.stateMachine.metricFailed().metricName
-          }`,
+          alarmName: `${this.stateMachine.node.path}/${this.stateMachine.metricFailed().metricName
+            }`,
           alarmDescription: [
             'Backend orchestration failed!',
             '',
