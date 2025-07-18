@@ -1000,7 +1000,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
+              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],["AWS/States","ExecutionTime","StateMachineArn","",
+              {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"State Machine Failures","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -1016,11 +1024,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}],["AWS/States","ExecutionTime","StateMachineArn","",
-              {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
+              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":105,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1045,7 +1049,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":105,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
+              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":111,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
               {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -1076,7 +1080,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":107,"properties":{"view":"timeSeries","title":"Deny List","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":113,"properties":{"view":"timeSeries","title":"Deny List","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1087,7 +1091,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":107,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
+              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":113,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1099,7 +1103,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":113,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":119,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -1111,11 +1115,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":115,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":115,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":121,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1123,7 +1127,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":121,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -1135,11 +1139,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":123,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":129,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":123,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":129,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1147,7 +1151,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"1 minutes (Lambda timeout)","value":60,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":129,"properties":{"markdown":"# Release Notes\\n\\n[button:primary:StateMachine](/states/home#/statemachines/view/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"1 minutes (Lambda timeout)","value":60,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":135,"properties":{"markdown":"# Release Notes\\n\\n[button:primary:StateMachine](/states/home#/statemachines/view/",
               {
                 "Ref": "ConstructHubReleaseNotesStateMachine8C711CC7",
               },
@@ -1208,15 +1212,15 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":131,"properties":{"view":"timeSeries","title":"Number of release Notes","region":"",
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":137,"properties":{"view":"timeSeries","title":"Number of release Notes","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with release notes","expression":"FILL(m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d, REPEAT)"}],["ConstructHub/ReleaseNotes","PackageWithChangeLog",{"label":"Packages with release notes","stat":"Sum","visible":false,"id":"m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":131,"properties":{"view":"timeSeries","title":"Release notes generation Errors","region":"",
+              "","metrics":[[{"label":"Packages with release notes","expression":"FILL(m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d, REPEAT)"}],["ConstructHub/ReleaseNotes","PackageWithChangeLog",{"label":"Packages with release notes","stat":"Sum","visible":false,"id":"m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":137,"properties":{"view":"timeSeries","title":"Release notes generation Errors","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["ConstructHub/ReleaseNotes","AllErrors",{"label":"All Errors","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnknownError",{"label":"UnknownError","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidCredentials",{"label":"InvalidCredentials","stat":"Maximum"}],["ConstructHub/ReleaseNotes","RequestQuotaExhausted",{"label":"RequestQuotaExhausted","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnSupportedRepo",{"label":"UnSupportedRepo","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidPackageJson",{"label":"InvalidPackageJson","stat":"Maximum"}],["ConstructHub/ReleaseNotes","ChangelogFetchError",{"label":"ChangeLogFetchError","stat":"Maximum"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":0,"y":137,"properties":{"view":"timeSeries","title":"GitHub API Rate Limits","region":"",
+              "","metrics":[["ConstructHub/ReleaseNotes","AllErrors",{"label":"All Errors","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnknownError",{"label":"UnknownError","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidCredentials",{"label":"InvalidCredentials","stat":"Maximum"}],["ConstructHub/ReleaseNotes","RequestQuotaExhausted",{"label":"RequestQuotaExhausted","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnSupportedRepo",{"label":"UnSupportedRepo","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidPackageJson",{"label":"InvalidPackageJson","stat":"Maximum"}],["ConstructHub/ReleaseNotes","ChangelogFetchError",{"label":"ChangeLogFetchError","stat":"Maximum"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":0,"y":143,"properties":{"view":"timeSeries","title":"GitHub API Rate Limits","region":"",
               {
                 "Ref": "AWS::Region",
               },
