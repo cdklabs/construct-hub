@@ -346,6 +346,20 @@ export class BackendDashboard extends Construct {
                   label: 'Succeeded',
                 })
               ),
+            ],
+            leftYAxis: { min: 0, label: 'Count', showUnits: false },
+            right: [
+              props.orchestration.stateMachine.metricTime({
+                label: 'Duration',
+              }),
+            ],
+            rightYAxis: { min: 0 },
+          }),
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'State Machine Failures',
+            left: [
               fillMetric(
                 props.orchestration.stateMachine.metricAborted({
                   label: 'Aborted',
@@ -367,13 +381,7 @@ export class BackendDashboard extends Construct {
                 })
               ),
             ],
-            leftYAxis: { min: 0 },
-            right: [
-              props.orchestration.stateMachine.metricTime({
-                label: 'Duration',
-              }),
-            ],
-            rightYAxis: { min: 0 },
+            leftYAxis: { min: 0, label: 'Count', showUnits: false },
           }),
           new GraphWidget({
             height: 6,
