@@ -471,14 +471,16 @@ export class Orchestration extends Construct {
       );
     }
 
-    props.monitoring.addHighSeverityAlarm(
+    // low severity because sporadic singular failures can happen due to invalid packages
+    // from time to time. a high severity alarm is defined below in case the failure rate 
+    // is really high.
+    props.monitoring.addLowSeverityAlarm(
       'Backend Orchestration Failed',
       this.stateMachine
         .metricFailed()
         .createAlarm(this, 'OrchestrationFailed', {
-          alarmName: `${this.stateMachine.node.path}/${
-            this.stateMachine.metricFailed().metricName
-          }`,
+          alarmName: `${this.stateMachine.node.path}/${this.stateMachine.metricFailed().metricName
+            }`,
           alarmDescription: [
             'Backend orchestration failed!',
             '',

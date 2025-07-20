@@ -100,7 +100,7 @@ export interface NpmJsProps {
  * A package source that gets package data from the npmjs.com package registry.
  */
 export class NpmJs implements IPackageSource {
-  public constructor(private readonly props: NpmJsProps = {}) {}
+  public constructor(private readonly props: NpmJsProps = {}) { }
 
   public bind(
     scope: Construct,
@@ -345,13 +345,13 @@ export class NpmJs implements IPackageSource {
           }),
           ...(this.props.enableCanary ?? true
             ? this.registerCanary(
-                follower,
-                this.props.canaryPackage ?? 'construct-hub-probe',
-                this.props.canarySla ?? Duration.minutes(5),
-                bucket,
-                baseUrl,
-                monitoring
-              )
+              follower,
+              this.props.canaryPackage ?? 'construct-hub-probe',
+              this.props.canarySla ?? Duration.minutes(5),
+              bucket,
+              baseUrl,
+              monitoring
+            )
             : []),
         ],
       ],
@@ -626,12 +626,12 @@ export class NpmJs implements IPackageSource {
       treatMissingData: TreatMissingData.NOT_BREACHING,
       threshold: visibilitySla.toSeconds(),
     });
-    // This is deemed low severity, because the npm registry replica (replicate.npmjs.com) can
+    // This is deemed medium severity, because the npm registry replica (replicate.npmjs.com) can
     // occasionally lag several hours behind the primary (registry.npmjs.com), and we cannot easily
     // tell about that. Someone should have a look, but in virtually all cases we have seen so far,
     // there is nothing that can be done from our end, besides waiting for the replica to be all
     // caught up.
-    monitoring.addLowSeverityAlarm(
+    monitoring.addMediumSeverityAlarm(
       'New version visibility SLA breached',
       alarm
     );
