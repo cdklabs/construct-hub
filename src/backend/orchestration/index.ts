@@ -471,7 +471,7 @@ export class Orchestration extends Construct {
       );
     }
 
-    props.monitoring.addHighSeverityAlarm(
+    props.monitoring.addMediumSeverityAlarm(
       'Backend Orchestration Failed',
       this.stateMachine
         .metricFailed()
