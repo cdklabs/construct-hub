@@ -40,6 +40,8 @@ import type {
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
 import { ReStagePackageVersion } from './npmjs/re-stage-package-version';
+import { addAlarm } from '../monitoring';
+import { AlarmSeverities, AlarmSeverity } from '../api';
 
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid
@@ -94,13 +96,18 @@ export interface NpmJsProps {
    * @default Duration.minutes(5)
    */
   readonly canarySla?: Duration;
+
+  /**
+   * Configure alarm severities.
+   */
+  readonly alarmSeverities?: AlarmSeverities;
 }
 
 /**
  * A package source that gets package data from the npmjs.com package registry.
  */
 export class NpmJs implements IPackageSource {
-  public constructor(private readonly props: NpmJsProps = {}) {}
+  public constructor(private readonly props: NpmJsProps = {}) { }
 
   public bind(
     scope: Construct,
@@ -345,13 +352,13 @@ export class NpmJs implements IPackageSource {
           }),
           ...(this.props.enableCanary ?? true
             ? this.registerCanary(
-                follower,
-                this.props.canaryPackage ?? 'construct-hub-probe',
-                this.props.canarySla ?? Duration.minutes(5),
-                bucket,
-                baseUrl,
-                monitoring
-              )
+              follower,
+              this.props.canaryPackage ?? 'construct-hub-probe',
+              this.props.canarySla ?? Duration.minutes(5),
+              bucket,
+              baseUrl,
+              monitoring
+            )
             : []),
         ],
       ],
@@ -631,9 +638,11 @@ export class NpmJs implements IPackageSource {
     // tell about that. Someone should have a look, but in virtually all cases we have seen so far,
     // there is nothing that can be done from our end, besides waiting for the replica to be all
     // caught up.
-    monitoring.addLowSeverityAlarm(
+    addAlarm(
       'New version visibility SLA breached',
-      alarm
+      alarm,
+      this.props.alarmSeverities?.packageCanarySLABreached ?? AlarmSeverity.LOW,
+      monitoring
     );
 
     const notRunningOrFailingAlarm = new CompositeAlarm(

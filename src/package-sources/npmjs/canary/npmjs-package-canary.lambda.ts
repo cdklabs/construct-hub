@@ -356,6 +356,10 @@ export class CanaryStateService {
       )
     ).time[version];
 
+    if (publishedAt === undefined) {
+      throw new Error(`Latest version of ${packageName} is ${version} but publish time has not been reported.`);
+    }
+
     console.log(
       `Package: ${packageName} | Version : ${version} | Published At: ${publishedAt}`
     );

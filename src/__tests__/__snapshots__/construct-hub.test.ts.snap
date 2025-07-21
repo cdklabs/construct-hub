@@ -938,7 +938,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
+              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],["AWS/States","ExecutionTime","StateMachineArn","",
+              {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"State Machine Failures","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -954,11 +962,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}],["AWS/States","ExecutionTime","StateMachineArn","",
-              {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
+              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":105,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -983,7 +987,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":105,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
+              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":111,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
               {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -1014,7 +1018,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":107,"properties":{"view":"timeSeries","title":"Deny List","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":113,"properties":{"view":"timeSeries","title":"Deny List","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1025,7 +1029,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":107,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
+              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":113,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1037,7 +1041,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":113,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":119,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -1049,11 +1053,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":115,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":115,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":121,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1061,7 +1065,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":121,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -1073,11 +1077,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":123,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":129,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":123,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":129,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1266,7 +1270,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -1635,7 +1639,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c5a7e4c4f9cb7ff8301c656c21b15cb923d1c8f71199f9aa2209f55c7c50837c.zip",
+          "S3Key": "09375ff8e5911d688adb2e26314b407ad82f4fd758f725afb353d35fcfe07981.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -1831,7 +1835,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ecb9042968c9b129ea6643150db411111ab64f6c0df5704a809179eee3694f13.zip",
+          "S3Key": "1dfbf5cfb273765dca570329652d00119022eaca161c159f7d01b9020b31572a.zip",
         },
         "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
         "Environment": {
@@ -2112,7 +2116,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ae20216bad9a98e9e000bf389f3c7a5fd1c178f05fc10c18c0788b95e5af571b.zip",
+          "S3Key": "3a72763a1dfd5a6120909964286831571eaacb11600f2a9a6e734de713981008.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -2340,7 +2344,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f0b5164117103b54ce362cffca246918504d062e4dff7673602f62842acd97b9.zip",
+          "S3Key": "73a375c5da3e66c04c512fa5318b92b5aa42c98fbaa385733fd6a098f69a3488.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -2552,7 +2556,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -2767,7 +2771,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "da9733a76d65e742f9109839af1a20cb7ebefac8d06fc8c3591d67d8369c7a3f.zip",
+          "S3Key": "50b79042237192aad9b1a93983376559f72f57a6aa718dbbf2fa42f5e67b7844.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -3605,7 +3609,7 @@ Direct link to the state machine: /states/home#/statemachines/view/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9990ec2bb3709aedf379e50e52595f064b1c44198a586004409cf54eccd4f10c.zip",
+          "S3Key": "585c9b63397caec126cda20dd29c6a95b3ad040175fdcc35d82687d049c5e161.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -4258,7 +4262,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -5095,7 +5099,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a15b865e7e354cd5c517fed1af2fc3138e804ccf5b4bee7c41eddec7af41f7d3.zip",
+          "S3Key": "cafce4753dd05702c234bb46b9ba965c9ea202e2c787a4ed2af08bd3406370dc.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -5409,7 +5413,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "4c2f19698adb490fe4ec6d9c47a6df2a555f6624281c83ced28e0d172082e50e.zip",
+          "S3Key": "a9005b2a79b434d6220822a9fe9b67ca7ad0b5b01cc596af2de50e975a934d21.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -6164,7 +6168,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5966abdae61cbf589017a887953de31cb7c5d61a47458ef6fc866deee3a03aac.zip",
+          "S3Key": "40ff4bed95d94f5c20b31435bc2e119c1255089c570ab056d33a31cec6faa939.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -6319,7 +6323,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3f2d8a1942a0e178f7ebc1e39e44fa907e81fb55c0f50dcabc21e626658c80cc.zip",
+          "S3Key": "3d1bac376ce971a4ab49c9310ba37a8822ef7d5a078020df54a070ce44967848.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -7088,7 +7092,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:84029dd6f8c3aa27755299b53632dd263d6d30e2aeff5edcfe30631a1268571e",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:d5059c7b60e1d55f1dd1401c2792e131534aa45dbbdd44229e95fc15e9abb143",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -9699,7 +9703,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a759d3e641a9c0fab98f7731a5c86627c5b984fe1cd415c78af3e78131d58d11.zip",
+          "S3Key": "c884f469a5cf655d1e9fd0a0982707a8a29059ed30260b36fd45948b7f7b70c3.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -9753,7 +9757,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "29e78215fa58dbf8262a36fb2d6c23e7f7dec1b0bcf7a9bbe54c6b1589e8407c.zip",
+          "S3Key": "99477d7d535275f1e97095b617af6589339ecfa0d8286469526f0f7dc53e91a8.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -10483,7 +10487,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "82dc554e83d06042d4c20d4e3532ada47c6d05eb8644f4afdb92fb4228dc8b5c.zip",
+          "S3Key": "caa22b62345428e288125c52d900ef84dda30fcc398326a339d9493d52c87c99.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -10814,7 +10818,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "33c4c9af564419db234b2356a76050637c6073fe54d8c2ed7715ee42cccf366d.zip",
+          "S3Key": "931a06df6eb348b2e7e820594e616fcc8c9933ade439d0d6e6c5f70fa6137066.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -11023,7 +11027,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e93c93f09d7655ef452accd15566fb190fc95923eb772db5000ecac801160ef5.zip",
+          "S3Key": "570622fedd8d73fcad5a47a8ff5d3963472f22c67ac8a6d6f6461002fa1cea4b.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -11230,7 +11234,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a1b428cef83f5c764c982cda06f64f842d7ddf3bff9ffab71c33cd31295e8748.zip",
+          "S3Key": "20f9ae3b441be3e0e9fe3a014f8cb3ac1e3b2b056c00c4a979e6bf95f231ce6a.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -11583,7 +11587,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -11595,7 +11599,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -11664,7 +11668,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "df003418bb96a12297a65bd7c63c98b14283ea8ed6058a0b104f841caa8e5ae7.zip",
+          "a5175f763c4185fbf9d9cb4f160e904f35e0dc331c3e44772b28a8637903234c.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -12653,7 +12657,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b7644ac27954176c42cb358b1d78a5016288312c838bc060dd7cf6b59d4d5e92.zip",
+          "S3Key": "130feb1a5e0eebaa893b11fb8ebd1f2a964ae189eee38429524da7bef3ef7916.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -13079,7 +13083,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "78b67c66fac35f6c57cca4e13943d25e0a8c80637706df6ba907d1f36f24c2d6.zip",
+          "S3Key": "47e960cae21402377551df39e598f1ff43825a944928755b0610c345b9928442.zip",
         },
         "Description": "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler",
         "Handler": "index.handler",
@@ -14188,7 +14192,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
+              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],["AWS/States","ExecutionTime","StateMachineArn","",
+              {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"State Machine Failures","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -14204,11 +14216,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}],["AWS/States","ExecutionTime","StateMachineArn","",
-              {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
+              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":105,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -14233,7 +14241,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":105,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
+              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":111,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
               {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -14264,7 +14272,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":107,"properties":{"view":"timeSeries","title":"Deny List","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":113,"properties":{"view":"timeSeries","title":"Deny List","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -14275,7 +14283,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":107,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
+              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":113,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -14287,7 +14295,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":113,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":119,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -14299,11 +14307,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":115,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":115,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":121,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -14311,7 +14319,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":121,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -14323,11 +14331,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":123,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":129,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":123,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":129,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -14719,7 +14727,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -15088,7 +15096,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c5a7e4c4f9cb7ff8301c656c21b15cb923d1c8f71199f9aa2209f55c7c50837c.zip",
+          "S3Key": "09375ff8e5911d688adb2e26314b407ad82f4fd758f725afb353d35fcfe07981.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -15284,7 +15292,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ecb9042968c9b129ea6643150db411111ab64f6c0df5704a809179eee3694f13.zip",
+          "S3Key": "1dfbf5cfb273765dca570329652d00119022eaca161c159f7d01b9020b31572a.zip",
         },
         "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
         "Environment": {
@@ -15565,7 +15573,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ae20216bad9a98e9e000bf389f3c7a5fd1c178f05fc10c18c0788b95e5af571b.zip",
+          "S3Key": "3a72763a1dfd5a6120909964286831571eaacb11600f2a9a6e734de713981008.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -15793,7 +15801,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f0b5164117103b54ce362cffca246918504d062e4dff7673602f62842acd97b9.zip",
+          "S3Key": "73a375c5da3e66c04c512fa5318b92b5aa42c98fbaa385733fd6a098f69a3488.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -16023,7 +16031,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -16238,7 +16246,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "da9733a76d65e742f9109839af1a20cb7ebefac8d06fc8c3591d67d8369c7a3f.zip",
+          "S3Key": "50b79042237192aad9b1a93983376559f72f57a6aa718dbbf2fa42f5e67b7844.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -17156,7 +17164,7 @@ Direct link to the state machine: /states/home#/statemachines/view/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9990ec2bb3709aedf379e50e52595f064b1c44198a586004409cf54eccd4f10c.zip",
+          "S3Key": "585c9b63397caec126cda20dd29c6a95b3ad040175fdcc35d82687d049c5e161.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -17809,7 +17817,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -18646,7 +18654,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a15b865e7e354cd5c517fed1af2fc3138e804ccf5b4bee7c41eddec7af41f7d3.zip",
+          "S3Key": "cafce4753dd05702c234bb46b9ba965c9ea202e2c787a4ed2af08bd3406370dc.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -18960,7 +18968,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "4c2f19698adb490fe4ec6d9c47a6df2a555f6624281c83ced28e0d172082e50e.zip",
+          "S3Key": "a9005b2a79b434d6220822a9fe9b67ca7ad0b5b01cc596af2de50e975a934d21.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -19715,7 +19723,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5966abdae61cbf589017a887953de31cb7c5d61a47458ef6fc866deee3a03aac.zip",
+          "S3Key": "40ff4bed95d94f5c20b31435bc2e119c1255089c570ab056d33a31cec6faa939.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -19870,7 +19878,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3f2d8a1942a0e178f7ebc1e39e44fa907e81fb55c0f50dcabc21e626658c80cc.zip",
+          "S3Key": "3d1bac376ce971a4ab49c9310ba37a8822ef7d5a078020df54a070ce44967848.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -20666,7 +20674,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:84029dd6f8c3aa27755299b53632dd263d6d30e2aeff5edcfe30631a1268571e",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:d5059c7b60e1d55f1dd1401c2792e131534aa45dbbdd44229e95fc15e9abb143",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -23323,7 +23331,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a759d3e641a9c0fab98f7731a5c86627c5b984fe1cd415c78af3e78131d58d11.zip",
+          "S3Key": "c884f469a5cf655d1e9fd0a0982707a8a29059ed30260b36fd45948b7f7b70c3.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -23377,7 +23385,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "29e78215fa58dbf8262a36fb2d6c23e7f7dec1b0bcf7a9bbe54c6b1589e8407c.zip",
+          "S3Key": "99477d7d535275f1e97095b617af6589339ecfa0d8286469526f0f7dc53e91a8.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -24107,7 +24115,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "82dc554e83d06042d4c20d4e3532ada47c6d05eb8644f4afdb92fb4228dc8b5c.zip",
+          "S3Key": "caa22b62345428e288125c52d900ef84dda30fcc398326a339d9493d52c87c99.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -24438,7 +24446,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "33c4c9af564419db234b2356a76050637c6073fe54d8c2ed7715ee42cccf366d.zip",
+          "S3Key": "931a06df6eb348b2e7e820594e616fcc8c9933ade439d0d6e6c5f70fa6137066.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -24647,7 +24655,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e93c93f09d7655ef452accd15566fb190fc95923eb772db5000ecac801160ef5.zip",
+          "S3Key": "570622fedd8d73fcad5a47a8ff5d3963472f22c67ac8a6d6f6461002fa1cea4b.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -24854,7 +24862,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a1b428cef83f5c764c982cda06f64f842d7ddf3bff9ffab71c33cd31295e8748.zip",
+          "S3Key": "20f9ae3b441be3e0e9fe3a014f8cb3ac1e3b2b056c00c4a979e6bf95f231ce6a.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -25207,7 +25215,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -25219,7 +25227,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -25288,7 +25296,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "df003418bb96a12297a65bd7c63c98b14283ea8ed6058a0b104f841caa8e5ae7.zip",
+          "a5175f763c4185fbf9d9cb4f160e904f35e0dc331c3e44772b28a8637903234c.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -26277,7 +26285,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b7644ac27954176c42cb358b1d78a5016288312c838bc060dd7cf6b59d4d5e92.zip",
+          "S3Key": "130feb1a5e0eebaa893b11fb8ebd1f2a964ae189eee38429524da7bef3ef7916.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -26703,7 +26711,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "78b67c66fac35f6c57cca4e13943d25e0a8c80637706df6ba907d1f36f24c2d6.zip",
+          "S3Key": "47e960cae21402377551df39e598f1ff43825a944928755b0610c345b9928442.zip",
         },
         "Description": "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler",
         "Handler": "index.handler",
@@ -27750,7 +27758,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
+              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],["AWS/States","ExecutionTime","StateMachineArn","",
+              {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"State Machine Failures","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -27766,11 +27782,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}],["AWS/States","ExecutionTime","StateMachineArn","",
-              {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
+              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":105,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -27795,7 +27807,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":105,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
+              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":111,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
               {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -27826,7 +27838,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":107,"properties":{"view":"timeSeries","title":"Deny List","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":113,"properties":{"view":"timeSeries","title":"Deny List","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -27837,7 +27849,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":107,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
+              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":113,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -27849,7 +27861,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":113,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":119,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -27861,11 +27873,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":115,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":115,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":121,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -27873,7 +27885,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":121,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -27885,11 +27897,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":123,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":129,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":123,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":129,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -28078,7 +28090,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -28447,7 +28459,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c5a7e4c4f9cb7ff8301c656c21b15cb923d1c8f71199f9aa2209f55c7c50837c.zip",
+          "S3Key": "09375ff8e5911d688adb2e26314b407ad82f4fd758f725afb353d35fcfe07981.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -28643,7 +28655,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ecb9042968c9b129ea6643150db411111ab64f6c0df5704a809179eee3694f13.zip",
+          "S3Key": "1dfbf5cfb273765dca570329652d00119022eaca161c159f7d01b9020b31572a.zip",
         },
         "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
         "Environment": {
@@ -28924,7 +28936,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ae20216bad9a98e9e000bf389f3c7a5fd1c178f05fc10c18c0788b95e5af571b.zip",
+          "S3Key": "3a72763a1dfd5a6120909964286831571eaacb11600f2a9a6e734de713981008.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -29152,7 +29164,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f0b5164117103b54ce362cffca246918504d062e4dff7673602f62842acd97b9.zip",
+          "S3Key": "73a375c5da3e66c04c512fa5318b92b5aa42c98fbaa385733fd6a098f69a3488.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -29364,7 +29376,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -29579,7 +29591,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "da9733a76d65e742f9109839af1a20cb7ebefac8d06fc8c3591d67d8369c7a3f.zip",
+          "S3Key": "50b79042237192aad9b1a93983376559f72f57a6aa718dbbf2fa42f5e67b7844.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -30417,7 +30429,7 @@ Direct link to the state machine: /states/home#/statemachines/view/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9990ec2bb3709aedf379e50e52595f064b1c44198a586004409cf54eccd4f10c.zip",
+          "S3Key": "585c9b63397caec126cda20dd29c6a95b3ad040175fdcc35d82687d049c5e161.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -31070,7 +31082,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -31907,7 +31919,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a15b865e7e354cd5c517fed1af2fc3138e804ccf5b4bee7c41eddec7af41f7d3.zip",
+          "S3Key": "cafce4753dd05702c234bb46b9ba965c9ea202e2c787a4ed2af08bd3406370dc.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -32221,7 +32233,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "4c2f19698adb490fe4ec6d9c47a6df2a555f6624281c83ced28e0d172082e50e.zip",
+          "S3Key": "a9005b2a79b434d6220822a9fe9b67ca7ad0b5b01cc596af2de50e975a934d21.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -32976,7 +32988,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5966abdae61cbf589017a887953de31cb7c5d61a47458ef6fc866deee3a03aac.zip",
+          "S3Key": "40ff4bed95d94f5c20b31435bc2e119c1255089c570ab056d33a31cec6faa939.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -33131,7 +33143,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3f2d8a1942a0e178f7ebc1e39e44fa907e81fb55c0f50dcabc21e626658c80cc.zip",
+          "S3Key": "3d1bac376ce971a4ab49c9310ba37a8822ef7d5a078020df54a070ce44967848.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -33900,7 +33912,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:84029dd6f8c3aa27755299b53632dd263d6d30e2aeff5edcfe30631a1268571e",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:d5059c7b60e1d55f1dd1401c2792e131534aa45dbbdd44229e95fc15e9abb143",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -36511,7 +36523,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a759d3e641a9c0fab98f7731a5c86627c5b984fe1cd415c78af3e78131d58d11.zip",
+          "S3Key": "c884f469a5cf655d1e9fd0a0982707a8a29059ed30260b36fd45948b7f7b70c3.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -36565,7 +36577,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "29e78215fa58dbf8262a36fb2d6c23e7f7dec1b0bcf7a9bbe54c6b1589e8407c.zip",
+          "S3Key": "99477d7d535275f1e97095b617af6589339ecfa0d8286469526f0f7dc53e91a8.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -37295,7 +37307,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "82dc554e83d06042d4c20d4e3532ada47c6d05eb8644f4afdb92fb4228dc8b5c.zip",
+          "S3Key": "caa22b62345428e288125c52d900ef84dda30fcc398326a339d9493d52c87c99.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -37626,7 +37638,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "33c4c9af564419db234b2356a76050637c6073fe54d8c2ed7715ee42cccf366d.zip",
+          "S3Key": "931a06df6eb348b2e7e820594e616fcc8c9933ade439d0d6e6c5f70fa6137066.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -37835,7 +37847,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e93c93f09d7655ef452accd15566fb190fc95923eb772db5000ecac801160ef5.zip",
+          "S3Key": "570622fedd8d73fcad5a47a8ff5d3963472f22c67ac8a6d6f6461002fa1cea4b.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -38042,7 +38054,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a1b428cef83f5c764c982cda06f64f842d7ddf3bff9ffab71c33cd31295e8748.zip",
+          "S3Key": "20f9ae3b441be3e0e9fe3a014f8cb3ac1e3b2b056c00c4a979e6bf95f231ce6a.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -38395,7 +38407,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -38407,7 +38419,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -38476,7 +38488,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "df003418bb96a12297a65bd7c63c98b14283ea8ed6058a0b104f841caa8e5ae7.zip",
+          "a5175f763c4185fbf9d9cb4f160e904f35e0dc331c3e44772b28a8637903234c.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -39465,7 +39477,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b7644ac27954176c42cb358b1d78a5016288312c838bc060dd7cf6b59d4d5e92.zip",
+          "S3Key": "130feb1a5e0eebaa893b11fb8ebd1f2a964ae189eee38429524da7bef3ef7916.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -39891,7 +39903,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "78b67c66fac35f6c57cca4e13943d25e0a8c80637706df6ba907d1f36f24c2d6.zip",
+          "S3Key": "47e960cae21402377551df39e598f1ff43825a944928755b0610c345b9928442.zip",
         },
         "Description": "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler",
         "Handler": "index.handler",
@@ -41086,7 +41098,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
+              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],["AWS/States","ExecutionTime","StateMachineArn","",
+              {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"State Machine Failures","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -41102,11 +41122,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}],["AWS/States","ExecutionTime","StateMachineArn","",
-              {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
+              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":105,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -41131,7 +41147,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":105,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
+              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":111,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
               {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -41162,7 +41178,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":107,"properties":{"view":"timeSeries","title":"Deny List","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":113,"properties":{"view":"timeSeries","title":"Deny List","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -41173,7 +41189,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":107,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
+              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":113,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -41185,7 +41201,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":113,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":119,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -41197,11 +41213,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":115,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":115,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":121,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -41209,7 +41225,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":121,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -41221,11 +41237,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":123,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":129,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":123,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":129,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -41414,7 +41430,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -41783,7 +41799,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c5a7e4c4f9cb7ff8301c656c21b15cb923d1c8f71199f9aa2209f55c7c50837c.zip",
+          "S3Key": "09375ff8e5911d688adb2e26314b407ad82f4fd758f725afb353d35fcfe07981.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -41979,7 +41995,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ecb9042968c9b129ea6643150db411111ab64f6c0df5704a809179eee3694f13.zip",
+          "S3Key": "1dfbf5cfb273765dca570329652d00119022eaca161c159f7d01b9020b31572a.zip",
         },
         "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
         "Environment": {
@@ -42260,7 +42276,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ae20216bad9a98e9e000bf389f3c7a5fd1c178f05fc10c18c0788b95e5af571b.zip",
+          "S3Key": "3a72763a1dfd5a6120909964286831571eaacb11600f2a9a6e734de713981008.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -42475,7 +42491,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f0b5164117103b54ce362cffca246918504d062e4dff7673602f62842acd97b9.zip",
+          "S3Key": "73a375c5da3e66c04c512fa5318b92b5aa42c98fbaa385733fd6a098f69a3488.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -42687,7 +42703,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -42902,7 +42918,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "da9733a76d65e742f9109839af1a20cb7ebefac8d06fc8c3591d67d8369c7a3f.zip",
+          "S3Key": "50b79042237192aad9b1a93983376559f72f57a6aa718dbbf2fa42f5e67b7844.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -43740,7 +43756,7 @@ Direct link to the state machine: /states/home#/statemachines/view/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9990ec2bb3709aedf379e50e52595f064b1c44198a586004409cf54eccd4f10c.zip",
+          "S3Key": "585c9b63397caec126cda20dd29c6a95b3ad040175fdcc35d82687d049c5e161.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -44393,7 +44409,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -45252,7 +45268,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a15b865e7e354cd5c517fed1af2fc3138e804ccf5b4bee7c41eddec7af41f7d3.zip",
+          "S3Key": "cafce4753dd05702c234bb46b9ba965c9ea202e2c787a4ed2af08bd3406370dc.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -45566,7 +45582,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "4c2f19698adb490fe4ec6d9c47a6df2a555f6624281c83ced28e0d172082e50e.zip",
+          "S3Key": "a9005b2a79b434d6220822a9fe9b67ca7ad0b5b01cc596af2de50e975a934d21.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -46321,7 +46337,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5966abdae61cbf589017a887953de31cb7c5d61a47458ef6fc866deee3a03aac.zip",
+          "S3Key": "40ff4bed95d94f5c20b31435bc2e119c1255089c570ab056d33a31cec6faa939.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -46476,7 +46492,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3f2d8a1942a0e178f7ebc1e39e44fa907e81fb55c0f50dcabc21e626658c80cc.zip",
+          "S3Key": "3d1bac376ce971a4ab49c9310ba37a8822ef7d5a078020df54a070ce44967848.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -47245,7 +47261,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:84029dd6f8c3aa27755299b53632dd263d6d30e2aeff5edcfe30631a1268571e",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:d5059c7b60e1d55f1dd1401c2792e131534aa45dbbdd44229e95fc15e9abb143",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -49856,7 +49872,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a759d3e641a9c0fab98f7731a5c86627c5b984fe1cd415c78af3e78131d58d11.zip",
+          "S3Key": "c884f469a5cf655d1e9fd0a0982707a8a29059ed30260b36fd45948b7f7b70c3.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -49910,7 +49926,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "29e78215fa58dbf8262a36fb2d6c23e7f7dec1b0bcf7a9bbe54c6b1589e8407c.zip",
+          "S3Key": "99477d7d535275f1e97095b617af6589339ecfa0d8286469526f0f7dc53e91a8.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -50627,7 +50643,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "82dc554e83d06042d4c20d4e3532ada47c6d05eb8644f4afdb92fb4228dc8b5c.zip",
+          "S3Key": "caa22b62345428e288125c52d900ef84dda30fcc398326a339d9493d52c87c99.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -50958,7 +50974,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "33c4c9af564419db234b2356a76050637c6073fe54d8c2ed7715ee42cccf366d.zip",
+          "S3Key": "931a06df6eb348b2e7e820594e616fcc8c9933ade439d0d6e6c5f70fa6137066.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -51167,7 +51183,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e93c93f09d7655ef452accd15566fb190fc95923eb772db5000ecac801160ef5.zip",
+          "S3Key": "570622fedd8d73fcad5a47a8ff5d3963472f22c67ac8a6d6f6461002fa1cea4b.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -51374,7 +51390,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a1b428cef83f5c764c982cda06f64f842d7ddf3bff9ffab71c33cd31295e8748.zip",
+          "S3Key": "20f9ae3b441be3e0e9fe3a014f8cb3ac1e3b2b056c00c4a979e6bf95f231ce6a.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -51779,7 +51795,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -51791,7 +51807,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -51860,7 +51876,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "df003418bb96a12297a65bd7c63c98b14283ea8ed6058a0b104f841caa8e5ae7.zip",
+          "a5175f763c4185fbf9d9cb4f160e904f35e0dc331c3e44772b28a8637903234c.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -53047,7 +53063,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b7644ac27954176c42cb358b1d78a5016288312c838bc060dd7cf6b59d4d5e92.zip",
+          "S3Key": "130feb1a5e0eebaa893b11fb8ebd1f2a964ae189eee38429524da7bef3ef7916.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -53473,7 +53489,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "78b67c66fac35f6c57cca4e13943d25e0a8c80637706df6ba907d1f36f24c2d6.zip",
+          "S3Key": "47e960cae21402377551df39e598f1ff43825a944928755b0610c345b9928442.zip",
         },
         "Description": "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler",
         "Handler": "index.handler",
@@ -54605,7 +54621,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
+              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],["AWS/States","ExecutionTime","StateMachineArn","",
+              {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"State Machine Failures","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -54621,11 +54645,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}],["AWS/States","ExecutionTime","StateMachineArn","",
-              {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
+              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":105,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -54650,7 +54670,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":105,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
+              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":111,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
               {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -54681,7 +54701,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":107,"properties":{"view":"timeSeries","title":"Deny List","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":113,"properties":{"view":"timeSeries","title":"Deny List","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -54692,7 +54712,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":107,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
+              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":113,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -54704,7 +54724,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":113,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":119,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -54716,11 +54736,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":115,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":115,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":121,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -54728,7 +54748,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStats61DB07B1",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":121,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -54740,11 +54760,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":123,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":129,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":123,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":129,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -54933,7 +54953,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -55302,7 +55322,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c5a7e4c4f9cb7ff8301c656c21b15cb923d1c8f71199f9aa2209f55c7c50837c.zip",
+          "S3Key": "09375ff8e5911d688adb2e26314b407ad82f4fd758f725afb353d35fcfe07981.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": {
@@ -55498,7 +55518,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ecb9042968c9b129ea6643150db411111ab64f6c0df5704a809179eee3694f13.zip",
+          "S3Key": "1dfbf5cfb273765dca570329652d00119022eaca161c159f7d01b9020b31572a.zip",
         },
         "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
         "Environment": {
@@ -55779,7 +55799,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ae20216bad9a98e9e000bf389f3c7a5fd1c178f05fc10c18c0788b95e5af571b.zip",
+          "S3Key": "3a72763a1dfd5a6120909964286831571eaacb11600f2a9a6e734de713981008.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": {
@@ -56007,7 +56027,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "f0b5164117103b54ce362cffca246918504d062e4dff7673602f62842acd97b9.zip",
+          "S3Key": "73a375c5da3e66c04c512fa5318b92b5aa42c98fbaa385733fd6a098f69a3488.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": {
@@ -56219,7 +56239,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -56434,7 +56454,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "da9733a76d65e742f9109839af1a20cb7ebefac8d06fc8c3591d67d8369c7a3f.zip",
+          "S3Key": "50b79042237192aad9b1a93983376559f72f57a6aa718dbbf2fa42f5e67b7844.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -57398,7 +57418,7 @@ Direct link to the state machine: /states/home#/statemachines/view/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9990ec2bb3709aedf379e50e52595f064b1c44198a586004409cf54eccd4f10c.zip",
+          "S3Key": "585c9b63397caec126cda20dd29c6a95b3ad040175fdcc35d82687d049c5e161.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": {
@@ -58051,7 +58071,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -58917,7 +58937,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a15b865e7e354cd5c517fed1af2fc3138e804ccf5b4bee7c41eddec7af41f7d3.zip",
+          "S3Key": "cafce4753dd05702c234bb46b9ba965c9ea202e2c787a4ed2af08bd3406370dc.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -59231,7 +59251,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "4c2f19698adb490fe4ec6d9c47a6df2a555f6624281c83ced28e0d172082e50e.zip",
+          "S3Key": "a9005b2a79b434d6220822a9fe9b67ca7ad0b5b01cc596af2de50e975a934d21.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -59579,7 +59599,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "5966abdae61cbf589017a887953de31cb7c5d61a47458ef6fc866deee3a03aac.zip",
+          "S3Key": "40ff4bed95d94f5c20b31435bc2e119c1255089c570ab056d33a31cec6faa939.zip",
         },
         "Description": "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update",
         "Environment": {
@@ -59734,7 +59754,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "3f2d8a1942a0e178f7ebc1e39e44fa907e81fb55c0f50dcabc21e626658c80cc.zip",
+          "S3Key": "3d1bac376ce971a4ab49c9310ba37a8822ef7d5a078020df54a070ce44967848.zip",
         },
         "Description": "[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue",
         "Environment": {
@@ -60509,7 +60529,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:84029dd6f8c3aa27755299b53632dd263d6d30e2aeff5edcfe30631a1268571e",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:d5059c7b60e1d55f1dd1401c2792e131534aa45dbbdd44229e95fc15e9abb143",
             },
             "LogConfiguration": {
               "LogDriver": "awslogs",
@@ -63182,7 +63202,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a759d3e641a9c0fab98f7731a5c86627c5b984fe1cd415c78af3e78131d58d11.zip",
+          "S3Key": "c884f469a5cf655d1e9fd0a0982707a8a29059ed30260b36fd45948b7f7b70c3.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -63236,7 +63256,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "29e78215fa58dbf8262a36fb2d6c23e7f7dec1b0bcf7a9bbe54c6b1589e8407c.zip",
+          "S3Key": "99477d7d535275f1e97095b617af6589339ecfa0d8286469526f0f7dc53e91a8.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -63966,7 +63986,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "82dc554e83d06042d4c20d4e3532ada47c6d05eb8644f4afdb92fb4228dc8b5c.zip",
+          "S3Key": "caa22b62345428e288125c52d900ef84dda30fcc398326a339d9493d52c87c99.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -64297,7 +64317,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "33c4c9af564419db234b2356a76050637c6073fe54d8c2ed7715ee42cccf366d.zip",
+          "S3Key": "931a06df6eb348b2e7e820594e616fcc8c9933ade439d0d6e6c5f70fa6137066.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -64506,7 +64526,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e93c93f09d7655ef452accd15566fb190fc95923eb772db5000ecac801160ef5.zip",
+          "S3Key": "570622fedd8d73fcad5a47a8ff5d3963472f22c67ac8a6d6f6461002fa1cea4b.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -67603,7 +67623,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a1b428cef83f5c764c982cda06f64f842d7ddf3bff9ffab71c33cd31295e8748.zip",
+          "S3Key": "20f9ae3b441be3e0e9fe3a014f8cb3ac1e3b2b056c00c4a979e6bf95f231ce6a.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -67956,7 +67976,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -67968,7 +67988,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e8ea9d657c30715826b809f41d1f2482ff4e16f37385f55fbcf7d8ccfdd14db.zip",
+          "S3Key": "4ba3e3c030a1f70fc64f87fd55bbb3f01854e1d1deb5a4d51572d0ca94b9da74.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -68037,7 +68057,7 @@ function handler(event) {
           },
         ],
         "SourceObjectKeys": [
-          "df003418bb96a12297a65bd7c63c98b14283ea8ed6058a0b104f841caa8e5ae7.zip",
+          "a5175f763c4185fbf9d9cb4f160e904f35e0dc331c3e44772b28a8637903234c.zip",
         ],
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
@@ -69583,7 +69603,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b7644ac27954176c42cb358b1d78a5016288312c838bc060dd7cf6b59d4d5e92.zip",
+          "S3Key": "130feb1a5e0eebaa893b11fb8ebd1f2a964ae189eee38429524da7bef3ef7916.zip",
         },
         "Description": "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler",
         "Environment": {
@@ -70009,7 +70029,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "78b67c66fac35f6c57cca4e13943d25e0a8c80637706df6ba907d1f36f24c2d6.zip",
+          "S3Key": "47e960cae21402377551df39e598f1ff43825a944928755b0610c345b9928442.zip",
         },
         "Description": "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler",
         "Handler": "index.handler",
