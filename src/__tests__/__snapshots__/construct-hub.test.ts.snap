@@ -4479,7 +4479,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","annotations":{"alarms":["",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubOrchestrationOrchestrationFailed5AF50838",
+                  "Arn",
+                ],
+              },
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4490,7 +4501,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4501,7 +4512,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4512,7 +4523,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4523,7 +4534,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -6260,6 +6271,9 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
     },
     "ConstructHubOrchestrationOrchestrationFailed5AF50838": {
       "Properties": {
+        "AlarmActions": [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -18020,7 +18034,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","annotations":{"alarms":["",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubOrchestrationOrchestrationFailed5AF50838",
+                  "Arn",
+                ],
+              },
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -18031,7 +18056,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -18042,7 +18067,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -18053,7 +18078,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -18064,7 +18089,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -19801,6 +19826,9 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
     },
     "ConstructHubOrchestrationOrchestrationFailed5AF50838": {
       "Properties": {
+        "AlarmActions": [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -31271,7 +31299,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","annotations":{"alarms":["",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubOrchestrationOrchestrationFailed5AF50838",
+                  "Arn",
+                ],
+              },
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -31282,7 +31321,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -31293,7 +31332,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -31304,7 +31343,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -31315,7 +31354,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -33052,6 +33091,9 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
     },
     "ConstructHubOrchestrationOrchestrationFailed5AF50838": {
       "Properties": {
+        "AlarmActions": [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -44584,7 +44626,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","annotations":{"alarms":["",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubOrchestrationOrchestrationFailed5AF50838",
+                  "Arn",
+                ],
+              },
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -44595,7 +44648,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -44606,7 +44659,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"ACM Certificate Expiry","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"ACM Certificate Expiry","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -44617,7 +44670,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Endpoint Certificate Expiry","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"Endpoint Certificate Expiry","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -44628,7 +44681,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -44639,7 +44692,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -44650,7 +44703,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -46387,6 +46440,9 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
     },
     "ConstructHubOrchestrationOrchestrationFailed5AF50838": {
       "Properties": {
+        "AlarmActions": [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -58232,7 +58288,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","annotations":{"alarms":["",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubOrchestrationOrchestrationFailed5AF50838",
+                  "Arn",
+                ],
+              },
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -58243,7 +58310,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -58254,7 +58321,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -58265,7 +58332,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -58276,7 +58343,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -59635,6 +59702,9 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
     },
     "ConstructHubOrchestrationOrchestrationFailed5AF50838": {
       "Properties": {
+        "AlarmActions": [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",

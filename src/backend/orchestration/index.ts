@@ -33,7 +33,7 @@ import { NeedsCatalogUpdate } from './needs-catalog-update';
 import { RedriveStateMachine } from './redrive-state-machine';
 import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
-import { Monitoring } from '../../monitoring';
+import { Monitoring, addAlarm } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
@@ -50,6 +50,7 @@ import {
   UNPROCESSABLE_PACKAGE_ERROR_NAME,
 } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
+import { AlarmSeverities, AlarmSeverity } from '../../api';
 
 const REPROCESS_PER_PACKAGE_STATE_MACHINE_NAME =
   'ReprocessDocumentationPerPackage';
@@ -155,6 +156,11 @@ export interface OrchestrationProps {
    * The construct that generates RSS/ATOM feed
    */
   readonly feedBuilder: FeedBuilder;
+
+  /**
+   * Configure alarm severities.
+   */
+  readonly alarmSeverities?: AlarmSeverities;
 }
 
 /**
@@ -474,8 +480,7 @@ export class Orchestration extends Construct {
     // low severity because sporadic singular failures can happen due to invalid packages
     // from time to time. a high severity alarm is defined below in case the failure rate 
     // is really high.
-    props.monitoring.addLowSeverityAlarm(
-      'Backend Orchestration Failed',
+    addAlarm(props.monitoring, 'Backend Orchestration Failed',
       this.stateMachine
         .metricFailed()
         .createAlarm(this, 'OrchestrationFailed', {
@@ -495,8 +500,8 @@ export class Orchestration extends Construct {
             ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
           evaluationPeriods: 1,
           threshold: 1,
-        })
-    );
+        }),
+      props.alarmSeverities?.backendOrchestrationFailed ?? AlarmSeverity.HIGH);
 
     props.monitoring.addHighSeverityAlarm(
       'Execution Failure Rate above 75%',

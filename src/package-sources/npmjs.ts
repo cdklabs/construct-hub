@@ -40,6 +40,8 @@ import type {
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
 import { ReStagePackageVersion } from './npmjs/re-stage-package-version';
+import { addAlarm } from '../monitoring';
+import { AlarmSeverities, AlarmSeverity } from '../api';
 
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid
@@ -94,6 +96,11 @@ export interface NpmJsProps {
    * @default Duration.minutes(5)
    */
   readonly canarySla?: Duration;
+
+  /**
+   * Configure alarm severities.
+   */
+  readonly alarmSeverities?: AlarmSeverities;
 }
 
 /**
@@ -626,14 +633,14 @@ export class NpmJs implements IPackageSource {
       treatMissingData: TreatMissingData.NOT_BREACHING,
       threshold: visibilitySla.toSeconds(),
     });
-    // This is deemed medium severity, because the npm registry replica (replicate.npmjs.com) can
+    // This is deemed low severity, because the npm registry replica (replicate.npmjs.com) can
     // occasionally lag several hours behind the primary (registry.npmjs.com), and we cannot easily
     // tell about that. Someone should have a look, but in virtually all cases we have seen so far,
     // there is nothing that can be done from our end, besides waiting for the replica to be all
     // caught up.
-    monitoring.addMediumSeverityAlarm(
-      'New version visibility SLA breached',
-      alarm
+    addAlarm(monitoring, 'New version visibility SLA breached',
+      alarm,
+      this.props.alarmSeverities?.packageCanarySLABreached ?? AlarmSeverity.LOW,
     );
 
     const notRunningOrFailingAlarm = new CompositeAlarm(

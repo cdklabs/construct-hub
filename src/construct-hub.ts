@@ -11,7 +11,7 @@ import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { createRestrictedSecurityGroups } from './_limited-internet-access';
-import { AlarmActions, Domain } from './api';
+import { AlarmActions, AlarmSeverities, Domain } from './api';
 import { DenyList, Ingestion } from './backend';
 import { DenyListRule } from './backend/deny-list/api';
 import { FeedBuilder } from './backend/feed-builder';
@@ -76,6 +76,11 @@ export interface ConstructHubProps {
    * Actions to perform when alarms are set.
    */
   readonly alarmActions?: AlarmActions;
+
+  /**
+   * Configure the severities of various alarms.
+   */
+  readonly alarmSeverities?: AlarmSeverities;
 
   /**
    * Whether compute environments for sensitive tasks (which operate on
@@ -413,6 +418,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       vpcSubnets,
       vpcSecurityGroups,
       feedBuilder,
+      alarmSeverities: props.alarmSeverities,
     });
     this.regenerateAllDocumentationPerPackage =
       orchestration.regenerateAllDocumentationPerPackage;
@@ -485,7 +491,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     feedBuilder.setConstructHubUrl(webApp.baseUrl);
 
     const sources = new Construct(this, 'Sources');
-    const packageSources = (props.packageSources ?? [new NpmJs()]).map(
+    const packageSources = (props.packageSources ?? [new NpmJs({ alarmSeverities: props.alarmSeverities })]).map(
       (source) =>
         source.bind(sources, {
           baseUrl: webApp.baseUrl,
