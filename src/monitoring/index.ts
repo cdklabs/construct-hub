@@ -3,7 +3,7 @@ import { Watchful } from 'cdk-watchful';
 import { Construct } from 'constructs';
 import { IMonitoring } from './api';
 import { WebCanary } from './web-canary';
-import { AlarmActions } from '../api';
+import { AlarmActions, AlarmSeverity } from '../api';
 
 /**
  * Props for the monitoring construct.
@@ -151,5 +151,21 @@ export class Monitoring extends Construct implements IMonitoring {
     );
 
     this.addHighSeverityAlarm(`${name} Canary`, canary.alarm);
+  }
+}
+
+export function addAlarm(title: string, alarm: cw.Alarm, severity: AlarmSeverity, monitoring: IMonitoring) {
+  switch (severity) {
+    case AlarmSeverity.HIGH:
+      monitoring.addHighSeverityAlarm(title, alarm);
+      break;
+    case AlarmSeverity.LOW:
+      monitoring.addLowSeverityAlarm(title, alarm);
+      break;
+    case AlarmSeverity.MEDIUM:
+      monitoring.addMediumSeverityAlarm(title, alarm);
+      break;
+    default:
+      throw new Error(`Unknown alarm severity: ${severity}`);
   }
 }

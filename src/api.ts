@@ -36,6 +36,31 @@ export interface Domain {
   readonly monitorCertificateExpiration?: boolean;
 }
 
+export enum AlarmSeverity {
+  HIGH,
+  MEDIUM,
+  LOW,
+}
+
+/**
+ * Configure severities for various alarms.
+ * 
+ * Alarms not included here are currently not configurable.
+ */
+export interface AlarmSeverities {
+
+  /**
+   * @default AlarmSeverity.HIGH
+   */
+  readonly backendOrchestrationFailed?: AlarmSeverity;
+
+  /**
+   * @default AlarmSeverity.LOW
+   */
+  readonly packageCanarySLABreached?: AlarmSeverity;
+
+}
+
 /**
  * CloudWatch alarm actions to perform.
  */
