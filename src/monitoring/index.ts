@@ -154,7 +154,7 @@ export class Monitoring extends Construct implements IMonitoring {
   }
 }
 
-export function addAlarm(monitoring: IMonitoring, title: string, alarm: cw.Alarm, severity: AlarmSeverity) {
+export function addAlarm(title: string, alarm: cw.Alarm, severity: AlarmSeverity, monitoring: IMonitoring) {
   switch (severity) {
     case AlarmSeverity.HIGH:
       monitoring.addHighSeverityAlarm(title, alarm);

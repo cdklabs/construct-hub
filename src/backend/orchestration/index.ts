@@ -477,7 +477,8 @@ export class Orchestration extends Construct {
       );
     }
 
-    addAlarm(props.monitoring, 'Backend Orchestration Failed',
+    addAlarm(
+      'Backend Orchestration Failed',
       this.stateMachine
         .metricFailed()
         .createAlarm(this, 'OrchestrationFailed', {
@@ -498,7 +499,8 @@ export class Orchestration extends Construct {
           evaluationPeriods: 1,
           threshold: 1,
         }),
-      props.alarmSeverities?.backendOrchestrationFailed ?? AlarmSeverity.HIGH);
+      props.alarmSeverities?.backendOrchestrationFailed ?? AlarmSeverity.HIGH,
+      props.monitoring);
 
     props.monitoring.addHighSeverityAlarm(
       'Execution Failure Rate above 75%',

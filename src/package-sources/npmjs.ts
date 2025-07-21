@@ -638,9 +638,11 @@ export class NpmJs implements IPackageSource {
     // tell about that. Someone should have a look, but in virtually all cases we have seen so far,
     // there is nothing that can be done from our end, besides waiting for the replica to be all
     // caught up.
-    addAlarm(monitoring, 'New version visibility SLA breached',
+    addAlarm(
+      'New version visibility SLA breached',
       alarm,
       this.props.alarmSeverities?.packageCanarySLABreached ?? AlarmSeverity.LOW,
+      monitoring
     );
 
     const notRunningOrFailingAlarm = new CompositeAlarm(
