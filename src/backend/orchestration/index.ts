@@ -477,9 +477,6 @@ export class Orchestration extends Construct {
       );
     }
 
-    // low severity because sporadic singular failures can happen due to invalid packages
-    // from time to time. a high severity alarm is defined below in case the failure rate 
-    // is really high.
     addAlarm(props.monitoring, 'Backend Orchestration Failed',
       this.stateMachine
         .metricFailed()
