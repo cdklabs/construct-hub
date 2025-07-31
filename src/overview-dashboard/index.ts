@@ -15,6 +15,7 @@ import { IOverviewDashboard } from './api';
 import { SQSDLQWidget } from './sqs-dlq-widget';
 import { Inventory } from '../backend/inventory';
 import { RUNBOOK_URL } from '../runbook-url';
+import { Duration } from 'aws-cdk-lib';
 
 /**
  * Properties for OverviewDashboard
@@ -127,10 +128,12 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
       this.dashboard.addWidgets(this.cloudFrontMetricWidget);
     }
 
+    // see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/programming-cloudwatch-metrics.html#cloudfront-metrics-distribution-values
+
     const totalRequest = new Metric({
       metricName: 'Requests',
       namespace: 'AWS/CloudFront',
-      statistic: Statistic.AVERAGE,
+      statistic: Statistic.SUM,
       dimensionsMap: {
         DistributionId: distribution.distributionId,
         Region: 'Global',
@@ -160,9 +163,9 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
       region: 'us-east-1', // global metric
     });
 
-    this.cloudFrontMetricWidget.addLeftMetric(totalRequest);
-    this.cloudFrontMetricWidget.addRightMetric(errorRate4xx);
-    this.cloudFrontMetricWidget.addRightMetric(errorRate5xx);
+    this.cloudFrontMetricWidget.addLeftMetric(totalRequest.with({ period: Duration.days(1) }));
+    this.cloudFrontMetricWidget.addRightMetric(errorRate4xx.with({ period: Duration.days(1) }));
+    this.cloudFrontMetricWidget.addRightMetric(errorRate5xx.with({ period: Duration.days(1) }));
   }
 
   private addCloudFrontMetricWidget() {
