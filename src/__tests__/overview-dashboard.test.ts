@@ -141,7 +141,7 @@ test('It adds cloud front distribution to the dashboard when present', () => {
             {
               Ref: 'DistributionCFDistribution882A7313',
             },
-            '","Region","Global",{"region":"us-east-1","period":86400,"yAxis":"right"}]],"yAxis":{"left":{"label":"Requests count"},"right":{"label":"Request Percent","min":0,"max":100}}}}]}',
+            '","Region","Global",{"region":"us-east-1","period":86400,"yAxis":"right"}]],"yAxis":{"left":{"label":"Requests count","min":0},"right":{"label":"Request Percent","min":0,"max":100}}}}]}',
           ],
         ],
       },

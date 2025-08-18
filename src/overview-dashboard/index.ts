@@ -173,7 +173,7 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
       title: 'CloudFront Metrics',
       height: 8,
       width: 12,
-      leftYAxis: { label: 'Requests count' },
+      leftYAxis: { label: 'Requests count', min: 0 },
       rightYAxis: { label: 'Request Percent', min: 0, max: 100 },
     });
     return widget;
