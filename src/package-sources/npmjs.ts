@@ -723,10 +723,6 @@ export class NpmJs implements IPackageSource {
           },
         ],
         leftYAxis: { min: 0 },
-        right: [
-          canary.metricTrackedVersionCount({ label: 'Tracked Version Count' }),
-        ],
-        rightYAxis: { min: 0 },
       }),
       new TextWidget({
         height: 6,
