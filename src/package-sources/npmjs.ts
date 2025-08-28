@@ -19,8 +19,10 @@ import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
+import { AlarmSeverities, AlarmSeverity } from '../api';
 import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
+import { addAlarm } from '../monitoring';
 import { NpmJsPackageCanary } from './npmjs/canary';
 import {
   KNOWN_VERSIONS_FILE_NAME,
@@ -40,8 +42,6 @@ import type {
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
 import { ReStagePackageVersion } from './npmjs/re-stage-package-version';
-import { addAlarm } from '../monitoring';
-import { AlarmSeverities, AlarmSeverity } from '../api';
 
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid
@@ -107,7 +107,7 @@ export interface NpmJsProps {
  * A package source that gets package data from the npmjs.com package registry.
  */
 export class NpmJs implements IPackageSource {
-  public constructor(private readonly props: NpmJsProps = {}) { }
+  public constructor(private readonly props: NpmJsProps = {}) {}
 
   public bind(
     scope: Construct,
@@ -352,13 +352,13 @@ export class NpmJs implements IPackageSource {
           }),
           ...(this.props.enableCanary ?? true
             ? this.registerCanary(
-              follower,
-              this.props.canaryPackage ?? 'construct-hub-probe',
-              this.props.canarySla ?? Duration.minutes(5),
-              bucket,
-              baseUrl,
-              monitoring
-            )
+                follower,
+                this.props.canaryPackage ?? 'construct-hub-probe',
+                this.props.canarySla ?? Duration.minutes(5),
+                bucket,
+                baseUrl,
+                monitoring
+              )
             : []),
         ],
       ],
@@ -554,35 +554,28 @@ export class NpmJs implements IPackageSource {
       noChangeAlarm
     );
 
-    const dlqNotEmptyAlarm = new MathExpression({
-      expression: 'mVisible + mHidden',
-      usingMetrics: {
-        mVisible:
-          stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({
-            period: Duration.minutes(1),
-          }),
-        mHidden:
-          stager.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible({
-            period: Duration.minutes(1),
-          }),
-      },
-    }).createAlarm(scope, `${scope.node.path}/NpmJs/Stager/DLQNotEmpty`, {
-      alarmName: `${scope.node.path}/NpmJs/Stager/DLQNotEmpty`,
-      alarmDescription: [
-        'The NpmJS package stager is failing - its dead letter queue is not empty',
-        '',
-        `Link to the lambda function: ${lambdaFunctionUrl(stager)}`,
-        `Link to the dead letter queue: ${sqsQueueUrl(
-          stager.deadLetterQueue!
-        )}`,
-        '',
-        `Runbook: ${RUNBOOK_URL}`,
-      ].join('/n'),
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 2,
-      threshold: 1,
-      treatMissingData: TreatMissingData.NOT_BREACHING,
-    });
+    const dlqNotEmptyAlarm = stager
+      .deadLetterQueue!.metricApproximateNumberOfMessagesVisible({
+        period: Duration.minutes(1),
+      })
+      .createAlarm(scope, `${scope.node.path}/NpmJs/Stager/DLQNotEmpty`, {
+        alarmName: `${scope.node.path}/NpmJs/Stager/DLQNotEmpty`,
+        alarmDescription: [
+          'The NpmJS package stager is failing - its dead letter queue is not empty',
+          '',
+          `Link to the lambda function: ${lambdaFunctionUrl(stager)}`,
+          `Link to the dead letter queue: ${sqsQueueUrl(
+            stager.deadLetterQueue!
+          )}`,
+          '',
+          `Runbook: ${RUNBOOK_URL}`,
+        ].join('/n'),
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 2,
+        threshold: 1,
+        treatMissingData: TreatMissingData.NOT_BREACHING,
+      });
     monitoring.addLowSeverityAlarm(
       'NpmJs/Stager DLQ Not Empty',
       dlqNotEmptyAlarm

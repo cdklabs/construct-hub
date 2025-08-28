@@ -309,59 +309,22 @@ exports[`default configuration 1`] = `
         },
         "AlarmName": "Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name/DLQNotEmpty",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 1,
-        "Metrics": [
+        "Dimensions": [
           {
-            "Expression": "mVisible + mHidden",
-            "Id": "expr_1",
-          },
-          {
-            "Id": "mVisible",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "fakepathtorepositoryDLQAE116084",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "fakepathtorepositoryDLQAE116084",
+                "QueueName",
+              ],
             },
-            "ReturnData": false,
-          },
-          {
-            "Id": "mHidden",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "fakepathtorepositoryDLQAE116084",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesNotVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
-            },
-            "ReturnData": false,
           },
         ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 60,
+        "Statistic": "Maximum",
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },
@@ -791,59 +754,22 @@ exports[`user-provided staging bucket 1`] = `
         },
         "AlarmName": "Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name/DLQNotEmpty",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 1,
-        "Metrics": [
+        "Dimensions": [
           {
-            "Expression": "mVisible + mHidden",
-            "Id": "expr_1",
-          },
-          {
-            "Id": "mVisible",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "fakepathtorepositoryDLQAE116084",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "fakepathtorepositoryDLQAE116084",
+                "QueueName",
+              ],
             },
-            "ReturnData": false,
-          },
-          {
-            "Id": "mHidden",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "fakepathtorepositoryDLQAE116084",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesNotVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
-            },
-            "ReturnData": false,
           },
         ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 60,
+        "Statistic": "Maximum",
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },

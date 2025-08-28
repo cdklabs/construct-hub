@@ -10956,59 +10956,22 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
         "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 2,
-        "Metrics": [
+        "Dimensions": [
           {
-            "Expression": "mVisible + mHidden",
-            "Id": "expr_1",
-          },
-          {
-            "Id": "mVisible",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "ConstructHubSourcesStagerDLQ80BD2600",
+                "QueueName",
+              ],
             },
-            "ReturnData": false,
-          },
-          {
-            "Id": "mHidden",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesNotVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
-            },
-            "ReturnData": false,
           },
         ],
+        "EvaluationPeriods": 2,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 60,
+        "Statistic": "Maximum",
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },
@@ -24584,59 +24547,22 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
         "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 2,
-        "Metrics": [
+        "Dimensions": [
           {
-            "Expression": "mVisible + mHidden",
-            "Id": "expr_1",
-          },
-          {
-            "Id": "mVisible",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "ConstructHubSourcesStagerDLQ80BD2600",
+                "QueueName",
+              ],
             },
-            "ReturnData": false,
-          },
-          {
-            "Id": "mHidden",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesNotVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
-            },
-            "ReturnData": false,
           },
         ],
+        "EvaluationPeriods": 2,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 60,
+        "Statistic": "Maximum",
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },
@@ -37776,59 +37702,22 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
         "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 2,
-        "Metrics": [
+        "Dimensions": [
           {
-            "Expression": "mVisible + mHidden",
-            "Id": "expr_1",
-          },
-          {
-            "Id": "mVisible",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "ConstructHubSourcesStagerDLQ80BD2600",
+                "QueueName",
+              ],
             },
-            "ReturnData": false,
-          },
-          {
-            "Id": "mHidden",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesNotVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
-            },
-            "ReturnData": false,
           },
         ],
+        "EvaluationPeriods": 2,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 60,
+        "Statistic": "Maximum",
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },
@@ -51112,59 +51001,22 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
         "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 2,
-        "Metrics": [
+        "Dimensions": [
           {
-            "Expression": "mVisible + mHidden",
-            "Id": "expr_1",
-          },
-          {
-            "Id": "mVisible",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "ConstructHubSourcesStagerDLQ80BD2600",
+                "QueueName",
+              ],
             },
-            "ReturnData": false,
-          },
-          {
-            "Id": "mHidden",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesNotVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
-            },
-            "ReturnData": false,
           },
         ],
+        "EvaluationPeriods": 2,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 60,
+        "Statistic": "Maximum",
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },
@@ -64455,59 +64307,22 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
         "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 2,
-        "Metrics": [
+        "Dimensions": [
           {
-            "Expression": "mVisible + mHidden",
-            "Id": "expr_1",
-          },
-          {
-            "Id": "mVisible",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "ConstructHubSourcesStagerDLQ80BD2600",
+                "QueueName",
+              ],
             },
-            "ReturnData": false,
-          },
-          {
-            "Id": "mHidden",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "QueueName",
-                    "Value": {
-                      "Fn::GetAtt": [
-                        "ConstructHubSourcesStagerDLQ80BD2600",
-                        "QueueName",
-                      ],
-                    },
-                  },
-                ],
-                "MetricName": "ApproximateNumberOfMessagesNotVisible",
-                "Namespace": "AWS/SQS",
-              },
-              "Period": 300,
-              "Stat": "Maximum",
-            },
-            "ReturnData": false,
           },
         ],
+        "EvaluationPeriods": 2,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 60,
+        "Statistic": "Maximum",
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },
