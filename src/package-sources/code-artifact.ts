@@ -2,7 +2,6 @@ import { ArnFormat, Aws, Duration, Stack } from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   GraphWidget,
-  MathExpression,
   Metric,
   MetricOptions,
   Statistic,
@@ -162,29 +161,24 @@ export class CodeArtifact implements IPackageSource {
       failureAlarm
     );
 
-    const dlqNotEmptyAlarm = new MathExpression({
-      expression: 'mVisible + mHidden',
-      usingMetrics: {
-        mVisible: dlq.metricApproximateNumberOfMessagesVisible({
-          period: Duration.minutes(1),
-        }),
-        mHidden: dlq.metricApproximateNumberOfMessagesNotVisible({
-          period: Duration.minutes(1),
-        }),
-      },
-    }).createAlarm(scope, `${idPrefix}/Forwarder/DLQNotEmpty`, {
-      alarmName: `${scope.node.path}/CodeArtifact/${repositoryId}/DLQNotEmpty`,
-      alarmDescription: [
-        `The CodeArtifact fowarder for ${repositoryId} is failing`,
-        '',
-        `Link to the lambda function: ${lambdaFunctionUrl(forwarder)}`,
-        `Link to the dead letter queue: ${sqsQueueUrl(dlq)}`,
-      ].join('/n'),
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 1,
-      threshold: 1,
-      treatMissingData: TreatMissingData.NOT_BREACHING,
-    });
+    const dlqNotEmptyAlarm = dlq
+      .metricApproximateNumberOfMessagesVisible({
+        period: Duration.minutes(1),
+      })
+      .createAlarm(scope, `${idPrefix}/Forwarder/DLQNotEmpty`, {
+        alarmName: `${scope.node.path}/CodeArtifact/${repositoryId}/DLQNotEmpty`,
+        alarmDescription: [
+          `The CodeArtifact fowarder for ${repositoryId} is failing`,
+          '',
+          `Link to the lambda function: ${lambdaFunctionUrl(forwarder)}`,
+          `Link to the dead letter queue: ${sqsQueueUrl(dlq)}`,
+        ].join('/n'),
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+        treatMissingData: TreatMissingData.NOT_BREACHING,
+      });
     monitoring.addLowSeverityAlarm(
       `CodeArtifact/${repositoryId} DLQ Not Empty`,
       dlqNotEmptyAlarm
