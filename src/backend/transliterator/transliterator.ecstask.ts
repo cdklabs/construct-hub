@@ -1,6 +1,7 @@
 import { rmSync } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import { Readable } from 'node:stream';
+import { buffer } from 'node:stream/consumers';
 import * as os from 'os';
 import * as path from 'path';
 import {
@@ -238,9 +239,10 @@ export function transliterate(
                   readme: true,
                   submodule: submoduleFqn,
                   language: docgenLang,
+                  spaces: 0, // ensures string is smaller uncompressed, important when loading with node
                 });
 
-                const jsonPage = Buffer.from(json.render());
+                const jsonPage = await buffer(json.stream());
                 metrics.putMetric(
                   MetricName.DOCUMENT_SIZE,
                   jsonPage.length,
@@ -280,7 +282,7 @@ export function transliterate(
                   }
                 );
 
-                const page = Buffer.from(markdown.render());
+                const page = await buffer(markdown.stream());
                 metrics.putMetric(
                   MetricName.DOCUMENT_SIZE,
                   page.length,

@@ -68,6 +68,7 @@ const project = new CdklabsConstructLibrary({
     'feed',
     'fs-extra',
     'got',
+    'jsii-docgen@^10.9.0',
     'semver',
     'spdx-license-list',
     'streamx',
@@ -86,16 +87,16 @@ const project = new CdklabsConstructLibrary({
 
   peerDeps,
 
-  typescriptVersion: '5.8.x',
+  typescriptVersion: '5.9.x',
   // Exclude handler images from TypeScript compiler path
   excludeTypescript: ['resources/**'],
   tsconfigDev: {
     include: ['test/**/*.ts'],
   },
 
-  jsiiVersion: '5.8.x',
+  jsiiVersion: '5.9.x',
   rosettaOptions: {
-    version: '5.8.x',
+    version: '5.9.x',
   },
 
   pullRequestTemplateContents: [

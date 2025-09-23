@@ -89,8 +89,10 @@ describe('VPC Endpoints', () => {
         ) {
           throw new LanguageNotSupportedError();
         } else {
+          const content = '{ "contents": "docs" }';
           return {
-            render: () => '{ "contents": "docs" }',
+            stream: () => Readable.from([content]),
+            render: () => content,
           };
         }
       }
@@ -578,8 +580,10 @@ describe('markers for un-supported languages', () => {
 class MockDocumentation {
   public constructor(private readonly target: string) {}
   public async toJson() {
+    const content = `{ "content": "docs for ${this.target}" }`;
     return {
-      render: () => `{ "content": "docs for ${this.target}" }`,
+      stream: () => Readable.from([content]),
+      render: () => content,
     };
   }
 }
