@@ -7,6 +7,7 @@ import { StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import {
   Assembly,
+  JsiiFeature,
   loadAssemblyFromBuffer,
   SPEC_FILE_NAME,
   SPEC_FILE_NAME_COMPRESSED,
@@ -33,6 +34,8 @@ import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
+
+const SUPPORTED_ASSEMBLY_FEATURES: JsiiFeature[] = ['intersection-types'];
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -135,7 +138,9 @@ export const handler = metricScope(
                 }
                 return compDotJsii!;
               }
-            : undefined
+            : undefined,
+          true,
+          SUPPORTED_ASSEMBLY_FEATURES
         );
 
         // needs `dependencyClosure`

@@ -96,7 +96,7 @@ const project = new CdklabsConstructLibrary({
 
   jsiiVersion: '5.9.x',
   rosettaOptions: {
-    version: '5.9.x',
+    version: '~5.9.9',
   },
 
   pullRequestTemplateContents: [
