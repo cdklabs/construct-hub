@@ -35,7 +35,10 @@ import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 
-const SUPPORTED_ASSEMBLY_FEATURES: JsiiFeature[] = ['intersection-types'];
+const SUPPORTED_ASSEMBLY_FEATURES: JsiiFeature[] = [
+  'intersection-types',
+  'class-covariant-overrides',
+];
 
 Configuration.namespace = METRICS_NAMESPACE;
 
