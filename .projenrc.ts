@@ -1,6 +1,6 @@
 import { join, relative } from 'path';
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
-import { github } from 'projen';
+import { github, ReleasableCommits } from 'projen';
 import { addDevApp } from './projenrc/dev-app';
 import { discoverEcsTasks } from './projenrc/magic-ecs';
 import { discoverLambdas } from './projenrc/magic-lambda';
@@ -16,6 +16,14 @@ const peerDeps = [
 ];
 
 const cdkCli = 'aws-cdk@^2';
+
+const releasableCommitsCmd = [
+  ReleasableCommits.featuresAndFixes().cmd,
+
+  // dev dependencies affect our bundles
+  "'chore\\(deps\\): upgrade dev dependencies'",
+];
+
 
 const project = new CdklabsConstructLibrary({
   cdkVersion,
@@ -109,6 +117,7 @@ const project = new CdklabsConstructLibrary({
   enablePRAutoMerge: true,
 
   releaseToNpm: true,
+  releasableCommits: ReleasableCommits.exec(releasableCommitsCmd.join(' --grep ')),
   cdklabsPublishingDefaults: false,
 
   publishToGo: undefined,
