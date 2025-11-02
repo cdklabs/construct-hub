@@ -24,7 +24,6 @@ const releasableCommitsCmd = [
   "'chore\\(deps\\): upgrade dev dependencies'",
 ];
 
-
 const project = new CdklabsConstructLibrary({
   cdkVersion,
   setNodeEngineVersion: false,
@@ -117,7 +116,9 @@ const project = new CdklabsConstructLibrary({
   enablePRAutoMerge: true,
 
   releaseToNpm: true,
-  releasableCommits: ReleasableCommits.exec(releasableCommitsCmd.join(' --grep ')),
+  releasableCommits: ReleasableCommits.exec(
+    releasableCommitsCmd.join(' --grep ')
+  ),
   cdklabsPublishingDefaults: false,
 
   publishToGo: undefined,
