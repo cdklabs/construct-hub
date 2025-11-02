@@ -120,6 +120,8 @@ const project = new CdklabsConstructLibrary({
     releasableCommitsCmd.join(' --grep ')
   ),
   cdklabsPublishingDefaults: false,
+  npmTrustedPublishing: true,
+  releaseEnvironment: 'release',
 
   publishToGo: undefined,
   // publishToGo: {
