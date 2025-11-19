@@ -84,7 +84,13 @@
           "spawn": "bundle:generate-release-notes"
         },
         {
-          "spawn": "bundle:package-stats"
+          "spawn": "bundle:package-stats-processor"
+        },
+        {
+          "spawn": "bundle:package-stats-chunker"
+        },
+        {
+          "spawn": "bundle:package-stats-aggregator"
         },
         {
           "spawn": "bundle:redrive-state-machine"
@@ -327,7 +333,7 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/re-stage-package-version.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22 --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/re-stage-package-version.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats-processor.lambda.ts src/backend/package-stats/package-stats-chunker.lambda.ts src/backend/package-stats/package-stats-aggregator.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22 --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
         }
       ]
     },
@@ -403,21 +409,57 @@
         }
       ]
     },
-    "bundle:package-stats": {
-      "name": "bundle:package-stats",
-      "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
+    "bundle:package-stats-aggregator": {
+      "name": "bundle:package-stats-aggregator",
+      "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats-aggregator.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-aggregator.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-aggregator.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
         }
       ]
     },
-    "bundle:package-stats:watch": {
-      "name": "bundle:package-stats:watch",
-      "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
+    "bundle:package-stats-aggregator:watch": {
+      "name": "bundle:package-stats-aggregator:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats-aggregator.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-aggregator.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-aggregator.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+        }
+      ]
+    },
+    "bundle:package-stats-chunker": {
+      "name": "bundle:package-stats-chunker",
+      "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats-chunker.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-chunker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-chunker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+        }
+      ]
+    },
+    "bundle:package-stats-chunker:watch": {
+      "name": "bundle:package-stats-chunker:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats-chunker.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-chunker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-chunker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+        }
+      ]
+    },
+    "bundle:package-stats-processor": {
+      "name": "bundle:package-stats-processor",
+      "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats-processor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-processor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-processor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+        }
+      ]
+    },
+    "bundle:package-stats-processor:watch": {
+      "name": "bundle:package-stats-processor:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats-processor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-processor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-processor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
         }
       ]
     },
@@ -758,7 +800,13 @@
           "spawn": "bundle:generate-release-notes"
         },
         {
-          "spawn": "bundle:package-stats"
+          "spawn": "bundle:package-stats-processor"
+        },
+        {
+          "spawn": "bundle:package-stats-chunker"
+        },
+        {
+          "spawn": "bundle:package-stats-aggregator"
         },
         {
           "spawn": "bundle:redrive-state-machine"

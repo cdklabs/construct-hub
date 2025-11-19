@@ -769,6 +769,51 @@ to determine what is happening and resolve the problem.
 Once the canary starts running normally again, the alarm will clear itself
 without requiring any further intervention.
 
+### `ConstructHub/PackageStats/Failures`
+
+#### Description
+
+The package stats state machine has failed. This means the `stats.json` file
+containing NPM download statistics was not updated successfully. The stats are
+used to display download counts on package pages.
+
+#### Investigation
+
+The package stats feature uses a Step Functions state machine that orchestrates
+three Lambda functions:
+
+1. **Chunker** - Splits the package list into chunks for parallel processing
+2. **Processor** - Fetches NPM download stats for each chunk of packages
+3. **Aggregator** - Combines all chunks into the final `stats.json` file
+
+In the backend dashboard under *Package Stats*, click the *Package Stats State
+Machine* button to access the Step Functions console. Review failed executions
+to identify which step failed:
+
+- If the **ChunkPackages** step failed, check the Chunker function logs
+- If the **ProcessChunksMap** step failed, check the Processor function logs
+- If the **AggregateResults** step failed, check the Aggregator function logs
+
+Common failure causes:
+- NPM API throttling or unavailability (affects Processor)
+- Large number of packages causing timeout (should be handled by chunking)
+- S3 access issues (affects all functions)
+- Temporary chunk files not cleaned up properly (affects Aggregator)
+
+For additional recommendations for diving into CloudWatch Logs, refer to the
+[Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
+
+#### Resolution
+
+The alarm will automatically go back to green once the next scheduled execution
+of the state machine succeeds. The state machine runs daily by default.
+
+If the failure was transient, no action is needed. If the issue persists,
+manually trigger a new execution of the state machine from the Step Functions
+console after addressing the root cause.
+
+--------------------------------------------------------------------------------
+
 ## :information_source: General Recommendations
 
 ### Diving into Lambda Function logs in CloudWatch Logs
