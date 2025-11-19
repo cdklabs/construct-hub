@@ -1085,7 +1085,19 @@
       },
       "steps": [
         {
-          "exec": "echo No dependencies to upgrade."
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=prod --filter=construct-hub-webapp"
+        },
+        {
+          "exec": "yarn install --check-files"
+        },
+        {
+          "exec": "yarn upgrade construct-hub-webapp"
+        },
+        {
+          "exec": "npx projen"
+        },
+        {
+          "spawn": "post-upgrade"
         }
       ]
     },
