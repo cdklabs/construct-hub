@@ -1,6 +1,6 @@
 import { join, relative } from 'path';
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
-import { github, ReleasableCommits } from 'projen';
+import { javascript, ReleasableCommits } from 'projen';
 import { addDevApp } from './projenrc/dev-app';
 import { discoverEcsTasks } from './projenrc/magic-ecs';
 import { discoverLambdas } from './projenrc/magic-lambda';
@@ -159,16 +159,6 @@ const project = new CdklabsConstructLibrary({
   },
   autoApproveUpgrades: true,
 
-  depsUpgradeOptions: {
-    exclude: [...peerDeps, cdkCli],
-    workflowOptions: {
-      labels: ['auto-approve'],
-      projenCredentials: github.GithubCredentials.fromPersonalAccessToken({
-        secret: 'PROJEN_GITHUB_TOKEN',
-      }),
-    },
-  },
-
   jestOptions: {
     jestConfig: {
       // Ensure we don't try to parallelize too much, this causes timeouts.
@@ -283,5 +273,15 @@ buildWorkflow?.addOverride(
   'jobs.build.steps.3.env.NODE_OPTIONS',
   '--max-old-space-size=8192' // 8GB
 );
+
+// We are forcing construct-hub-webapp to be considered a prod dependency,
+// so that an update will cause a new release of construct hub
+const upgrades = project.components.find(
+  (c) =>
+    c instanceof javascript.UpgradeDependencies &&
+    c.upgradeTask.name === 'upgrade'
+);
+// @ts-ignore
+upgrades.options.include = ['construct-hub-webapp'];
 
 project.synth();
