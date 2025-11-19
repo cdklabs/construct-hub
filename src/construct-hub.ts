@@ -9,6 +9,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { IStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
 import { createRestrictedSecurityGroups } from './_limited-internet-access';
 import { AlarmActions, AlarmSeverities, Domain } from './api';
@@ -41,7 +42,6 @@ import {
   FeatureFlags,
   Category,
 } from './webapp';
-import { IStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 
 /**
  * Configuration for generating RSS and ATOM feed for the latest packages
@@ -342,6 +342,8 @@ export class ConstructHub extends Construct implements iam.IGrantable {
         },
         // Permanently delete non-current versions of catalog.json earlier
         { noncurrentVersionExpiration: Duration.days(7), prefix: CATALOG_KEY },
+        // Delete stats chunk files after 1 day
+        { expiration: Duration.days(1), prefix: 'stats-chunks/' },
       ],
       versioned: true,
     });
@@ -355,13 +357,13 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     // Create an internal CodeArtifact repository if we run in network-controlled mode, or if a domain is provided.
     const codeArtifact =
       isolation === Isolation.NO_INTERNET_ACCESS ||
-        props.codeArtifactDomain != null
+      props.codeArtifactDomain != null
         ? new Repository(this, 'CodeArtifact', {
-          description: 'Proxy to npmjs.com for ConstructHub',
-          domainName: props.codeArtifactDomain?.name,
-          domainExists: props.codeArtifactDomain != null,
-          upstreams: props.codeArtifactDomain?.upstreams,
-        })
+            description: 'Proxy to npmjs.com for ConstructHub',
+            domainName: props.codeArtifactDomain?.name,
+            domainExists: props.codeArtifactDomain != null,
+            upstreams: props.codeArtifactDomain?.upstreams,
+          })
         : undefined;
     const { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups } = this.createVpc(
       isolation,
@@ -491,18 +493,21 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     feedBuilder.setConstructHubUrl(webApp.baseUrl);
 
     const sources = new Construct(this, 'Sources');
-    const packageSources = (props.packageSources ?? [new NpmJs({ alarmSeverities: props.alarmSeverities })]).map(
-      (source) =>
-        source.bind(sources, {
-          baseUrl: webApp.baseUrl,
-          denyList,
-          ingestion: this.ingestion,
-          licenseList,
-          monitoring: this.monitoring,
-          queue: this.ingestion.queue,
-          repository: codeArtifact,
-          overviewDashboard: overviewDashboard,
-        })
+    const packageSources = (
+      props.packageSources ?? [
+        new NpmJs({ alarmSeverities: props.alarmSeverities }),
+      ]
+    ).map((source) =>
+      source.bind(sources, {
+        baseUrl: webApp.baseUrl,
+        denyList,
+        ingestion: this.ingestion,
+        licenseList,
+        monitoring: this.monitoring,
+        queue: this.ingestion.queue,
+        repository: codeArtifact,
+        overviewDashboard: overviewDashboard,
+      })
     );
 
     const inventory = new Inventory(this, 'InventoryCanary', {
@@ -589,7 +594,11 @@ export class ConstructHub extends Construct implements iam.IGrantable {
    * Returns a list of all alarms configured by this ConstructHub instance.
    */
   public get allAlarms(): cw.IAlarm[] {
-    return [...this.highSeverityAlarms, ...this.lowSeverityAlarms, ...this.mediumSeverityAlarms];
+    return [
+      ...this.highSeverityAlarms,
+      ...this.lowSeverityAlarms,
+      ...this.mediumSeverityAlarms,
+    ];
   }
 
   public get grantPrincipal(): iam.IPrincipal {

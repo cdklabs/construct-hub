@@ -1045,15 +1045,23 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "?prefix=stats.json)\\n[button:Package Stats Function](/lambda/home#/functions/",
+              "?prefix=stats.json)\\n[button:Package Stats State Machine](/states/home#/statemachines/view/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              ")\\n[button:Package Stats Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              ")\\n[button:Chunker Function](/lambda/home#/functions/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              ")\\n[button:Processor Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+              ")\\n[button:Aggregator Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
+              },
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1061,11 +1069,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Lambda","Duration","FunctionName","",
+              "","metrics":[["AWS/States","ExecutionTime","StateMachineArn","",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"6 hours (State Machine timeout)","value":21600,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -1993,6 +2001,11 @@ def sort_filter_rules(json_obj):
                 "NoncurrentDays": 7,
               },
               "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
               "Status": "Enabled",
             },
           ],
@@ -9469,6 +9482,11 @@ Request a service quota increase for lambda functions",
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -9559,34 +9577,22 @@ Request a service quota increase for lambda functions",
     },
     "ConstructHubPackageStatsFailures833C3D9B": {
       "Properties": {
-        "AlarmDescription": {
-          "Fn::Join": [
-            "",
-            [
-              "The package stats function failed!
+        "AlarmDescription": "The package stats state machine failed!
 
-RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
-
-Direct link to Lambda function: /lambda/home#/functions/",
-              {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-            ],
-          ],
-        },
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
         "AlarmName": "Test/ConstructHub/PackageStats/Failures",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [
           {
-            "Name": "FunctionName",
+            "Name": "StateMachineArn",
             "Value": {
-              "Ref": "ConstructHubStats61DB07B1",
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
             },
           },
         ],
         "EvaluationPeriods": 1,
-        "MetricName": "Errors",
-        "Namespace": "AWS/Lambda",
+        "MetricName": "ExecutionsFailed",
+        "Namespace": "AWS/States",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
@@ -10977,10 +10983,10 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubStats61DB07B1": {
+    "ConstructHubStatsAggregator3345DB4E": {
       "DependsOn": [
-        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
-        "ConstructHubStatsServiceRole48DCA379",
+        "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
+        "ConstructHubStatsAggregatorServiceRole75EC3ABA",
       ],
       "Properties": {
         "Architectures": [
@@ -10990,25 +10996,16 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0763bfc93fa570bf32b261e81c4a80f851ccb7f0653d843f5e40b973f77972af.zip",
+          "S3Key": "8273ca3b6480a7988d25cde8f84afc832870d85301f8fcf1357f1c583f5b0841.zip",
         },
-        "Description": {
-          "Fn::Join": [
-            "",
-            [
-              "Creates the stats.json object in ",
-              {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
+        "Description": "Aggregates processed chunks into final stats.json",
         "Environment": {
           "Variables": {
             "CATALOG_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
             "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
             "STATS_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
@@ -11016,23 +11013,21 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
         },
         "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
         "Role": {
           "Fn::GetAtt": [
-            "ConstructHubStatsServiceRole48DCA379",
+            "ConstructHubStatsAggregatorServiceRole75EC3ABA",
             "Arn",
           ],
         },
         "Runtime": "nodejs22.x",
-        "Timeout": 900,
+        "Timeout": 300,
         "TracingConfig": {
           "Mode": "PassThrough",
         },
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructHubStatsLogRetentionDD577705": {
+    "ConstructHubStatsAggregatorLogRetentionCD6EEA8D": {
       "Properties": {
         "LogGroupName": {
           "Fn::Join": [
@@ -11040,7 +11035,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             [
               "/aws/lambda/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
               },
             ],
           ],
@@ -11055,44 +11050,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "Custom::LogRetention",
     },
-    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": {
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "ConstructHubStats61DB07B1",
-            "Arn",
-          ],
-        },
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "ConstructHubStatsRuleEEDEC976",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "ConstructHubStatsRuleEEDEC976": {
-      "Properties": {
-        "ScheduleExpression": "rate(1 day)",
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {
-              "Fn::GetAtt": [
-                "ConstructHubStats61DB07B1",
-                "Arn",
-              ],
-            },
-            "Id": "Target0",
-          },
-        ],
-      },
-      "Type": "AWS::Events::Rule",
-    },
-    "ConstructHubStatsServiceRole48DCA379": {
+    "ConstructHubStatsAggregatorServiceRole75EC3ABA": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -11123,7 +11081,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": {
+    "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -11175,10 +11133,559 @@ Direct link to Lambda function: /lambda/home#/functions/",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "PolicyName": "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
         "Roles": [
           {
-            "Ref": "ConstructHubStatsServiceRole48DCA379",
+            "Ref": "ConstructHubStatsAggregatorServiceRole75EC3ABA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunker1B4C3FA3": {
+      "DependsOn": [
+        "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "ConstructHubStatsChunkerServiceRoleE7318ADC",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "20225fdc8c6fef2800b93233881ef6bea980d6df67750f93414c75fb2e5c837b.zip",
+        },
+        "Description": "Splits package list into chunks for parallel processing",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsChunkerServiceRoleE7318ADC",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsChunkerLogRetentionBD7C5CB0": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsChunkerServiceRoleE7318ADC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunkerServiceRoleE7318ADC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessor20ABE801": {
+      "DependsOn": [
+        "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "ConstructHubStatsProcessorServiceRole42497A5D",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "a4808a1a210e8933602c1be3d7edd06b7c2fcf9dd9dcda47ad8b856580a267c8.zip",
+        },
+        "Description": "Processes a chunk of packages to get NPM stats",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsProcessorServiceRole42497A5D",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 600,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsProcessorLogRetentionD5DEB00E": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsProcessorServiceRole42497A5D": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsProcessorServiceRole42497A5D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsRuleEEDEC976": {
+      "Properties": {
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "ConstructHubStatsStateMachineEventsRole3841F59E",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsStateMachine1A1DEC97": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "ConstructHubStatsStateMachineRole600234EC",
+      ],
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{"StartAt":"ChunkPackages","States":{"ChunkPackages":{"Next":"ProcessChunksMap","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","ResultPath":"$.chunks","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsChunker1B4C3FA3",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunksMap":{"Type":"Map","ResultPath":"$.processResults","Next":"AggregateResults","ItemsPath":"$.chunks.Payload.chunks","ItemProcessor":{"ProcessorConfig":{"Mode":"INLINE"},"StartAt":"ProcessChunk","States":{"ProcessChunk":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":300,"MaxAttempts":1,"BackoffRate":1}],"Catch":[{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"ProcessChunkError"}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsProcessor20ABE801",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunkError":{"Type":"Pass","Result":{"error":"Failed to process chunk"},"End":true}}},"MaxConcurrency":10},"AggregateResults":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsAggregator3345DB4E",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}}},"TimeoutSeconds":21600}",
+            ],
+          ],
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsStateMachineRole600234EC",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubStatsStateMachineEventsRole3841F59E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineEventsRole3841F59E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsStateMachineRole600234EC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "states.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsChunker1B4C3FA3",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsChunker1B4C3FA3",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsAggregator3345DB4E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsAggregator3345DB4E",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsProcessor20ABE801",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsProcessor20ABE801",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineRole600234EC",
           },
         ],
       },
@@ -14262,15 +14769,23 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "?prefix=stats.json)\\n[button:Package Stats Function](/lambda/home#/functions/",
+              "?prefix=stats.json)\\n[button:Package Stats State Machine](/states/home#/statemachines/view/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              ")\\n[button:Package Stats Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              ")\\n[button:Chunker Function](/lambda/home#/functions/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              ")\\n[button:Processor Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+              ")\\n[button:Aggregator Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
+              },
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -14278,11 +14793,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Lambda","Duration","FunctionName","",
+              "","metrics":[["AWS/States","ExecutionTime","StateMachineArn","",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"6 hours (State Machine timeout)","value":21600,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -15413,6 +15928,11 @@ def sort_filter_rules(json_obj):
                 "NoncurrentDays": 7,
               },
               "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
               "Status": "Enabled",
             },
           ],
@@ -23060,6 +23580,11 @@ Request a service quota increase for lambda functions",
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -23150,34 +23675,22 @@ Request a service quota increase for lambda functions",
     },
     "ConstructHubPackageStatsFailures833C3D9B": {
       "Properties": {
-        "AlarmDescription": {
-          "Fn::Join": [
-            "",
-            [
-              "The package stats function failed!
+        "AlarmDescription": "The package stats state machine failed!
 
-RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
-
-Direct link to Lambda function: /lambda/home#/functions/",
-              {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-            ],
-          ],
-        },
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
         "AlarmName": "Test/ConstructHub/PackageStats/Failures",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [
           {
-            "Name": "FunctionName",
+            "Name": "StateMachineArn",
             "Value": {
-              "Ref": "ConstructHubStats61DB07B1",
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
             },
           },
         ],
         "EvaluationPeriods": 1,
-        "MetricName": "Errors",
-        "Namespace": "AWS/Lambda",
+        "MetricName": "ExecutionsFailed",
+        "Namespace": "AWS/States",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
@@ -24568,10 +25081,10 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubStats61DB07B1": {
+    "ConstructHubStatsAggregator3345DB4E": {
       "DependsOn": [
-        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
-        "ConstructHubStatsServiceRole48DCA379",
+        "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
+        "ConstructHubStatsAggregatorServiceRole75EC3ABA",
       ],
       "Properties": {
         "Architectures": [
@@ -24581,25 +25094,16 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0763bfc93fa570bf32b261e81c4a80f851ccb7f0653d843f5e40b973f77972af.zip",
+          "S3Key": "8273ca3b6480a7988d25cde8f84afc832870d85301f8fcf1357f1c583f5b0841.zip",
         },
-        "Description": {
-          "Fn::Join": [
-            "",
-            [
-              "Creates the stats.json object in ",
-              {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
+        "Description": "Aggregates processed chunks into final stats.json",
         "Environment": {
           "Variables": {
             "CATALOG_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
             "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
             "STATS_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
@@ -24607,23 +25111,21 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
         },
         "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
         "Role": {
           "Fn::GetAtt": [
-            "ConstructHubStatsServiceRole48DCA379",
+            "ConstructHubStatsAggregatorServiceRole75EC3ABA",
             "Arn",
           ],
         },
         "Runtime": "nodejs22.x",
-        "Timeout": 900,
+        "Timeout": 300,
         "TracingConfig": {
           "Mode": "PassThrough",
         },
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructHubStatsLogRetentionDD577705": {
+    "ConstructHubStatsAggregatorLogRetentionCD6EEA8D": {
       "Properties": {
         "LogGroupName": {
           "Fn::Join": [
@@ -24631,7 +25133,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             [
               "/aws/lambda/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
               },
             ],
           ],
@@ -24646,44 +25148,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "Custom::LogRetention",
     },
-    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": {
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "ConstructHubStats61DB07B1",
-            "Arn",
-          ],
-        },
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "ConstructHubStatsRuleEEDEC976",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "ConstructHubStatsRuleEEDEC976": {
-      "Properties": {
-        "ScheduleExpression": "rate(1 day)",
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {
-              "Fn::GetAtt": [
-                "ConstructHubStats61DB07B1",
-                "Arn",
-              ],
-            },
-            "Id": "Target0",
-          },
-        ],
-      },
-      "Type": "AWS::Events::Rule",
-    },
-    "ConstructHubStatsServiceRole48DCA379": {
+    "ConstructHubStatsAggregatorServiceRole75EC3ABA": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -24714,7 +25179,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": {
+    "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -24766,10 +25231,559 @@ Direct link to Lambda function: /lambda/home#/functions/",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "PolicyName": "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
         "Roles": [
           {
-            "Ref": "ConstructHubStatsServiceRole48DCA379",
+            "Ref": "ConstructHubStatsAggregatorServiceRole75EC3ABA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunker1B4C3FA3": {
+      "DependsOn": [
+        "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "ConstructHubStatsChunkerServiceRoleE7318ADC",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "20225fdc8c6fef2800b93233881ef6bea980d6df67750f93414c75fb2e5c837b.zip",
+        },
+        "Description": "Splits package list into chunks for parallel processing",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsChunkerServiceRoleE7318ADC",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsChunkerLogRetentionBD7C5CB0": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsChunkerServiceRoleE7318ADC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunkerServiceRoleE7318ADC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessor20ABE801": {
+      "DependsOn": [
+        "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "ConstructHubStatsProcessorServiceRole42497A5D",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "a4808a1a210e8933602c1be3d7edd06b7c2fcf9dd9dcda47ad8b856580a267c8.zip",
+        },
+        "Description": "Processes a chunk of packages to get NPM stats",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsProcessorServiceRole42497A5D",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 600,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsProcessorLogRetentionD5DEB00E": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsProcessorServiceRole42497A5D": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsProcessorServiceRole42497A5D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsRuleEEDEC976": {
+      "Properties": {
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "ConstructHubStatsStateMachineEventsRole3841F59E",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsStateMachine1A1DEC97": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "ConstructHubStatsStateMachineRole600234EC",
+      ],
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{"StartAt":"ChunkPackages","States":{"ChunkPackages":{"Next":"ProcessChunksMap","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","ResultPath":"$.chunks","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsChunker1B4C3FA3",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunksMap":{"Type":"Map","ResultPath":"$.processResults","Next":"AggregateResults","ItemsPath":"$.chunks.Payload.chunks","ItemProcessor":{"ProcessorConfig":{"Mode":"INLINE"},"StartAt":"ProcessChunk","States":{"ProcessChunk":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":300,"MaxAttempts":1,"BackoffRate":1}],"Catch":[{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"ProcessChunkError"}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsProcessor20ABE801",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunkError":{"Type":"Pass","Result":{"error":"Failed to process chunk"},"End":true}}},"MaxConcurrency":10},"AggregateResults":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsAggregator3345DB4E",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}}},"TimeoutSeconds":21600}",
+            ],
+          ],
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsStateMachineRole600234EC",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubStatsStateMachineEventsRole3841F59E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineEventsRole3841F59E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsStateMachineRole600234EC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "states.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsChunker1B4C3FA3",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsChunker1B4C3FA3",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsAggregator3345DB4E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsAggregator3345DB4E",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsProcessor20ABE801",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsProcessor20ABE801",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineRole600234EC",
           },
         ],
       },
@@ -27791,15 +28805,23 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "?prefix=stats.json)\\n[button:Package Stats Function](/lambda/home#/functions/",
+              "?prefix=stats.json)\\n[button:Package Stats State Machine](/states/home#/statemachines/view/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              ")\\n[button:Package Stats Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              ")\\n[button:Chunker Function](/lambda/home#/functions/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              ")\\n[button:Processor Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+              ")\\n[button:Aggregator Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
+              },
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -27807,11 +28829,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Lambda","Duration","FunctionName","",
+              "","metrics":[["AWS/States","ExecutionTime","StateMachineArn","",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"6 hours (State Machine timeout)","value":21600,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -28739,6 +29761,11 @@ def sort_filter_rules(json_obj):
                 "NoncurrentDays": 7,
               },
               "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
               "Status": "Enabled",
             },
           ],
@@ -36215,6 +37242,11 @@ Request a service quota increase for lambda functions",
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -36305,34 +37337,22 @@ Request a service quota increase for lambda functions",
     },
     "ConstructHubPackageStatsFailures833C3D9B": {
       "Properties": {
-        "AlarmDescription": {
-          "Fn::Join": [
-            "",
-            [
-              "The package stats function failed!
+        "AlarmDescription": "The package stats state machine failed!
 
-RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
-
-Direct link to Lambda function: /lambda/home#/functions/",
-              {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-            ],
-          ],
-        },
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
         "AlarmName": "Test/ConstructHub/PackageStats/Failures",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [
           {
-            "Name": "FunctionName",
+            "Name": "StateMachineArn",
             "Value": {
-              "Ref": "ConstructHubStats61DB07B1",
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
             },
           },
         ],
         "EvaluationPeriods": 1,
-        "MetricName": "Errors",
-        "Namespace": "AWS/Lambda",
+        "MetricName": "ExecutionsFailed",
+        "Namespace": "AWS/States",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
@@ -37723,10 +38743,10 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubStats61DB07B1": {
+    "ConstructHubStatsAggregator3345DB4E": {
       "DependsOn": [
-        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
-        "ConstructHubStatsServiceRole48DCA379",
+        "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
+        "ConstructHubStatsAggregatorServiceRole75EC3ABA",
       ],
       "Properties": {
         "Architectures": [
@@ -37736,25 +38756,16 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0763bfc93fa570bf32b261e81c4a80f851ccb7f0653d843f5e40b973f77972af.zip",
+          "S3Key": "8273ca3b6480a7988d25cde8f84afc832870d85301f8fcf1357f1c583f5b0841.zip",
         },
-        "Description": {
-          "Fn::Join": [
-            "",
-            [
-              "Creates the stats.json object in ",
-              {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
+        "Description": "Aggregates processed chunks into final stats.json",
         "Environment": {
           "Variables": {
             "CATALOG_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
             "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
             "STATS_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
@@ -37762,23 +38773,21 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
         },
         "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
         "Role": {
           "Fn::GetAtt": [
-            "ConstructHubStatsServiceRole48DCA379",
+            "ConstructHubStatsAggregatorServiceRole75EC3ABA",
             "Arn",
           ],
         },
         "Runtime": "nodejs22.x",
-        "Timeout": 900,
+        "Timeout": 300,
         "TracingConfig": {
           "Mode": "PassThrough",
         },
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructHubStatsLogRetentionDD577705": {
+    "ConstructHubStatsAggregatorLogRetentionCD6EEA8D": {
       "Properties": {
         "LogGroupName": {
           "Fn::Join": [
@@ -37786,7 +38795,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             [
               "/aws/lambda/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
               },
             ],
           ],
@@ -37801,44 +38810,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "Custom::LogRetention",
     },
-    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": {
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "ConstructHubStats61DB07B1",
-            "Arn",
-          ],
-        },
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "ConstructHubStatsRuleEEDEC976",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "ConstructHubStatsRuleEEDEC976": {
-      "Properties": {
-        "ScheduleExpression": "rate(1 day)",
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {
-              "Fn::GetAtt": [
-                "ConstructHubStats61DB07B1",
-                "Arn",
-              ],
-            },
-            "Id": "Target0",
-          },
-        ],
-      },
-      "Type": "AWS::Events::Rule",
-    },
-    "ConstructHubStatsServiceRole48DCA379": {
+    "ConstructHubStatsAggregatorServiceRole75EC3ABA": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -37869,7 +38841,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": {
+    "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -37921,10 +38893,559 @@ Direct link to Lambda function: /lambda/home#/functions/",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "PolicyName": "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
         "Roles": [
           {
-            "Ref": "ConstructHubStatsServiceRole48DCA379",
+            "Ref": "ConstructHubStatsAggregatorServiceRole75EC3ABA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunker1B4C3FA3": {
+      "DependsOn": [
+        "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "ConstructHubStatsChunkerServiceRoleE7318ADC",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "20225fdc8c6fef2800b93233881ef6bea980d6df67750f93414c75fb2e5c837b.zip",
+        },
+        "Description": "Splits package list into chunks for parallel processing",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsChunkerServiceRoleE7318ADC",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsChunkerLogRetentionBD7C5CB0": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsChunkerServiceRoleE7318ADC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunkerServiceRoleE7318ADC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessor20ABE801": {
+      "DependsOn": [
+        "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "ConstructHubStatsProcessorServiceRole42497A5D",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "a4808a1a210e8933602c1be3d7edd06b7c2fcf9dd9dcda47ad8b856580a267c8.zip",
+        },
+        "Description": "Processes a chunk of packages to get NPM stats",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsProcessorServiceRole42497A5D",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 600,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsProcessorLogRetentionD5DEB00E": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsProcessorServiceRole42497A5D": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsProcessorServiceRole42497A5D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsRuleEEDEC976": {
+      "Properties": {
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "ConstructHubStatsStateMachineEventsRole3841F59E",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsStateMachine1A1DEC97": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "ConstructHubStatsStateMachineRole600234EC",
+      ],
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{"StartAt":"ChunkPackages","States":{"ChunkPackages":{"Next":"ProcessChunksMap","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","ResultPath":"$.chunks","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsChunker1B4C3FA3",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunksMap":{"Type":"Map","ResultPath":"$.processResults","Next":"AggregateResults","ItemsPath":"$.chunks.Payload.chunks","ItemProcessor":{"ProcessorConfig":{"Mode":"INLINE"},"StartAt":"ProcessChunk","States":{"ProcessChunk":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":300,"MaxAttempts":1,"BackoffRate":1}],"Catch":[{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"ProcessChunkError"}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsProcessor20ABE801",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunkError":{"Type":"Pass","Result":{"error":"Failed to process chunk"},"End":true}}},"MaxConcurrency":10},"AggregateResults":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsAggregator3345DB4E",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}}},"TimeoutSeconds":21600}",
+            ],
+          ],
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsStateMachineRole600234EC",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubStatsStateMachineEventsRole3841F59E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineEventsRole3841F59E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsStateMachineRole600234EC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "states.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsChunker1B4C3FA3",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsChunker1B4C3FA3",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsAggregator3345DB4E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsAggregator3345DB4E",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsProcessor20ABE801",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsProcessor20ABE801",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineRole600234EC",
           },
         ],
       },
@@ -41094,15 +42615,23 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "?prefix=stats.json)\\n[button:Package Stats Function](/lambda/home#/functions/",
+              "?prefix=stats.json)\\n[button:Package Stats State Machine](/states/home#/statemachines/view/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              ")\\n[button:Package Stats Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              ")\\n[button:Chunker Function](/lambda/home#/functions/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              ")\\n[button:Processor Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+              ")\\n[button:Aggregator Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
+              },
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -41110,11 +42639,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Lambda","Duration","FunctionName","",
+              "","metrics":[["AWS/States","ExecutionTime","StateMachineArn","",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"6 hours (State Machine timeout)","value":21600,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -42042,6 +43571,11 @@ def sort_filter_rules(json_obj):
                 "NoncurrentDays": 7,
               },
               "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
               "Status": "Enabled",
             },
           ],
@@ -49527,6 +51061,11 @@ Request a service quota increase for lambda functions",
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -49617,34 +51156,22 @@ Request a service quota increase for lambda functions",
     },
     "ConstructHubPackageStatsFailures833C3D9B": {
       "Properties": {
-        "AlarmDescription": {
-          "Fn::Join": [
-            "",
-            [
-              "The package stats function failed!
+        "AlarmDescription": "The package stats state machine failed!
 
-RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
-
-Direct link to Lambda function: /lambda/home#/functions/",
-              {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-            ],
-          ],
-        },
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
         "AlarmName": "Test/ConstructHub/PackageStats/Failures",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [
           {
-            "Name": "FunctionName",
+            "Name": "StateMachineArn",
             "Value": {
-              "Ref": "ConstructHubStats61DB07B1",
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
             },
           },
         ],
         "EvaluationPeriods": 1,
-        "MetricName": "Errors",
-        "Namespace": "AWS/Lambda",
+        "MetricName": "ExecutionsFailed",
+        "Namespace": "AWS/States",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
@@ -51022,10 +52549,10 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubStats61DB07B1": {
+    "ConstructHubStatsAggregator3345DB4E": {
       "DependsOn": [
-        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
-        "ConstructHubStatsServiceRole48DCA379",
+        "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
+        "ConstructHubStatsAggregatorServiceRole75EC3ABA",
       ],
       "Properties": {
         "Architectures": [
@@ -51035,25 +52562,16 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0763bfc93fa570bf32b261e81c4a80f851ccb7f0653d843f5e40b973f77972af.zip",
+          "S3Key": "8273ca3b6480a7988d25cde8f84afc832870d85301f8fcf1357f1c583f5b0841.zip",
         },
-        "Description": {
-          "Fn::Join": [
-            "",
-            [
-              "Creates the stats.json object in ",
-              {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
+        "Description": "Aggregates processed chunks into final stats.json",
         "Environment": {
           "Variables": {
             "CATALOG_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
             "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
             "STATS_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
@@ -51061,23 +52579,21 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
         },
         "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
         "Role": {
           "Fn::GetAtt": [
-            "ConstructHubStatsServiceRole48DCA379",
+            "ConstructHubStatsAggregatorServiceRole75EC3ABA",
             "Arn",
           ],
         },
         "Runtime": "nodejs22.x",
-        "Timeout": 900,
+        "Timeout": 300,
         "TracingConfig": {
           "Mode": "PassThrough",
         },
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructHubStatsLogRetentionDD577705": {
+    "ConstructHubStatsAggregatorLogRetentionCD6EEA8D": {
       "Properties": {
         "LogGroupName": {
           "Fn::Join": [
@@ -51085,7 +52601,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             [
               "/aws/lambda/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
               },
             ],
           ],
@@ -51100,44 +52616,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "Custom::LogRetention",
     },
-    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": {
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "ConstructHubStats61DB07B1",
-            "Arn",
-          ],
-        },
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "ConstructHubStatsRuleEEDEC976",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "ConstructHubStatsRuleEEDEC976": {
-      "Properties": {
-        "ScheduleExpression": "rate(1 day)",
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {
-              "Fn::GetAtt": [
-                "ConstructHubStats61DB07B1",
-                "Arn",
-              ],
-            },
-            "Id": "Target0",
-          },
-        ],
-      },
-      "Type": "AWS::Events::Rule",
-    },
-    "ConstructHubStatsServiceRole48DCA379": {
+    "ConstructHubStatsAggregatorServiceRole75EC3ABA": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -51168,7 +52647,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": {
+    "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -51220,10 +52699,559 @@ Direct link to Lambda function: /lambda/home#/functions/",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "PolicyName": "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
         "Roles": [
           {
-            "Ref": "ConstructHubStatsServiceRole48DCA379",
+            "Ref": "ConstructHubStatsAggregatorServiceRole75EC3ABA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunker1B4C3FA3": {
+      "DependsOn": [
+        "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "ConstructHubStatsChunkerServiceRoleE7318ADC",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "20225fdc8c6fef2800b93233881ef6bea980d6df67750f93414c75fb2e5c837b.zip",
+        },
+        "Description": "Splits package list into chunks for parallel processing",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsChunkerServiceRoleE7318ADC",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsChunkerLogRetentionBD7C5CB0": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsChunkerServiceRoleE7318ADC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunkerServiceRoleE7318ADC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessor20ABE801": {
+      "DependsOn": [
+        "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "ConstructHubStatsProcessorServiceRole42497A5D",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "a4808a1a210e8933602c1be3d7edd06b7c2fcf9dd9dcda47ad8b856580a267c8.zip",
+        },
+        "Description": "Processes a chunk of packages to get NPM stats",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsProcessorServiceRole42497A5D",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 600,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsProcessorLogRetentionD5DEB00E": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsProcessorServiceRole42497A5D": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsProcessorServiceRole42497A5D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsRuleEEDEC976": {
+      "Properties": {
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "ConstructHubStatsStateMachineEventsRole3841F59E",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsStateMachine1A1DEC97": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "ConstructHubStatsStateMachineRole600234EC",
+      ],
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{"StartAt":"ChunkPackages","States":{"ChunkPackages":{"Next":"ProcessChunksMap","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","ResultPath":"$.chunks","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsChunker1B4C3FA3",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunksMap":{"Type":"Map","ResultPath":"$.processResults","Next":"AggregateResults","ItemsPath":"$.chunks.Payload.chunks","ItemProcessor":{"ProcessorConfig":{"Mode":"INLINE"},"StartAt":"ProcessChunk","States":{"ProcessChunk":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":300,"MaxAttempts":1,"BackoffRate":1}],"Catch":[{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"ProcessChunkError"}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsProcessor20ABE801",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunkError":{"Type":"Pass","Result":{"error":"Failed to process chunk"},"End":true}}},"MaxConcurrency":10},"AggregateResults":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsAggregator3345DB4E",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}}},"TimeoutSeconds":21600}",
+            ],
+          ],
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsStateMachineRole600234EC",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubStatsStateMachineEventsRole3841F59E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineEventsRole3841F59E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsStateMachineRole600234EC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "states.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsChunker1B4C3FA3",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsChunker1B4C3FA3",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsAggregator3345DB4E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsAggregator3345DB4E",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsProcessor20ABE801",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsProcessor20ABE801",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineRole600234EC",
           },
         ],
       },
@@ -54580,15 +56608,23 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "?prefix=stats.json)\\n[button:Package Stats Function](/lambda/home#/functions/",
+              "?prefix=stats.json)\\n[button:Package Stats State Machine](/states/home#/statemachines/view/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              ")\\n[button:Package Stats Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              ")\\n[button:Chunker Function](/lambda/home#/functions/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              ")\\n[button:Processor Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+              ")\\n[button:Aggregator Function](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
+              },
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -54596,11 +56632,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Lambda","Duration","FunctionName","",
+              "","metrics":[["AWS/States","ExecutionTime","StateMachineArn","",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15 minutes (Lambda timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"6 hours (State Machine timeout)","value":21600,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -55528,6 +57564,11 @@ def sort_filter_rules(json_obj):
                 "NoncurrentDays": 7,
               },
               "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
               "Status": "Enabled",
             },
           ],
@@ -62758,6 +64799,11 @@ Request a service quota increase for lambda functions",
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
+            {
+              "ExpirationInDays": 1,
+              "Prefix": "stats-chunks/",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -62848,34 +64894,22 @@ Request a service quota increase for lambda functions",
     },
     "ConstructHubPackageStatsFailures833C3D9B": {
       "Properties": {
-        "AlarmDescription": {
-          "Fn::Join": [
-            "",
-            [
-              "The package stats function failed!
+        "AlarmDescription": "The package stats state machine failed!
 
-RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
-
-Direct link to Lambda function: /lambda/home#/functions/",
-              {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-            ],
-          ],
-        },
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
         "AlarmName": "Test/ConstructHub/PackageStats/Failures",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [
           {
-            "Name": "FunctionName",
+            "Name": "StateMachineArn",
             "Value": {
-              "Ref": "ConstructHubStats61DB07B1",
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
             },
           },
         ],
         "EvaluationPeriods": 1,
-        "MetricName": "Errors",
-        "Namespace": "AWS/Lambda",
+        "MetricName": "ExecutionsFailed",
+        "Namespace": "AWS/States",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
@@ -64328,10 +66362,10 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubStats61DB07B1": {
+    "ConstructHubStatsAggregator3345DB4E": {
       "DependsOn": [
-        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
-        "ConstructHubStatsServiceRole48DCA379",
+        "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
+        "ConstructHubStatsAggregatorServiceRole75EC3ABA",
       ],
       "Properties": {
         "Architectures": [
@@ -64341,25 +66375,16 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0763bfc93fa570bf32b261e81c4a80f851ccb7f0653d843f5e40b973f77972af.zip",
+          "S3Key": "8273ca3b6480a7988d25cde8f84afc832870d85301f8fcf1357f1c583f5b0841.zip",
         },
-        "Description": {
-          "Fn::Join": [
-            "",
-            [
-              "Creates the stats.json object in ",
-              {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
+        "Description": "Aggregates processed chunks into final stats.json",
         "Environment": {
           "Variables": {
             "CATALOG_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
             "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
             "STATS_BUCKET_NAME": {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
@@ -64367,23 +66392,21 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
         },
         "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
         "Role": {
           "Fn::GetAtt": [
-            "ConstructHubStatsServiceRole48DCA379",
+            "ConstructHubStatsAggregatorServiceRole75EC3ABA",
             "Arn",
           ],
         },
         "Runtime": "nodejs22.x",
-        "Timeout": 900,
+        "Timeout": 300,
         "TracingConfig": {
           "Mode": "PassThrough",
         },
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructHubStatsLogRetentionDD577705": {
+    "ConstructHubStatsAggregatorLogRetentionCD6EEA8D": {
       "Properties": {
         "LogGroupName": {
           "Fn::Join": [
@@ -64391,7 +66414,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             [
               "/aws/lambda/",
               {
-                "Ref": "ConstructHubStats61DB07B1",
+                "Ref": "ConstructHubStatsAggregator3345DB4E",
               },
             ],
           ],
@@ -64406,44 +66429,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "Custom::LogRetention",
     },
-    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": {
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "ConstructHubStats61DB07B1",
-            "Arn",
-          ],
-        },
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "ConstructHubStatsRuleEEDEC976",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "ConstructHubStatsRuleEEDEC976": {
-      "Properties": {
-        "ScheduleExpression": "rate(1 day)",
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {
-              "Fn::GetAtt": [
-                "ConstructHubStats61DB07B1",
-                "Arn",
-              ],
-            },
-            "Id": "Target0",
-          },
-        ],
-      },
-      "Type": "AWS::Events::Rule",
-    },
-    "ConstructHubStatsServiceRole48DCA379": {
+    "ConstructHubStatsAggregatorServiceRole75EC3ABA": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -64474,7 +66460,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": {
+    "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -64526,10 +66512,559 @@ Direct link to Lambda function: /lambda/home#/functions/",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "PolicyName": "ConstructHubStatsAggregatorServiceRoleDefaultPolicy64F3A3B3",
         "Roles": [
           {
-            "Ref": "ConstructHubStatsServiceRole48DCA379",
+            "Ref": "ConstructHubStatsAggregatorServiceRole75EC3ABA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunker1B4C3FA3": {
+      "DependsOn": [
+        "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "ConstructHubStatsChunkerServiceRoleE7318ADC",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "20225fdc8c6fef2800b93233881ef6bea980d6df67750f93414c75fb2e5c837b.zip",
+        },
+        "Description": "Splits package list into chunks for parallel processing",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsChunkerServiceRoleE7318ADC",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsChunkerLogRetentionBD7C5CB0": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsChunker1B4C3FA3",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsChunkerServiceRoleDefaultPolicyCE31A863",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsChunkerServiceRoleE7318ADC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsChunkerServiceRoleE7318ADC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessor20ABE801": {
+      "DependsOn": [
+        "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "ConstructHubStatsProcessorServiceRole42497A5D",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "a4808a1a210e8933602c1be3d7edd06b7c2fcf9dd9dcda47ad8b856580a267c8.zip",
+        },
+        "Description": "Processes a chunk of packages to get NPM stats",
+        "Environment": {
+          "Variables": {
+            "CATALOG_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CATALOG_OBJECT_KEY": "catalog.json",
+            "CHUNK_SIZE": "100",
+            "STATS_BUCKET_NAME": {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATS_OBJECT_KEY": "stats.json",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsProcessorServiceRole42497A5D",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 600,
+        "TracingConfig": {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsProcessorLogRetentionD5DEB00E": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubStatsProcessor20ABE801",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsProcessorServiceRole42497A5D": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsProcessorServiceRoleDefaultPolicyB3B69BE0",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsProcessorServiceRole42497A5D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsRuleEEDEC976": {
+      "Properties": {
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "ConstructHubStatsStateMachineEventsRole3841F59E",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsStateMachine1A1DEC97": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "ConstructHubStatsStateMachineRole600234EC",
+      ],
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{"StartAt":"ChunkPackages","States":{"ChunkPackages":{"Next":"ProcessChunksMap","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","ResultPath":"$.chunks","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsChunker1B4C3FA3",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunksMap":{"Type":"Map","ResultPath":"$.processResults","Next":"AggregateResults","ItemsPath":"$.chunks.Payload.chunks","ItemProcessor":{"ProcessorConfig":{"Mode":"INLINE"},"StartAt":"ProcessChunk","States":{"ProcessChunk":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":300,"MaxAttempts":1,"BackoffRate":1}],"Catch":[{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"ProcessChunkError"}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsProcessor20ABE801",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"ProcessChunkError":{"Type":"Pass","Result":{"error":"Failed to process chunk"},"End":true}}},"MaxConcurrency":10},"AggregateResults":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubStatsAggregator3345DB4E",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}}},"TimeoutSeconds":21600}",
+            ],
+          ],
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "ConstructHubStatsStateMachineRole600234EC",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubStatsStateMachineEventsRole3841F59E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ConstructHubStatsStateMachine1A1DEC97",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineEventsRoleDefaultPolicyAF9D4FB3",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineEventsRole3841F59E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubStatsStateMachineRole600234EC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "states.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsChunker1B4C3FA3",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsChunker1B4C3FA3",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsAggregator3345DB4E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsAggregator3345DB4E",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubStatsProcessor20ABE801",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubStatsProcessor20ABE801",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsStateMachineRoleDefaultPolicyA941D1E6",
+        "Roles": [
+          {
+            "Ref": "ConstructHubStatsStateMachineRole600234EC",
           },
         ],
       },

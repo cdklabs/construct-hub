@@ -197,6 +197,7 @@ project.addPackageIgnore('/test');
 project.addGitIgnore('!/test/fixtures/**');
 project.addGitIgnore('/test/*.snapshot/asset.*');
 project.addGitIgnore('!/src/third-party-types/*');
+project.addGitIgnore('/test/cdk-integ.out.*/');
 
 project.package.addField('resolutions', {
   // https://github.com/aws/aws-cdk/issues/20319

@@ -745,11 +745,17 @@ function renderPackageStatsWidgets(packageStats: PackageStats): IWidget[][] {
             packageStats.bucket,
             packageStats.statsKey
           )})`,
-          `[button:Package Stats Function](${lambdaFunctionUrl(
-            packageStats.handler
+          `[button:Package Stats State Machine](${stateMachineUrl(
+            packageStats.stateMachine
           )})`,
-          `[button:Package Stats Logs](${lambdaSearchLogGroupUrl(
-            packageStats.handler
+          `[button:Chunker Function](${lambdaFunctionUrl(
+            packageStats.chunkerFunction
+          )})`,
+          `[button:Processor Function](${lambdaFunctionUrl(
+            packageStats.processorFunction
+          )})`,
+          `[button:Aggregator Function](${lambdaFunctionUrl(
+            packageStats.aggregatorFunction
           )})`,
         ].join('\n'),
       }),
@@ -771,13 +777,13 @@ function renderPackageStatsWidgets(packageStats: PackageStats): IWidget[][] {
         height: 6,
         width: 12,
         title: 'Invocation Duration',
-        left: [packageStats.handler.metricDuration({ label: 'Duration' })],
+        left: [packageStats.stateMachine.metricTime({ label: 'Duration' })],
         leftYAxis: { min: 0 },
         rightAnnotations: [
           {
             color: '#ffa500',
-            label: '15 minutes (Lambda timeout)',
-            value: Duration.minutes(15).toSeconds(),
+            label: '6 hours (State Machine timeout)',
+            value: Duration.hours(6).toSeconds(),
           },
         ],
       }),
