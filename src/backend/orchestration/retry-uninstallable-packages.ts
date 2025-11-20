@@ -93,9 +93,10 @@ export class RetryUninstallablePackages extends Construct {
     const transformPackage = new Pass(this, 'Transform Package Format', {
       parameters: {
         'originalPackage.$': '$',
-        'packageName.$': "States.ArrayGetItem(States.StringSplit($, '@'), 0)",
         'packageVersion.$':
-          "States.ArrayGetItem(States.StringSplit($, '@'), 1)",
+          "States.ArrayGetItem(States.StringSplit($, '@'), -1)",
+        'packageName.$':
+          "States.ArrayJoin(States.ArraySlice(States.StringSplit($, '@'), 0, -1), '@')",
       },
     });
 
