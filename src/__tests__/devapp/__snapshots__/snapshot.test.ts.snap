@@ -7061,34 +7061,34 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Read Uninstallable Report","States":{"Read Uninstallable Report":{"Next":"Parse Report","Retry":[{"ErrorEquals":["S3.NoSuchKey"]}],"Catch":[{"ErrorEquals":["S3.NoSuchKey"],"Next":"No Report Found"}],"Type":"Task","ResultPath":"$.reportResponse","Resource":"arn:",
-              {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::aws-sdk:s3:getObject","Parameters":{"Bucket":"",
-              {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-              "","Key":"uninstallable-objects/data.json"}},"Parse Report":{"Type":"Pass","ResultPath":"$.parsedReport","Parameters":{"packages.$":"States.StringToJson($.reportResponse.Body)"},"Next":"Has Packages?"},"Has Packages?":{"Type":"Choice","Choices":[{"Variable":"$.parsedReport.packages[0]","IsPresent":true,"Next":"Process Each Package"}],"Default":"No Packages to Retry"},"No Packages to Retry":{"Type":"Succeed"},"Process Each Package":{"Type":"Map","ResultPath":null,"Next":"Run Inventory","ItemsPath":"$.parsedReport.packages","Iterator":{"StartAt":"Transform Package Format","States":{"Transform Package Format":{"Type":"Pass","ResultPath":"$.transformed","Parameters":{"packageName.$":"States.ArrayGetItem(States.StringSplit($, \\"@\\"), 0)","packageVersion.$":"States.ArrayGetItem(States.StringSplit($, \\"@\\"), 1)"},"Next":"Retry Package"},"Retry Package":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"Next":"Package Retry Failed"}],"Type":"Task","Resource":"arn:",
-              {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::states:startExecution.sync:2","Parameters":{"Input":{"Prefix.$":"States.Format('data/{}/v{}', $.transformed.packageName, $.transformed.packageVersion)"},"StateMachineArn":"",
-              {
-                "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
-              },
-              ""}},"Package Retry Failed":{"Type":"Succeed"}}}},"Run Inventory":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"]}],"Type":"Task","ResultPath":null,"Resource":"arn:",
+              "{"StartAt":"Read Uninstallable Report","States":{"Read Uninstallable Report":{"Next":"Has Packages?","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.Unknown"],"IntervalSeconds":2,"MaxAttempts":3,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"Next":"No Report Found"}],"Type":"Task","ResultPath":"$.reportResponse","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
               ":states:::lambda:invoke","Parameters":{"FunctionName":"",
               {
                 "Fn::GetAtt": [
-                  "ConstructHubInventoryCanary63D899BC",
+                  "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionF9851BD2",
                   "Arn",
                 ],
               },
-              "","Payload.$":"$"}},"No Report Found":{"Type":"Succeed"}},"TimeoutSeconds":21600}",
+              "","Payload":{"bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","key":"uninstallable-objects/data.json"}}},"Has Packages?":{"Type":"Choice","Choices":[{"Variable":"$.reportResponse.Payload.packages[0]","IsPresent":true,"Next":"Process Each Package"}],"Default":"No Packages to Retry"},"No Packages to Retry":{"Type":"Succeed"},"Process Each Package":{"Type":"Map","ResultPath":null,"End":true,"ItemsPath":"$.reportResponse.Payload.packages","ItemProcessor":{"ProcessorConfig":{"Mode":"INLINE"},"StartAt":"Retry Package","States":{"Retry Package":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"],"IntervalSeconds":60,"MaxAttempts":3,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Package Retry Failed"}],"Type":"Task","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2","Parameters":{"Input":{"bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","assembly":{"key.$":"States.Format('data/{}/v{}/assembly.json', $.packageName, $.packageVersion)"},"metadata":{"key.$":"States.Format('data/{}/v{}/metadata.json', $.packageName, $.packageVersion)"},"package":{"key.$":"States.Format('data/{}/v{}/package.tgz', $.packageName, $.packageVersion)"}},"StateMachineArn":"",
+              {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              ""}},"Package Retry Failed":{"Type":"Pass","Parameters":{"package.$":"$.originalPackage","prefix.$":"States.Format('data/{}/v{}', $.packageName, $.packageVersion)","error.$":"$.error"},"End":true}}}},"No Report Found":{"Type":"Fail","Error":"NoReportFound","Cause":"Uninstallable packages report not found at uninstallable-objects/data.json"}},"TimeoutSeconds":21600}",
             ],
           ],
         },
@@ -7105,6 +7105,133 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::StepFunctions::StateMachine",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionF9851BD2": {
+      "DependsOn": [
+        "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionServiceRoleDefaultPolicyCAAF8F73",
+        "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionServiceRole528C403B",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "fb54708aff141c6bb8f32a52c2c3ae5928620794390e5ea974fcb07cc588ffef.zip",
+        },
+        "Description": "backend/orchestration/read-uninstallable-report.lambda.ts",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionServiceRole528C403B",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionLogRetentionBDF7ED83": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionF9851BD2",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 90,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionServiceRole528C403B": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionServiceRoleDefaultPolicyCAAF8F73": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionServiceRoleDefaultPolicyCAAF8F73",
+        "Roles": [
+          {
+            "Ref": "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionServiceRole528C403B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationRetryUninstallablePackagesRole380D2573": {
       "Properties": {
@@ -7128,30 +7255,12 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    {
-                      "Fn::GetAtt": [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/uninstallable-objects/data.json",
-                  ],
-                ],
-              },
-            },
-            {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
               "Resource": [
                 {
                   "Fn::GetAtt": [
-                    "ConstructHubInventoryCanary63D899BC",
+                    "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionF9851BD2",
                     "Arn",
                   ],
                 },
@@ -7161,7 +7270,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                     [
                       {
                         "Fn::GetAtt": [
-                          "ConstructHubInventoryCanary63D899BC",
+                          "ConstructHubOrchestrationRetryUninstallablePackagesReadReportFunctionF9851BD2",
                           "Arn",
                         ],
                       },
@@ -7175,7 +7284,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": "states:StartExecution",
               "Effect": "Allow",
               "Resource": {
-                "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
+                "Ref": "ConstructHubOrchestration39161A46",
               },
             },
             {
@@ -7208,7 +7317,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                           "Fn::Split": [
                             ":",
                             {
-                              "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
+                              "Ref": "ConstructHubOrchestration39161A46",
                             },
                           ],
                         },
