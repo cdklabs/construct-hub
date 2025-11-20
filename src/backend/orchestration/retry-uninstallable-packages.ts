@@ -71,33 +71,32 @@ export class RetryUninstallablePackages extends Construct {
       resultPath: '$.parsedReport',
     });
 
-    // Transform package@version to data/package/v{version} format
-    const transformPackage = new Pass(this, 'Transform Package Format', {
-      parameters: {
-        'prefix.$':
-          'States.Format("data/{}/v{}", States.ArrayGetItem(States.StringSplit($, "@"), 0), States.ArrayGetItem(States.StringSplit($, "@"), 1))',
-      },
-      resultPath: '$.transformed',
-    });
-
     // Process each uninstallable package
     const processPackages = new Map(this, 'Process Each Package', {
       itemsPath: '$.parsedReport.packages',
       resultPath: JsonPath.DISCARD,
     }).iterator(
-      transformPackage.next(
-        new tasks.StepFunctionsStartExecution(this, 'Retry Package', {
-          stateMachine: props.reprocessStateMachine,
-          input: TaskInput.fromObject({
-            Prefix: JsonPath.stringAt('$.transformed.prefix'),
-          }),
-          integrationPattern: IntegrationPattern.RUN_JOB,
+      new tasks.StepFunctionsStartExecution(this, 'Retry Package', {
+        stateMachine: props.reprocessStateMachine,
+        input: TaskInput.fromObject({
+          Prefix: JsonPath.format(
+            'data/{}/v{}',
+            JsonPath.arrayGetItem(
+              JsonPath.stringSplit(JsonPath.stringAt('$'), '@'),
+              0
+            ),
+            JsonPath.arrayGetItem(
+              JsonPath.stringSplit(JsonPath.stringAt('$'), '@'),
+              1
+            )
+          ),
+        }),
+        integrationPattern: IntegrationPattern.RUN_JOB,
+      })
+        .addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+        .addCatch(new Succeed(this, 'Package Retry Failed'), {
+          errors: ['States.TaskFailed'],
         })
-          .addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
-          .addCatch(new Succeed(this, 'Package Retry Failed'), {
-            errors: ['States.TaskFailed'],
-          })
-      )
     );
 
     // Re-run inventory canary to update the report
