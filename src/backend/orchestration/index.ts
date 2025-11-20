@@ -31,6 +31,8 @@ import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
 import { NeedsCatalogUpdate } from './needs-catalog-update';
 import { RedriveStateMachine } from './redrive-state-machine';
+import { RetryUninstallablePackages } from './retry-uninstallable-packages';
+import { AlarmSeverities, AlarmSeverity } from '../../api';
 import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { Monitoring, addAlarm } from '../../monitoring';
@@ -50,7 +52,6 @@ import {
   UNPROCESSABLE_PACKAGE_ERROR_NAME,
 } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
-import { AlarmSeverities, AlarmSeverity } from '../../api';
 
 const REPROCESS_PER_PACKAGE_STATE_MACHINE_NAME =
   'ReprocessDocumentationPerPackage';
@@ -104,6 +105,11 @@ export interface OrchestrationProps {
    * The bucket in which to source assemblies to transliterate.
    */
   readonly bucket: IBucket;
+
+  /**
+   * The inventory canary function.
+   */
+  readonly inventory: { function: IFunction };
 
   /**
    * The CodeArtifact registry to use for regular operations.
@@ -196,6 +202,11 @@ export class Orchestration extends Construct {
    * through the backend data pipeline.
    */
   public readonly regenerateAllDocumentationPerPackage: IStateMachine;
+
+  /**
+   * The state machine operators can use to retry processing uninstallable packages.
+   */
+  public readonly retryUninstallablePackages: IStateMachine;
 
   /**
    * The function that builds the catalog.
@@ -479,8 +490,9 @@ export class Orchestration extends Construct {
       this.stateMachine
         .metricFailed()
         .createAlarm(this, 'OrchestrationFailed', {
-          alarmName: `${this.stateMachine.node.path}/${this.stateMachine.metricFailed().metricName
-            }`,
+          alarmName: `${this.stateMachine.node.path}/${
+            this.stateMachine.metricFailed().metricName
+          }`,
           alarmDescription: [
             'Backend orchestration failed!',
             '',
@@ -497,7 +509,8 @@ export class Orchestration extends Construct {
           threshold: 1,
         }),
       props.alarmSeverities?.backendOrchestrationFailed ?? AlarmSeverity.HIGH,
-      props.monitoring);
+      props.monitoring
+    );
 
     props.monitoring.addHighSeverityAlarm(
       'Execution Failure Rate above 75%',
@@ -549,6 +562,23 @@ export class Orchestration extends Construct {
     this.regenerateAllDocumentation = regenerateAllDocumentation.stateMachine;
     this.regenerateAllDocumentationPerPackage =
       regenerateAllDocumentation.processPackageVersions;
+
+    // Create retry uninstallable packages workflow
+    const inventoryInvoke = new tasks.LambdaInvoke(this, 'Run Inventory', {
+      lambdaFunction: props.inventory.function,
+      resultPath: JsonPath.DISCARD,
+    });
+
+    const retryUninstallable = new RetryUninstallablePackages(
+      this,
+      'RetryUninstallablePackages',
+      {
+        bucket: props.bucket,
+        reprocessStateMachine: this.regenerateAllDocumentationPerPackage,
+        inventoryFunction: inventoryInvoke,
+      }
+    );
+    this.retryUninstallablePackages = retryUninstallable.stateMachine;
 
     props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
       needsCatalogUpdateFunction,
