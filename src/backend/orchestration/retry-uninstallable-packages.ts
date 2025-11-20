@@ -18,6 +18,7 @@ import {
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
+import { ReadUninstallableReport } from './read-uninstallable-report';
 
 export interface RetryUninstallablePackagesProps {
   readonly bucket: IBucket;
@@ -50,14 +51,13 @@ export class RetryUninstallablePackages extends Construct {
 
     const noPackagesToRetry = new Succeed(this, 'No Packages to Retry');
 
-    const readReportFunction = new Function(this, 'ReadReportFunction', {
-      runtime: Runtime.NODEJS_18_X,
-      handler: 'read-uninstallable-report.lambda.handler',
-      code: Code.fromAsset('lib/backend/orchestration'),
-      architecture: gravitonLambdaIfAvailable(this),
-      timeout: Duration.minutes(1),
-      logRetention: RetentionDays.ONE_YEAR,
-    });
+    const readReportFunction = new ReadUninstallableReport(
+      this,
+      'ReadReportFunction',
+      {
+        logRetention: RetentionDays.THREE_MONTHS,
+      }
+    );
 
     props.bucket.grantRead(readReportFunction);
 
