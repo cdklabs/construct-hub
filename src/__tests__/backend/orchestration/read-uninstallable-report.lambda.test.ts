@@ -10,9 +10,9 @@ beforeEach(() => {
 });
 
 test('reads and decompresses uninstallable packages report', async () => {
-  const packages = ['package1@1.0.0', 'package2@2.0.0'];
+  const rawPackages = ['package1@1.0.0', '@aws-cdk/core@2.0.0'];
   const mockBody = {
-    transformToString: jest.fn().mockResolvedValue(JSON.stringify(packages)),
+    transformToString: jest.fn().mockResolvedValue(JSON.stringify(rawPackages)),
   };
 
   s3Mock.on(GetObjectCommand).resolves({
@@ -25,7 +25,20 @@ test('reads and decompresses uninstallable packages report', async () => {
     key: 'uninstallable-objects/data.json',
   });
 
-  expect(result).toEqual({ packages });
+  expect(result).toEqual({
+    packages: [
+      {
+        originalPackage: 'package1@1.0.0',
+        packageName: 'package1',
+        packageVersion: '1.0.0',
+      },
+      {
+        originalPackage: '@aws-cdk/core@2.0.0',
+        packageName: '@aws-cdk/core',
+        packageVersion: '2.0.0',
+      },
+    ],
+  });
   expect(s3Mock.calls()).toHaveLength(1);
   expect(s3Mock.call(0).args[0].input).toEqual({
     Bucket: 'test-bucket',

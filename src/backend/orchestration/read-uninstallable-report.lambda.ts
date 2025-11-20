@@ -7,8 +7,30 @@ export interface ReadUninstallableReportEvent {
   readonly key: string;
 }
 
+export interface PackageInfo {
+  readonly originalPackage: string;
+  readonly packageName: string;
+  readonly packageVersion: string;
+}
+
 export interface ReadUninstallableReportResult {
-  readonly packages: string[];
+  readonly packages: PackageInfo[];
+}
+
+function parsePackageName(packageString: string): PackageInfo {
+  const lastAtIndex = packageString.lastIndexOf('@');
+  if (lastAtIndex === -1) {
+    throw new Error(`Invalid package format: ${packageString}`);
+  }
+
+  const packageName = packageString.substring(0, lastAtIndex);
+  const packageVersion = packageString.substring(lastAtIndex + 1);
+
+  return {
+    originalPackage: packageString,
+    packageName,
+    packageVersion,
+  };
 }
 
 export async function handler(
@@ -30,6 +52,8 @@ export async function handler(
     response.ContentEncoding
   );
 
-  const packages = JSON.parse(decompressed);
+  const rawPackages = JSON.parse(decompressed);
+  const packages = rawPackages.map(parsePackageName);
+
   return { packages };
 }

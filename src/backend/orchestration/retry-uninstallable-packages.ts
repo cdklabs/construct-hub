@@ -83,23 +83,6 @@ export class RetryUninstallablePackages extends Construct {
       errors: ['States.TaskFailed'],
     });
 
-    const parseReport = new Pass(this, 'Parse Report', {
-      parameters: {
-        'packages.$': '$.reportResponse.Payload.packages',
-      },
-      resultPath: '$.parsedReport',
-    });
-
-    const transformPackage = new Pass(this, 'Transform Package Format', {
-      parameters: {
-        'originalPackage.$': '$',
-        'packageVersion.$':
-          "States.ArrayGetItem(States.StringSplit($, '@'), -1)",
-        'packageName.$':
-          "States.ArrayJoin(States.ArraySlice(States.StringSplit($, '@'), 0, -1), '@')",
-      },
-    });
-
     const packageRetryFailed = new Pass(this, 'Package Retry Failed', {
       parameters: {
         'package.$': '$.originalPackage',
@@ -146,20 +129,20 @@ export class RetryUninstallablePackages extends Construct {
     });
 
     const processEachPackage = new Map(this, 'Process Each Package', {
-      itemsPath: JsonPath.stringAt('$.parsedReport.packages'),
+      itemsPath: JsonPath.stringAt('$.reportResponse.Payload.packages'),
       resultPath: JsonPath.DISCARD,
     });
 
-    processEachPackage.itemProcessor(transformPackage.next(retryPackage));
+    processEachPackage.itemProcessor(retryPackage);
 
     const hasPackages = new Choice(this, 'Has Packages?')
       .when(
-        Condition.isPresent('$.parsedReport.packages[0]'),
+        Condition.isPresent('$.reportResponse.Payload.packages[0]'),
         processEachPackage
       )
       .otherwise(noPackagesToRetry);
 
-    const definition = readReport.next(parseReport).next(hasPackages);
+    const definition = readReport.next(hasPackages);
 
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition,
