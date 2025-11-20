@@ -71,12 +71,11 @@ export class RetryUninstallablePackages extends Construct {
       resultPath: '$.parsedReport',
     });
 
-    // Transform package@version to data/package/vversion format
+    // Transform package@version to data/package/v{version} format
     const transformPackage = new Pass(this, 'Transform Package Format', {
       parameters: {
-        'packageName.$': 'States.ArrayGetItem(States.StringSplit($, "@"), 0)',
-        'packageVersion.$':
-          'States.ArrayGetItem(States.StringSplit($, "@"), 1)',
+        'prefix.$':
+          'States.Format("data/{}/v{}", States.ArrayGetItem(States.StringSplit($, "@"), 0), States.ArrayGetItem(States.StringSplit($, "@"), 1))',
       },
       resultPath: '$.transformed',
     });
@@ -90,11 +89,7 @@ export class RetryUninstallablePackages extends Construct {
         new tasks.StepFunctionsStartExecution(this, 'Retry Package', {
           stateMachine: props.reprocessStateMachine,
           input: TaskInput.fromObject({
-            Prefix: JsonPath.format(
-              'data/{}/v{}',
-              JsonPath.stringAt('$.transformed.packageName'),
-              JsonPath.stringAt('$.transformed.packageVersion')
-            ),
+            Prefix: JsonPath.stringAt('$.transformed.prefix'),
           }),
           integrationPattern: IntegrationPattern.RUN_JOB,
         })
