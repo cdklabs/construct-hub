@@ -1,5 +1,4 @@
 import { Duration } from 'aws-cdk-lib';
-import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import {
@@ -17,7 +16,6 @@ import {
 } from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
-import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { ReadUninstallableReport } from './read-uninstallable-report';
 
 export interface RetryUninstallablePackagesProps {
