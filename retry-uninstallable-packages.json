@@ -1,0 +1,83 @@
+{
+  "Comment": "State machine that retries processing of uninstallable packages",
+  "StartAt": "Process Each Package",
+  "States": {
+    "Process Each Package": {
+      "Type": "Map",
+      "ItemReader": {
+        "Resource": "arn:aws:states:::s3:getObject",
+        "ReaderConfig": {
+          "InputType": "JSON"
+        },
+        "Parameters": {
+          "Bucket": "constructhub-gamma-constructhubpackagedatadc5ef35-qde3kml6fwa5",
+          "Key": "uninstallable-objects/data.json"
+        }
+      },
+      "ResultPath": null,
+      "Iterator": {
+        "StartAt": "Transform Package Format",
+        "States": {
+          "Transform Package Format": {
+            "Type": "Pass",
+            "Parameters": {
+              "packageName.$": "States.ArrayGetItem(States.StringSplit($, '@'), 0)",
+              "packageVersion.$": "States.ArrayGetItem(States.StringSplit($, '@'), 1)"
+            },
+            "ResultPath": "$.transformed",
+            "Next": "Retry Package"
+          },
+          "Retry Package": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::states:startExecution.sync:2",
+            "Parameters": {
+              "StateMachineArn": "arn:aws:states:us-east-1:363076331236:stateMachine:ReprocessDocumentationPerPackage",
+              "Input": {
+                "Prefix.$": "States.Format('data/{}/v{}', $.transformed.packageName, $.transformed.packageVersion)"
+              }
+            },
+            "Retry": [
+              {
+                "ErrorEquals": ["StepFunctions.ExecutionLimitExceeded"],
+                "IntervalSeconds": 60,
+                "MaxAttempts": 30,
+                "BackoffRate": 1.1
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": ["States.TaskFailed"],
+                "Next": "Package Retry Failed"
+              }
+            ],
+            "End": true
+          },
+          "Package Retry Failed": {
+            "Type": "Succeed"
+          }
+        }
+      },
+      "Next": "Run Inventory"
+    },
+    "Run Inventory": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-1:363076331236:function:ConstructHub-Gamma-ConstructHubInventoryCanary63D8-qHHckzUXmDkk"
+      },
+      "ResultPath": null,
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 60,
+          "MaxAttempts": 30,
+          "BackoffRate": 1.1
+        }
+      ],
+      "End": true
+    },
+    "No Packages to Retry": {
+      "Type": "Succeed"
+    }
+  }
+}
