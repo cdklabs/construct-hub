@@ -408,13 +408,6 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       monitoring: this.monitoring,
     });
 
-    const inventory = new Inventory(this, 'InventoryCanary', {
-      bucket: packageData,
-      logRetention: props.logRetention,
-      monitoring: this.monitoring,
-      overviewDashboard: overviewDashboard,
-    });
-
     const orchestration = new Orchestration(this, 'Orchestration', {
       bucket: packageData,
       codeArtifact,
@@ -428,7 +421,6 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       vpcSecurityGroups,
       feedBuilder,
       alarmSeverities: props.alarmSeverities,
-      inventory,
     });
     this.regenerateAllDocumentationPerPackage =
       orchestration.regenerateAllDocumentationPerPackage;
@@ -517,6 +509,13 @@ export class ConstructHub extends Construct implements iam.IGrantable {
         overviewDashboard: overviewDashboard,
       })
     );
+
+    const inventory = new Inventory(this, 'InventoryCanary', {
+      bucket: packageData,
+      logRetention: props.logRetention,
+      monitoring: this.monitoring,
+      overviewDashboard: overviewDashboard,
+    });
 
     new BackendDashboard(this, 'BackendDashboard', {
       packageData,

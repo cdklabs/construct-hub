@@ -107,11 +107,6 @@ export interface OrchestrationProps {
   readonly bucket: IBucket;
 
   /**
-   * The inventory canary function.
-   */
-  readonly inventory: { function: IFunction };
-
-  /**
    * The CodeArtifact registry to use for regular operations.
    */
   readonly codeArtifact?: Repository;
