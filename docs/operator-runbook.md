@@ -710,7 +710,7 @@ When documentation for a package is not available, it could be due to several re
 1. **For Uninstallable Packages**: Use the "Retry Uninstallable Packages" button in the backend dashboard to automatically retry all uninstallable packages. This will:
    - Read the current uninstallable packages report
    - Trigger reprocessing for each uninstallable package
-   - Update the inventory report after completion
+   - Note: The inventory report will be updated automatically by the scheduled inventory canary, but it processes packages incrementally, so it may take a few hours for all changes to be fully reflected in the dashboard
 
 2. **For Individual Packages**: Use the "ReprocessDocumentationPerPackage" state machine to retry a specific package:
    ```json
