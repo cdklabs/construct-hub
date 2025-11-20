@@ -1,25 +1,24 @@
 import { Duration } from 'aws-cdk-lib';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import {
-  Choice,
-  Condition,
-  IntegrationPattern,
   IStateMachine,
-  JsonPath,
-  Map,
-  Pass,
   StateMachine,
   Succeed,
+  Fail,
+  Pass,
+  Choice,
+  Condition,
+  Map,
+  JsonPath,
+  IntegrationPattern,
   TaskInput,
 } from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
-import { UNINSTALLABLE_PACKAGES_REPORT } from '../shared/constants';
 
 export interface RetryUninstallablePackagesProps {
   readonly bucket: IBucket;
-  readonly reprocessStateMachine: IStateMachine;
-  readonly inventoryFunction: tasks.LambdaInvoke;
+  readonly orchestrationStateMachine: IStateMachine;
 }
 
 /**
@@ -27,8 +26,8 @@ export interface RetryUninstallablePackagesProps {
  *
  * This workflow:
  * 1. Reads the uninstallable packages report
- * 2. Triggers ReprocessDocumentationPerPackage for each entry
- * 3. Re-runs the inventory canary to update the report
+ * 2. Triggers main orchestration for each package
+ * 3. Ends after processing all packages
  */
 export class RetryUninstallablePackages extends Construct {
   public readonly stateMachine: StateMachine;
@@ -40,30 +39,40 @@ export class RetryUninstallablePackages extends Construct {
   ) {
     super(scope, id);
 
-    // Read the uninstallable packages report
+    const noReportFound = new Fail(this, 'No Report Found', {
+      error: 'NoReportFound',
+      cause:
+        'Uninstallable packages report not found at uninstallable-objects/data.json',
+    });
+
+    const noPackagesToRetry = new Succeed(this, 'No Packages to Retry');
+
     const readReport = new tasks.CallAwsService(
       this,
       'Read Uninstallable Report',
       {
         service: 's3',
         action: 'getObject',
-        iamAction: 's3:GetObject',
-        iamResources: [
-          `${props.bucket.bucketArn}/${UNINSTALLABLE_PACKAGES_REPORT}`,
-        ],
+        iamResources: [props.bucket.arnForObjects('*')],
         parameters: {
           Bucket: props.bucket.bucketName,
-          Key: UNINSTALLABLE_PACKAGES_REPORT,
+          Key: 'uninstallable-objects/data.json',
         },
         resultPath: '$.reportResponse',
       }
-    )
-      .addRetry({ errors: ['S3.NoSuchKey'] })
-      .addCatch(new Succeed(this, 'No Report Found'), {
-        errors: ['S3.NoSuchKey'],
-      });
+    );
 
-    // Parse the JSON content using intrinsic function
+    readReport.addRetry({
+      errors: ['S3.NoSuchKey'],
+      interval: Duration.seconds(2),
+      maxAttempts: 3,
+      backoffRate: 2.0,
+    });
+
+    readReport.addCatch(noReportFound, {
+      errors: ['S3.NoSuchKey'],
+    });
+
     const parseReport = new Pass(this, 'Parse Report', {
       parameters: {
         'packages.$': 'States.StringToJson($.reportResponse.Body)',
@@ -71,49 +80,75 @@ export class RetryUninstallablePackages extends Construct {
       resultPath: '$.parsedReport',
     });
 
-    // Process each uninstallable package
-    const processPackages = new Map(this, 'Process Each Package', {
-      itemsPath: '$.parsedReport.packages',
-      resultPath: JsonPath.DISCARD,
-    }).iterator(
-      new tasks.StepFunctionsStartExecution(this, 'Retry Package', {
-        stateMachine: props.reprocessStateMachine,
-        input: TaskInput.fromObject({
-          Prefix: JsonPath.format(
-            'data/{}/v{}',
-            JsonPath.arrayGetItem(
-              JsonPath.stringSplit(JsonPath.stringAt('$'), '@'),
-              0
-            ),
-            JsonPath.arrayGetItem(
-              JsonPath.stringSplit(JsonPath.stringAt('$'), '@'),
-              1
-            )
-          ),
-        }),
-        integrationPattern: IntegrationPattern.RUN_JOB,
-      })
-        .addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
-        .addCatch(new Succeed(this, 'Package Retry Failed'), {
-          errors: ['States.TaskFailed'],
-        })
-    );
-
-    // Re-run inventory canary to update the report
-    const updateInventory = props.inventoryFunction.addRetry({
-      errors: ['Lambda.TooManyRequestsException'],
+    const transformPackage = new Pass(this, 'Transform Package Format', {
+      parameters: {
+        'originalPackage.$': '$',
+        'packageName.$': "States.ArrayGetItem(States.StringSplit($, '@'), 0)",
+        'packageVersion.$':
+          "States.ArrayGetItem(States.StringSplit($, '@'), 1)",
+      },
     });
 
-    const definition = readReport
-      .next(parseReport)
-      .next(
-        new Choice(this, 'Has Packages?')
-          .when(
-            Condition.isPresent('$.parsedReport.packages[0]'),
-            processPackages.next(updateInventory)
-          )
-          .otherwise(new Succeed(this, 'No Packages to Retry'))
-      );
+    const packageRetryFailed = new Pass(this, 'Package Retry Failed', {
+      parameters: {
+        'package.$': '$.originalPackage',
+        'prefix.$':
+          "States.Format('data/{}/v{}', $.packageName, $.packageVersion)",
+        'error.$': '$.error',
+      },
+    });
+
+    const retryPackage = new tasks.StepFunctionsStartExecution(
+      this,
+      'Retry Package',
+      {
+        stateMachine: props.orchestrationStateMachine,
+        integrationPattern: IntegrationPattern.RUN_JOB,
+        input: TaskInput.fromObject({
+          bucket: props.bucket.bucketName,
+          assembly: {
+            'key.$':
+              "States.Format('data/{}/v{}/assembly.json', $.packageName, $.packageVersion)",
+          },
+          metadata: {
+            'key.$':
+              "States.Format('data/{}/v{}/metadata.json', $.packageName, $.packageVersion)",
+          },
+          package: {
+            'key.$':
+              "States.Format('data/{}/v{}/package.tgz', $.packageName, $.packageVersion)",
+          },
+        }),
+      }
+    );
+
+    retryPackage.addRetry({
+      errors: ['StepFunctions.ExecutionLimitExceeded'],
+      interval: Duration.seconds(60),
+      maxAttempts: 3,
+      backoffRate: 2.0,
+    });
+
+    retryPackage.addCatch(packageRetryFailed, {
+      errors: ['States.ALL'],
+      resultPath: '$.error',
+    });
+
+    const processEachPackage = new Map(this, 'Process Each Package', {
+      itemsPath: JsonPath.stringAt('$.parsedReport.packages'),
+      resultPath: JsonPath.DISCARD,
+    });
+
+    processEachPackage.itemProcessor(transformPackage.next(retryPackage));
+
+    const hasPackages = new Choice(this, 'Has Packages?')
+      .when(
+        Condition.isPresent('$.parsedReport.packages[0]'),
+        processEachPackage
+      )
+      .otherwise(noPackagesToRetry);
+
+    const definition = readReport.next(parseReport).next(hasPackages);
 
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition,
@@ -123,5 +158,6 @@ export class RetryUninstallablePackages extends Construct {
     });
 
     props.bucket.grantRead(this.stateMachine);
+    props.orchestrationStateMachine.grantStartExecution(this.stateMachine);
   }
 }

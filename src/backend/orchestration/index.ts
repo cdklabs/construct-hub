@@ -564,18 +564,12 @@ export class Orchestration extends Construct {
       regenerateAllDocumentation.processPackageVersions;
 
     // Create retry uninstallable packages workflow
-    const inventoryInvoke = new tasks.LambdaInvoke(this, 'Run Inventory', {
-      lambdaFunction: props.inventory.function,
-      resultPath: JsonPath.DISCARD,
-    });
-
     const retryUninstallable = new RetryUninstallablePackages(
       this,
       'RetryUninstallablePackages',
       {
         bucket: props.bucket,
-        reprocessStateMachine: this.regenerateAllDocumentationPerPackage,
-        inventoryFunction: inventoryInvoke,
+        orchestrationStateMachine: this.stateMachine,
       }
     );
     this.retryUninstallablePackages = retryUninstallable.stateMachine;
