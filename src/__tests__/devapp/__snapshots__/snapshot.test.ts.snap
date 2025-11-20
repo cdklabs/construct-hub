@@ -988,6 +988,10 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationE9FAB254",
               },
+              ")\\n[button:Retry Uninstallable Packages](/states/home#/statemachines/view/",
+              {
+                "Ref": "ConstructHubOrchestrationRetryUninstallablePackagesA408F9B3",
+              },
               ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":99,"properties":{"view":"timeSeries","title":"State Machine Executions","region":"",
               {
                 "Ref": "AWS::Region",
@@ -1253,7 +1257,11 @@ def sort_filter_rules(json_obj):
                   "Arn",
                 ],
               },
-              "","params":{"key":"uninstallable-objects/data.json","description":"These packages could not be installed. Note that currently they will also appear in the 'missing' documentation reports.\\n\\nThe specific error can be found in the package directory inside a file named 'uninstallable'\\n"},"title":"Package Versions Report | Uninstallable","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"custom","width":24,"height":6,"x":0,"y":6,"properties":{"endpoint":"",
+              "","params":{"key":"uninstallable-objects/data.json","description":"These packages could not be installed. Note that currently they will also appear in the 'missing' documentation reports.\\n\\nThe specific error can be found in the package directory inside a file named 'uninstallable'\\n\\n[button:primary:Retry Uninstallable Packages](/states/home#/statemachines/view/",
+              {
+                "Ref": "ConstructHubOrchestrationRetryUninstallablePackagesA408F9B3",
+              },
+              ")\\n"},"title":"Package Versions Report | Uninstallable","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"custom","width":24,"height":6,"x":0,"y":6,"properties":{"endpoint":"",
               {
                 "Fn::GetAtt": [
                   "PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2",
@@ -7042,6 +7050,255 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubOrchestrationRetryUninstallablePackagesA408F9B3": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "ConstructHubOrchestrationRetryUninstallablePackagesRoleDefaultPolicy7CB8A523",
+        "ConstructHubOrchestrationRetryUninstallablePackagesRole380D2573",
+      ],
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{"StartAt":"Read Uninstallable Report","States":{"Read Uninstallable Report":{"Next":"Parse Report","Retry":[{"ErrorEquals":["S3.NoSuchKey"]}],"Catch":[{"ErrorEquals":["S3.NoSuchKey"],"Next":"No Report Found"}],"Type":"Task","ResultPath":"$.reportResponse","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:getObject","Parameters":{"Bucket":"",
+              {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "","Key":"uninstallable-objects/data.json"}},"Parse Report":{"Type":"Pass","ResultPath":"$.parsedReport","Parameters":{"packages.$":"States.StringToJson($.reportResponse.Body)"},"Next":"Has Packages?"},"Has Packages?":{"Type":"Choice","Choices":[{"Variable":"$.parsedReport.packages[0]","IsPresent":true,"Next":"Process Each Package"}],"Default":"No Packages to Retry"},"No Packages to Retry":{"Type":"Succeed"},"Process Each Package":{"Type":"Map","ResultPath":null,"Next":"Run Inventory","ItemsPath":"$.parsedReport.packages","Iterator":{"StartAt":"Transform Package Format","States":{"Transform Package Format":{"Type":"Pass","ResultPath":"$.transformed","Parameters":{"packageName.$":"States.ArrayGetItem(States.StringSplit($, \\"@\\"), 0)","packageVersion.$":"States.ArrayGetItem(States.StringSplit($, \\"@\\"), 1)"},"Next":"Retry Package"},"Retry Package":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"Next":"Package Retry Failed"}],"Type":"Task","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2","Parameters":{"Input":{"Prefix.$":"States.Format('data/{}/v{}', $.transformed.packageName, $.transformed.packageVersion)"},"StateMachineArn":"",
+              {
+                "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
+              },
+              ""}},"Package Retry Failed":{"Type":"Succeed"}}}},"Run Inventory":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"]}],"Type":"Task","ResultPath":null,"Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::lambda:invoke","Parameters":{"FunctionName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubInventoryCanary63D899BC",
+                  "Arn",
+                ],
+              },
+              "","Payload.$":"$"}},"No Report Found":{"Type":"Succeed"}},"TimeoutSeconds":21600}",
+            ],
+          ],
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "ConstructHubOrchestrationRetryUninstallablePackagesRole380D2573",
+            "Arn",
+          ],
+        },
+        "StateMachineName": "RetryUninstallablePackages",
+        "TracingConfiguration": {
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubOrchestrationRetryUninstallablePackagesRole380D2573": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "states.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationRetryUninstallablePackagesRoleDefaultPolicy7CB8A523": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/uninstallable-objects/data.json",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubInventoryCanary63D899BC",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubInventoryCanary63D899BC",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
+              },
+            },
+            {
+              "Action": [
+                "states:DescribeExecution",
+                "states:StopExecution",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":execution:",
+                    {
+                      "Fn::Select": [
+                        6,
+                        {
+                          "Fn::Split": [
+                            ":",
+                            {
+                              "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    "*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "events:PutTargets",
+                "events:PutRule",
+                "events:DescribeRule",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":events:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":rule/StepFunctionsGetEventsForStepFunctionsExecutionRule",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationRetryUninstallablePackagesRoleDefaultPolicy7CB8A523",
+        "Roles": [
+          {
+            "Ref": "ConstructHubOrchestrationRetryUninstallablePackagesRole380D2573",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": {
       "Properties": {
         "PolicyDocument": {
@@ -9654,39 +9911,43 @@ Request a service quota increase for lambda functions",
               {
                 "Ref": "ConstructHubFeedBuilderReleaseNotesUpdateFeedBB0BA91D",
               },
-              "",{"label":"updateFeedFunction","stat":"Maximum","visible":false,"id":"m3"}],[{"label":"CatalogBuilderLambda quota usage %","expression":"m4 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
-              {
-                "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
-              },
-              "",{"label":"CatalogBuilderLambda","stat":"Maximum","visible":false,"id":"m4"}],[{"label":"NeedsCatalogUpdateLambda quota usage %","expression":"m5 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
-              {
-                "Ref": "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
-              },
-              "",{"label":"NeedsCatalogUpdateLambda","stat":"Maximum","visible":false,"id":"m5"}],[{"label":"releaseNotesTrigger quota usage %","expression":"m6 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
-              {
-                "Ref": "ConstructHubReleaseNotesReleaseNotesTriggerDD939C4F",
-              },
-              "",{"label":"releaseNotesTrigger","stat":"Maximum","visible":false,"id":"m6"}],[{"label":"releaseNoteGenerateForPackage quota usage %","expression":"m7 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
-              {
-                "Ref": "ConstructHubReleaseNotesGithubChangelogFetcher1616748C",
-              },
-              "",{"label":"releaseNoteGenerateForPackage","stat":"Maximum","visible":false,"id":"m7"}],[{"label":"IngestionLambda quota usage %","expression":"m8 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
-              {
-                "Ref": "ConstructHubIngestion407909CE",
-              },
-              "",{"label":"IngestionLambda","stat":"Maximum","visible":false,"id":"m8"}],[{"label":"NpmJsLambda quota usage %","expression":"m9 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
-              {
-                "Ref": "ConstructHubSourcesNpmJs15A77D2D",
-              },
-              "",{"label":"NpmJsLambda","stat":"Maximum","visible":false,"id":"m9"}],[{"label":"NpmJs-StageAndNotifyLambda quota usage %","expression":"m10 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
-              {
-                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
-              },
-              "",{"label":"NpmJs-StageAndNotifyLambda","stat":"Maximum","visible":false,"id":"m10"}],[{"label":"CanaryResourceLambda quota usage %","expression":"m11 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"updateFeedFunction","stat":"Maximum","visible":false,"id":"m3"}],[{"label":"CanaryResourceLambda quota usage %","expression":"m4 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
               },
-              "",{"label":"CanaryResourceLambda","stat":"Maximum","visible":false,"id":"m11"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}},{"type":"custom","width":12,"height":8,"x":0,"y":8,"properties":{"endpoint":"",
+              "",{"label":"CanaryResourceLambda","stat":"Maximum","visible":false,"id":"m4"}],[{"label":"CatalogBuilderLambda quota usage %","expression":"m5 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
+              },
+              "",{"label":"CatalogBuilderLambda","stat":"Maximum","visible":false,"id":"m5"}],[{"label":"NeedsCatalogUpdateLambda quota usage %","expression":"m6 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
+              },
+              "",{"label":"NeedsCatalogUpdateLambda","stat":"Maximum","visible":false,"id":"m6"}],[{"label":"releaseNotesTrigger quota usage %","expression":"m7 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "ConstructHubReleaseNotesReleaseNotesTriggerDD939C4F",
+              },
+              "",{"label":"releaseNotesTrigger","stat":"Maximum","visible":false,"id":"m7"}],[{"label":"releaseNoteGenerateForPackage quota usage %","expression":"m8 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "ConstructHubReleaseNotesGithubChangelogFetcher1616748C",
+              },
+              "",{"label":"releaseNoteGenerateForPackage","stat":"Maximum","visible":false,"id":"m8"}],[{"label":"IngestionLambda quota usage %","expression":"m9 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "ConstructHubIngestion407909CE",
+              },
+              "",{"label":"IngestionLambda","stat":"Maximum","visible":false,"id":"m9"}],[{"label":"NpmJsLambda quota usage %","expression":"m10 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "ConstructHubSourcesNpmJs15A77D2D",
+              },
+              "",{"label":"NpmJsLambda","stat":"Maximum","visible":false,"id":"m10"}],[{"label":"NpmJs-StageAndNotifyLambda quota usage %","expression":"m11 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "",{"label":"NpmJs-StageAndNotifyLambda","stat":"Maximum","visible":false,"id":"m11"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}},{"type":"metric","width":12,"height":8,"x":0,"y":8,"properties":{"view":"timeSeries","title":"Construct Hub Inventory","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["ConstructHub/Inventory","PackageCount",{"period":900,"stat":"Maximum"}],["ConstructHub/Inventory","PackageMajorVersionCount",{"period":900,"stat":"Maximum"}]],"yAxis":{"left":{"label":"Package count"}}}},{"type":"custom","width":12,"height":8,"x":0,"y":16,"properties":{"endpoint":"",
               {
                 "Fn::GetAtt": [
                   "SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885366DDBD5",
@@ -9756,7 +10017,7 @@ Request a service quota increase for lambda functions",
                   "QueueName",
                 ],
               },
-              ""}}},"title":"SQS DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":16,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"",
+              ""}}},"title":"SQS DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":24,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -9772,11 +10033,7 @@ Request a service quota increase for lambda functions",
               {
                 "Ref": "ConstructHubWebAppDistribution1F181DC9",
               },
-              "","Region","Global",{"region":"us-east-1","period":86400,"yAxis":"right"}]],"yAxis":{"left":{"label":"Requests count","min":0},"right":{"label":"Request Percent","min":0,"max":100}}}},{"type":"metric","width":12,"height":8,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Construct Hub Inventory","region":"",
-              {
-                "Ref": "AWS::Region",
-              },
-              "","metrics":[["ConstructHub/Inventory","PackageCount",{"period":900,"stat":"Maximum"}],["ConstructHub/Inventory","PackageMajorVersionCount",{"period":900,"stat":"Maximum"}]],"yAxis":{"left":{"label":"Package count"}}}}]}",
+              "","Region","Global",{"region":"us-east-1","period":86400,"yAxis":"right"}]],"yAxis":{"left":{"label":"Requests count","min":0},"right":{"label":"Request Percent","min":0,"max":100}}}}]}",
             ],
           ],
         },
