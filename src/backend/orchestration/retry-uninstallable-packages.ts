@@ -1,4 +1,6 @@
 import { Duration } from 'aws-cdk-lib';
+import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import {
   IStateMachine,
@@ -15,6 +17,7 @@ import {
 } from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
+import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 
 export interface RetryUninstallablePackagesProps {
   readonly bucket: IBucket;
@@ -47,35 +50,44 @@ export class RetryUninstallablePackages extends Construct {
 
     const noPackagesToRetry = new Succeed(this, 'No Packages to Retry');
 
-    const readReport = new tasks.CallAwsService(
+    const readReportFunction = new Function(this, 'ReadReportFunction', {
+      runtime: Runtime.NODEJS_18_X,
+      handler: 'read-uninstallable-report.lambda.handler',
+      code: Code.fromAsset('lib/backend/orchestration'),
+      architecture: gravitonLambdaIfAvailable(this),
+      timeout: Duration.minutes(1),
+      logRetention: RetentionDays.ONE_YEAR,
+    });
+
+    props.bucket.grantRead(readReportFunction);
+
+    const readReport = new tasks.LambdaInvoke(
       this,
       'Read Uninstallable Report',
       {
-        service: 's3',
-        action: 'getObject',
-        iamResources: [props.bucket.arnForObjects('*')],
-        parameters: {
-          Bucket: props.bucket.bucketName,
-          Key: 'uninstallable-objects/data.json',
-        },
+        lambdaFunction: readReportFunction,
+        payload: TaskInput.fromObject({
+          bucket: props.bucket.bucketName,
+          key: 'uninstallable-objects/data.json',
+        }),
         resultPath: '$.reportResponse',
       }
     );
 
     readReport.addRetry({
-      errors: ['S3.NoSuchKey'],
+      errors: ['Lambda.Unknown'],
       interval: Duration.seconds(2),
       maxAttempts: 3,
       backoffRate: 2.0,
     });
 
     readReport.addCatch(noReportFound, {
-      errors: ['S3.NoSuchKey'],
+      errors: ['States.TaskFailed'],
     });
 
     const parseReport = new Pass(this, 'Parse Report', {
       parameters: {
-        'packages.$': 'States.StringToJson($.reportResponse.Body)',
+        'packages.$': '$.reportResponse.Payload.packages',
       },
       resultPath: '$.parsedReport',
     });
