@@ -711,6 +711,7 @@ When documentation for a package is not available, it could be due to several re
    - Read the current uninstallable packages report
    - Trigger reprocessing for each uninstallable package
    - Note: The inventory report will be updated automatically by the scheduled inventory canary, but it processes packages incrementally, so it may take a few hours for all changes to be fully reflected in the dashboard
+   - Warning: This may trigger `Orchestration/Resource/ExecutionsFailed` and `Orchestration/DLQ/NotEmpty` alarms since some packages may still fail on retry and be sent to the dead letter queue
 
 2. **For Individual Packages**: Use the "ReprocessDocumentationPerPackage" state machine to retry a specific package:
    ```json
