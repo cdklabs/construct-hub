@@ -68,6 +68,10 @@ export class BackendDashboard extends Construct {
             "These packages could not be installed. Note that currently they will also appear in the 'missing' documentation reports.",
             '',
             "The specific error can be found in the package directory inside a file named 'uninstallable'",
+            '',
+            `[button:primary:Retry Uninstallable Packages](${stateMachineUrl(
+              props.orchestration.retryUninstallablePackages
+            )})`,
           ].join('\n'),
           bucket: props.packageData,
           key: UNINSTALLABLE_PACKAGES_REPORT,
@@ -326,6 +330,9 @@ export class BackendDashboard extends Construct {
               )})`,
               `[button:Regenerate All Documentation](${stateMachineUrl(
                 props.orchestration.regenerateAllDocumentation
+              )})`,
+              `[button:Retry Uninstallable Packages](${stateMachineUrl(
+                props.orchestration.retryUninstallablePackages
               )})`,
             ].join('\n'),
           }),

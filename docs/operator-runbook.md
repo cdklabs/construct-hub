@@ -681,6 +681,57 @@ Two workflows are available for reprocessing of individual items:
    }
    ```
 
+## :package: Missing Package Documentation
+
+### Description
+
+When documentation for a package is not available, it could be due to several reasons:
+
+1. **Uninstallable Package**: The package cannot be installed during the documentation generation process
+2. **Corrupt Assembly**: The package's assembly.json file is corrupted or invalid
+3. **Transliteration Error**: The documentation generation process failed for a specific language
+4. **Missing Dependencies**: Required dependencies are not available
+
+### Investigation
+
+1. **Check the Uninstallable Packages Report**: In the backend dashboard, review the "Package Versions Report | Uninstallable" section to see if the package is listed as uninstallable.
+
+2. **Review Package Directory**: Check the package's S3 directory (`data/<package-name>/v<version>/`) for error marker files:
+   - `uninstallable` - Package cannot be installed
+   - `*.corruptassembly` - Assembly file is corrupted
+   - `*.transliteration-failed` - Transliteration failed for a language
+
+3. **Check Orchestration Logs**: Review the orchestration state machine execution logs for the specific package to identify the failure point.
+
+4. **Examine ECS Task Logs**: If the failure occurred during documentation generation, check the ECS task logs in CloudWatch for detailed error messages.
+
+### Resolution
+
+1. **For Uninstallable Packages**: Use the "Retry Uninstallable Packages" button in the backend dashboard to automatically retry all uninstallable packages. This will:
+   - Read the current uninstallable packages report
+   - Trigger reprocessing for each uninstallable package
+   - Note: The inventory report will be updated automatically by the scheduled inventory canary, but it processes packages incrementally, so it may take a few hours for all changes to be fully reflected in the dashboard
+   - Warning: This may trigger `Orchestration/Resource/ExecutionsFailed` and `Orchestration/DLQ/NotEmpty` alarms since some packages may still fail on retry and be sent to the dead letter queue
+
+2. **For Individual Packages**: Use the "ReprocessDocumentationPerPackage" state machine to retry a specific package:
+   ```json
+   {
+     "Prefix": "data/<package-name>/v<package-version>"
+   }
+   ```
+
+3. **For Systematic Issues**: If many packages are failing, investigate the root cause:
+   - Check if there are issues with the documentation generation tooling
+   - Verify that all required dependencies and services are available
+   - Review recent changes to the transliterator or documentation generator
+
+### Prevention
+
+- Monitor the uninstallable packages count metric regularly
+- Set up alerts for increases in missing documentation
+- Regularly review and update the documentation generation tooling
+- Ensure proper testing of changes to the transliterator pipeline
+
 --------------------------------------------------------------------------------
 
 ### `ConstructHub/Sources/NpmJs/Canary/SLA-Breached`

@@ -96,6 +96,9 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
+          "spawn": "bundle:read-uninstallable-report"
+        },
+        {
           "spawn": "bundle:needs-catalog-update"
         },
         {
@@ -333,7 +336,7 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/re-stage-package-version.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats-processor.lambda.ts src/backend/package-stats/package-stats-chunker.lambda.ts src/backend/package-stats/package-stats-aggregator.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22 --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/re-stage-package-version.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats-processor.lambda.ts src/backend/package-stats/package-stats-chunker.lambda.ts src/backend/package-stats/package-stats-aggregator.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/read-uninstallable-report.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22 --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
         }
       ]
     },
@@ -568,6 +571,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/package-sources/npmjs/re-stage-package-version.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/re-stage-package-version.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+        }
+      ]
+    },
+    "bundle:read-uninstallable-report": {
+      "name": "bundle:read-uninstallable-report",
+      "description": "Create an AWS Lambda bundle from src/backend/orchestration/read-uninstallable-report.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/read-uninstallable-report.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/read-uninstallable-report.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+        }
+      ]
+    },
+    "bundle:read-uninstallable-report:watch": {
+      "name": "bundle:read-uninstallable-report:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/orchestration/read-uninstallable-report.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/read-uninstallable-report.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/read-uninstallable-report.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
         }
       ]
     },
@@ -810,6 +831,9 @@
         },
         {
           "spawn": "bundle:redrive-state-machine"
+        },
+        {
+          "spawn": "bundle:read-uninstallable-report"
         },
         {
           "spawn": "bundle:needs-catalog-update"

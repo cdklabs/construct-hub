@@ -1,0 +1,59 @@
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3_CLIENT } from '../shared/aws.lambda-shared';
+import { decompressContent } from '../shared/compress-content.lambda-shared';
+
+export interface ReadUninstallableReportEvent {
+  readonly bucket: string;
+  readonly key: string;
+}
+
+export interface PackageInfo {
+  readonly originalPackage: string;
+  readonly packageName: string;
+  readonly packageVersion: string;
+}
+
+export interface ReadUninstallableReportResult {
+  readonly packages: PackageInfo[];
+}
+
+function parsePackageName(packageString: string): PackageInfo {
+  const lastAtIndex = packageString.lastIndexOf('@');
+  if (lastAtIndex === -1) {
+    throw new Error(`Invalid package format: ${packageString}`);
+  }
+
+  const packageName = packageString.substring(0, lastAtIndex);
+  const packageVersion = packageString.substring(lastAtIndex + 1);
+
+  return {
+    originalPackage: packageString,
+    packageName,
+    packageVersion,
+  };
+}
+
+export async function handler(
+  event: ReadUninstallableReportEvent
+): Promise<ReadUninstallableReportResult> {
+  const response = await S3_CLIENT.send(
+    new GetObjectCommand({
+      Bucket: event.bucket,
+      Key: event.key,
+    })
+  );
+
+  if (!response.Body) {
+    throw new Error(`Object not found: s3://${event.bucket}/${event.key}`);
+  }
+
+  const decompressed = await decompressContent(
+    response.Body as any,
+    response.ContentEncoding
+  );
+
+  const rawPackages = JSON.parse(decompressed);
+  const packages = rawPackages.map(parsePackageName);
+
+  return { packages };
+}
