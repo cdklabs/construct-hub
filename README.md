@@ -83,7 +83,8 @@ sources configured on the instance. ConstructHub provides `IPackageSource`
 implementations for the public `npmjs.com` registry as well as for private
 CodeArtifact repositories:
 
-```ts nofixture
+```typescript
+ts nofixture
 import * as codeartifact from 'aws-cdk-lib/aws-codeartifact';
 import { App, Stack } from 'aws-cdk-lib/core';
 import { sources, ConstructHub } from 'construct-hub';
