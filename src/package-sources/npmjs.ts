@@ -606,8 +606,7 @@ export class NpmJs implements IPackageSource {
       packageName,
     });
 
-    const period = Duration.minutes(5);
-
+    const period = Duration.minutes(10); // we run canary once per hour, but not guaranteed exact times
     const alarm = new MathExpression({
       expression: 'MAX([mDwell, mTTC])',
       period,
@@ -622,7 +621,7 @@ export class NpmJs implements IPackageSource {
         `Runbook: ${RUNBOOK_URL}`,
       ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-      evaluationPeriods: 4,
+      evaluationPeriods: 1,
       treatMissingData: TreatMissingData.NOT_BREACHING,
       threshold: visibilitySla.toSeconds(),
     });
