@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as process from 'process';
-import { Duration, Stack } from 'aws-cdk-lib';
+import { Stack } from 'aws-cdk-lib';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import * as secretsManager from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
