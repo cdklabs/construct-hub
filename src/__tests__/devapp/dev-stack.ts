@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as process from 'process';
-import { Stack } from 'aws-cdk-lib';
+import { Duration, Stack } from 'aws-cdk-lib';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import * as secretsManager from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
@@ -109,6 +109,7 @@ export class DevStack extends Stack {
       props.sensitiveTaskIsolation ?? defaultIsolateSensitiveTasks();
 
     new ConstructHub(this, 'ConstructHub', {
+      reprocessFrequency: Duration.minutes(5),
       featureFlags: {
         homeRedesign: true,
         searchRedesign: true,
