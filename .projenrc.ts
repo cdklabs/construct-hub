@@ -7,7 +7,7 @@ import { discoverLambdas } from './projenrc/magic-lambda';
 import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
 import { addVpcAllowListManagement } from './projenrc/vps-allow-list';
 
-const cdkVersion = '2.189.0';
+const cdkVersion = '2.194.0';
 const peerDeps = [
   `@aws-cdk/aws-servicecatalogappregistry-alpha@${cdkVersion}-alpha.0`,
   `aws-cdk-lib@^${cdkVersion}`,
