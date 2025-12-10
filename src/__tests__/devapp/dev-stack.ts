@@ -109,7 +109,6 @@ export class DevStack extends Stack {
       props.sensitiveTaskIsolation ?? defaultIsolateSensitiveTasks();
 
     new ConstructHub(this, 'ConstructHub', {
-      reprocessFrequency: Duration.minutes(5),
       featureFlags: {
         homeRedesign: true,
         searchRedesign: true,
