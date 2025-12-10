@@ -493,6 +493,55 @@ class ReprocessIngestionWorkflow extends Construct {
         resultPath: '$.response',
       });
 
+    const process = new Map(this, 'Process Result', {
+      inputPath: `$.response.Contents[*][?(@.Key =~ /^.*${METADATA_KEY_SUFFIX}$/)]`,
+      resultPath: JsonPath.DISCARD,
+    }).iterator(
+      new LambdaInvoke(this, 'Send for reprocessing', { lambdaFunction })
+        // Ample retries here... We should never fail because of throttling....
+        .addRetry({
+          errors: ['Lambda.TooManyRequestsException'],
+          backoffRate: 1.1,
+          interval: Duration.minutes(1),
+          maxAttempts: 30,
+        })
+    );
+
+    const isThereMore = new Choice(this, 'Is there more?')
+      .when(
+        Condition.isPresent('$.response.NextContinuationToken'),
+
+        new Wait(this, 'Give room for on-demand work', {
+          // Sleep a little before enqueuing the next batch, so that we leave room in the worker
+          // pool for handling on-demand work. If we don't do this, 60k items will be queued at
+          // once and live updates from NPM will struggle to get in in a reasonable time.
+          time: WaitTime.duration(waitTimeBetweenReprocessBatches()),
+        }).next(
+          new StepFunctionsStartExecution(this, 'Continue as new', {
+            associateWithParent: true,
+            stateMachine: StateMachine.fromStateMachineArn(
+              this,
+              'ThisStateMachine',
+              Stack.of(this).formatArn({
+                arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+                service: 'states',
+                resource: 'stateMachine',
+                resourceName: stateMachineName,
+              })
+            ),
+            input: TaskInput.fromObject({
+              ContinuationToken: JsonPath.stringAt(
+                '$.response.NextContinuationToken'
+              ),
+            }),
+            integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+            resultPath: JsonPath.DISCARD,
+          }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+        )
+      )
+      .afterwards({ includeOtherwise: true })
+      .next(process);
+
     const listObjects = (name: string, token?: string) => {
       // Create a chain of retries with decreasing MaxKeys values
       const startMaxKeysValue = 1000;
@@ -505,6 +554,8 @@ class ReprocessIngestionWorkflow extends Construct {
         startMaxKeysValue,
         token
       ).addRetry({ errors: ['S3.SdkClientException'] });
+      
+      firstTask.next(isThereMore);
 
       // Chain tasks with decreasing MaxKeys values
       let lastTask = firstTask;
@@ -518,6 +569,8 @@ class ReprocessIngestionWorkflow extends Construct {
           maxKeys,
           token
         ).addRetry({ errors: ['S3.SdkClientException'] });
+        
+        nextTask.next(isThereMore);
 
         // Chain this task to the previous one using DataLimitExceeded catch
         lastTask.addCatch(nextTask, {
@@ -541,57 +594,6 @@ class ReprocessIngestionWorkflow extends Construct {
       )
       .otherwise(listObjects('S3.ListObjectsV2(FirstPage)'))
       .afterwards();
-
-    const process = new Map(this, 'Process Result', {
-      inputPath: `$.response.Contents[*][?(@.Key =~ /^.*${METADATA_KEY_SUFFIX}$/)]`,
-      resultPath: JsonPath.DISCARD,
-    }).iterator(
-      new LambdaInvoke(this, 'Send for reprocessing', { lambdaFunction })
-        // Ample retries here... We should never fail because of throttling....
-        .addRetry({
-          errors: ['Lambda.TooManyRequestsException'],
-          backoffRate: 1.1,
-          interval: Duration.minutes(1),
-          maxAttempts: 30,
-        })
-    );
-
-    listBucket.next(
-      new Choice(this, 'Is there more?')
-        .when(
-          Condition.isPresent('$.response.NextContinuationToken'),
-
-          new Wait(this, 'Give room for on-demand work', {
-            // Sleep a little before enqueuing the next batch, so that we leave room in the worker
-            // pool for handling on-demand work. If we don't do this, 60k items will be queued at
-            // once and live updates from NPM will struggle to get in in a reasonable time.
-            time: WaitTime.duration(waitTimeBetweenReprocessBatches()),
-          }).next(
-            new StepFunctionsStartExecution(this, 'Continue as new', {
-              associateWithParent: true,
-              stateMachine: StateMachine.fromStateMachineArn(
-                this,
-                'ThisStateMachine',
-                Stack.of(this).formatArn({
-                  arnFormat: ArnFormat.COLON_RESOURCE_NAME,
-                  service: 'states',
-                  resource: 'stateMachine',
-                  resourceName: stateMachineName,
-                })
-              ),
-              input: TaskInput.fromObject({
-                ContinuationToken: JsonPath.stringAt(
-                  '$.response.NextContinuationToken'
-                ),
-              }),
-              integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-              resultPath: JsonPath.DISCARD,
-            }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
-          )
-        )
-        .afterwards({ includeOtherwise: true })
-        .next(process)
-    );
 
     this.stateMachine = new StateMachine(this, 'StateMachine', {
       definition: listBucket,
