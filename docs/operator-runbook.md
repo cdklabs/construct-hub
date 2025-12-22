@@ -288,7 +288,8 @@ which can be searched for in the Lambda function's CloudWatch Logs.
 Once the root cause has been identified and fixed (unless this was a transient
 issue), messages from the dead-letter queue can be sent back to the State
 Machine for re-processing by running the *Redrive DLQ* function, linked from the
-*Orchestration* section of the backend dashboard.
+*Orchestration* section of the backend dashboard. In the lambda console that opens, 
+click on the `Test` tab and then hit the _Test_ button to trigger the redrive function. 
 
 If messages are sent back to the dead-letter queue, perform the investigation
 steps again.
