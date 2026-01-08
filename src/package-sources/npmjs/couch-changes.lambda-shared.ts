@@ -16,6 +16,8 @@ const DEFAULT_BATCH_SIZE = 100;
 
 const MAX_CONNS_PER_HOST = 100;
 
+const MAX_PACKAGE_SERVER_LAG_MS = 30_000; // 30 seconds
+
 /**
  * A utility class that helps with traversing CouchDB database changes streams
  * in a promise-based, page-by-page manner.
@@ -82,6 +84,12 @@ export class CouchChanges extends EventEmitter {
     };
   }
 
+  /**
+   * Fetch the metadata associated with a change. The change comes associated with a revision number,
+   * which can be compared to the revision number of the metadata to determine if the replica is
+   * lagging behind the changes stream. If so, we retry until the replica is up-to-date or until
+   * 30 seconds elapsed after which we return the potentially stale metadata.
+   */
   private async fetchAndFilterMetadata(change: DatabaseChange) {
     // Filter out deleted packages or null ids
     if (change.deleted || !change.id) {
@@ -89,22 +97,47 @@ export class CouchChanges extends EventEmitter {
       return;
     }
 
+    const latestChangesRev = getMaxSequentialRevision(change);
     const metadataUrl = new URL(change.id, NPM_REGISTRY_URL);
     console.log(`Fetching metadata for ${change.id}: ${metadataUrl}`);
 
-    try {
-      const meta = await this.https('get', metadataUrl);
-      change.doc = meta; // add metadata to the change object
-      return change;
-    } catch (e: any) {
-      if (e.message?.includes('HTTP 404')) {
-        console.log(
-          `Skipping ${change.id} because of HTTP 404 (Not Found) error`
-        );
-        return;
+    // Retry configuration
+    const baseDelay = 1_000; // 1 second
+    const maxDelay = 8_000; // 8 seconds max
+    let attempt = 0;
+    const startTime = Date.now();
+
+    while(Date.now() - startTime < MAX_PACKAGE_SERVER_LAG_MS) {
+      try {
+        const meta = await this.https('get', metadataUrl);
+        const latestReplicaRev = parseSequentialRevision(meta._rev as string);
+
+        change.doc = meta; // add metadata to the change object
+
+        // Happy path: replica is up-to-date
+        if (latestReplicaRev >= latestChangesRev) {
+          return change;
+        }
+
+        // Unhappy path: replica is behind. Calculate delay and retry
+        const delay = Math.floor(Math.random() * Math.min(baseDelay * Math.pow(2, attempt), maxDelay));
+        console.log(`${change.id}: package _rev ${latestReplicaRev} < expected replication rev ${latestChangesRev}, retrying in ${delay} ms`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        attempt++;
+      } catch (e: any) {
+        if (e.message?.includes('HTTP 404')) {
+          console.log(
+            `Skipping ${change.id} because of HTTP 404 (Not Found) error`
+          );
+          return;
+        }
+        throw e;
       }
-      throw e;
     }
+
+    // Timeout reached, proceed with stale data
+    console.log(`Timeout reached for ${change.id}, replica may be stale`);
+    return change;
   }
 
   private async fetchAndFilterAllMetadata(
@@ -243,6 +276,17 @@ function isRetryableError(e: Error): boolean {
 
 async function sleep(ms: number) {
   return new Promise((ok) => setTimeout(ok, ms));
+}
+
+function parseSequentialRevision(rev: string): number {
+  return parseInt(rev.split('-')[0]);
+}
+
+function getMaxSequentialRevision(change: DatabaseChange): number {
+  return Math.max(...change.changes
+    .map(change => parseSequentialRevision(change.rev))
+    .filter(num => !isNaN(num))
+  );
 }
 
 export interface DatabaseChanges {
