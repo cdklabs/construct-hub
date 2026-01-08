@@ -16,6 +16,8 @@ const DEFAULT_BATCH_SIZE = 100;
 
 const MAX_CONNS_PER_HOST = 100;
 
+const MAX_PACKAGE_SERVER_LAG_MS = 30_000; // 30 seconds
+
 /**
  * A utility class that helps with traversing CouchDB database changes streams
  * in a promise-based, page-by-page manner.
@@ -100,18 +102,16 @@ export class CouchChanges extends EventEmitter {
     console.log(`Fetching metadata for ${change.id}: ${metadataUrl}`);
 
     // Retry configuration
-    const maxRetryTime = 30000; // 30 seconds
-    const baseDelay = 1000; // 1 second
-    const maxDelay = 8000; // 8 seconds max
+    const baseDelay = 1_000; // 1 second
+    const maxDelay = 8_000; // 8 seconds max
     let attempt = 0;
     const startTime = Date.now();
 
-    while(Date.now() - startTime < maxRetryTime) {
+    while(Date.now() - startTime < MAX_PACKAGE_SERVER_LAG_MS) {
       try {
         const meta = await this.https('get', metadataUrl);
         const latestReplicaRev = parseSequentialRevision(meta._rev as string);
 
-        console.log(`Changes database reported revision ${latestChangesRev}; Latest revision in replica is ${latestReplicaRev}`);
         change.doc = meta; // add metadata to the change object
 
         // Happy path: replica is up-to-date
@@ -120,8 +120,8 @@ export class CouchChanges extends EventEmitter {
         }
 
         // Unhappy path: replica is behind. Calculate delay and retry
-        const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
-        console.log(`Replica rev ${latestReplicaRev} < Changes rev ${latestChangesRev}, retrying in ${delay} ms`);
+        const delay = Math.floor(Math.random() * Math.min(baseDelay * Math.pow(2, attempt), maxDelay));
+        console.log(`${change.id}: package _rev ${latestReplicaRev} < expected replication rev ${latestChangesRev}, retrying in ${delay} ms`);
         await new Promise(resolve => setTimeout(resolve, delay));
         attempt++;
       } catch (e: any) {
