@@ -110,6 +110,12 @@ export class CouchChanges extends EventEmitter {
     while(Date.now() - startTime < MAX_PACKAGE_SERVER_LAG_MS) {
       try {
         const meta = await this.https('get', metadataUrl);
+        if (!meta) {
+          throw new Error(`No metadata for ${change.id}`);
+        }
+        if (!meta._rev) {
+          throw new Error(`No _rev in metadata for ${change.id}`);
+        }
         const latestReplicaRev = parseSequentialRevision(meta._rev as string);
 
         change.doc = meta; // add metadata to the change object
