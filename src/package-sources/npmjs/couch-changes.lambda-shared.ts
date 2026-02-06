@@ -107,14 +107,23 @@ export class CouchChanges extends EventEmitter {
     let attempt = 0;
     const startTime = Date.now();
 
-    while(Date.now() - startTime < MAX_PACKAGE_SERVER_LAG_MS) {
+    // note: this function should not throw validation errors as
+    // it may cause a poison pill - whereby a single corrupt package will
+    // fail the entire lambda execution and prevent us from ingesting any package.
+    // instead, log the violation and return undefined. 
+
+    while (Date.now() - startTime < MAX_PACKAGE_SERVER_LAG_MS) {
       try {
         const meta = await this.https('get', metadataUrl);
         if (!meta) {
-          throw new Error(`No metadata for ${change.id}`);
+          // can happen if a package was removed from npm
+          console.log(`Skipping ${change.id} because no metadata found`);
+          return;
         }
         if (!meta._rev) {
-          throw new Error(`No _rev in metadata for ${change.id}`);
+          // can happen if a package was removed from npm
+          console.log(`Skipping ${change.id} because no _rev found in metadata`);
+          return;
         }
         const latestReplicaRev = parseSequentialRevision(meta._rev as string);
 
@@ -217,8 +226,7 @@ export class CouchChanges extends EventEmitter {
         }
 
         console.log(
-          `Response: ${method.toUpperCase()} ${url} => HTTP ${
-            res.statusCode
+          `Response: ${method.toUpperCase()} ${url} => HTTP ${res.statusCode
           } (${res.statusMessage})`
         );
 
@@ -274,7 +282,7 @@ function readResponseJson(
   });
 }
 
-class RetryableError extends Error {}
+class RetryableError extends Error { }
 
 function isRetryableError(e: Error): boolean {
   return e instanceof RetryableError || (e as any).code === 'ECONNRESET';
