@@ -47,6 +47,7 @@ new ConstructHub(scope: Construct, id: string, props?: ConstructHubProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#construct-hub.ConstructHub.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#construct-hub.ConstructHub.with">with</a></code> | Applies one or more mixins to this construct. |
 
 ---
 
@@ -57,6 +58,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="construct-hub.ConstructHub.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="construct-hub.ConstructHub.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
@@ -228,6 +250,7 @@ Create s3 storage resources.
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#construct-hub.S3StorageFactory.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#construct-hub.S3StorageFactory.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#construct-hub.S3StorageFactory.newBucket">newBucket</a></code> | Create a new bucket in a storage config aware manner. |
 
 ---
@@ -239,6 +262,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="construct-hub.S3StorageFactory.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="construct-hub.S3StorageFactory.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `newBucket` <a name="newBucket" id="construct-hub.S3StorageFactory.newBucket"></a>
 
