@@ -658,11 +658,12 @@ export class NpmJs implements IPackageSource {
         alarmDescription: [
           `The canary package ${packageName} has not published a new version in over ${maxStale.toHumanString()}.`,
           'This means the SLA alarm is blind — no new versions are being tracked, so SLA breaches cannot be detected.',
+          'Metric: ConstructHub/PackageCanary / TimeSinceLastPublish',
           '',
           `Runbook: ${RUNBOOK_URL}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-        evaluationPeriods: 2,
+        evaluationPeriods: 1,
         treatMissingData: TreatMissingData.MISSING,
         threshold: maxStale.toSeconds(),
       });
