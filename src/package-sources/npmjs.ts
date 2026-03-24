@@ -663,7 +663,7 @@ export class NpmJs implements IPackageSource {
         ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
         evaluationPeriods: 2,
-        treatMissingData: TreatMissingData.BREACHING,
+        treatMissingData: TreatMissingData.MISSING,
         threshold: maxStale.toSeconds(),
       });
     monitoring.addMediumSeverityAlarm(
