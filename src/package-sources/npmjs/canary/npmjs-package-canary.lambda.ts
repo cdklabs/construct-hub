@@ -87,6 +87,11 @@ export async function handler(event: unknown): Promise<void> {
           (await stateService.isNpmReplicaDown()) ? 1 : 0,
           Unit.None
         );
+        metrics.putMetric(
+          MetricName.TIME_SINCE_LAST_PUBLISH,
+          (Date.now() - state.latest.publishedAt.getTime()) / 1_000,
+          Unit.Seconds
+        );
       })();
 
       for (const versionState of [

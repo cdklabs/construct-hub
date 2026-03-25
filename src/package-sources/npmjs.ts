@@ -98,6 +98,16 @@ export interface NpmJsProps {
   readonly canarySla?: Duration;
 
   /**
+   * The maximum amount of time the canary package is expected to go without
+   * publishing a new version. If exceeded, an alarm will fire indicating the
+   * canary package may have stopped publishing, which would leave the SLA
+   * alarm blind.
+   *
+   * @default Duration.days(1)
+   */
+  readonly canaryMaxStale?: Duration;
+
+  /**
    * Configure alarm severities.
    */
   readonly alarmSeverities?: AlarmSeverities;
@@ -355,6 +365,7 @@ export class NpmJs implements IPackageSource {
                 follower,
                 this.props.canaryPackage ?? 'construct-hub-probe',
                 this.props.canarySla ?? Duration.minutes(5),
+                this.props.canaryMaxStale ?? Duration.days(1),
                 bucket,
                 baseUrl,
                 monitoring
@@ -596,6 +607,9 @@ export class NpmJs implements IPackageSource {
     // Construct Hub after it gets published to npm, assuming the npm replica
     // is up to date etc.
     visibilitySla: Duration,
+    // A duration specifying how long the canary package can go without
+    // publishing a new version before we alarm.
+    maxStale: Duration,
     bucket: IBucket,
     constructHubBaseUrl: string,
     monitoring: IMonitoring
@@ -635,6 +649,27 @@ export class NpmJs implements IPackageSource {
       alarm,
       this.props.alarmSeverities?.packageCanarySLABreached ?? AlarmSeverity.LOW,
       monitoring
+    );
+
+    const staleAlarm = canary
+      .metricTimeSinceLastPublish({ period })
+      .createAlarm(canary, 'StaleCanaryPackage', {
+        alarmName: `${canary.node.path}/StaleCanaryPackage`,
+        alarmDescription: [
+          `The canary package ${packageName} has not published a new version in over ${maxStale.toHumanString()}.`,
+          'This means the SLA alarm is blind — no new versions are being tracked, so SLA breaches cannot be detected.',
+          'Metric: ConstructHub/PackageCanary / TimeSinceLastPublish',
+          '',
+          `Runbook: ${RUNBOOK_URL}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+        evaluationPeriods: 1,
+        treatMissingData: TreatMissingData.MISSING,
+        threshold: maxStale.toSeconds(),
+      });
+    monitoring.addMediumSeverityAlarm(
+      'Canary package has stopped publishing new versions',
+      staleAlarm
     );
 
     const notRunningOrFailingAlarm = new CompositeAlarm(

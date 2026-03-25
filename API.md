@@ -1710,6 +1710,7 @@ const npmJsProps: sources.NpmJsProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.alarmSeverities">alarmSeverities</a></code> | <code><a href="#construct-hub.AlarmSeverities">AlarmSeverities</a></code> | Configure alarm severities. |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.canaryMaxStale">canaryMaxStale</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum amount of time the canary package is expected to go without publishing a new version. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.canaryPackage">canaryPackage</a></code> | <code>string</code> | The package that is monitored by the package canary, if enabled by `enableCanary`. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.canarySla">canarySla</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.enableCanary">enableCanary</a></code> | <code>boolean</code> | Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics. |
@@ -1726,6 +1727,23 @@ public readonly alarmSeverities: AlarmSeverities;
 - *Type:* <a href="#construct-hub.AlarmSeverities">AlarmSeverities</a>
 
 Configure alarm severities.
+
+---
+
+##### `canaryMaxStale`<sup>Optional</sup> <a name="canaryMaxStale" id="construct-hub.sources.NpmJsProps.property.canaryMaxStale"></a>
+
+```typescript
+public readonly canaryMaxStale: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* Duration.days(1)
+
+The maximum amount of time the canary package is expected to go without publishing a new version.
+
+If exceeded, an alarm will fire indicating the
+canary package may have stopped publishing, which would leave the SLA
+alarm blind.
 
 ---
 

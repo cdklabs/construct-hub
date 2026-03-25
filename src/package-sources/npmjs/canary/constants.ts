@@ -42,6 +42,14 @@ export const enum MetricName {
    * otherwise impaired, and could cause alarms we cannot do anything about.
    */
   HTTP_GATEWAY_ERRORS = 'HttpGatewayErrors',
+
+  /**
+   * The time elapsed since the canary package last published a new version to
+   * npm. This metric is emitted on every canary invocation, ensuring it is
+   * never sparse. It is used to detect when the canary package has stopped
+   * publishing, which would otherwise leave the SLA alarm blind.
+   */
+  TIME_SINCE_LAST_PUBLISH = 'TimeSinceLastPublish',
 }
 
 export const enum ObjectKey {

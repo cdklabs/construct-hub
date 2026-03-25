@@ -11410,7 +11410,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "81b23c3d6138f128dd0812b44f9582b7ba899363d094f3ffe651c2e4ff9ff4f6.zip",
+          "S3Key": "ed4c15f5ed406a3b8e069741560cb10b90635594ce5f9c5fef92014ae1493c1c.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": {
@@ -11746,6 +11746,29 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesNpmJsCanaryStaleCanaryPackageA4C2ACB2": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "AlarmDescription": "The canary package construct-hub-probe has not published a new version in over 1 day.
+This means the SLA alarm is blind — no new versions are being tracked, so SLA breaches cannot be detected.
+Metric: ConstructHub/PackageCanary / TimeSinceLastPublish
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "dev/ConstructHub/Sources/NpmJs/Canary/StaleCanaryPackage",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "TimeSinceLastPublish",
+        "Namespace": "ConstructHub/PackageCanary",
+        "Period": 600,
+        "Statistic": "Maximum",
+        "Threshold": 86400,
+        "TreatMissingData": "missing",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubSourcesNpmJsFollowerFailures86BCBA0D": {
       "Properties": {
