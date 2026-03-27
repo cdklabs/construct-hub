@@ -308,7 +308,7 @@ export class Ingestion extends Construct implements IGrantable {
         ].join('\n'),
         comparisonOperator:
           ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 2,
+        evaluationPeriods: 3,
         threshold: 1,
         // SQS does not emit metrics if the queue has been empty for a while, which is GOOD.
         treatMissingData: TreatMissingData.NOT_BREACHING,
