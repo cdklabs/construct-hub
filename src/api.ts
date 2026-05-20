@@ -44,7 +44,7 @@ export enum AlarmSeverity {
 
 /**
  * Configure severities for various alarms.
- * 
+ *
  * Alarms not included here are currently not configurable.
  */
 export interface AlarmSeverities {
@@ -59,6 +59,62 @@ export interface AlarmSeverities {
    */
   readonly packageCanarySLABreached?: AlarmSeverity;
 
+}
+
+/**
+ * Construct paths of alarms that can be overridden via `alarmOverrides`.
+ *
+ * The path is relative to the `ConstructHub` construct.
+ */
+export enum AlarmPath {
+  SOURCES_NPMJS_FOLLOWER_FAILURES = 'Sources/NpmJs/Follower/Failures',
+  SOURCES_NPMJS_FOLLOWER_NOT_RUNNING = 'Sources/NpmJs/Follower/NotRunning',
+  SOURCES_NPMJS_FOLLOWER_NO_CHANGES = 'Sources/NpmJs/Follower/NoChanges',
+  SOURCES_NPMJS_STAGER_DLQ_NOT_EMPTY = 'Sources/NpmJs/Stager/DLQNotEmpty',
+  SOURCES_NPMJS_CANARY_SLA_BREACHED = 'Sources/NpmJs/Canary/SLA-Breached',
+  SOURCES_NPMJS_CANARY_STALE_PACKAGE = 'Sources/NpmJs/Canary/StaleCanaryPackage',
+  SOURCES_NPMJS_CANARY_FAILING = 'Sources/NpmJs/Canary/Failing',
+  SOURCES_NPMJS_CANARY_NOT_RUNNING = 'Sources/NpmJs/Canary/NotRunning',
+  SOURCES_NPMJS_CANARY_NOT_RUNNING_OR_FAILING = 'Sources/NpmJs/Canary/NotRunningOrFailing',
+  SOURCES_NPMJS_CANARY_GATEWAY_ERRORS = 'Sources/NpmJs/Canary/GatewayErrors',
+  INGESTION_DLQ_NOT_EMPTY = 'Ingestion/DLQNotEmpty',
+  INGESTION_FAILURE = 'Ingestion/Failure',
+  INGESTION_REPROCESS_WORKFLOW_FAILURE = 'Ingestion/ReprocessWorkflow/Failure',
+  FEED_BUILDER_FAILURE = 'FeedBuilder/Failure',
+  ORCHESTRATION_DLQ_NOT_EMPTY = 'Orchestration/DLQ/NotEmpty',
+  ORCHESTRATION_EXECUTIONS_FAILED = 'Orchestration/Resource/ExecutionsFailed',
+  ORCHESTRATION_EXECUTION_FAILURE_RATE = 'Orchestration/Resource/ExecutionFailureRate',
+  ORCHESTRATION_SHRINKING_CATALOG = 'Orchestration/CatalogBuilder/ShrinkingCatalog',
+  INVENTORY_CANARY_NOT_RUNNING = 'InventoryCanary/NotRunning',
+  INVENTORY_CANARY_FAILURES = 'InventoryCanary/Failures',
+  PACKAGE_STATS_FAILURES = 'PackageStats/Failures',
+  VERSION_TRACKER_FAILURES = 'VersionTracker/Failures',
+  VERSION_TRACKER_NOT_RUNNING = 'VersionTracker/NotRunning',
+  RELEASE_NOTES_GENERATION_FAILURE = 'ReleaseNotes/ReleaseNotesGenerationFailure',
+  RELEASE_NOTES_TRIGGER_FAILURE = 'ReleaseNotes/ReleaseNotesTriggerFailure',
+  RELEASE_NOTES_INVALID_GITHUB_CREDENTIALS = 'ReleaseNotes/ReleaseNotesInvalidGitHubCredentials',
+  RELEASE_NOTES_GITHUB_RATE_LIMIT = 'ReleaseNotes/ReleaseNotes Github rate limit',
+  WEBAPP_ACM_CERTIFICATE_EXPIRES_SOON = 'WebApp/ExpirationMonitor/ACMAlarm',
+  WEBAPP_ENDPOINT_CERTIFICATE_EXPIRES_SOON = 'WebApp/ExpirationMonitor/EndpointAlarm',
+}
+
+/**
+ * An override for a specific alarm.
+ */
+export interface AlarmOverride {
+  /**
+   * Wire this alarm to a different severity bucket's action.
+   *
+   * @default - the severity hardcoded by the alarm's author
+   */
+  readonly severity?: AlarmSeverity;
+
+  /**
+   * Wire custom actions onto this alarm, replacing the severity bucket's action.
+   *
+   * @default - the severity bucket's action
+   */
+  readonly actions?: IAlarmAction[];
 }
 
 /**

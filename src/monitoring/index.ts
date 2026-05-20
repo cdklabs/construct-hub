@@ -3,7 +3,7 @@ import { Watchful } from 'cdk-watchful';
 import { Construct } from 'constructs';
 import { IMonitoring } from './api';
 import { WebCanary } from './web-canary';
-import { AlarmActions, AlarmSeverity } from '../api';
+import { AlarmActions, AlarmOverride, AlarmSeverity } from '../api';
 
 /**
  * Props for the monitoring construct.
@@ -13,6 +13,12 @@ export interface MonitoringProps {
    * ARNs of alarm actions to take for various severities.
    */
   readonly alarmActions?: AlarmActions;
+
+  /**
+   * Per-alarm overrides keyed by the alarm's construct path relative to the
+   * `ConstructHub` construct.
+   */
+  readonly alarmOverrides?: { [path: string]: AlarmOverride };
 }
 
 /**
@@ -26,6 +32,7 @@ export interface MonitoringProps {
  */
 export class Monitoring extends Construct implements IMonitoring {
   private alarmActions?: AlarmActions;
+  private alarmOverrides: { [path: string]: AlarmOverride };
   private _highSeverityAlarms: cw.AlarmBase[];
   private _mediumSeverityAlarms: cw.AlarmBase[];
   private _lowSeverityAlarms: cw.AlarmBase[];
@@ -43,6 +50,7 @@ export class Monitoring extends Construct implements IMonitoring {
     super(scope, id);
 
     this.alarmActions = props.alarmActions;
+    this.alarmOverrides = props.alarmOverrides ?? {};
 
     this.watchful = new Watchful(this, 'Watchful', {
       // alarms that come from watchful are all considered normal severity
@@ -69,6 +77,8 @@ export class Monitoring extends Construct implements IMonitoring {
    * @param alarm
    */
   public addHighSeverityAlarm(title: string, alarm: cw.AlarmBase) {
+    if (this.applyOverride(title, alarm, AlarmSeverity.HIGH)) return;
+
     const highSeverityActionArn = this.alarmActions?.highSeverity;
     if (highSeverityActionArn) {
       alarm.addAlarmAction({
@@ -91,7 +101,9 @@ export class Monitoring extends Construct implements IMonitoring {
     this._highSeverityAlarms.push(alarm);
   }
 
-  public addLowSeverityAlarm(_title: string, alarm: cw.AlarmBase) {
+  public addLowSeverityAlarm(title: string, alarm: cw.AlarmBase) {
+    if (this.applyOverride(title, alarm, AlarmSeverity.LOW)) return;
+
     const normalSeverityActionArn = this.alarmActions?.normalSeverity;
     if (normalSeverityActionArn) {
       alarm.addAlarmAction({
@@ -105,7 +117,9 @@ export class Monitoring extends Construct implements IMonitoring {
     this._lowSeverityAlarms.push(alarm);
   }
 
-  public addMediumSeverityAlarm(_title: string, alarm: cw.AlarmBase) {
+  public addMediumSeverityAlarm(title: string, alarm: cw.AlarmBase) {
+    if (this.applyOverride(title, alarm, AlarmSeverity.MEDIUM)) return;
+
     const actionArn = this.alarmActions?.mediumSeverity;
     if (actionArn) {
       alarm.addAlarmAction({
@@ -117,6 +131,56 @@ export class Monitoring extends Construct implements IMonitoring {
       alarm.addAlarmAction(action);
     }
     this._mediumSeverityAlarms.push(alarm);
+  }
+
+  /**
+   * If `alarm` has an entry in `alarmOverrides`, fully wire it (actions,
+   * dashboard placement, bookkeeping) according to the override and return
+   * true. Otherwise return false to let the caller fall back to default
+   * bucket-based behavior.
+   */
+  private applyOverride(
+    title: string,
+    alarm: cw.AlarmBase,
+    defaultSeverity: AlarmSeverity
+  ): boolean {
+    const prefix = `${this.node.scope!.node.path}/`;
+    if (!alarm.node.path.startsWith(prefix)) return false;
+    const override = this.alarmOverrides[alarm.node.path.slice(prefix.length)];
+    if (!override) return false;
+
+    const severity = override.severity ?? defaultSeverity;
+
+    if (override.actions) {
+      for (const action of override.actions) {
+        alarm.addAlarmAction(action);
+      }
+    } else {
+      const arn =
+        severity === AlarmSeverity.HIGH ? this.alarmActions?.highSeverity :
+          severity === AlarmSeverity.MEDIUM ? this.alarmActions?.mediumSeverity :
+            this.alarmActions?.normalSeverity;
+      if (arn) alarm.addAlarmAction({ bind: () => ({ alarmActionArn: arn }) });
+
+      const action =
+        severity === AlarmSeverity.HIGH ? this.alarmActions?.highSeverityAction :
+          severity === AlarmSeverity.MEDIUM ? this.alarmActions?.mediumSeverityAction :
+            this.alarmActions?.normalSeverityAction;
+      if (action) alarm.addAlarmAction(action);
+    }
+
+    if (severity === AlarmSeverity.HIGH) {
+      this.highSeverityDashboard.addWidgets(
+        new cw.AlarmWidget({ alarm, title, width: 24 })
+      );
+      this._highSeverityAlarms.push(alarm);
+    } else if (severity === AlarmSeverity.MEDIUM) {
+      this._mediumSeverityAlarms.push(alarm);
+    } else {
+      this._lowSeverityAlarms.push(alarm);
+    }
+
+    return true;
   }
 
   public get highSeverityAlarms() {
