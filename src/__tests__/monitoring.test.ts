@@ -423,7 +423,5 @@ test('alarm overrides: alarm without explicit alarmName fails synth', () => {
   }).addHighSeverityAlarm('Alarm', alarm);
 
   // THEN: synth flags the missing alarmName
-  expect(() => Template.fromStack(stack)).toThrow(
-    /has no explicit alarmName/
-  );
+  expect(() => Template.fromStack(stack)).toThrow(/has no explicit alarmName/);
 });

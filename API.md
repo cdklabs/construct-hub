@@ -537,8 +537,8 @@ const alarmOverride: AlarmOverride = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.AlarmOverride.property.actions">actions</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction[]</code> | Wire custom actions onto this alarm, replacing the severity bucket's action. |
-| <code><a href="#construct-hub.AlarmOverride.property.severity">severity</a></code> | <code>string</code> | Wire this alarm to a different severity bucket's action. |
+| <code><a href="#construct-hub.AlarmOverride.property.actions">actions</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction[]</code> | Wire these actions onto the alarm in place of the severity bucket's action. |
+| <code><a href="#construct-hub.AlarmOverride.property.severity">severity</a></code> | <code><a href="#construct-hub.AlarmSeverity">AlarmSeverity</a></code> | Wire this alarm to a different severity bucket's action. |
 
 ---
 
@@ -551,17 +551,17 @@ public readonly actions: IAlarmAction[];
 - *Type:* aws-cdk-lib.aws_cloudwatch.IAlarmAction[]
 - *Default:* the severity bucket's action
 
-Wire custom actions onto this alarm, replacing the severity bucket's action.
+Wire these actions onto the alarm in place of the severity bucket's action.
 
 ---
 
 ##### `severity`<sup>Optional</sup> <a name="severity" id="construct-hub.AlarmOverride.property.severity"></a>
 
 ```typescript
-public readonly severity: string;
+public readonly severity: AlarmSeverity;
 ```
 
-- *Type:* string
+- *Type:* <a href="#construct-hub.AlarmSeverity">AlarmSeverity</a>
 - *Default:* the severity hardcoded by the alarm's author
 
 Wire this alarm to a different severity bucket's action.
