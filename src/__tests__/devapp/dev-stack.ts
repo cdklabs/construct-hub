@@ -1,8 +1,10 @@
 import * as path from 'path';
 import * as process from 'process';
 import { Stack } from 'aws-cdk-lib';
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import * as secretsManager from 'aws-cdk-lib/aws-secretsmanager';
+import * as sns from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
 import * as dotenv from 'dotenv';
 import { ConstructHub, Isolation } from '../..';
@@ -108,10 +110,30 @@ export class DevStack extends Stack {
     const sensitiveTaskIsolation =
       props.sensitiveTaskIsolation ?? defaultIsolateSensitiveTasks();
 
+    // Manual-test scaffolding for #1599 alarm overrides.
+    const highTopic = new sns.Topic(this, 'HighSeverityTopic');
+    const mediumTopic = new sns.Topic(this, 'MediumSeverityTopic');
+    const customTopic = new sns.Topic(this, 'MyCustomTopic');
+
     new ConstructHub(this, 'ConstructHub', {
       featureFlags: {
         homeRedesign: true,
         searchRedesign: true,
+      },
+      alarmActions: {
+        highSeverityAction: new SnsAction(highTopic),
+        mediumSeverityAction: new SnsAction(mediumTopic),
+      },
+      alarmOverrides: {
+        // Severity-only — should wire MediumSeverityTopic, not High.
+        'Sources/NpmJs/Canary/NotRunningOrFailing': { severity: 'MEDIUM' },
+        // Actions-only — should wire MyCustomTopic, bypass both buckets.
+        'Ingestion/DLQNotEmpty': { actions: [new SnsAction(customTopic)] },
+        // Both — wires MyCustomTopic AND keeps the alarm on the high-sev dashboard.
+        'PackageStats/Failures': {
+          severity: 'HIGH',
+          actions: [new SnsAction(customTopic)],
+        },
       },
       denyList: [
         {

@@ -33,6 +33,7 @@ export interface MonitoringProps {
 export class Monitoring extends Construct implements IMonitoring {
   private alarmActions?: AlarmActions;
   private alarmOverrides: { [path: string]: AlarmOverride };
+  private matchedOverrideKeys = new Set<string>();
   private _highSeverityAlarms: cw.AlarmBase[];
   private _mediumSeverityAlarms: cw.AlarmBase[];
   private _lowSeverityAlarms: cw.AlarmBase[];
@@ -70,6 +71,19 @@ export class Monitoring extends Construct implements IMonitoring {
       this,
       'HighSeverityDashboard'
     );
+
+    // Warn at synth time about override keys that didn't match any alarm.
+    this.node.addValidation({
+      validate: () => {
+        const unknown = Object.keys(this.alarmOverrides).filter(
+          (k) => !this.matchedOverrideKeys.has(k)
+        );
+        return unknown.map(
+          (k) =>
+            `alarmOverrides: '${k}' did not match any alarm — typo? Refer to API.md for the list of overridable alarm names.`
+        );
+      },
+    });
   }
 
   /**
@@ -138,18 +152,26 @@ export class Monitoring extends Construct implements IMonitoring {
    * dashboard placement, bookkeeping) according to the override and return
    * true. Otherwise return false to let the caller fall back to default
    * bucket-based behavior.
+   *
+   * Lookup is by the alarm's CloudWatch display name (the `alarmName`
+   * property), with the `${stack}/${ConstructHub-id}/` prefix stripped — so
+   * customers write the same string they see in tickets.
    */
   private applyOverride(
     title: string,
     alarm: cw.AlarmBase,
     defaultSeverity: AlarmSeverity
   ): boolean {
-    const prefix = `${this.node.scope!.node.path}/`;
-    if (!alarm.node.path.startsWith(prefix)) return false;
-    const override = this.alarmOverrides[alarm.node.path.slice(prefix.length)];
+    const relative = this.relativeAlarmName(alarm);
+    if (!relative) return false;
+    const override = this.alarmOverrides[relative];
     if (!override) return false;
 
-    const severity = override.severity ?? defaultSeverity;
+    this.matchedOverrideKeys.add(relative);
+
+    const severity = override.severity
+      ? severityFromString(override.severity)
+      : defaultSeverity;
 
     if (override.actions) {
       for (const action of override.actions) {
@@ -181,6 +203,23 @@ export class Monitoring extends Construct implements IMonitoring {
     }
 
     return true;
+  }
+
+  /**
+   * Returns the alarm's CloudWatch display name with the `${ConstructHub.path}/`
+   * prefix stripped, or undefined if the alarm has no explicit name.
+   */
+  private relativeAlarmName(alarm: cw.AlarmBase): string | undefined {
+    const cfn = alarm.node.defaultChild as
+      | cw.CfnAlarm
+      | cw.CfnCompositeAlarm
+      | undefined;
+    const fullName =
+      (cfn as cw.CfnAlarm | undefined)?.alarmName ??
+      (cfn as cw.CfnCompositeAlarm | undefined)?.alarmName;
+    if (!fullName) return undefined;
+    const prefix = `${this.node.scope!.node.path}/`;
+    return fullName.startsWith(prefix) ? fullName.slice(prefix.length) : undefined;
   }
 
   public get highSeverityAlarms() {
@@ -231,5 +270,13 @@ export function addAlarm(title: string, alarm: cw.Alarm, severity: AlarmSeverity
       break;
     default:
       throw new Error(`Unknown alarm severity: ${severity}`);
+  }
+}
+
+function severityFromString(s: 'HIGH' | 'MEDIUM' | 'LOW'): AlarmSeverity {
+  switch (s) {
+    case 'HIGH': return AlarmSeverity.HIGH;
+    case 'MEDIUM': return AlarmSeverity.MEDIUM;
+    case 'LOW': return AlarmSeverity.LOW;
   }
 }

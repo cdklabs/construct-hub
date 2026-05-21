@@ -83,14 +83,17 @@ export interface ConstructHubProps {
   readonly alarmSeverities?: AlarmSeverities;
 
   /**
-   * Per-alarm overrides keyed by the alarm's construct path relative to the
-   * `ConstructHub` construct (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing').
-   * Use the `AlarmPath` enum for compile-time typo protection.
+   * Per-alarm overrides keyed by the alarm's CloudWatch display name relative
+   * to the `ConstructHub` construct — i.e. the same string a customer sees in
+   * tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing').
    *
-   * For each entry, set `severity` to wire the alarm to a different bucket's
-   * action, `actions` to supply custom actions that bypass the buckets, or both.
+   * For each entry, set `severity` ('HIGH' | 'MEDIUM' | 'LOW') to wire the
+   * alarm to a different bucket's action, `actions` to supply custom actions
+   * that bypass the buckets, or both.
+   *
+   * Unknown keys are surfaced as synth-time validation errors.
    */
-  readonly alarmOverrides?: { [path: string]: AlarmOverride };
+  readonly alarmOverrides?: { [alarmName: string]: AlarmOverride };
 
   /**
    * Whether compute environments for sensitive tasks (which operate on
