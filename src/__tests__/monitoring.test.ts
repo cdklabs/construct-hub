@@ -3,6 +3,7 @@ import { Match, Template } from 'aws-cdk-lib/assertions';
 import { IAlarmAction, Alarm, Metric } from 'aws-cdk-lib/aws-cloudwatch';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as sns from 'aws-cdk-lib/aws-sns';
+import { AlarmSeverity } from '../api';
 import { Monitoring } from '../monitoring';
 
 const actions = {
@@ -60,7 +61,11 @@ test('high severity alarms trigger the correct action', () => {
   });
   const alarm = topic
     .metricNumberOfNotificationsFailed()
-    .createAlarm(stack, 'Alarm', { threshold: 1, evaluationPeriods: 1 });
+    .createAlarm(stack, 'Alarm', {
+      alarmName: `${stack.node.path}/Alarm`,
+      threshold: 1,
+      evaluationPeriods: 1,
+    });
 
   // WHEN
   monitoring.addHighSeverityAlarm('My Alarm', alarm);
@@ -184,6 +189,7 @@ test('normal-severity alarm actions are registered', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: `${stack.node.path}/Alarm`,
     evaluationPeriods: 1,
     metric: new Metric({
       metricName: 'FakeMetricName',
@@ -213,6 +219,7 @@ test('high-severity alarm actions are registered', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: `${stack.node.path}/Alarm`,
     evaluationPeriods: 1,
     metric: new Metric({
       metricName: 'FakeMetricName',
@@ -242,6 +249,7 @@ test('medium-severity alarm actions are registered', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: `${stack.node.path}/Alarm`,
     evaluationPeriods: 1,
     metric: new Metric({
       metricName: 'FakeMetricName',
@@ -284,7 +292,7 @@ test('alarm overrides: severity-only override wires the new bucket action', () =
       mediumSeverity: 'arn:medium',
     },
     alarmOverrides: {
-      Alarm: { severity: 'MEDIUM' },
+      Alarm: { severity: AlarmSeverity.MEDIUM },
     },
   }).addHighSeverityAlarm('Alarm', alarm);
 
@@ -338,7 +346,7 @@ test('alarm overrides: severity + actions wires custom action and uses new dashb
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'arn:high', normalSeverity: 'arn:normal' },
     alarmOverrides: {
-      Alarm: { severity: 'HIGH', actions: [customAction] },
+      Alarm: { severity: AlarmSeverity.HIGH, actions: [customAction] },
     },
   });
   monitoring.addLowSeverityAlarm('Alarm', alarm);
@@ -368,12 +376,54 @@ test('alarm overrides: unknown key fails synth-time validation', () => {
   new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'arn:high' },
     alarmOverrides: {
-      'NonExistent/Alarm': { severity: 'LOW' },
+      'NonExistent/Alarm': { severity: AlarmSeverity.LOW },
     },
   }).addHighSeverityAlarm('Alarm', alarm);
 
   // THEN: synth surfaces an error pointing at the unknown key
   expect(() => Template.fromStack(stack)).toThrow(
     /alarmOverrides: 'NonExistent\/Alarm' did not match/
+  );
+});
+
+test('alarm overrides: alarms with explicit name and no override use the bucket action', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: 'TestStack/Alarm',
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+
+  // WHEN: registered as HIGH with no override entry for it
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { highSeverity: 'arn:high' },
+    alarmOverrides: {},
+  }).addHighSeverityAlarm('Alarm', alarm);
+
+  // THEN: default bucket action is wired (no regression)
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmActions: ['arn:high'],
+  });
+});
+
+test('alarm overrides: alarm without explicit alarmName fails synth', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    // no alarmName set
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { highSeverity: 'arn:high' },
+  }).addHighSeverityAlarm('Alarm', alarm);
+
+  // THEN: synth flags the missing alarmName
+  expect(() => Template.fromStack(stack)).toThrow(
+    /has no explicit alarmName/
   );
 });

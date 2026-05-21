@@ -15,10 +15,10 @@ export interface MonitoringProps {
   readonly alarmActions?: AlarmActions;
 
   /**
-   * Per-alarm overrides keyed by the alarm's construct path relative to the
-   * `ConstructHub` construct.
+   * Per-alarm overrides keyed by the alarm's CloudWatch display name relative
+   * to the `ConstructHub` construct.
    */
-  readonly alarmOverrides?: { [path: string]: AlarmOverride };
+  readonly alarmOverrides?: { [alarmName: string]: AlarmOverride };
 }
 
 /**
@@ -32,7 +32,7 @@ export interface MonitoringProps {
  */
 export class Monitoring extends Construct implements IMonitoring {
   private alarmActions?: AlarmActions;
-  private alarmOverrides: { [path: string]: AlarmOverride };
+  private alarmOverrides: { [alarmName: string]: AlarmOverride };
   private matchedOverrideKeys = new Set<string>();
   private _highSeverityAlarms: cw.AlarmBase[];
   private _mediumSeverityAlarms: cw.AlarmBase[];
@@ -72,16 +72,30 @@ export class Monitoring extends Construct implements IMonitoring {
       'HighSeverityDashboard'
     );
 
-    // Warn at synth time about override keys that didn't match any alarm.
+    // Synth-time checks:
+    //   1. Every registered alarm must have an explicit `alarmName`, otherwise
+    //      it is silently un-overridable.
+    //   2. Every key in `alarmOverrides` must match a registered alarm.
     this.node.addValidation({
       validate: () => {
-        const unknown = Object.keys(this.alarmOverrides).filter(
-          (k) => !this.matchedOverrideKeys.has(k)
-        );
-        return unknown.map(
-          (k) =>
-            `alarmOverrides: '${k}' did not match any alarm — typo? Refer to API.md for the list of overridable alarm names.`
-        );
+        const errors: string[] = [];
+        for (const alarm of this.allRegisteredAlarms()) {
+          if (!this.relativeAlarmName(alarm)) {
+            errors.push(
+              `alarm '${alarm.node.path}' has no explicit alarmName, ` +
+                'so it cannot be overridden via `alarmOverrides`. Set ' +
+                '`alarmName: ${scope.node.path}/<short-name>` at the registration site.'
+            );
+          }
+        }
+        for (const k of Object.keys(this.alarmOverrides)) {
+          if (!this.matchedOverrideKeys.has(k)) {
+            errors.push(
+              `alarmOverrides: '${k}' did not match any alarm — typo? Refer to API.md for the list of overridable alarm names.`
+            );
+          }
+        }
+        return errors;
       },
     });
   }
@@ -169,9 +183,7 @@ export class Monitoring extends Construct implements IMonitoring {
 
     this.matchedOverrideKeys.add(relative);
 
-    const severity = override.severity
-      ? severityFromString(override.severity)
-      : defaultSeverity;
+    const severity = override.severity ?? defaultSeverity;
 
     if (override.actions) {
       for (const action of override.actions) {
@@ -218,7 +230,9 @@ export class Monitoring extends Construct implements IMonitoring {
       (cfn as cw.CfnAlarm | undefined)?.alarmName ??
       (cfn as cw.CfnCompositeAlarm | undefined)?.alarmName;
     if (!fullName) return undefined;
-    const prefix = `${this.node.scope!.node.path}/`;
+    const parent = this.node.scope;
+    if (!parent) return undefined;
+    const prefix = `${parent.node.path}/`;
     return fullName.startsWith(prefix) ? fullName.slice(prefix.length) : undefined;
   }
 
@@ -232,6 +246,14 @@ export class Monitoring extends Construct implements IMonitoring {
 
   public get lowSeverityAlarms() {
     return [...this._lowSeverityAlarms];
+  }
+
+  private allRegisteredAlarms(): cw.AlarmBase[] {
+    return [
+      ...this._highSeverityAlarms,
+      ...this._mediumSeverityAlarms,
+      ...this._lowSeverityAlarms,
+    ];
   }
 
   /**
@@ -273,10 +295,3 @@ export function addAlarm(title: string, alarm: cw.Alarm, severity: AlarmSeverity
   }
 }
 
-function severityFromString(s: 'HIGH' | 'MEDIUM' | 'LOW'): AlarmSeverity {
-  switch (s) {
-    case 'HIGH': return AlarmSeverity.HIGH;
-    case 'MEDIUM': return AlarmSeverity.MEDIUM;
-    case 'LOW': return AlarmSeverity.LOW;
-  }
-}

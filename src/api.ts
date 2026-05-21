@@ -70,10 +70,10 @@ export interface AlarmOverride {
    *
    * @default - the severity hardcoded by the alarm's author
    */
-  readonly severity?: 'HIGH' | 'MEDIUM' | 'LOW';
+  readonly severity?: AlarmSeverity;
 
   /**
-   * Wire custom actions onto this alarm, replacing the severity bucket's action.
+   * Wire these actions onto the alarm in place of the severity bucket's action.
    *
    * @default - the severity bucket's action
    */
