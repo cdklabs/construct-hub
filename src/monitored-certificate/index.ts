@@ -97,6 +97,7 @@ export class MonitoredCertificate extends Construct {
 
     this.alarmAcmCertificateExpiresSoon =
       this.metricAcmCertificateDaysToExpiry().createAlarm(this, 'ACMAlarm', {
+        alarmName: `${this.node.path}/ACMCertificateExpiresSoon`,
         alarmDescription: `The ACM certificate ${props.certificate.certificateArn} will expire in less than 45 days!`,
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
         evaluationPeriods: 1,
@@ -109,6 +110,7 @@ export class MonitoredCertificate extends Construct {
         this,
         'EndpointAlarm',
         {
+          alarmName: `${this.node.path}/EndpointCertificateExpiresSoon`,
           alarmDescription: `The certificate used to serve ${props.domainName} will expire in less than 45 days!`,
           comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
           evaluationPeriods: 1,
