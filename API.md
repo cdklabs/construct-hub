@@ -538,7 +538,7 @@ const alarmOverride: AlarmOverride = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#construct-hub.AlarmOverride.property.actions">actions</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction[]</code> | Wire custom actions onto this alarm, replacing the severity bucket's action. |
-| <code><a href="#construct-hub.AlarmOverride.property.severity">severity</a></code> | <code><a href="#construct-hub.AlarmSeverity">AlarmSeverity</a></code> | Wire this alarm to a different severity bucket's action. |
+| <code><a href="#construct-hub.AlarmOverride.property.severity">severity</a></code> | <code>string</code> | Wire this alarm to a different severity bucket's action. |
 
 ---
 
@@ -558,10 +558,10 @@ Wire custom actions onto this alarm, replacing the severity bucket's action.
 ##### `severity`<sup>Optional</sup> <a name="severity" id="construct-hub.AlarmOverride.property.severity"></a>
 
 ```typescript
-public readonly severity: AlarmSeverity;
+public readonly severity: string;
 ```
 
-- *Type:* <a href="#construct-hub.AlarmSeverity">AlarmSeverity</a>
+- *Type:* string
 - *Default:* the severity hardcoded by the alarm's author
 
 Wire this alarm to a different severity bucket's action.
@@ -775,7 +775,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | --- | --- | --- |
 | <code><a href="#construct-hub.ConstructHubProps.property.additionalDomains">additionalDomains</a></code> | <code><a href="#construct-hub.DomainRedirectSource">DomainRedirectSource</a>[]</code> | Additional domains which will be set up to redirect to the primary construct hub domain. |
 | <code><a href="#construct-hub.ConstructHubProps.property.alarmActions">alarmActions</a></code> | <code><a href="#construct-hub.AlarmActions">AlarmActions</a></code> | Actions to perform when alarms are set. |
-| <code><a href="#construct-hub.ConstructHubProps.property.alarmOverrides">alarmOverrides</a></code> | <code>{[ key: string ]: <a href="#construct-hub.AlarmOverride">AlarmOverride</a>}</code> | Per-alarm overrides keyed by the alarm's construct path relative to the `ConstructHub` construct (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing'). Use the `AlarmPath` enum for compile-time typo protection. |
+| <code><a href="#construct-hub.ConstructHubProps.property.alarmOverrides">alarmOverrides</a></code> | <code>{[ key: string ]: <a href="#construct-hub.AlarmOverride">AlarmOverride</a>}</code> | Per-alarm overrides keyed by the alarm's CloudWatch display name relative to the `ConstructHub` construct — i.e. the same string a customer sees in tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing'). |
 | <code><a href="#construct-hub.ConstructHubProps.property.alarmSeverities">alarmSeverities</a></code> | <code><a href="#construct-hub.AlarmSeverities">AlarmSeverities</a></code> | Configure the severities of various alarms. |
 | <code><a href="#construct-hub.ConstructHubProps.property.allowedLicenses">allowedLicenses</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a>[]</code> | The allowed licenses for packages indexed by this instance of ConstructHub. |
 | <code><a href="#construct-hub.ConstructHubProps.property.appRegistryApplication">appRegistryApplication</a></code> | <code>boolean</code> | Create an AppRegistry application associated with the stack containing this construct. |
@@ -835,10 +835,13 @@ public readonly alarmOverrides: {[ key: string ]: AlarmOverride};
 
 - *Type:* {[ key: string ]: <a href="#construct-hub.AlarmOverride">AlarmOverride</a>}
 
-Per-alarm overrides keyed by the alarm's construct path relative to the `ConstructHub` construct (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing'). Use the `AlarmPath` enum for compile-time typo protection.
+Per-alarm overrides keyed by the alarm's CloudWatch display name relative to the `ConstructHub` construct — i.e. the same string a customer sees in tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing').
 
-For each entry, set `severity` to wire the alarm to a different bucket's
-action, `actions` to supply custom actions that bypass the buckets, or both.
+For each entry, set `severity` ('HIGH' | 'MEDIUM' | 'LOW') to wire the
+alarm to a different bucket's action, `actions` to supply custom actions
+that bypass the buckets, or both.
+
+Unknown keys are surfaced as synth-time validation errors.
 
 ---
 
@@ -14469,193 +14472,6 @@ the id of the external connection (i.e: `public:npmjs`).
 
 
 ## Enums <a name="Enums" id="Enums"></a>
-
-### AlarmPath <a name="AlarmPath" id="construct-hub.AlarmPath"></a>
-
-Construct paths of alarms that can be overridden via `alarmOverrides`.
-
-The path is relative to the `ConstructHub` construct.
-
-#### Members <a name="Members" id="Members"></a>
-
-| **Name** | **Description** |
-| --- | --- |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_FOLLOWER_FAILURES">SOURCES_NPMJS_FOLLOWER_FAILURES</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_FOLLOWER_NOT_RUNNING">SOURCES_NPMJS_FOLLOWER_NOT_RUNNING</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_FOLLOWER_NO_CHANGES">SOURCES_NPMJS_FOLLOWER_NO_CHANGES</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_STAGER_DLQ_NOT_EMPTY">SOURCES_NPMJS_STAGER_DLQ_NOT_EMPTY</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_SLA_BREACHED">SOURCES_NPMJS_CANARY_SLA_BREACHED</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_STALE_PACKAGE">SOURCES_NPMJS_CANARY_STALE_PACKAGE</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_FAILING">SOURCES_NPMJS_CANARY_FAILING</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_NOT_RUNNING">SOURCES_NPMJS_CANARY_NOT_RUNNING</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_NOT_RUNNING_OR_FAILING">SOURCES_NPMJS_CANARY_NOT_RUNNING_OR_FAILING</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_GATEWAY_ERRORS">SOURCES_NPMJS_CANARY_GATEWAY_ERRORS</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.INGESTION_DLQ_NOT_EMPTY">INGESTION_DLQ_NOT_EMPTY</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.INGESTION_FAILURE">INGESTION_FAILURE</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.INGESTION_REPROCESS_WORKFLOW_FAILURE">INGESTION_REPROCESS_WORKFLOW_FAILURE</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.FEED_BUILDER_FAILURE">FEED_BUILDER_FAILURE</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.ORCHESTRATION_DLQ_NOT_EMPTY">ORCHESTRATION_DLQ_NOT_EMPTY</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.ORCHESTRATION_EXECUTIONS_FAILED">ORCHESTRATION_EXECUTIONS_FAILED</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.ORCHESTRATION_EXECUTION_FAILURE_RATE">ORCHESTRATION_EXECUTION_FAILURE_RATE</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.ORCHESTRATION_SHRINKING_CATALOG">ORCHESTRATION_SHRINKING_CATALOG</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.INVENTORY_CANARY_NOT_RUNNING">INVENTORY_CANARY_NOT_RUNNING</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.INVENTORY_CANARY_FAILURES">INVENTORY_CANARY_FAILURES</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.PACKAGE_STATS_FAILURES">PACKAGE_STATS_FAILURES</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.VERSION_TRACKER_FAILURES">VERSION_TRACKER_FAILURES</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.VERSION_TRACKER_NOT_RUNNING">VERSION_TRACKER_NOT_RUNNING</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.RELEASE_NOTES_GENERATION_FAILURE">RELEASE_NOTES_GENERATION_FAILURE</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.RELEASE_NOTES_TRIGGER_FAILURE">RELEASE_NOTES_TRIGGER_FAILURE</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.RELEASE_NOTES_INVALID_GITHUB_CREDENTIALS">RELEASE_NOTES_INVALID_GITHUB_CREDENTIALS</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.RELEASE_NOTES_GITHUB_RATE_LIMIT">RELEASE_NOTES_GITHUB_RATE_LIMIT</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.WEBAPP_ACM_CERTIFICATE_EXPIRES_SOON">WEBAPP_ACM_CERTIFICATE_EXPIRES_SOON</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmPath.WEBAPP_ENDPOINT_CERTIFICATE_EXPIRES_SOON">WEBAPP_ENDPOINT_CERTIFICATE_EXPIRES_SOON</a></code> | *No description.* |
-
----
-
-##### `SOURCES_NPMJS_FOLLOWER_FAILURES` <a name="SOURCES_NPMJS_FOLLOWER_FAILURES" id="construct-hub.AlarmPath.SOURCES_NPMJS_FOLLOWER_FAILURES"></a>
-
----
-
-
-##### `SOURCES_NPMJS_FOLLOWER_NOT_RUNNING` <a name="SOURCES_NPMJS_FOLLOWER_NOT_RUNNING" id="construct-hub.AlarmPath.SOURCES_NPMJS_FOLLOWER_NOT_RUNNING"></a>
-
----
-
-
-##### `SOURCES_NPMJS_FOLLOWER_NO_CHANGES` <a name="SOURCES_NPMJS_FOLLOWER_NO_CHANGES" id="construct-hub.AlarmPath.SOURCES_NPMJS_FOLLOWER_NO_CHANGES"></a>
-
----
-
-
-##### `SOURCES_NPMJS_STAGER_DLQ_NOT_EMPTY` <a name="SOURCES_NPMJS_STAGER_DLQ_NOT_EMPTY" id="construct-hub.AlarmPath.SOURCES_NPMJS_STAGER_DLQ_NOT_EMPTY"></a>
-
----
-
-
-##### `SOURCES_NPMJS_CANARY_SLA_BREACHED` <a name="SOURCES_NPMJS_CANARY_SLA_BREACHED" id="construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_SLA_BREACHED"></a>
-
----
-
-
-##### `SOURCES_NPMJS_CANARY_STALE_PACKAGE` <a name="SOURCES_NPMJS_CANARY_STALE_PACKAGE" id="construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_STALE_PACKAGE"></a>
-
----
-
-
-##### `SOURCES_NPMJS_CANARY_FAILING` <a name="SOURCES_NPMJS_CANARY_FAILING" id="construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_FAILING"></a>
-
----
-
-
-##### `SOURCES_NPMJS_CANARY_NOT_RUNNING` <a name="SOURCES_NPMJS_CANARY_NOT_RUNNING" id="construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_NOT_RUNNING"></a>
-
----
-
-
-##### `SOURCES_NPMJS_CANARY_NOT_RUNNING_OR_FAILING` <a name="SOURCES_NPMJS_CANARY_NOT_RUNNING_OR_FAILING" id="construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_NOT_RUNNING_OR_FAILING"></a>
-
----
-
-
-##### `SOURCES_NPMJS_CANARY_GATEWAY_ERRORS` <a name="SOURCES_NPMJS_CANARY_GATEWAY_ERRORS" id="construct-hub.AlarmPath.SOURCES_NPMJS_CANARY_GATEWAY_ERRORS"></a>
-
----
-
-
-##### `INGESTION_DLQ_NOT_EMPTY` <a name="INGESTION_DLQ_NOT_EMPTY" id="construct-hub.AlarmPath.INGESTION_DLQ_NOT_EMPTY"></a>
-
----
-
-
-##### `INGESTION_FAILURE` <a name="INGESTION_FAILURE" id="construct-hub.AlarmPath.INGESTION_FAILURE"></a>
-
----
-
-
-##### `INGESTION_REPROCESS_WORKFLOW_FAILURE` <a name="INGESTION_REPROCESS_WORKFLOW_FAILURE" id="construct-hub.AlarmPath.INGESTION_REPROCESS_WORKFLOW_FAILURE"></a>
-
----
-
-
-##### `FEED_BUILDER_FAILURE` <a name="FEED_BUILDER_FAILURE" id="construct-hub.AlarmPath.FEED_BUILDER_FAILURE"></a>
-
----
-
-
-##### `ORCHESTRATION_DLQ_NOT_EMPTY` <a name="ORCHESTRATION_DLQ_NOT_EMPTY" id="construct-hub.AlarmPath.ORCHESTRATION_DLQ_NOT_EMPTY"></a>
-
----
-
-
-##### `ORCHESTRATION_EXECUTIONS_FAILED` <a name="ORCHESTRATION_EXECUTIONS_FAILED" id="construct-hub.AlarmPath.ORCHESTRATION_EXECUTIONS_FAILED"></a>
-
----
-
-
-##### `ORCHESTRATION_EXECUTION_FAILURE_RATE` <a name="ORCHESTRATION_EXECUTION_FAILURE_RATE" id="construct-hub.AlarmPath.ORCHESTRATION_EXECUTION_FAILURE_RATE"></a>
-
----
-
-
-##### `ORCHESTRATION_SHRINKING_CATALOG` <a name="ORCHESTRATION_SHRINKING_CATALOG" id="construct-hub.AlarmPath.ORCHESTRATION_SHRINKING_CATALOG"></a>
-
----
-
-
-##### `INVENTORY_CANARY_NOT_RUNNING` <a name="INVENTORY_CANARY_NOT_RUNNING" id="construct-hub.AlarmPath.INVENTORY_CANARY_NOT_RUNNING"></a>
-
----
-
-
-##### `INVENTORY_CANARY_FAILURES` <a name="INVENTORY_CANARY_FAILURES" id="construct-hub.AlarmPath.INVENTORY_CANARY_FAILURES"></a>
-
----
-
-
-##### `PACKAGE_STATS_FAILURES` <a name="PACKAGE_STATS_FAILURES" id="construct-hub.AlarmPath.PACKAGE_STATS_FAILURES"></a>
-
----
-
-
-##### `VERSION_TRACKER_FAILURES` <a name="VERSION_TRACKER_FAILURES" id="construct-hub.AlarmPath.VERSION_TRACKER_FAILURES"></a>
-
----
-
-
-##### `VERSION_TRACKER_NOT_RUNNING` <a name="VERSION_TRACKER_NOT_RUNNING" id="construct-hub.AlarmPath.VERSION_TRACKER_NOT_RUNNING"></a>
-
----
-
-
-##### `RELEASE_NOTES_GENERATION_FAILURE` <a name="RELEASE_NOTES_GENERATION_FAILURE" id="construct-hub.AlarmPath.RELEASE_NOTES_GENERATION_FAILURE"></a>
-
----
-
-
-##### `RELEASE_NOTES_TRIGGER_FAILURE` <a name="RELEASE_NOTES_TRIGGER_FAILURE" id="construct-hub.AlarmPath.RELEASE_NOTES_TRIGGER_FAILURE"></a>
-
----
-
-
-##### `RELEASE_NOTES_INVALID_GITHUB_CREDENTIALS` <a name="RELEASE_NOTES_INVALID_GITHUB_CREDENTIALS" id="construct-hub.AlarmPath.RELEASE_NOTES_INVALID_GITHUB_CREDENTIALS"></a>
-
----
-
-
-##### `RELEASE_NOTES_GITHUB_RATE_LIMIT` <a name="RELEASE_NOTES_GITHUB_RATE_LIMIT" id="construct-hub.AlarmPath.RELEASE_NOTES_GITHUB_RATE_LIMIT"></a>
-
----
-
-
-##### `WEBAPP_ACM_CERTIFICATE_EXPIRES_SOON` <a name="WEBAPP_ACM_CERTIFICATE_EXPIRES_SOON" id="construct-hub.AlarmPath.WEBAPP_ACM_CERTIFICATE_EXPIRES_SOON"></a>
-
----
-
-
-##### `WEBAPP_ENDPOINT_CERTIFICATE_EXPIRES_SOON` <a name="WEBAPP_ENDPOINT_CERTIFICATE_EXPIRES_SOON" id="construct-hub.AlarmPath.WEBAPP_ENDPOINT_CERTIFICATE_EXPIRES_SOON"></a>
-
----
-
 
 ### AlarmSeverity <a name="AlarmSeverity" id="construct-hub.AlarmSeverity"></a>
 

@@ -2556,6 +2556,11 @@ def sort_filter_rules(json_obj):
     },
     "ConstructHubFeedBuilderFailureAlarmA4E080D6": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -2970,6 +2975,11 @@ Direct link to the function: /lambda/home#/functions/",
     },
     "ConstructHubIngestionDLQAlarm83BD1903": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "MyCustomTopic6CE14E59",
+          },
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -3170,6 +3180,11 @@ Direct link to the function: /lambda/home#/functions/",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -5033,7 +5048,18 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Feed builder failures","region":"",
+              "{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"PackageStats Failures","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","annotations":{"alarms":["",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubPackageStatsFailures833C3D9B",
+                  "Arn",
+                ],
+              },
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":6,"properties":{"view":"timeSeries","title":"Feed builder failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5044,7 +5070,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":6,"properties":{"view":"timeSeries","title":"Catalog Size Shrunk","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Catalog Size Shrunk","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5055,7 +5081,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5066,7 +5092,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5077,7 +5103,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"ReleaseNotes generation Failure","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"ReleaseNotes generation Failure","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5088,7 +5114,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"ReleaseNotes Github credential invalid","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"ReleaseNotes Github credential invalid","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5099,7 +5125,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5110,7 +5136,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5121,7 +5147,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5129,17 +5155,6 @@ Direct link to function: /lambda/home#/functions/",
               {
                 "Fn::GetAtt": [
                   "ConstructHubSourcesNpmJsFollowerNotRunningCEAF0E1E",
-                  "Arn",
-                ],
-              },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
-              {
-                "Ref": "AWS::Region",
-              },
-              "","annotations":{"alarms":["",
-              {
-                "Fn::GetAtt": [
-                  "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6",
                   "Arn",
                 ],
               },
@@ -5415,6 +5430,11 @@ Direct link to function: /lambda/home#/functions/",
     },
     "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -5920,6 +5940,11 @@ Direct link to function: /lambda/home#/functions/",
     },
     "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -6283,6 +6308,11 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
     },
     "ConstructHubOrchestrationFailureRateAlarm3E65EEE1": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": "Execution Failure Rate above 75%",
         "AlarmName": "dev/ConstructHub/Orchestration/Resource/ExecutionFailureRate",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -6469,6 +6499,11 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
     },
     "ConstructHubOrchestrationOrchestrationFailed5AF50838": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -10246,6 +10281,11 @@ Request a service quota increase for lambda functions",
     },
     "ConstructHubPackageStatsFailures833C3D9B": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "MyCustomTopic6CE14E59",
+          },
+        ],
         "AlarmDescription": "The package stats state machine failed!
 
 RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
@@ -10602,6 +10642,11 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
     },
     "ConstructHubReleaseNotesReleaseNotesGenerationFailure04ABD01D": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -10685,6 +10730,11 @@ Consider either using GitHub application.",
     },
     "ConstructHubReleaseNotesReleaseNotesInvalidGitHubCredentialsE84D7534": {
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": "Release notes generation is failing due to Invalid GitHub token
 
 RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
@@ -11529,6 +11579,11 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "ConstructHubLicenseListCustomResource323F0FD4",
       ],
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "MediumSeverityTopic52CBAF3D",
+          },
+        ],
         "AlarmDescription": "The NpmJs package canary is not running or is failing. This prevents alarming when this instance of
 ConstructHub falls out of SLA for new package ingestion!
 
@@ -11705,6 +11760,11 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "ConstructHubLicenseListCustomResource323F0FD4",
       ],
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "MediumSeverityTopic52CBAF3D",
+          },
+        ],
         "AlarmDescription": "The canary package construct-hub-probe has not published a new version in over 1 day.
 This means the SLA alarm is blind — no new versions are being tracked, so SLA breaches cannot be detected.
 Metric: ConstructHub/PackageCanary / TimeSinceLastPublish
@@ -11794,6 +11854,11 @@ Direct link to Lambda function: /lambda/home#/functions/",
         "ConstructHubSourcesNpmJsSchedule34031870",
       ],
       "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "HighSeverityTopicC74B35F8",
+          },
+        ],
         "AlarmDescription": {
           "Fn::Join": [
             "",
@@ -17658,6 +17723,9 @@ function handler(event) {
       },
       "Type": "AWS::IAM::Role",
     },
+    "HighSeverityTopicC74B35F8": {
+      "Type": "AWS::SNS::Topic",
+    },
     "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
       "DependsOn": [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
@@ -17744,6 +17812,12 @@ function handler(event) {
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "MediumSeverityTopic52CBAF3D": {
+      "Type": "AWS::SNS::Topic",
+    },
+    "MyCustomTopic6CE14E59": {
+      "Type": "AWS::SNS::Topic",
     },
     "PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2": {
       "DependsOn": [
