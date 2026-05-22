@@ -329,6 +329,30 @@ test('alarm overrides: actions-only override replaces the bucket action', () => 
   });
 });
 
+test('alarm overrides: empty actions array falls back to the bucket action', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: 'TestStack/Alarm',
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+
+  // WHEN: override sets actions: [] (does not silently mute the alarm)
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { highSeverity: 'arn:high' },
+    alarmOverrides: {
+      Alarm: { actions: [] },
+    },
+  }).addHighSeverityAlarm('Alarm', alarm);
+
+  // THEN: bucket action is still wired
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmActions: ['arn:high'],
+  });
+});
+
 test('alarm overrides: severity + actions wires custom action and uses new dashboard placement', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
@@ -382,7 +406,7 @@ test('alarm overrides: unknown key fails synth-time validation', () => {
 
   // THEN: synth surfaces an error pointing at the unknown key
   expect(() => Template.fromStack(stack)).toThrow(
-    /alarmOverrides: 'NonExistent\/Alarm' did not match/
+    /alarmOverrides: 'NonExistent\/Alarm' did not match any alarm/
   );
 });
 
@@ -408,7 +432,7 @@ test('alarm overrides: alarms with explicit name and no override use the bucket 
   });
 });
 
-test('alarm overrides: alarm without explicit alarmName fails synth', () => {
+test('alarm overrides: alarm without explicit alarmName fails synth when overrides are set', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
@@ -418,8 +442,10 @@ test('alarm overrides: alarm without explicit alarmName fails synth', () => {
     threshold: 0,
   });
 
+  // Any non-empty alarmOverrides activates the validator.
   new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'arn:high' },
+    alarmOverrides: { 'Some/Other/Alarm': { severity: AlarmSeverity.LOW } },
   }).addHighSeverityAlarm('Alarm', alarm);
 
   // THEN: synth flags the missing alarmName

@@ -72,12 +72,12 @@ export class Monitoring extends Construct implements IMonitoring {
       'HighSeverityDashboard'
     );
 
-    // Synth-time checks:
-    //   1. Every registered alarm must have an explicit `alarmName`, otherwise
-    //      it is silently un-overridable.
-    //   2. Every key in `alarmOverrides` must match a registered alarm.
+    // Synth-time checks. Only run when `alarmOverrides` is in use — otherwise
+    // we'd reject anonymous alarms that subclasses or downstream forks may
+    // legitimately register without intending to make them overridable.
     this.node.addValidation({
       validate: () => {
+        if (Object.keys(this.alarmOverrides).length === 0) return [];
         const errors: string[] = [];
         for (const alarm of this.allRegisteredAlarms()) {
           if (!this.relativeAlarmName(alarm)) {
@@ -91,7 +91,7 @@ export class Monitoring extends Construct implements IMonitoring {
         for (const k of Object.keys(this.alarmOverrides)) {
           if (!this.matchedOverrideKeys.has(k)) {
             errors.push(
-              `alarmOverrides: '${k}' did not match any alarm — typo? Refer to API.md for the list of overridable alarm names.`
+              `alarmOverrides: '${k}' did not match any alarm. See ConstructHubProps.alarmOverrides for the list of overridable alarm names.`
             );
           }
         }
@@ -185,7 +185,7 @@ export class Monitoring extends Construct implements IMonitoring {
 
     const severity = override.severity ?? defaultSeverity;
 
-    if (override.actions) {
+    if (override.actions && override.actions.length > 0) {
       for (const action of override.actions) {
         alarm.addAlarmAction(action);
       }
@@ -222,13 +222,14 @@ export class Monitoring extends Construct implements IMonitoring {
    * prefix stripped, or undefined if the alarm has no explicit name.
    */
   private relativeAlarmName(alarm: cw.AlarmBase): string | undefined {
+    // Both CfnAlarm and CfnCompositeAlarm expose `alarmName` directly.
+    // Note: this only resolves when the alarm name is set to a literal string at
+    // synth time. A CDK token (e.g. `Fn.join(...)`) won't match the prefix below.
     const cfn = alarm.node.defaultChild as
       | cw.CfnAlarm
       | cw.CfnCompositeAlarm
       | undefined;
-    const fullName =
-      (cfn as cw.CfnAlarm | undefined)?.alarmName ??
-      (cfn as cw.CfnCompositeAlarm | undefined)?.alarmName;
+    const fullName = cfn?.alarmName;
     if (!fullName) return undefined;
     const parent = this.node.scope;
     if (!parent) return undefined;
@@ -294,4 +295,3 @@ export function addAlarm(title: string, alarm: cw.Alarm, severity: AlarmSeverity
       throw new Error(`Unknown alarm severity: ${severity}`);
   }
 }
-
