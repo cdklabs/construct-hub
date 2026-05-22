@@ -231,9 +231,7 @@ export class Monitoring extends Construct implements IMonitoring {
       | undefined;
     const fullName = cfn?.alarmName;
     if (!fullName) return undefined;
-    const parent = this.node.scope;
-    if (!parent) return undefined;
-    const prefix = `${parent.node.path}/`;
+    const prefix = `${this.node.scope!.node.path}/`;
     return fullName.startsWith(prefix) ? fullName.slice(prefix.length) : undefined;
   }
 
