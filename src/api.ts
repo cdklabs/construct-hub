@@ -75,6 +75,9 @@ export interface AlarmOverride {
   /**
    * Wire these actions onto the alarm in place of the severity bucket's action.
    *
+   * An empty array falls back to the bucket action — it does NOT mute the
+   * alarm. To silence an alarm intentionally, supply a no-op action.
+   *
    * @default - the severity bucket's action
    */
   readonly actions?: IAlarmAction[];

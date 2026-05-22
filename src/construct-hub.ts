@@ -87,9 +87,9 @@ export interface ConstructHubProps {
    * to the `ConstructHub` construct — i.e. the same string a customer sees in
    * tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing').
    *
-   * For each entry, set `severity` ('HIGH' | 'MEDIUM' | 'LOW') to wire the
-   * alarm to a different bucket's action, `actions` to supply custom actions
-   * that bypass the buckets, or both.
+   * For each entry, set `severity` (`AlarmSeverity.HIGH` / `MEDIUM` / `LOW`)
+   * to wire the alarm to a different bucket's action, `actions` to supply
+   * custom actions that bypass the buckets, or both.
    *
    * Unknown keys are surfaced as synth-time validation errors.
    */
