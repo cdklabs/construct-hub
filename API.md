@@ -553,6 +553,9 @@ public readonly actions: IAlarmAction[];
 
 Wire these actions onto the alarm in place of the severity bucket's action.
 
+An empty array falls back to the bucket action — it does NOT mute the
+alarm. To silence an alarm intentionally, supply a no-op action.
+
 ---
 
 ##### `severity`<sup>Optional</sup> <a name="severity" id="construct-hub.AlarmOverride.property.severity"></a>
@@ -837,9 +840,9 @@ public readonly alarmOverrides: {[ key: string ]: AlarmOverride};
 
 Per-alarm overrides keyed by the alarm's CloudWatch display name relative to the `ConstructHub` construct — i.e. the same string a customer sees in tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing').
 
-For each entry, set `severity` ('HIGH' | 'MEDIUM' | 'LOW') to wire the
-alarm to a different bucket's action, `actions` to supply custom actions
-that bypass the buckets, or both.
+For each entry, set `severity` (`AlarmSeverity.HIGH` / `MEDIUM` / `LOW`)
+to wire the alarm to a different bucket's action, `actions` to supply
+custom actions that bypass the buckets, or both.
 
 Unknown keys are surfaced as synth-time validation errors.
 
