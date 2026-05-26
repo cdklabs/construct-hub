@@ -28,13 +28,13 @@ import {
   WaitTime,
 } from 'aws-cdk-lib/aws-stepfunctions';
 import {
-  CallAwsService,
   LambdaInvoke,
   StepFunctionsStartExecution,
 } from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
+import { ListObjects } from './list-objects';
 import { ReIngest } from './re-ingest';
 import { Repository } from '../../codeartifact/repository';
 import {
@@ -474,23 +474,39 @@ class ReprocessIngestionWorkflow extends Construct {
     // Need to physical-name the state machine so it can self-invoke.
     const stateMachineName = stateMachineNameFrom(this.node.path);
 
-    const listObjectsWithMaxKeys = (
-      name: string,
-      maxKeys: number,
-      token?: string
-    ) =>
-      new CallAwsService(this, name, {
-        service: 's3',
-        action: 'listObjectsV2',
-        iamAction: 's3:ListBucket',
-        iamResources: [props.bucket.bucketArn],
-        parameters: {
-          Bucket: props.bucket.bucketName,
-          ContinuationToken: token,
-          Prefix: STORAGE_KEY_PREFIX,
-          MaxKeys: maxKeys,
-        },
+    // Use a Lambda function to list objects instead of the Step Functions SDK
+    // integration. The Lambda returns only the Key field for each object,
+    // eliminating the 256KB payload limit issue that occurs when S3 returns
+    // large responses with per-object metadata (ETag, LastModified, Size, etc.).
+    const listObjectsFunction = new ListObjects(this, 'ListObjectsFunction', {
+      architecture: gravitonLambdaIfAvailable(this),
+      description:
+        '[ConstructHub/Ingestion/ListObjects] Lists S3 objects for reprocessing workflow',
+      environment: {
+        BUCKET_NAME: props.bucket.bucketName,
+        PREFIX: STORAGE_KEY_PREFIX,
+        MAX_KEYS: '1000',
+      },
+      memorySize: 256,
+      tracing: Tracing.ACTIVE,
+      timeout: Duration.minutes(1),
+    });
+
+    props.bucket.grantRead(listObjectsFunction);
+
+    const listObjects = (name: string, token?: string) =>
+      new LambdaInvoke(this, name, {
+        lambdaFunction: listObjectsFunction,
+        payload: token
+          ? TaskInput.fromObject({ ContinuationToken: token })
+          : TaskInput.fromObject({}),
+        payloadResponseOnly: true,
         resultPath: '$.response',
+      }).addRetry({
+        errors: ['Lambda.TooManyRequestsException'],
+        backoffRate: 2,
+        interval: Duration.seconds(10),
+        maxAttempts: 6,
       });
 
     const process = new Map(this, 'Process Result', {
@@ -542,57 +558,17 @@ class ReprocessIngestionWorkflow extends Construct {
       .afterwards({ includeOtherwise: true })
       .next(process);
 
-    const listObjects = (name: string, token?: string) => {
-      // Create a chain of retries with decreasing MaxKeys values
-      const startMaxKeysValue = 1000;
-      const minMaxKeysValue = 100;
-      const decrement = 100;
-
-      // Create the first task with maximum MaxKeys value
-      const firstTask = listObjectsWithMaxKeys(
-        `${name}Try${startMaxKeysValue}`,
-        startMaxKeysValue,
-        token
-      ).addRetry({ errors: ['S3.SdkClientException'] });
-      
-      firstTask.next(isThereMore);
-
-      // Chain tasks with decreasing MaxKeys values
-      let lastTask = firstTask;
-      for (
-        let maxKeys = startMaxKeysValue - decrement;
-        maxKeys >= minMaxKeysValue;
-        maxKeys -= decrement
-      ) {
-        const nextTask = listObjectsWithMaxKeys(
-          `${name}Try${maxKeys}`,
-          maxKeys,
-          token
-        ).addRetry({ errors: ['S3.SdkClientException'] });
-        
-        nextTask.next(isThereMore);
-
-        // Chain this task to the previous one using DataLimitExceeded catch
-        lastTask.addCatch(nextTask, {
-          errors: ['States.DataLimitExceeded'],
-          resultPath: JsonPath.DISCARD,
-        });
-
-        lastTask = nextTask;
-      }
-
-      return firstTask;
-    };
-
     const listBucket = new Choice(this, 'Has a ContinuationToken?')
       .when(
         Condition.isPresent('$.ContinuationToken'),
         listObjects(
           'S3.ListObjectsV2(NextPage)',
           JsonPath.stringAt('$.ContinuationToken')
-        )
+        ).next(isThereMore)
       )
-      .otherwise(listObjects('S3.ListObjectsV2(FirstPage)'))
+      .otherwise(
+        listObjects('S3.ListObjectsV2(FirstPage)').next(isThereMore)
+      )
       .afterwards();
 
     this.stateMachine = new StateMachine(this, 'StateMachine', {
@@ -601,7 +577,6 @@ class ReprocessIngestionWorkflow extends Construct {
       timeout: Duration.hours(1),
     });
 
-    props.bucket.grantRead(this.stateMachine);
     props.queue.grantSendMessages(this.stateMachine);
   }
 }
