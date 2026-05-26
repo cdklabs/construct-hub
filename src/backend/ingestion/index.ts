@@ -543,9 +543,12 @@ class ReprocessIngestionWorkflow extends Construct {
       .next(process);
 
     const listObjects = (name: string, token?: string) => {
-      // Create a chain of retries with decreasing MaxKeys values
-      const startMaxKeysValue = 1000;
-      const minMaxKeysValue = 100;
+      // Start at 750 (not 1000) to avoid an uncatchable edge case where
+      // the S3 response is just under 256KB, the state reports success,
+      // but Step Functions aborts the execution at the state transition
+      // boundary when internal metadata pushes the total over the limit.
+      const startMaxKeysValue = 750;
+      const minMaxKeysValue = 150;
       const decrement = 100;
 
       // Create the first task with maximum MaxKeys value
