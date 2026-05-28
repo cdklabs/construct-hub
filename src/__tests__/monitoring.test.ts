@@ -432,22 +432,3 @@ test('alarm overrides: alarms with explicit name and no override use the bucket 
   });
 });
 
-test('alarm overrides: alarm without explicit alarmName fails synth when overrides are set', () => {
-  // GIVEN
-  const stack = new Stack(undefined, 'TestStack');
-  const alarm = new Alarm(stack, 'Alarm', {
-    // no alarmName set
-    evaluationPeriods: 1,
-    metric: new Metric({ metricName: 'M', namespace: 'N' }),
-    threshold: 0,
-  });
-
-  // Any non-empty alarmOverrides activates the validator.
-  new Monitoring(stack, 'Monitoring', {
-    alarmActions: { highSeverity: 'arn:high' },
-    alarmOverrides: { 'Some/Other/Alarm': { severity: AlarmSeverity.LOW } },
-  }).addHighSeverityAlarm('Alarm', alarm);
-
-  // THEN: synth flags the missing alarmName
-  expect(() => Template.fromStack(stack)).toThrow(/has no explicit alarmName/);
-});

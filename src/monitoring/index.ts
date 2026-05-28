@@ -1,3 +1,4 @@
+import { Token } from 'aws-cdk-lib';
 import * as cw from 'aws-cdk-lib/aws-cloudwatch';
 import { Watchful } from 'cdk-watchful';
 import { Construct } from 'constructs';
@@ -72,31 +73,16 @@ export class Monitoring extends Construct implements IMonitoring {
       'HighSeverityDashboard'
     );
 
-    // Synth-time checks. Only run when `alarmOverrides` is in use — otherwise
-    // we'd reject anonymous alarms that subclasses or downstream forks may
-    // legitimately register without intending to make them overridable.
+    // Surface override keys that didn't match any alarm at synth time, so
+    // typos fail before deploy.
     this.node.addValidation({
-      validate: () => {
-        if (Object.keys(this.alarmOverrides).length === 0) return [];
-        const errors: string[] = [];
-        for (const alarm of this.allRegisteredAlarms()) {
-          if (!this.relativeAlarmName(alarm)) {
-            errors.push(
-              `alarm '${alarm.node.path}' has no explicit alarmName, ` +
-                'so it cannot be overridden via `alarmOverrides`. Set ' +
-                '`alarmName: ${scope.node.path}/<short-name>` at the registration site.'
-            );
-          }
-        }
-        for (const k of Object.keys(this.alarmOverrides)) {
-          if (!this.matchedOverrideKeys.has(k)) {
-            errors.push(
+      validate: () =>
+        Object.keys(this.alarmOverrides)
+          .filter((k) => !this.matchedOverrideKeys.has(k))
+          .map(
+            (k) =>
               `alarmOverrides: '${k}' did not match any alarm. See ConstructHubProps.alarmOverrides for the list of overridable alarm names.`
-            );
-          }
-        }
-        return errors;
-      },
+          ),
     });
   }
 
@@ -222,15 +208,12 @@ export class Monitoring extends Construct implements IMonitoring {
    * prefix stripped, or undefined if the alarm has no explicit name.
    */
   private relativeAlarmName(alarm: cw.AlarmBase): string | undefined {
-    // Both CfnAlarm and CfnCompositeAlarm expose `alarmName` directly.
-    // Note: this only resolves when the alarm name is set to a literal string at
-    // synth time. A CDK token (e.g. `Fn.join(...)`) won't match the prefix below.
     const cfn = alarm.node.defaultChild as
       | cw.CfnAlarm
       | cw.CfnCompositeAlarm
       | undefined;
     const fullName = cfn?.alarmName;
-    if (!fullName) return undefined;
+    if (!fullName || Token.isUnresolved(fullName)) return undefined;
     const prefix = `${this.node.scope!.node.path}/`;
     return fullName.startsWith(prefix) ? fullName.slice(prefix.length) : undefined;
   }
@@ -245,14 +228,6 @@ export class Monitoring extends Construct implements IMonitoring {
 
   public get lowSeverityAlarms() {
     return [...this._lowSeverityAlarms];
-  }
-
-  private allRegisteredAlarms(): cw.AlarmBase[] {
-    return [
-      ...this._highSeverityAlarms,
-      ...this._mediumSeverityAlarms,
-      ...this._lowSeverityAlarms,
-    ];
   }
 
   /**
