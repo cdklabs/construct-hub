@@ -44,7 +44,7 @@ export enum AlarmSeverity {
 
 /**
  * Configure severities for various alarms.
- * 
+ *
  * Alarms not included here are currently not configurable.
  */
 export interface AlarmSeverities {
@@ -59,6 +59,28 @@ export interface AlarmSeverities {
    */
   readonly packageCanarySLABreached?: AlarmSeverity;
 
+}
+
+/**
+ * An override for a specific alarm.
+ */
+export interface AlarmOverride {
+  /**
+   * Wire this alarm to a different severity bucket's action.
+   *
+   * @default - the severity hardcoded by the alarm's author
+   */
+  readonly severity?: AlarmSeverity;
+
+  /**
+   * Wire these actions onto the alarm in place of the severity bucket's action.
+   *
+   * An empty array falls back to the bucket action — it does NOT mute the
+   * alarm. To silence an alarm intentionally, supply a no-op action.
+   *
+   * @default - the severity bucket's action
+   */
+  readonly actions?: IAlarmAction[];
 }
 
 /**

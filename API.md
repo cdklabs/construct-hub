@@ -521,6 +521,56 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
+### AlarmOverride <a name="AlarmOverride" id="construct-hub.AlarmOverride"></a>
+
+An override for a specific alarm.
+
+#### Initializer <a name="Initializer" id="construct-hub.AlarmOverride.Initializer"></a>
+
+```typescript
+import { AlarmOverride } from 'construct-hub'
+
+const alarmOverride: AlarmOverride = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#construct-hub.AlarmOverride.property.actions">actions</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction[]</code> | Wire these actions onto the alarm in place of the severity bucket's action. |
+| <code><a href="#construct-hub.AlarmOverride.property.severity">severity</a></code> | <code><a href="#construct-hub.AlarmSeverity">AlarmSeverity</a></code> | Wire this alarm to a different severity bucket's action. |
+
+---
+
+##### `actions`<sup>Optional</sup> <a name="actions" id="construct-hub.AlarmOverride.property.actions"></a>
+
+```typescript
+public readonly actions: IAlarmAction[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarmAction[]
+- *Default:* the severity bucket's action
+
+Wire these actions onto the alarm in place of the severity bucket's action.
+
+An empty array falls back to the bucket action — it does NOT mute the
+alarm. To silence an alarm intentionally, supply a no-op action.
+
+---
+
+##### `severity`<sup>Optional</sup> <a name="severity" id="construct-hub.AlarmOverride.property.severity"></a>
+
+```typescript
+public readonly severity: AlarmSeverity;
+```
+
+- *Type:* <a href="#construct-hub.AlarmSeverity">AlarmSeverity</a>
+- *Default:* the severity hardcoded by the alarm's author
+
+Wire this alarm to a different severity bucket's action.
+
+---
+
 ### AlarmSeverities <a name="AlarmSeverities" id="construct-hub.AlarmSeverities"></a>
 
 Configure severities for various alarms.
@@ -728,6 +778,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | --- | --- | --- |
 | <code><a href="#construct-hub.ConstructHubProps.property.additionalDomains">additionalDomains</a></code> | <code><a href="#construct-hub.DomainRedirectSource">DomainRedirectSource</a>[]</code> | Additional domains which will be set up to redirect to the primary construct hub domain. |
 | <code><a href="#construct-hub.ConstructHubProps.property.alarmActions">alarmActions</a></code> | <code><a href="#construct-hub.AlarmActions">AlarmActions</a></code> | Actions to perform when alarms are set. |
+| <code><a href="#construct-hub.ConstructHubProps.property.alarmOverrides">alarmOverrides</a></code> | <code>{[ key: string ]: <a href="#construct-hub.AlarmOverride">AlarmOverride</a>}</code> | Per-alarm overrides keyed by the alarm's CloudWatch display name relative to the `ConstructHub` construct — i.e. the same string a customer sees in tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing'). |
 | <code><a href="#construct-hub.ConstructHubProps.property.alarmSeverities">alarmSeverities</a></code> | <code><a href="#construct-hub.AlarmSeverities">AlarmSeverities</a></code> | Configure the severities of various alarms. |
 | <code><a href="#construct-hub.ConstructHubProps.property.allowedLicenses">allowedLicenses</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a>[]</code> | The allowed licenses for packages indexed by this instance of ConstructHub. |
 | <code><a href="#construct-hub.ConstructHubProps.property.appRegistryApplication">appRegistryApplication</a></code> | <code>boolean</code> | Create an AppRegistry application associated with the stack containing this construct. |
@@ -776,6 +827,24 @@ public readonly alarmActions: AlarmActions;
 - *Type:* <a href="#construct-hub.AlarmActions">AlarmActions</a>
 
 Actions to perform when alarms are set.
+
+---
+
+##### `alarmOverrides`<sup>Optional</sup> <a name="alarmOverrides" id="construct-hub.ConstructHubProps.property.alarmOverrides"></a>
+
+```typescript
+public readonly alarmOverrides: {[ key: string ]: AlarmOverride};
+```
+
+- *Type:* {[ key: string ]: <a href="#construct-hub.AlarmOverride">AlarmOverride</a>}
+
+Per-alarm overrides keyed by the alarm's CloudWatch display name relative to the `ConstructHub` construct — i.e. the same string a customer sees in tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing').
+
+For each entry, set `severity` (`AlarmSeverity.HIGH` / `MEDIUM` / `LOW`)
+to wire the alarm to a different bucket's action, `actions` to supply
+custom actions that bypass the buckets, or both.
+
+Unknown keys are surfaced as synth-time validation errors.
 
 ---
 

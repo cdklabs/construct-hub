@@ -3,6 +3,7 @@ import { Match, Template } from 'aws-cdk-lib/assertions';
 import { IAlarmAction, Alarm, Metric } from 'aws-cdk-lib/aws-cloudwatch';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as sns from 'aws-cdk-lib/aws-sns';
+import { AlarmSeverity } from '../api';
 import { Monitoring } from '../monitoring';
 
 const actions = {
@@ -60,7 +61,11 @@ test('high severity alarms trigger the correct action', () => {
   });
   const alarm = topic
     .metricNumberOfNotificationsFailed()
-    .createAlarm(stack, 'Alarm', { threshold: 1, evaluationPeriods: 1 });
+    .createAlarm(stack, 'Alarm', {
+      alarmName: `${stack.node.path}/Alarm`,
+      threshold: 1,
+      evaluationPeriods: 1,
+    });
 
   // WHEN
   monitoring.addHighSeverityAlarm('My Alarm', alarm);
@@ -184,6 +189,7 @@ test('normal-severity alarm actions are registered', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: `${stack.node.path}/Alarm`,
     evaluationPeriods: 1,
     metric: new Metric({
       metricName: 'FakeMetricName',
@@ -213,6 +219,7 @@ test('high-severity alarm actions are registered', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: `${stack.node.path}/Alarm`,
     evaluationPeriods: 1,
     metric: new Metric({
       metricName: 'FakeMetricName',
@@ -242,6 +249,7 @@ test('medium-severity alarm actions are registered', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: `${stack.node.path}/Alarm`,
     evaluationPeriods: 1,
     metric: new Metric({
       metricName: 'FakeMetricName',
@@ -264,5 +272,162 @@ test('medium-severity alarm actions are registered', () => {
   // THEN
   Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
     AlarmActions: [mediumSeverity, mediumSeverityActionArn],
+  });
+});
+
+test('alarm overrides: severity-only override wires the new bucket action', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: 'TestStack/Alarm',
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+
+  // WHEN: alarm registered as HIGH, override redirects to MEDIUM
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: {
+      highSeverity: 'arn:high',
+      mediumSeverity: 'arn:medium',
+    },
+    alarmOverrides: {
+      Alarm: { severity: AlarmSeverity.MEDIUM },
+    },
+  }).addHighSeverityAlarm('Alarm', alarm);
+
+  // THEN: medium bucket's action wired, not high
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmActions: ['arn:medium'],
+  });
+});
+
+test('alarm overrides: actions-only override replaces the bucket action', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: 'TestStack/Alarm',
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+  const customAction: IAlarmAction = {
+    bind: () => ({ alarmActionArn: 'arn:custom' }),
+  };
+
+  // WHEN: alarm registered as HIGH, override supplies a custom action
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { highSeverity: 'arn:high' },
+    alarmOverrides: {
+      Alarm: { actions: [customAction] },
+    },
+  }).addHighSeverityAlarm('Alarm', alarm);
+
+  // THEN: only the custom action is wired
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmActions: ['arn:custom'],
+  });
+});
+
+test('alarm overrides: empty actions array falls back to the bucket action', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: 'TestStack/Alarm',
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+
+  // WHEN: override sets actions: [] (does not silently mute the alarm)
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { highSeverity: 'arn:high' },
+    alarmOverrides: {
+      Alarm: { actions: [] },
+    },
+  }).addHighSeverityAlarm('Alarm', alarm);
+
+  // THEN: bucket action is still wired
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmActions: ['arn:high'],
+  });
+});
+
+test('alarm overrides: severity + actions wires custom action and uses new dashboard placement', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: 'TestStack/Alarm',
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+  const customAction: IAlarmAction = {
+    bind: () => ({ alarmActionArn: 'arn:custom' }),
+  };
+
+  // WHEN: alarm registered as LOW, override sets HIGH severity AND custom action
+  const monitoring = new Monitoring(stack, 'Monitoring', {
+    alarmActions: { highSeverity: 'arn:high', normalSeverity: 'arn:normal' },
+    alarmOverrides: {
+      Alarm: { severity: AlarmSeverity.HIGH, actions: [customAction] },
+    },
+  });
+  monitoring.addLowSeverityAlarm('Alarm', alarm);
+
+  // THEN: custom action wired (replacing both buckets)
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmActions: ['arn:custom'],
+  });
+
+  // AND: alarm appears in the high-severity getter (post-override severity)
+  expect(monitoring.highSeverityAlarms.map((a) => a.alarmArn)).toEqual([
+    alarm.alarmArn,
+  ]);
+  expect(monitoring.lowSeverityAlarms).toEqual([]);
+});
+
+test('alarm overrides: unknown key fails synth-time validation', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: 'TestStack/Alarm',
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { highSeverity: 'arn:high' },
+    alarmOverrides: {
+      'NonExistent/Alarm': { severity: AlarmSeverity.LOW },
+    },
+  }).addHighSeverityAlarm('Alarm', alarm);
+
+  // THEN: synth surfaces an error pointing at the unknown key
+  expect(() => Template.fromStack(stack)).toThrow(
+    /alarmOverrides: 'NonExistent\/Alarm' did not match any alarm/
+  );
+});
+
+test('alarm overrides: alarms with explicit name and no override use the bucket action', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    alarmName: 'TestStack/Alarm',
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'M', namespace: 'N' }),
+    threshold: 0,
+  });
+
+  // WHEN: registered as HIGH with no override entry for it
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { highSeverity: 'arn:high' },
+    alarmOverrides: {},
+  }).addHighSeverityAlarm('Alarm', alarm);
+
+  // THEN: default bucket action is wired (no regression)
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmActions: ['arn:high'],
   });
 });
