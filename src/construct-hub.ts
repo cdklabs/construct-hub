@@ -12,7 +12,7 @@ import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { IStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
 import { createRestrictedSecurityGroups } from './_limited-internet-access';
-import { AlarmActions, AlarmSeverities, Domain } from './api';
+import { AlarmActions, AlarmOverride, AlarmSeverities, Domain } from './api';
 import { DenyList, Ingestion } from './backend';
 import { DenyListRule } from './backend/deny-list/api';
 import { FeedBuilder } from './backend/feed-builder';
@@ -81,6 +81,19 @@ export interface ConstructHubProps {
    * Configure the severities of various alarms.
    */
   readonly alarmSeverities?: AlarmSeverities;
+
+  /**
+   * Per-alarm overrides keyed by the alarm's CloudWatch display name relative
+   * to the `ConstructHub` construct — i.e. the same string a customer sees in
+   * tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing').
+   *
+   * For each entry, set `severity` (`AlarmSeverity.HIGH` / `MEDIUM` / `LOW`)
+   * to wire the alarm to a different bucket's action, `actions` to supply
+   * custom actions that bypass the buckets, or both.
+   *
+   * Unknown keys are surfaced as synth-time validation errors.
+   */
+  readonly alarmOverrides?: { [alarmName: string]: AlarmOverride };
 
   /**
    * Whether compute environments for sensitive tasks (which operate on
@@ -310,6 +323,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
 
     this.monitoring = new Monitoring(this, 'Monitoring', {
       alarmActions: props.alarmActions,
+      alarmOverrides: props.alarmOverrides,
     });
 
     const overviewDashboard = new OverviewDashboard(this, 'OverviewDashboard', {
