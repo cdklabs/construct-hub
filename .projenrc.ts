@@ -75,7 +75,7 @@ const project = new CdklabsConstructLibrary({
     'feed',
     'fs-extra',
     'got',
-    'jsii-docgen@^10.9.0',
+    'jsii-docgen@^10.11.23',
     'semver',
     'spdx-license-list',
     'streamx',
