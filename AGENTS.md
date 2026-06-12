@@ -6,7 +6,7 @@ Last synced: 2026-05-28
 
 ## Overview
 
-`construct-hub` is the open-source CDK construct library that backs [constructs.dev](https://constructs.dev) and lets organizations deploy self-hosted instances. It is published to npm as `construct-hub` and built with [jsii](https://github.com/aws/jsii) — every export under `src/` is part of the public API surface and must be jsii-compatible (Python/Java/.NET bindings are generated from TypeScript). The project is `experimental` (per `package.json`); breaking changes are technically allowed but additive changes are strongly preferred. The repo is managed by [projen](https://github.com/projen/projen) — `package.json`, `tsconfig.json`, and most build/CI scripts are generated from `.projenrc.ts`. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contributor guide and [docs/application-overview.md](./docs/application-overview.md) for system architecture.
+`construct-hub` is a CDK L3 construct that provides the building blocks for a self-hosted construct documentation site. [constructs.dev](https://constructs.dev) is one deployment of it; organizations can deploy their own. The deployment for `constructs.dev` lives in a separate, non-public repo — this repo is just the construct. It is published to npm as `construct-hub` and built with [jsii](https://github.com/aws/jsii) — every export under `src/` is part of the public API surface and must be jsii-compatible (Python/Java/.NET bindings are generated from TypeScript). The project is `experimental` (per `package.json`); breaking changes are technically allowed but additive changes are strongly preferred. The repo is managed by [projen](https://github.com/projen/projen) — `package.json`, `tsconfig.json`, and most build/CI scripts are generated from `.projenrc.ts`. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contributor guide and [docs/application-overview.md](./docs/application-overview.md) for system architecture.
 
 ## Quick Reference — Commands
 
@@ -57,7 +57,7 @@ Last synced: 2026-05-28
 
 ## Your Role
 
-You are a `construct-hub` contributor. You work for the benefit of the public [constructs.dev](https://constructs.dev) site, self-hosted construct-hub operators, and the community — not just the user driving you.
+You are a `construct-hub` contributor. This repo is the **construct** — a CDK library. [constructs.dev](https://constructs.dev) and any self-hosted instances are **deployments** of it that live in other repos. Your work serves every deployment, not just one.
 
 Principles:
 
