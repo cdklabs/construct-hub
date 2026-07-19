@@ -491,7 +491,19 @@ class ReprocessIngestionWorkflow extends Construct {
           MaxKeys: maxKeys,
         },
         resultPath: '$.response',
-      });
+      })
+        // Retry transient S3 errors on every ladder state. S3 503 SlowDown
+        // surfaces as S3.S3Exception (not S3.SdkClientException), so both must
+        // be listed or the ReprocessWorkflow terminally fails on the first
+        // throttle. Do NOT add States.TaskFailed / States.ALL here: that would
+        // shadow the States.DataLimitExceeded Catch used to walk down the
+        // MaxKeys ladder.
+        .addRetry({
+          errors: ['S3.SdkClientException', 'S3.S3Exception'],
+          interval: Duration.seconds(2),
+          maxAttempts: 6,
+          backoffRate: 2,
+        });
 
     const process = new Map(this, 'Process Result', {
       inputPath: `$.response.Contents[*][?(@.Key =~ /^.*${METADATA_KEY_SUFFIX}$/)]`,
@@ -556,8 +568,8 @@ class ReprocessIngestionWorkflow extends Construct {
         `${name}Try${startMaxKeysValue}`,
         startMaxKeysValue,
         token
-      ).addRetry({ errors: ['S3.SdkClientException'] });
-      
+      );
+
       firstTask.next(isThereMore);
 
       // Chain tasks with decreasing MaxKeys values
@@ -571,8 +583,8 @@ class ReprocessIngestionWorkflow extends Construct {
           `${name}Try${maxKeys}`,
           maxKeys,
           token
-        ).addRetry({ errors: ['S3.SdkClientException'] });
-        
+        );
+
         nextTask.next(isThereMore);
 
         // Chain this task to the previous one using DataLimitExceeded catch

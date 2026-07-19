@@ -744,7 +744,15 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: JsonPath.stringAt('$.Prefix'),
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] })
+        }).addRetry({
+          // S3 503 SlowDown surfaces as S3.S3Exception (not
+          // S3.SdkClientException), so both must be retried or documentation
+          // regeneration terminally fails on the first throttle.
+          errors: ['S3.SdkClientException', 'S3.S3Exception'],
+          interval: Duration.seconds(2),
+          maxAttempts: 6,
+          backoffRate: 2,
+        })
       )
       .otherwise(
         new tasks.CallAwsService(this, 'First versions page', {
@@ -758,7 +766,15 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: JsonPath.stringAt('$.Prefix'),
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] })
+        }).addRetry({
+          // S3 503 SlowDown surfaces as S3.S3Exception (not
+          // S3.SdkClientException), so both must be retried or documentation
+          // regeneration terminally fails on the first throttle.
+          errors: ['S3.SdkClientException', 'S3.S3Exception'],
+          interval: Duration.seconds(2),
+          maxAttempts: 6,
+          backoffRate: 2,
+        })
       )
       .afterwards()
       .next(
@@ -842,7 +858,15 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: JsonPath.stringAt('$.Prefix'),
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] })
+        }).addRetry({
+          // S3 503 SlowDown surfaces as S3.S3Exception (not
+          // S3.SdkClientException), so both must be retried or documentation
+          // regeneration terminally fails on the first throttle.
+          errors: ['S3.SdkClientException', 'S3.S3Exception'],
+          interval: Duration.seconds(2),
+          maxAttempts: 6,
+          backoffRate: 2,
+        })
       )
       .otherwise(
         new tasks.CallAwsService(this, 'First @scope page', {
@@ -856,7 +880,15 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: JsonPath.stringAt('$.Prefix'),
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] })
+        }).addRetry({
+          // S3 503 SlowDown surfaces as S3.S3Exception (not
+          // S3.SdkClientException), so both must be retried or documentation
+          // regeneration terminally fails on the first throttle.
+          errors: ['S3.SdkClientException', 'S3.S3Exception'],
+          interval: Duration.seconds(2),
+          maxAttempts: 6,
+          backoffRate: 2,
+        })
       )
       .afterwards()
       .next(
@@ -904,7 +936,15 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] })
+        }).addRetry({
+          // S3 503 SlowDown surfaces as S3.S3Exception (not
+          // S3.SdkClientException), so both must be retried or documentation
+          // regeneration terminally fails on the first throttle.
+          errors: ['S3.SdkClientException', 'S3.S3Exception'],
+          interval: Duration.seconds(2),
+          maxAttempts: 6,
+          backoffRate: 2,
+        })
       )
       .otherwise(
         new tasks.CallAwsService(this, 'First prefix page', {
@@ -918,7 +958,15 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] })
+        }).addRetry({
+          // S3 503 SlowDown surfaces as S3.S3Exception (not
+          // S3.SdkClientException), so both must be retried or documentation
+          // regeneration terminally fails on the first throttle.
+          errors: ['S3.SdkClientException', 'S3.S3Exception'],
+          interval: Duration.seconds(2),
+          maxAttempts: 6,
+          backoffRate: 2,
+        })
       )
       .afterwards()
       .next(
