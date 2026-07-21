@@ -556,7 +556,7 @@ class ReprocessIngestionWorkflow extends Construct {
         `${name}Try${startMaxKeysValue}`,
         startMaxKeysValue,
         token
-      ).addRetry({ errors: ['S3.SdkClientException'] });
+      ).addRetry({ errors: ['S3.SdkClientException', 'S3.S3Exception'] });
       
       firstTask.next(isThereMore);
 
@@ -571,7 +571,7 @@ class ReprocessIngestionWorkflow extends Construct {
           `${name}Try${maxKeys}`,
           maxKeys,
           token
-        ).addRetry({ errors: ['S3.SdkClientException'] });
+        ).addRetry({ errors: ['S3.SdkClientException', 'S3.S3Exception'] });
         
         nextTask.next(isThereMore);
 
