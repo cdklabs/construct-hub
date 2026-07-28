@@ -7,7 +7,7 @@
 > cross-referencing documents.
 
 Most of the investigation instructions in this document refer to the *backend
-dashboard* of ConstructHub. Operators should ensure this dashboard is always
+dashboard* (titled `ConstructHubBackend-graphs`) of ConstructHub. Operators should ensure this dashboard is always
 readily available.
 
 --------------------------------------------------------------------------------
