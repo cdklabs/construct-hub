@@ -19,7 +19,7 @@ import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
-import { AlarmSeverities, AlarmSeverity } from '../api';
+import { AlarmSeverity } from '../api';
 import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { addAlarm } from '../monitoring';
@@ -106,11 +106,6 @@ export interface NpmJsProps {
    * @default Duration.days(1)
    */
   readonly canaryMaxStale?: Duration;
-
-  /**
-   * Configure alarm severities.
-   */
-  readonly alarmSeverities?: AlarmSeverities;
 }
 
 /**
@@ -647,7 +642,7 @@ export class NpmJs implements IPackageSource {
     addAlarm(
       'New version visibility SLA breached',
       alarm,
-      this.props.alarmSeverities?.packageCanarySLABreached ?? AlarmSeverity.LOW,
+      AlarmSeverity.LOW,
       monitoring
     );
 
