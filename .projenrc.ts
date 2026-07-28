@@ -43,12 +43,13 @@ const project = new CdklabsConstructLibrary({
   authorAddress: 'construct-ecosystem-team@amazon.com',
   authorOrganization: true,
 
+  packageManager: javascript.NodePackageManager.YARN_BERRY,
+  allowScripts: ['esbuild', 'unrs-resolver'],
   devDeps: [
     ...peerDeps,
     '@jsii/spec',
     '@types/fs-extra',
     '@types/semver',
-    '@types/streamx',
     '@types/tar-stream',
     '@types/tough-cookie',
     '@types/uuid',

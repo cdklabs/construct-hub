@@ -1,4 +1,9 @@
 {
+  "manifestVersion": 3,
+  "env": {
+    "PATH": "$(yarn exec node --print process.env.PATH)",
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  },
   "tasks": {
     "build": {
       "name": "build",
@@ -33,15 +38,36 @@
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
         "RELEASE_TAG_PREFIX": "",
-        "BUMP_PACKAGE": "commit-and-tag-version@^12",
-        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\" --grep 'chore\\(deps\\): upgrade dev dependencies'"
+        "BUMP_PACKAGE": "commit-and-tag-version@^12"
       },
       "steps": [
         {
-          "builtin": "release/bump-version"
+          "builtin": "release/resolve-latest-tag",
+          "outputEnv": "LATEST_TAG"
+        },
+        {
+          "spawn": "bump:releasable-commits",
+          "outputEnv": "RELEASABLE_COMMITS",
+          "condition": "git rev-parse --verify --quiet \"refs/tags/$LATEST_TAG\""
+        },
+        {
+          "builtin": "release/suggest-version-bump",
+          "outputEnv": "SUGGESTED_BUMP"
+        },
+        {
+          "builtin": "release/apply-version-bump"
         }
       ],
-      "condition": "git log --oneline -1 | grep -qv \"chore(release):\""
+      "condition": "git log --oneline -1 | grep -v \"chore(release):\" > /dev/null"
+    },
+    "bump:releasable-commits": {
+      "name": "bump:releasable-commits",
+      "description": "Print the releasable commits since the latest release",
+      "steps": [
+        {
+          "exec": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep '^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+' --grep 'chore\\(deps\\): upgrade dev dependencies'"
+        }
+      ]
     },
     "bundle": {
       "name": "bundle",
@@ -884,7 +910,12 @@
       "description": "Synthesize project files",
       "steps": [
         {
-          "exec": "ts-node --project tsconfig.dev.json .projenrc.ts"
+          "execArgs": [
+            "ts-node",
+            "--project",
+            "projenrc/tsconfig.json",
+            ".projenrc.ts"
+          ]
         }
       ]
     },
@@ -953,7 +984,11 @@
       "description": "Generate API.md from .jsii manifest",
       "steps": [
         {
-          "exec": "jsii-docgen -o API.md"
+          "execArgs": [
+            "jsii-docgen",
+            "-o",
+            "API.md"
+          ]
         }
       ]
     },
@@ -988,7 +1023,7 @@
       "description": "Install project dependencies and update lockfile (non-frozen)",
       "steps": [
         {
-          "exec": "yarn install --check-files"
+          "exec": "yarn install --no-immutable"
         }
       ]
     },
@@ -997,7 +1032,7 @@
       "description": "Install project dependencies using frozen lockfile",
       "steps": [
         {
-          "exec": "yarn install --check-files --frozen-lockfile"
+          "exec": "yarn install --immutable"
         }
       ]
     },
@@ -1006,7 +1041,7 @@
       "description": "Run integration snapshot tests",
       "steps": [
         {
-          "exec": "yarn integ-runner --language typescript",
+          "exec": "integ-runner --language typescript",
           "receiveArgs": true
         }
       ]
@@ -1016,7 +1051,7 @@
       "description": "Run and update integration snapshot tests",
       "steps": [
         {
-          "exec": "yarn integ-runner --language typescript --update-on-failed",
+          "exec": "integ-runner --language typescript --update-on-failed",
           "receiveArgs": true
         }
       ]
@@ -1049,7 +1084,12 @@
       "description": "Create js language bindings",
       "steps": [
         {
-          "exec": "jsii-pacmak -v --target js"
+          "execArgs": [
+            "jsii-pacmak",
+            "-v",
+            "--target",
+            "js"
+          ]
         }
       ]
     },
@@ -1102,7 +1142,7 @@
       "description": "Test rosetta extract",
       "steps": [
         {
-          "exec": "yarn --silent jsii-rosetta extract --strict"
+          "exec": "jsii-rosetta extract --strict"
         }
       ]
     },
@@ -1140,8 +1180,7 @@
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
         "RELEASE_TAG_PREFIX": "",
-        "BUMP_PACKAGE": "commit-and-tag-version@^12",
-        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\" --grep 'chore\\(deps\\): upgrade dev dependencies'"
+        "BUMP_PACKAGE": "commit-and-tag-version@^12"
       },
       "steps": [
         {
@@ -1153,20 +1192,38 @@
       "name": "upgrade",
       "description": "upgrade dependencies",
       "env": {
-        "CI": "0"
+        "CI": "0",
+        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
+        "YARN_NPM_MINIMAL_AGE_GATE": "4320"
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=prod --filter=construct-hub-webapp"
+          "execArgs": [
+            "yarn",
+            "dlx",
+            "npm-check-updates@20",
+            "--upgrade",
+            "--target=minor",
+            "--cooldown=3",
+            "--peer",
+            "--no-deprecated",
+            "--dep=prod",
+            "--filter=construct-hub-webapp"
+          ]
         },
         {
-          "exec": "yarn install --check-files"
+          "exec": "yarn install --no-immutable"
         },
         {
-          "exec": "yarn upgrade construct-hub-webapp"
+          "execArgs": [
+            "yarn",
+            "up",
+            "-R",
+            "construct-hub-webapp"
+          ]
         },
         {
-          "exec": "npx projen"
+          "exec": "yarn projen"
         },
         {
           "spawn": "post-upgrade"
@@ -1177,20 +1234,37 @@
       "name": "upgrade-cdklabs-projen-project-types",
       "description": "upgrade cdklabs-projen-project-types",
       "env": {
-        "CI": "0"
+        "CI": "0",
+        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false"
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=latest --peer --no-deprecated --dep=dev,peer,prod,optional --filter=cdklabs-projen-project-types,projen"
+          "execArgs": [
+            "yarn",
+            "dlx",
+            "npm-check-updates@20",
+            "--upgrade",
+            "--target=latest",
+            "--peer",
+            "--no-deprecated",
+            "--dep=dev,prod,peer,optional",
+            "--filter=cdklabs-projen-project-types,projen"
+          ]
         },
         {
-          "exec": "yarn install --check-files"
+          "exec": "yarn install --no-immutable"
         },
         {
-          "exec": "yarn upgrade cdklabs-projen-project-types projen"
+          "execArgs": [
+            "yarn",
+            "up",
+            "-R",
+            "cdklabs-projen-project-types",
+            "projen"
+          ]
         },
         {
-          "exec": "npx projen"
+          "exec": "yarn projen"
         },
         {
           "spawn": "post-upgrade"
@@ -1201,20 +1275,109 @@
       "name": "upgrade-dev-deps",
       "description": "upgrade dev dependencies",
       "env": {
-        "CI": "0"
+        "CI": "0",
+        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
+        "YARN_NPM_MINIMAL_AGE_GATE": "4320"
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev --filter=@aws-sdk/client-cloudwatch,@aws-sdk/client-codeartifact,@aws-sdk/client-ecs,@aws-sdk/client-lambda,@aws-sdk/client-s3,@aws-sdk/client-sfn,@aws-sdk/client-sqs,@jsii/spec,@octokit/rest,@smithy/types,@smithy/util-retry,@smithy/util-stream,@types/aws-lambda,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/streamx,@types/tar-stream,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk-client-mock,aws-sdk-client-mock-jest,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,chalk,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,uuid,yaml"
+          "execArgs": [
+            "yarn",
+            "dlx",
+            "npm-check-updates@20",
+            "--upgrade",
+            "--target=minor",
+            "--cooldown=3",
+            "--peer",
+            "--no-deprecated",
+            "--dep=dev",
+            "--filter=@aws-sdk/client-cloudwatch,@aws-sdk/client-codeartifact,@aws-sdk/client-ecs,@aws-sdk/client-lambda,@aws-sdk/client-s3,@aws-sdk/client-sfn,@aws-sdk/client-sqs,@jsii/spec,@octokit/rest,@smithy/types,@smithy/util-retry,@smithy/util-stream,@types/aws-lambda,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/tar-stream,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk-client-mock,aws-sdk-client-mock-jest,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,chalk,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,uuid,yaml"
+          ]
         },
         {
-          "exec": "yarn install --check-files"
+          "exec": "yarn install --no-immutable"
         },
         {
-          "exec": "yarn upgrade @aws-cdk/aws-servicecatalogappregistry-alpha @aws-cdk/integ-runner @aws-cdk/integ-tests-alpha @aws-sdk/client-cloudwatch @aws-sdk/client-codeartifact @aws-sdk/client-ecs @aws-sdk/client-lambda @aws-sdk/client-s3 @aws-sdk/client-sfn @aws-sdk/client-sqs @jsii/spec @octokit/rest @smithy/types @smithy/util-retry @smithy/util-stream @types/aws-lambda @types/fs-extra @types/jest @types/markdown-it @types/markdown-it-emoji @types/node @types/semver @types/streamx @types/tar-stream @types/tough-cookie @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser async-sema aws-cdk-lib aws-cdk aws-embedded-metrics aws-sdk-client-mock aws-sdk-client-mock-jest aws-xray-sdk-core case cdk-dia cdk-watchful chalk commit-and-tag-version construct-hub-webapp dotenv esbuild eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint feed fs-extra glob got jest jest-junit jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii markdown-it markdown-it-emoji nock normalize-registry-metadata prettier semver spdx-license-list streamcount streamx tar-stream ts-node typescript uuid yaml"
+          "execArgs": [
+            "yarn",
+            "up",
+            "-R",
+            "@aws-cdk/aws-servicecatalogappregistry-alpha",
+            "@aws-cdk/integ-runner",
+            "@aws-cdk/integ-tests-alpha",
+            "@aws-sdk/client-cloudwatch",
+            "@aws-sdk/client-codeartifact",
+            "@aws-sdk/client-ecs",
+            "@aws-sdk/client-lambda",
+            "@aws-sdk/client-s3",
+            "@aws-sdk/client-sfn",
+            "@aws-sdk/client-sqs",
+            "@jsii/spec",
+            "@octokit/rest",
+            "@smithy/types",
+            "@smithy/util-retry",
+            "@smithy/util-stream",
+            "@types/aws-lambda",
+            "@types/fs-extra",
+            "@types/jest",
+            "@types/markdown-it",
+            "@types/markdown-it-emoji",
+            "@types/node",
+            "@types/semver",
+            "@types/tar-stream",
+            "@types/tough-cookie",
+            "@types/uuid",
+            "@typescript-eslint/eslint-plugin",
+            "@typescript-eslint/parser",
+            "async-sema",
+            "aws-cdk-lib",
+            "aws-cdk",
+            "aws-embedded-metrics",
+            "aws-sdk-client-mock",
+            "aws-sdk-client-mock-jest",
+            "aws-xray-sdk-core",
+            "case",
+            "cdk-dia",
+            "cdk-watchful",
+            "chalk",
+            "commit-and-tag-version",
+            "construct-hub-webapp",
+            "dotenv",
+            "esbuild",
+            "eslint-config-prettier",
+            "eslint-import-resolver-typescript",
+            "eslint-plugin-import",
+            "eslint-plugin-prettier",
+            "eslint",
+            "feed",
+            "fs-extra",
+            "glob",
+            "got",
+            "jest",
+            "jest-junit",
+            "jsii-diff",
+            "jsii-docgen",
+            "jsii-pacmak",
+            "jsii-rosetta",
+            "jsii",
+            "markdown-it",
+            "markdown-it-emoji",
+            "nock",
+            "normalize-registry-metadata",
+            "prettier",
+            "semver",
+            "spdx-license-list",
+            "streamcount",
+            "streamx",
+            "tar-stream",
+            "ts-node",
+            "typescript",
+            "uuid",
+            "yaml"
+          ]
         },
         {
-          "exec": "npx projen"
+          "exec": "yarn projen"
         },
         {
           "spawn": "post-upgrade"
@@ -1231,9 +1394,5 @@
       ]
     }
   },
-  "env": {
-    "PATH": "$(npx -c \"node --print process.env.PATH\")",
-    "NODE_OPTIONS": "--max-old-space-size=4096"
-  },
-  "//": "~~ Generated by projen. To modify, edit .projenrc.ts and run \"npx projen\"."
+  "//": "~~ Generated by projen. To modify, edit .projenrc.ts and run \"yarn projen\"."
 }
