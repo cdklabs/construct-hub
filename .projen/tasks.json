@@ -165,6 +165,12 @@
         },
         {
           "spawn": "bundle:transliterator"
+        },
+        {
+          "spawn": "bundle:response-function"
+        },
+        {
+          "spawn": "bundle:redirect-function"
         }
       ]
     },
@@ -618,6 +624,15 @@
         }
       ]
     },
+    "bundle:redirect-function": {
+      "name": "bundle:redirect-function",
+      "description": "Create a CloudFront Function bundle from src/webapp/badge-redirect-function/redirect-function.ts",
+      "steps": [
+        {
+          "exec": "ts-node projenrc/bundle-cloudfront-function.exec.ts src/webapp/badge-redirect-function/redirect-function.ts lib/webapp/badge-redirect-function/redirect-function.js --runtime=2.0"
+        }
+      ]
+    },
     "bundle:redrive-state-machine": {
       "name": "bundle:redrive-state-machine",
       "description": "Create an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
@@ -651,6 +666,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/release-notes/release-notes-trigger.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/release-notes-trigger.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
+        }
+      ]
+    },
+    "bundle:response-function": {
+      "name": "bundle:response-function",
+      "description": "Create a CloudFront Function bundle from src/webapp/response-function/response-function.ts",
+      "steps": [
+        {
+          "exec": "ts-node projenrc/bundle-cloudfront-function.exec.ts src/webapp/response-function/response-function.ts lib/webapp/response-function/response-function.js --runtime=2.0"
         }
       ]
     },
@@ -902,6 +926,12 @@
         },
         {
           "spawn": "bundle:transliterator"
+        },
+        {
+          "spawn": "bundle:response-function"
+        },
+        {
+          "spawn": "bundle:redirect-function"
         }
       ]
     },

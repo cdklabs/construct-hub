@@ -2,6 +2,7 @@ import { join, relative } from 'path';
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
 import { javascript, ReleasableCommits } from 'projen';
 import { addDevApp } from './projenrc/dev-app';
+import { discoverCloudFrontFunctions } from './projenrc/magic-cloudfront';
 import { discoverEcsTasks } from './projenrc/magic-ecs';
 import { discoverLambdas } from './projenrc/magic-lambda';
 import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
@@ -253,6 +254,7 @@ project.addDevDeps('glob');
 project.addDevDeps(`@types/node@^${NODE_VERSION}`);
 discoverLambdas(project, NODE_VERSION);
 discoverEcsTasks(project, NODE_VERSION);
+discoverCloudFrontFunctions(project);
 
 // use custom version number of integ-runner
 project.deps.removeDependency('@aws-cdk/integ-runner');
