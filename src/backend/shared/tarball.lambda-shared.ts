@@ -1,5 +1,5 @@
+import { Readable } from 'stream';
 import { createGunzip } from 'zlib';
-import { Readable } from 'streamx';
 import { extract } from 'tar-stream';
 
 /**
@@ -25,24 +25,7 @@ export async function extractObjects<S extends Selector>(
   return new Promise((ok, ko) => {
     const result: { [name: string]: Buffer } = {};
 
-    // The readable will send data in chubks of 4KiB here.
-    let idx = 0;
-    new Readable({
-      read(cb) {
-        let drained = true;
-        while (drained && idx < tgz.length) {
-          const slice = tgz.slice(idx, idx + 4_096);
-          drained = this.push(slice);
-          idx += slice.length;
-        }
-
-        // If we've sent it all, we'll cork it by pushing null.
-        if (idx >= tgz.length) {
-          this.push(null);
-        }
-        cb(null);
-      },
-    })
+    Readable.from([Buffer.from(tgz)])
       .pipe(createGunzip())
       .pipe(extract({ filenameEncoding: 'utf-8' }), { end: true })
       .once('error', ko)

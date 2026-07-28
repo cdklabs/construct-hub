@@ -142,7 +142,7 @@ function newLambdaHandler(
     `--outfile="${outfile}"`,
     '--external:aws-sdk',
     '--sourcemap',
-    '--tsconfig=tsconfig.dev.json',
+    '--tsconfig=tsconfig.json',
   ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Lambda bundle from ${entry}`,
@@ -197,7 +197,7 @@ export function discoverLambdas(
       '--external:aws-sdk',
       '--sourcemap',
       '--watch',
-      '--tsconfig=tsconfig.dev.json',
+      '--tsconfig=tsconfig.json',
     ].join(' '),
   });
 

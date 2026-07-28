@@ -79,7 +79,6 @@ const project = new CdklabsConstructLibrary({
     'jsii-docgen@^10.11.23',
     'semver',
     'spdx-license-list',
-    'streamx',
     'streamcount',
     'tar-stream',
     'uuid',
