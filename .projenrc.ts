@@ -97,10 +97,6 @@ const project = new CdklabsConstructLibrary({
   typescriptVersion: '6.0.x',
   // Exclude handler images from TypeScript compiler path
   excludeTypescript: ['resources/**'],
-  tsconfigDev: {
-    include: ['test/**/*.ts'],
-  },
-
   jsiiVersion: '6.0.x',
 
   pullRequestTemplateContents: [
@@ -235,6 +231,22 @@ project.gitignore.exclude('**/.DS_Store');
 
 addVpcAllowListManagement(project);
 addDevApp(project);
+
+// Give the integ test directory its own tsconfig, so the eslint project
+// service (and editors) can type-check files under `test/`, which are not
+// covered by the root tsconfig (src only) or the dev tsconfig (src/__tests__).
+new javascript.TypescriptConfig(project, {
+  fileName: 'test/tsconfig.json',
+  include: ['**/*.ts'],
+  exclude: ['node_modules'],
+  compilerOptions: {
+    noEmit: true,
+    rootDir: '..',
+  },
+  extends: javascript.TypescriptConfigExtends.fromTypescriptConfigs([
+    project.tsconfig!,
+  ]),
+});
 
 const NODE_VERSION = '22';
 project.addDevDeps('glob');
