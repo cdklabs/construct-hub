@@ -1,5 +1,5 @@
 import { URL } from 'url';
-import * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 export const getReleaseNotesMd = async (
   markdownString: string,
   version: string
@@ -43,10 +43,7 @@ async function getContentBySection(
   headingLevel: number,
   text: string
 ): Promise<string[]> {
-  // Using dynamic import to ensure JSII doesnot complain about esModuleInterop
-  const markDownIt = await import('markdown-it');
-  // Common JS module. So calling default. Jest does the esModule interops so no default
-  const markdown: MarkdownIt = ((markDownIt as any).default || markDownIt)();
+  const markdown = new MarkdownIt();
 
   markdown.enable(['heading', 'lheading']);
   const sections: [number, number][] = [];

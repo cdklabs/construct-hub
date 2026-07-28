@@ -5,7 +5,8 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { Feed } from 'feed';
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
+import emoji from 'markdown-it-emoji';
 
 import { CacheStrategy } from '../../caching';
 import { CatalogClient } from '../catalog-builder/client.lambda-shared';
@@ -111,13 +112,11 @@ export const getPackageReleaseNotes = async (
   packageName: string,
   packageVersion: string
 ): Promise<string> => {
-  // Using dynamic import to ensure JSII doesnot complain about esModuleInterop
-  const markDownIt = await import('markdown-it');
-  const emoji = await import('markdown-it-emoji');
   const bucket = requireEnv('CATALOG_BUCKET_NAME');
-  // Common JS module. So calling default. Jest does the esModule interops so no default
-  const markdown: MarkdownIt = ((markDownIt as any).default || markDownIt)();
-  markdown.use((emoji as any).default || emoji);
+  const markdown = new MarkdownIt();
+  // @types/markdown-it-emoji ships its own (newer) @types/markdown-it, which
+  // structurally conflicts with the project's version. Runtime is compatible.
+  markdown.use(emoji as unknown as MarkdownIt.PluginSimple);
   const { releaseNotesKey } = constants.getObjectKeys(
     packageName,
     packageVersion
