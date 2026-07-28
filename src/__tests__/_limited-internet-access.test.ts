@@ -22,16 +22,21 @@ describe(createRestrictedSecurityGroups, () => {
   });
 });
 
-const realReadFileSync = fs.readFileSync;
+jest.mock('fs', () => {
+  const actual = jest.requireActual<typeof fs>('fs');
+  return {
+    ...actual,
+    readFileSync: jest.fn(actual.readFileSync).mockName('fs.readFileSync'),
+  };
+});
+
+const mockReadFileSync = fs.readFileSync as jest.MockedFunction<
+  typeof fs.readFileSync
+>;
+
 describe(parsePrefixList, () => {
-  const mockReadFileSync = jest
-    .fn()
-    .mockName('fs.readFileSync') as jest.MockedFunction<typeof fs.readFileSync>;
   beforeEach(() => {
-    (fs as any).readFileSync = mockReadFileSync;
-  });
-  afterEach(() => {
-    (fs as any).readFileSync = realReadFileSync;
+    mockReadFileSync.mockClear();
   });
 
   test('correctly parses list', () => {

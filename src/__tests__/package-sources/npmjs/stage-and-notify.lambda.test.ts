@@ -7,7 +7,7 @@ import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import type { Context } from 'aws-lambda';
 import { mockClient } from 'aws-sdk-client-mock';
 import 'aws-sdk-client-mock-jest';
-import * as nock from 'nock';
+import nock from 'nock';
 import {
   ENV_DENY_LIST_BUCKET_NAME,
   ENV_DENY_LIST_OBJECT_KEY,

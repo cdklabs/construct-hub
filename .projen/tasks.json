@@ -1,4 +1,9 @@
 {
+  "manifestVersion": 3,
+  "env": {
+    "PATH": "$(yarn exec node --print process.env.PATH)",
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  },
   "tasks": {
     "build": {
       "name": "build",
@@ -33,15 +38,36 @@
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
         "RELEASE_TAG_PREFIX": "",
-        "BUMP_PACKAGE": "commit-and-tag-version@^12",
-        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\" --grep 'chore\\(deps\\): upgrade dev dependencies'"
+        "BUMP_PACKAGE": "commit-and-tag-version@^12"
       },
       "steps": [
         {
-          "builtin": "release/bump-version"
+          "builtin": "release/resolve-latest-tag",
+          "outputEnv": "LATEST_TAG"
+        },
+        {
+          "spawn": "bump:releasable-commits",
+          "outputEnv": "RELEASABLE_COMMITS",
+          "condition": "git rev-parse --verify --quiet \"refs/tags/$LATEST_TAG\""
+        },
+        {
+          "builtin": "release/suggest-version-bump",
+          "outputEnv": "SUGGESTED_BUMP"
+        },
+        {
+          "builtin": "release/apply-version-bump"
         }
       ],
-      "condition": "git log --oneline -1 | grep -qv \"chore(release):\""
+      "condition": "git log --oneline -1 | grep -v \"chore(release):\" > /dev/null"
+    },
+    "bump:releasable-commits": {
+      "name": "bump:releasable-commits",
+      "description": "Print the releasable commits since the latest release",
+      "steps": [
+        {
+          "exec": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep '^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+' --grep 'chore\\(deps\\): upgrade dev dependencies'"
+        }
+      ]
     },
     "bundle": {
       "name": "bundle",
@@ -147,7 +173,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -156,7 +182,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -165,7 +191,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/catalog-builder/catalog-builder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -174,7 +200,7 @@
       "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -183,7 +209,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -192,7 +218,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/catalog-builder/catalog-builder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -201,7 +227,7 @@
       "description": "Create an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -210,7 +236,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -219,7 +245,7 @@
       "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/client-test.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/client-test.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/client-test.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -228,7 +254,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/client-test.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/client-test.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/client-test.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -237,7 +263,7 @@
       "description": "Create an AWS Lambda bundle from src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -246,7 +272,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -264,7 +290,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/release-notes/generate-release-notes.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/release-notes/generate-release-notes.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/generate-release-notes.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/release-notes/generate-release-notes.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/generate-release-notes.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -273,7 +299,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/release-notes/generate-release-notes.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/release-notes/generate-release-notes.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/generate-release-notes.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/release-notes/generate-release-notes.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/generate-release-notes.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -282,7 +308,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/release-notes/get-messages-from-worker-queue.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/release-notes/get-messages-from-worker-queue.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/get-messages-from-worker-queue.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/release-notes/get-messages-from-worker-queue.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/get-messages-from-worker-queue.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -291,7 +317,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/release-notes/get-messages-from-worker-queue.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/release-notes/get-messages-from-worker-queue.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/get-messages-from-worker-queue.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/release-notes/get-messages-from-worker-queue.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/get-messages-from-worker-queue.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -300,7 +326,7 @@
       "description": "Create an AWS Lambda bundle from src/monitoring/http-get-function.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -309,7 +335,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/monitoring/http-get-function.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -318,7 +344,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -327,7 +353,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -336,7 +362,7 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/re-stage-package-version.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats-processor.lambda.ts src/backend/package-stats/package-stats-chunker.lambda.ts src/backend/package-stats/package-stats-aggregator.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/read-uninstallable-report.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22 --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/re-stage-package-version.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats-processor.lambda.ts src/backend/package-stats/package-stats-chunker.lambda.ts src/backend/package-stats/package-stats-aggregator.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/read-uninstallable-report.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22 --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -345,7 +371,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/ecs-task-monitor/monitor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/ecs-task-monitor/monitor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ecs-task-monitor/monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/ecs-task-monitor/monitor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ecs-task-monitor/monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -354,7 +380,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/ecs-task-monitor/monitor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/ecs-task-monitor/monitor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ecs-task-monitor/monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/ecs-task-monitor/monitor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ecs-task-monitor/monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -363,7 +389,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/orchestration/needs-catalog-update.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/orchestration/needs-catalog-update.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/needs-catalog-update.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/orchestration/needs-catalog-update.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/needs-catalog-update.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -372,7 +398,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/orchestration/needs-catalog-update.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/orchestration/needs-catalog-update.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/needs-catalog-update.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/orchestration/needs-catalog-update.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/needs-catalog-update.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -381,7 +407,7 @@
       "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/npm-js-follower.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -390,7 +416,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/npm-js-follower.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -399,7 +425,7 @@
       "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/canary/npmjs-package-canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/canary/npmjs-package-canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -408,7 +434,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/canary/npmjs-package-canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/canary/npmjs-package-canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -417,7 +443,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats-aggregator.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats-aggregator.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-aggregator.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-aggregator.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-aggregator.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -426,7 +452,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats-aggregator.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats-aggregator.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-aggregator.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-aggregator.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-aggregator.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -435,7 +461,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats-chunker.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats-chunker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-chunker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-chunker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-chunker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -444,7 +470,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats-chunker.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats-chunker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-chunker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-chunker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-chunker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -453,7 +479,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats-processor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats-processor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-processor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-processor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-processor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -462,7 +488,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats-processor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats-processor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-processor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats-processor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats-processor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -471,7 +497,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/inventory/package-versions-table-widget-function.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -480,7 +506,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/package-versions-table-widget-function.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -489,7 +515,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/deny-list/prune-handler.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -498,7 +524,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/deny-list/prune-handler.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -507,7 +533,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/deny-list/prune-queue-handler.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -516,7 +542,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/deny-list/prune-queue-handler.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -525,7 +551,7 @@
       "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -534,7 +560,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/mocks/prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -543,7 +569,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -552,7 +578,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -561,7 +587,7 @@
       "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/re-stage-package-version.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/re-stage-package-version.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/re-stage-package-version.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/re-stage-package-version.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/re-stage-package-version.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -570,7 +596,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/re-stage-package-version.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/re-stage-package-version.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/re-stage-package-version.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/package-sources/npmjs/re-stage-package-version.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/re-stage-package-version.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -579,7 +605,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/orchestration/read-uninstallable-report.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/orchestration/read-uninstallable-report.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/read-uninstallable-report.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/orchestration/read-uninstallable-report.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/read-uninstallable-report.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -588,7 +614,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/orchestration/read-uninstallable-report.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/orchestration/read-uninstallable-report.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/read-uninstallable-report.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/orchestration/read-uninstallable-report.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/read-uninstallable-report.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -597,7 +623,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -606,7 +632,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -615,7 +641,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/release-notes/release-notes-trigger.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/release-notes/release-notes-trigger.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/release-notes-trigger.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/release-notes/release-notes-trigger.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/release-notes-trigger.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -624,7 +650,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/release-notes/release-notes-trigger.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/release-notes/release-notes-trigger.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/release-notes-trigger.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/release-notes/release-notes-trigger.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/release-notes/release-notes-trigger.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -633,7 +659,7 @@
       "description": "Create an AWS Lambda bundle from src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/overview-dashboard/sqs-dlq-stats-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/overview-dashboard/sqs-dlq-stats-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -642,7 +668,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/overview-dashboard/sqs-dlq-stats-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/overview-dashboard/sqs-dlq-stats-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -651,7 +677,7 @@
       "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -660,7 +686,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -699,7 +725,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/feed-builder/update-feed.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/feed-builder/update-feed.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/feed-builder/update-feed.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/feed-builder/update-feed.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/feed-builder/update-feed.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -708,7 +734,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/feed-builder/update-feed.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/feed-builder/update-feed.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/feed-builder/update-feed.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/feed-builder/update-feed.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/feed-builder/update-feed.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -717,7 +743,7 @@
       "description": "Create an AWS Lambda bundle from src/backend/version-tracker/version-tracker.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/version-tracker/version-tracker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/version-tracker/version-tracker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/backend/version-tracker/version-tracker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/version-tracker/version-tracker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -726,7 +752,7 @@
       "description": "Continuously update an AWS Lambda bundle from src/backend/version-tracker/version-tracker.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/version-tracker/version-tracker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/version-tracker/version-tracker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
+          "exec": "esbuild --bundle src/backend/version-tracker/version-tracker.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/backend/version-tracker/version-tracker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
         }
       ]
     },
@@ -884,7 +910,12 @@
       "description": "Synthesize project files",
       "steps": [
         {
-          "exec": "ts-node --project tsconfig.dev.json .projenrc.ts"
+          "execArgs": [
+            "ts-node",
+            "--project",
+            "projenrc/tsconfig.json",
+            ".projenrc.ts"
+          ]
         }
       ]
     },
@@ -953,7 +984,11 @@
       "description": "Generate API.md from .jsii manifest",
       "steps": [
         {
-          "exec": "jsii-docgen -o API.md"
+          "execArgs": [
+            "jsii-docgen",
+            "-o",
+            "API.md"
+          ]
         }
       ]
     },
@@ -988,7 +1023,7 @@
       "description": "Install project dependencies and update lockfile (non-frozen)",
       "steps": [
         {
-          "exec": "yarn install --check-files"
+          "exec": "yarn install --no-immutable"
         }
       ]
     },
@@ -997,7 +1032,7 @@
       "description": "Install project dependencies using frozen lockfile",
       "steps": [
         {
-          "exec": "yarn install --check-files --frozen-lockfile"
+          "exec": "yarn install --immutable"
         }
       ]
     },
@@ -1006,7 +1041,7 @@
       "description": "Run integration snapshot tests",
       "steps": [
         {
-          "exec": "yarn integ-runner --language typescript",
+          "exec": "integ-runner --language typescript",
           "receiveArgs": true
         }
       ]
@@ -1016,7 +1051,7 @@
       "description": "Run and update integration snapshot tests",
       "steps": [
         {
-          "exec": "yarn integ-runner --language typescript --update-on-failed",
+          "exec": "integ-runner --language typescript --update-on-failed",
           "receiveArgs": true
         }
       ]
@@ -1049,7 +1084,12 @@
       "description": "Create js language bindings",
       "steps": [
         {
-          "exec": "jsii-pacmak -v --target js"
+          "execArgs": [
+            "jsii-pacmak",
+            "-v",
+            "--target",
+            "js"
+          ]
         }
       ]
     },
@@ -1102,7 +1142,7 @@
       "description": "Test rosetta extract",
       "steps": [
         {
-          "exec": "yarn --silent jsii-rosetta extract --strict"
+          "exec": "jsii-rosetta extract --strict"
         }
       ]
     },
@@ -1140,8 +1180,7 @@
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
         "RELEASE_TAG_PREFIX": "",
-        "BUMP_PACKAGE": "commit-and-tag-version@^12",
-        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\" --grep 'chore\\(deps\\): upgrade dev dependencies'"
+        "BUMP_PACKAGE": "commit-and-tag-version@^12"
       },
       "steps": [
         {
@@ -1153,20 +1192,38 @@
       "name": "upgrade",
       "description": "upgrade dependencies",
       "env": {
-        "CI": "0"
+        "CI": "0",
+        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
+        "YARN_NPM_MINIMAL_AGE_GATE": "4320"
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=prod --filter=construct-hub-webapp"
+          "execArgs": [
+            "yarn",
+            "dlx",
+            "npm-check-updates@20",
+            "--upgrade",
+            "--target=minor",
+            "--cooldown=3",
+            "--peer",
+            "--no-deprecated",
+            "--dep=prod",
+            "--filter=construct-hub-webapp"
+          ]
         },
         {
-          "exec": "yarn install --check-files"
+          "exec": "yarn install --no-immutable"
         },
         {
-          "exec": "yarn upgrade construct-hub-webapp"
+          "execArgs": [
+            "yarn",
+            "up",
+            "-R",
+            "construct-hub-webapp"
+          ]
         },
         {
-          "exec": "npx projen"
+          "exec": "yarn projen"
         },
         {
           "spawn": "post-upgrade"
@@ -1177,20 +1234,37 @@
       "name": "upgrade-cdklabs-projen-project-types",
       "description": "upgrade cdklabs-projen-project-types",
       "env": {
-        "CI": "0"
+        "CI": "0",
+        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false"
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=latest --peer --no-deprecated --dep=dev,peer,prod,optional --filter=cdklabs-projen-project-types,projen"
+          "execArgs": [
+            "yarn",
+            "dlx",
+            "npm-check-updates@20",
+            "--upgrade",
+            "--target=latest",
+            "--peer",
+            "--no-deprecated",
+            "--dep=dev,prod,peer,optional",
+            "--filter=cdklabs-projen-project-types,projen"
+          ]
         },
         {
-          "exec": "yarn install --check-files"
+          "exec": "yarn install --no-immutable"
         },
         {
-          "exec": "yarn upgrade cdklabs-projen-project-types projen"
+          "execArgs": [
+            "yarn",
+            "up",
+            "-R",
+            "cdklabs-projen-project-types",
+            "projen"
+          ]
         },
         {
-          "exec": "npx projen"
+          "exec": "yarn projen"
         },
         {
           "spawn": "post-upgrade"
@@ -1201,20 +1275,108 @@
       "name": "upgrade-dev-deps",
       "description": "upgrade dev dependencies",
       "env": {
-        "CI": "0"
+        "CI": "0",
+        "YARN_ENABLE_IMMUTABLE_INSTALLS": "false",
+        "YARN_NPM_MINIMAL_AGE_GATE": "4320"
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev --filter=@aws-sdk/client-cloudwatch,@aws-sdk/client-codeartifact,@aws-sdk/client-ecs,@aws-sdk/client-lambda,@aws-sdk/client-s3,@aws-sdk/client-sfn,@aws-sdk/client-sqs,@jsii/spec,@octokit/rest,@smithy/types,@smithy/util-retry,@smithy/util-stream,@types/aws-lambda,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/streamx,@types/tar-stream,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk-client-mock,aws-sdk-client-mock-jest,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,chalk,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,uuid,yaml"
+          "execArgs": [
+            "yarn",
+            "dlx",
+            "npm-check-updates@20",
+            "--upgrade",
+            "--target=minor",
+            "--cooldown=3",
+            "--peer",
+            "--no-deprecated",
+            "--dep=dev",
+            "--filter=@aws-sdk/client-cloudwatch,@aws-sdk/client-codeartifact,@aws-sdk/client-ecs,@aws-sdk/client-lambda,@aws-sdk/client-s3,@aws-sdk/client-sfn,@aws-sdk/client-sqs,@jsii/spec,@octokit/rest,@smithy/types,@smithy/util-retry,@smithy/util-stream,@types/aws-lambda,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/tar-stream,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk-client-mock,aws-sdk-client-mock-jest,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,chalk,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,jsii-rosetta,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,semver,spdx-license-list,streamcount,tar-stream,ts-node,uuid,yaml"
+          ]
         },
         {
-          "exec": "yarn install --check-files"
+          "exec": "yarn install --no-immutable"
         },
         {
-          "exec": "yarn upgrade @aws-cdk/aws-servicecatalogappregistry-alpha @aws-cdk/integ-runner @aws-cdk/integ-tests-alpha @aws-sdk/client-cloudwatch @aws-sdk/client-codeartifact @aws-sdk/client-ecs @aws-sdk/client-lambda @aws-sdk/client-s3 @aws-sdk/client-sfn @aws-sdk/client-sqs @jsii/spec @octokit/rest @smithy/types @smithy/util-retry @smithy/util-stream @types/aws-lambda @types/fs-extra @types/jest @types/markdown-it @types/markdown-it-emoji @types/node @types/semver @types/streamx @types/tar-stream @types/tough-cookie @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser async-sema aws-cdk-lib aws-cdk aws-embedded-metrics aws-sdk-client-mock aws-sdk-client-mock-jest aws-xray-sdk-core case cdk-dia cdk-watchful chalk commit-and-tag-version construct-hub-webapp dotenv esbuild eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint feed fs-extra glob got jest jest-junit jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii markdown-it markdown-it-emoji nock normalize-registry-metadata prettier semver spdx-license-list streamcount streamx tar-stream ts-node typescript uuid yaml"
+          "execArgs": [
+            "yarn",
+            "up",
+            "-R",
+            "@aws-cdk/aws-servicecatalogappregistry-alpha",
+            "@aws-cdk/integ-runner",
+            "@aws-cdk/integ-tests-alpha",
+            "@aws-sdk/client-cloudwatch",
+            "@aws-sdk/client-codeartifact",
+            "@aws-sdk/client-ecs",
+            "@aws-sdk/client-lambda",
+            "@aws-sdk/client-s3",
+            "@aws-sdk/client-sfn",
+            "@aws-sdk/client-sqs",
+            "@jsii/spec",
+            "@octokit/rest",
+            "@smithy/types",
+            "@smithy/util-retry",
+            "@smithy/util-stream",
+            "@types/aws-lambda",
+            "@types/fs-extra",
+            "@types/jest",
+            "@types/markdown-it",
+            "@types/markdown-it-emoji",
+            "@types/node",
+            "@types/semver",
+            "@types/tar-stream",
+            "@types/tough-cookie",
+            "@types/uuid",
+            "@typescript-eslint/eslint-plugin",
+            "@typescript-eslint/parser",
+            "async-sema",
+            "aws-cdk-lib",
+            "aws-cdk",
+            "aws-embedded-metrics",
+            "aws-sdk-client-mock",
+            "aws-sdk-client-mock-jest",
+            "aws-xray-sdk-core",
+            "case",
+            "cdk-dia",
+            "cdk-watchful",
+            "chalk",
+            "commit-and-tag-version",
+            "construct-hub-webapp",
+            "dotenv",
+            "esbuild",
+            "eslint-config-prettier",
+            "eslint-import-resolver-typescript",
+            "eslint-plugin-import",
+            "eslint-plugin-prettier",
+            "eslint",
+            "feed",
+            "fs-extra",
+            "glob",
+            "got",
+            "jest",
+            "jest-junit",
+            "jsii-diff",
+            "jsii-docgen",
+            "jsii-pacmak",
+            "jsii-rosetta",
+            "jsii",
+            "markdown-it",
+            "markdown-it-emoji",
+            "nock",
+            "normalize-registry-metadata",
+            "prettier",
+            "semver",
+            "spdx-license-list",
+            "streamcount",
+            "tar-stream",
+            "ts-node",
+            "typescript",
+            "uuid",
+            "yaml"
+          ]
         },
         {
-          "exec": "npx projen"
+          "exec": "yarn projen"
         },
         {
           "spawn": "post-upgrade"
@@ -1231,9 +1393,5 @@
       ]
     }
   },
-  "env": {
-    "PATH": "$(npx -c \"node --print process.env.PATH\")",
-    "NODE_OPTIONS": "--max-old-space-size=4096"
-  },
-  "//": "~~ Generated by projen. To modify, edit .projenrc.ts and run \"npx projen\"."
+  "//": "~~ Generated by projen. To modify, edit .projenrc.ts and run \"yarn projen\"."
 }

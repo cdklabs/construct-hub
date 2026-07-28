@@ -43,12 +43,13 @@ const project = new CdklabsConstructLibrary({
   authorAddress: 'construct-ecosystem-team@amazon.com',
   authorOrganization: true,
 
+  packageManager: javascript.NodePackageManager.YARN_BERRY,
+  allowScripts: ['esbuild', 'unrs-resolver'],
   devDeps: [
     ...peerDeps,
     '@jsii/spec',
     '@types/fs-extra',
     '@types/semver',
-    '@types/streamx',
     '@types/tar-stream',
     '@types/tough-cookie',
     '@types/uuid',
@@ -78,7 +79,6 @@ const project = new CdklabsConstructLibrary({
     'jsii-docgen@^10.11.23',
     'semver',
     'spdx-license-list',
-    'streamx',
     'streamcount',
     'tar-stream',
     'uuid',
@@ -94,17 +94,10 @@ const project = new CdklabsConstructLibrary({
 
   peerDeps,
 
-  typescriptVersion: '5.9.x',
+  typescriptVersion: '6.0.x',
   // Exclude handler images from TypeScript compiler path
   excludeTypescript: ['resources/**'],
-  tsconfigDev: {
-    include: ['test/**/*.ts'],
-  },
-
-  jsiiVersion: '5.9.x',
-  rosettaOptions: {
-    version: '~5.9.9',
-  },
+  jsiiVersion: '6.0.x',
 
   pullRequestTemplateContents: [
     '',
@@ -238,6 +231,22 @@ project.gitignore.exclude('**/.DS_Store');
 
 addVpcAllowListManagement(project);
 addDevApp(project);
+
+// Give the integ test directory its own tsconfig, so the eslint project
+// service (and editors) can type-check files under `test/`, which are not
+// covered by the root tsconfig (src only) or the dev tsconfig (src/__tests__).
+new javascript.TypescriptConfig(project, {
+  fileName: 'test/tsconfig.json',
+  include: ['**/*.ts'],
+  exclude: ['node_modules'],
+  compilerOptions: {
+    noEmit: true,
+    rootDir: '..',
+  },
+  extends: javascript.TypescriptConfigExtends.fromTypescriptConfigs([
+    project.tsconfig!,
+  ]),
+});
 
 const NODE_VERSION = '22';
 project.addDevDeps('glob');
