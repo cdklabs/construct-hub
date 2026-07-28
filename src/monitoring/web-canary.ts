@@ -55,6 +55,7 @@ export class WebCanary extends Construct {
 
     // alarm if 4 or more pings have failed within a period of 5 minutes (80% failure rate)
     this.alarm = errors.createAlarm(this, 'Errors', {
+      alarmName: `${this.node.path}/Errors`,
       alarmDescription: `80% error rate for ${props.url} (${display})`,
       threshold: 4,
       evaluationPeriods: 1,

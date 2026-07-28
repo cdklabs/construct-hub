@@ -288,7 +288,8 @@ which can be searched for in the Lambda function's CloudWatch Logs.
 Once the root cause has been identified and fixed (unless this was a transient
 issue), messages from the dead-letter queue can be sent back to the State
 Machine for re-processing by running the *Redrive DLQ* function, linked from the
-*Orchestration* section of the backend dashboard.
+*Orchestration* section of the backend dashboard. In the lambda console that opens, 
+click on the `Test` tab and then hit the _Test_ button to trigger the redrive function. 
 
 If messages are sent back to the dead-letter queue, perform the investigation
 steps again.
@@ -819,6 +820,32 @@ to determine what is happening and resolve the problem.
 
 Once the canary starts running normally again, the alarm will clear itself
 without requiring any further intervention.
+
+### `ConstructHub/Sources/NpmJs/Canary/StaleCanaryPackage`
+
+#### Description
+
+This alarm fires when the canary package (by default, `construct-hub-probe`) has
+not published a new version to npm within the configured staleness threshold (by
+default, 1 day). When the canary package stops publishing, the SLA alarm becomes
+blind — no new versions flow through the system, so SLA breaches cannot be
+detected.
+
+#### Investigation
+
+1. Check whether the canary package is still being published to npm. Visit the
+   package page on `npmjs.com` and verify recent publish activity.
+2. If the package is not being published its likely that the publishing mechanism
+   is broken.
+2. If the package is being published but the metric is still high, the canary
+   Lambda may not be running or may be failing to fetch the latest version from
+   the npm registry. Check the canary Lambda logs for errors.
+3. Review the `TimeSinceLastPublish` metric in the `ConstructHub/PackageCanary`
+   CloudWatch namespace to see the trend.
+
+#### Resolution
+
+The alarm will clear automatically once a new version is published and the canary picks it up.
 
 ### `ConstructHub/PackageStats/Failures`
 

@@ -97,9 +97,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
   // The last written marker seq id.
   let updatedMarker = initialMarker;
 
-  // The slowest batch processing time so far (starts at 30 seconds). This is how much time should
+  // The slowest batch processing time so far (starts at 60 seconds). This is how much time should
   // be left before timeout if a new batch is to be fetched.
-  let maxBatchProcessingTime = 30_000;
+  let maxBatchProcessingTime = 60_000;
   // Whether we should continue reading more items or not... This is set to false when the current
   // latest change is reached (i.e: next page of changes is empty).
   let shouldContinue = true;

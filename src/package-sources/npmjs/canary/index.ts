@@ -101,6 +101,20 @@ export class NpmJsPackageCanary extends Construct {
   }
 
   /**
+   * A metric tracking the time since the canary package last published a new
+   * version to npm. Emitted on every invocation so it is never sparse.
+   */
+  public metricTimeSinceLastPublish(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.TIME_SINCE_LAST_PUBLISH,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
    * A metric tracking HTTP Gateway errors experienced while the canary is
    * running. Those are typically caused by the npm registry servers being
    * overloaded or otherwise impaired, and would cause false alarms.
