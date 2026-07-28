@@ -43,25 +43,6 @@ export enum AlarmSeverity {
 }
 
 /**
- * Configure severities for various alarms.
- *
- * Alarms not included here are currently not configurable.
- */
-export interface AlarmSeverities {
-
-  /**
-   * @default AlarmSeverity.HIGH
-   */
-  readonly backendOrchestrationFailed?: AlarmSeverity;
-
-  /**
-   * @default AlarmSeverity.LOW
-   */
-  readonly packageCanarySLABreached?: AlarmSeverity;
-
-}
-
-/**
  * An override for a specific alarm.
  */
 export interface AlarmOverride {

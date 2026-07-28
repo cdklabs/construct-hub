@@ -32,7 +32,7 @@ import { Construct } from 'constructs';
 import { NeedsCatalogUpdate } from './needs-catalog-update';
 import { RedriveStateMachine } from './redrive-state-machine';
 import { RetryUninstallablePackages } from './retry-uninstallable-packages';
-import { AlarmSeverities, AlarmSeverity } from '../../api';
+import { AlarmSeverity } from '../../api';
 import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { Monitoring, addAlarm } from '../../monitoring';
@@ -157,11 +157,6 @@ export interface OrchestrationProps {
    * The construct that generates RSS/ATOM feed
    */
   readonly feedBuilder: FeedBuilder;
-
-  /**
-   * Configure alarm severities.
-   */
-  readonly alarmSeverities?: AlarmSeverities;
 }
 
 /**
@@ -503,7 +498,7 @@ export class Orchestration extends Construct {
           evaluationPeriods: 1,
           threshold: 1,
         }),
-      props.alarmSeverities?.backendOrchestrationFailed ?? AlarmSeverity.HIGH,
+      AlarmSeverity.HIGH,
       props.monitoring
     );
 

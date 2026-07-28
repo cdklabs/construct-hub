@@ -571,51 +571,6 @@ Wire this alarm to a different severity bucket's action.
 
 ---
 
-### AlarmSeverities <a name="AlarmSeverities" id="construct-hub.AlarmSeverities"></a>
-
-Configure severities for various alarms.
-
-Alarms not included here are currently not configurable.
-
-#### Initializer <a name="Initializer" id="construct-hub.AlarmSeverities.Initializer"></a>
-
-```typescript
-import { AlarmSeverities } from 'construct-hub'
-
-const alarmSeverities: AlarmSeverities = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#construct-hub.AlarmSeverities.property.backendOrchestrationFailed">backendOrchestrationFailed</a></code> | <code><a href="#construct-hub.AlarmSeverity">AlarmSeverity</a></code> | *No description.* |
-| <code><a href="#construct-hub.AlarmSeverities.property.packageCanarySLABreached">packageCanarySLABreached</a></code> | <code><a href="#construct-hub.AlarmSeverity">AlarmSeverity</a></code> | *No description.* |
-
----
-
-##### `backendOrchestrationFailed`<sup>Optional</sup> <a name="backendOrchestrationFailed" id="construct-hub.AlarmSeverities.property.backendOrchestrationFailed"></a>
-
-```typescript
-public readonly backendOrchestrationFailed: AlarmSeverity;
-```
-
-- *Type:* <a href="#construct-hub.AlarmSeverity">AlarmSeverity</a>
-- *Default:* AlarmSeverity.HIGH
-
----
-
-##### `packageCanarySLABreached`<sup>Optional</sup> <a name="packageCanarySLABreached" id="construct-hub.AlarmSeverities.property.packageCanarySLABreached"></a>
-
-```typescript
-public readonly packageCanarySLABreached: AlarmSeverity;
-```
-
-- *Type:* <a href="#construct-hub.AlarmSeverity">AlarmSeverity</a>
-- *Default:* AlarmSeverity.LOW
-
----
-
 ### Category <a name="Category" id="construct-hub.Category"></a>
 
 A category of packages.
@@ -779,7 +734,6 @@ const constructHubProps: ConstructHubProps = { ... }
 | <code><a href="#construct-hub.ConstructHubProps.property.additionalDomains">additionalDomains</a></code> | <code><a href="#construct-hub.DomainRedirectSource">DomainRedirectSource</a>[]</code> | Additional domains which will be set up to redirect to the primary construct hub domain. |
 | <code><a href="#construct-hub.ConstructHubProps.property.alarmActions">alarmActions</a></code> | <code><a href="#construct-hub.AlarmActions">AlarmActions</a></code> | Actions to perform when alarms are set. |
 | <code><a href="#construct-hub.ConstructHubProps.property.alarmOverrides">alarmOverrides</a></code> | <code>{[ key: string ]: <a href="#construct-hub.AlarmOverride">AlarmOverride</a>}</code> | Per-alarm overrides keyed by the alarm's CloudWatch display name relative to the `ConstructHub` construct — i.e. the same string a customer sees in tickets and the CloudWatch console (e.g. 'Sources/NpmJs/Canary/NotRunningOrFailing'). |
-| <code><a href="#construct-hub.ConstructHubProps.property.alarmSeverities">alarmSeverities</a></code> | <code><a href="#construct-hub.AlarmSeverities">AlarmSeverities</a></code> | Configure the severities of various alarms. |
 | <code><a href="#construct-hub.ConstructHubProps.property.allowedLicenses">allowedLicenses</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a>[]</code> | The allowed licenses for packages indexed by this instance of ConstructHub. |
 | <code><a href="#construct-hub.ConstructHubProps.property.appRegistryApplication">appRegistryApplication</a></code> | <code>boolean</code> | Create an AppRegistry application associated with the stack containing this construct. |
 | <code><a href="#construct-hub.ConstructHubProps.property.backendDashboardName">backendDashboardName</a></code> | <code>string</code> | The name of the CloudWatch dashboard that represents the health of backend systems. |
@@ -845,18 +799,6 @@ to wire the alarm to a different bucket's action, `actions` to supply
 custom actions that bypass the buckets, or both.
 
 Unknown keys are surfaced as synth-time validation errors.
-
----
-
-##### `alarmSeverities`<sup>Optional</sup> <a name="alarmSeverities" id="construct-hub.ConstructHubProps.property.alarmSeverities"></a>
-
-```typescript
-public readonly alarmSeverities: AlarmSeverities;
-```
-
-- *Type:* <a href="#construct-hub.AlarmSeverities">AlarmSeverities</a>
-
-Configure the severities of various alarms.
 
 ---
 
@@ -1778,24 +1720,11 @@ const npmJsProps: sources.NpmJsProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.sources.NpmJsProps.property.alarmSeverities">alarmSeverities</a></code> | <code><a href="#construct-hub.AlarmSeverities">AlarmSeverities</a></code> | Configure alarm severities. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.canaryMaxStale">canaryMaxStale</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum amount of time the canary package is expected to go without publishing a new version. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.canaryPackage">canaryPackage</a></code> | <code>string</code> | The package that is monitored by the package canary, if enabled by `enableCanary`. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.canarySla">canarySla</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.enableCanary">enableCanary</a></code> | <code>boolean</code> | Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.stagingBucket">stagingBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The bucket to use for staging npm packages. |
-
----
-
-##### `alarmSeverities`<sup>Optional</sup> <a name="alarmSeverities" id="construct-hub.sources.NpmJsProps.property.alarmSeverities"></a>
-
-```typescript
-public readonly alarmSeverities: AlarmSeverities;
-```
-
-- *Type:* <a href="#construct-hub.AlarmSeverities">AlarmSeverities</a>
-
-Configure alarm severities.
 
 ---
 
