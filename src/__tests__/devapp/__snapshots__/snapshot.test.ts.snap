@@ -16609,51 +16609,49 @@ Direct link to Lambda function: /lambda/home#/functions/",
     "ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69": {
       "Properties": {
         "AutoPublish": true,
-        "FunctionCode": ""use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-// @ts-ignore
+        "FunctionCode": "// src/webapp/response-function/response-function.ts
 function handler(event) {
-    var response = event.response;
-    var headers = response.headers;
-    headers['x-frame-options'] = { value: 'deny' };
-    headers['x-xss-protection'] = { value: '1; mode=block' };
-    headers['x-content-type-options'] = { value: 'nosniff' };
-    headers['strict-transport-security'] = {
-        value: 'max-age=47304000; includeSubDomains',
-    };
-    headers['content-security-policy'] = {
-        value: [
-            "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
-            [
-                'connect-src',
-                "'self'",
-                'https://d2c-alpha.dse.marketing.aws.a2z.com',
-                'https://vs-alpha.aws.amazon.com',
-                'https://d2c-beta.dse.marketing.aws.a2z.com',
-                'https://vs-beta.aws.amazon.com',
-                'https://d2c-gamma.dse.marketing.aws.a2z.com',
-                'https://vs-gamma.aws.amazon.com',
-                'https://vs.aws.amazon.com',
-                'https://d2c.aws.amazon.com',
-                'https://*.shortbread.aws.dev',
-                'https://a0.awsstatic.com/',
-                'https://amazonwebservices.d2.sc.omtrdc.net',
-                'https://aws.demdex.net',
-                'https://dpm.demdex.net',
-                'https://cm.everesttech.net;',
-            ].join(' '),
-            'frame-src https://aws.demdex.net https://dpm.demdex.net;',
-            "img-src 'self' https://* https://a0.awsstatic.com/ https://amazonwebservices.d2.sc.omtrdc.net https://aws.demdex.net https://dpm.demdex.net https://cm.everesttech.net;",
-            "object-src 'none';",
-            "style-src 'self' 'unsafe-inline';",
-        ].join(' '),
-    };
-    return response;
+  var response = event.response;
+  var headers = response.headers;
+  headers["x-frame-options"] = { value: "deny" };
+  headers["x-xss-protection"] = { value: "1; mode=block" };
+  headers["x-content-type-options"] = { value: "nosniff" };
+  headers["strict-transport-security"] = {
+    value: "max-age=47304000; includeSubDomains"
+  };
+  headers["content-security-policy"] = {
+    value: [
+      "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
+      [
+        "connect-src",
+        "'self'",
+        "https://d2c-alpha.dse.marketing.aws.a2z.com",
+        "https://vs-alpha.aws.amazon.com",
+        "https://d2c-beta.dse.marketing.aws.a2z.com",
+        "https://vs-beta.aws.amazon.com",
+        "https://d2c-gamma.dse.marketing.aws.a2z.com",
+        "https://vs-gamma.aws.amazon.com",
+        "https://vs.aws.amazon.com",
+        "https://d2c.aws.amazon.com",
+        "https://*.shortbread.aws.dev",
+        "https://a0.awsstatic.com/",
+        "https://amazonwebservices.d2.sc.omtrdc.net",
+        "https://aws.demdex.net",
+        "https://dpm.demdex.net",
+        "https://cm.everesttech.net;"
+      ].join(" "),
+      "frame-src https://aws.demdex.net https://dpm.demdex.net;",
+      "img-src 'self' https://* https://a0.awsstatic.com/ https://amazonwebservices.d2.sc.omtrdc.net https://aws.demdex.net https://dpm.demdex.net https://cm.everesttech.net;",
+      "object-src 'none';",
+      "style-src 'self' 'unsafe-inline';"
+    ].join(" ")
+  };
+  return response;
 }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBU0EsYUFBYTtBQUNiLFNBQVMsT0FBTyxDQUFDLEtBQXlCO0lBQ3hDLElBQUksUUFBUSxHQUFHLEtBQUssQ0FBQyxRQUFRLENBQUM7SUFDOUIsSUFBSSxPQUFPLEdBQUcsUUFBUSxDQUFDLE9BQU8sQ0FBQztJQUUvQixPQUFPLENBQUMsaUJBQWlCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxNQUFNLEVBQUUsQ0FBQztJQUMvQyxPQUFPLENBQUMsa0JBQWtCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxlQUFlLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsd0JBQXdCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxTQUFTLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsMkJBQTJCLENBQUMsR0FBRztRQUNyQyxLQUFLLEVBQUUscUNBQXFDO0tBQzdDLENBQUM7SUFDRixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQUU7WUFDTCw2REFBNkQ7WUFDN0Q7Z0JBQ0UsYUFBYTtnQkFDYixRQUFRO2dCQUNSLDZDQUE2QztnQkFDN0MsaUNBQWlDO2dCQUNqQyw0Q0FBNEM7Z0JBQzVDLGdDQUFnQztnQkFDaEMsNkNBQTZDO2dCQUM3QyxpQ0FBaUM7Z0JBQ2pDLDJCQUEyQjtnQkFDM0IsNEJBQTRCO2dCQUM1Qiw4QkFBOEI7Z0JBQzlCLDJCQUEyQjtnQkFDM0IsNENBQTRDO2dCQUM1Qyx3QkFBd0I7Z0JBQ3hCLHdCQUF3QjtnQkFDeEIsNkJBQTZCO2FBQzlCLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQztZQUNYLDBEQUEwRDtZQUMxRCx5S0FBeUs7WUFDekssb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDWixDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImludGVyZmFjZSBDbG91ZEZyb250UmVzcG9uc2Uge1xuICByZXNwb25zZTogYW55O1xuICBoZWFkZXJzOiB7XG4gICAgW2tleTogc3RyaW5nXToge1xuICAgICAgdmFsdWU6IHN0cmluZztcbiAgICB9O1xuICB9O1xufVxuXG4vLyBAdHMtaWdub3JlXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHtcbiAgICB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyxcbiAgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTogW1xuICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgW1xuICAgICAgICAnY29ubmVjdC1zcmMnLFxuICAgICAgICBcIidzZWxmJ1wiLFxuICAgICAgICAnaHR0cHM6Ly9kMmMtYWxwaGEuZHNlLm1hcmtldGluZy5hd3MuYTJ6LmNvbScsXG4gICAgICAgICdodHRwczovL3ZzLWFscGhhLmF3cy5hbWF6b24uY29tJyxcbiAgICAgICAgJ2h0dHBzOi8vZDJjLWJldGEuZHNlLm1hcmtldGluZy5hd3MuYTJ6LmNvbScsXG4gICAgICAgICdodHRwczovL3ZzLWJldGEuYXdzLmFtYXpvbi5jb20nLFxuICAgICAgICAnaHR0cHM6Ly9kMmMtZ2FtbWEuZHNlLm1hcmtldGluZy5hd3MuYTJ6LmNvbScsXG4gICAgICAgICdodHRwczovL3ZzLWdhbW1hLmF3cy5hbWF6b24uY29tJyxcbiAgICAgICAgJ2h0dHBzOi8vdnMuYXdzLmFtYXpvbi5jb20nLFxuICAgICAgICAnaHR0cHM6Ly9kMmMuYXdzLmFtYXpvbi5jb20nLFxuICAgICAgICAnaHR0cHM6Ly8qLnNob3J0YnJlYWQuYXdzLmRldicsXG4gICAgICAgICdodHRwczovL2EwLmF3c3N0YXRpYy5jb20vJyxcbiAgICAgICAgJ2h0dHBzOi8vYW1hem9ud2Vic2VydmljZXMuZDIuc2Mub210cmRjLm5ldCcsXG4gICAgICAgICdodHRwczovL2F3cy5kZW1kZXgubmV0JyxcbiAgICAgICAgJ2h0dHBzOi8vZHBtLmRlbWRleC5uZXQnLFxuICAgICAgICAnaHR0cHM6Ly9jbS5ldmVyZXN0dGVjaC5uZXQ7JyxcbiAgICAgIF0uam9pbignICcpLFxuICAgICAgJ2ZyYW1lLXNyYyBodHRwczovL2F3cy5kZW1kZXgubmV0IGh0dHBzOi8vZHBtLmRlbWRleC5uZXQ7JyxcbiAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHBzOi8vYTAuYXdzc3RhdGljLmNvbS8gaHR0cHM6Ly9hbWF6b253ZWJzZXJ2aWNlcy5kMi5zYy5vbXRyZGMubmV0IGh0dHBzOi8vYXdzLmRlbWRleC5uZXQgaHR0cHM6Ly9kcG0uZGVtZGV4Lm5ldCBodHRwczovL2NtLmV2ZXJlc3R0ZWNoLm5ldDtcIixcbiAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICBcInN0eWxlLXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnO1wiLFxuICAgIF0uam9pbignICcpLFxuICB9O1xuXG4gIHJldHVybiByZXNwb25zZTtcbn1cbiJdfQ==",
+",
         "FunctionConfig": {
           "Comment": "AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c",
-          "Runtime": "cloudfront-js-1.0",
+          "Runtime": "cloudfront-js-2.0",
         },
         "Name": "AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c",
       },
@@ -16662,20 +16660,18 @@ function handler(event) {
     "ConstructHubWebAppBadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7DAA75A6": {
       "Properties": {
         "AutoPublish": true,
-        "FunctionCode": ""use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-// @ts-ignore
+        "FunctionCode": "// src/webapp/badge-redirect-function/redirect-function.ts
 function handler(event) {
-    return {
-        statusCode: 302,
-        statusDescription: 'Found',
-        headers: { location: { value: '/badge-dynamic.svg' } },
-    };
+  return {
+    statusCode: 302,
+    statusDescription: "Found",
+    headers: { location: { value: "/badge-dynamic.svg" } }
+  };
 }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsYUFBYTtBQUNiLFNBQVMsT0FBTyxDQUFDLEtBQVU7SUFDekIsT0FBTztRQUNMLFVBQVUsRUFBRSxHQUFHO1FBQ2YsaUJBQWlCLEVBQUUsT0FBTztRQUMxQixPQUFPLEVBQUUsRUFBRSxRQUFRLEVBQUUsRUFBRSxLQUFLLEVBQUUsb0JBQW9CLEVBQUUsRUFBRTtLQUN2RCxDQUFDO0FBQ0osQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbIi8vIEB0cy1pZ25vcmVcbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IGFueSkge1xuICByZXR1cm4ge1xuICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICBzdGF0dXNEZXNjcmlwdGlvbjogJ0ZvdW5kJyxcbiAgICBoZWFkZXJzOiB7IGxvY2F0aW9uOiB7IHZhbHVlOiAnL2JhZGdlLWR5bmFtaWMuc3ZnJyB9IH0sXG4gIH07XG59XG4iXX0=",
+",
         "FunctionConfig": {
           "Comment": "BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c",
-          "Runtime": "cloudfront-js-1.0",
+          "Runtime": "cloudfront-js-2.0",
         },
         "Name": "BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c",
       },

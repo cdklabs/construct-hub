@@ -11,6 +11,7 @@ export class ResponseFunction extends cloudfront.Function {
       code: cloudfront.FunctionCode.fromFile({
         filePath: path.join(__dirname, '/response-function.js'),
       }),
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
       ...props,
     });
   }
