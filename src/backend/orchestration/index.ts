@@ -354,13 +354,14 @@ export class Orchestration extends Construct {
           .otherwise(new Succeed(this, 'Done'))
       );
 
-    // aws-cdk-lib is one of the biggest libs and runs in ~8min
-    // We give the task some generous extra allowance to complete.
+    // @cdktn/provider-awscc is the biggest known package (3,979 submodules) and runs in ~15min,
+    // (aws-cdk-lib runs in ~8min).
+    // We give the task some extra allowance to complete.
     // If the task exceeds the runtime, it's very likely that there is an issue with the task execution.
     //
     // The timeout value is deliberately set close to the expected execution time,
     // to avoid an excessive cumulative runtime with retries and to not normalize longer than necessary runtime.
-    const transliteratorTimeout = Duration.minutes(15);
+    const transliteratorTimeout = Duration.minutes(18);
 
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
