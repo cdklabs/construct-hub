@@ -12,6 +12,26 @@ import { integrity } from '../../backend/shared/integrity.lambda-shared';
 class HttpNotFoundError extends Error {}
 
 /**
+ * Retry knobs for tarball downloads that return HTTP 404. npm metadata
+ * propagates faster than tarballs, so a version published seconds ago may
+ * transiently 404 on the tarball URL even though it will be available shortly.
+ *
+ * Exported (and mutable) so tests can shrink the delays.
+ */
+export const NOT_FOUND_RETRY = {
+  baseDelayMs: 1_000,
+  maxDelayMs: 8_000,
+  deadlineMs: 60_000,
+};
+
+/**
+ * A version published less than this long ago is considered "fresh": a 404 on
+ * its tarball is most likely metadata/tarball propagation lag, not a
+ * permanently missing tarball.
+ */
+export const FRESH_PACKAGE_WINDOW_MS = 30 * 60_000;
+
+/**
  * This function is invoked by the `npm-js-follower.lambda`  with a `PackageVersion` object, or by
  * an SQS trigger feeding from this function's Dead-Letter Queue (for re-trying purposes).
  *
@@ -42,18 +62,34 @@ export async function handler(
     return;
   }
 
-  let tarball: Buffer = Buffer.from('');
+  let tarball: Buffer;
   try {
-    // Download the tarball
-    console.log(`Downloading tarball from URL: ${event.tarballUrl}`);
-    tarball = await httpGet(event.tarballUrl);
+    tarball = await downloadTarball(event);
   } catch (e) {
     if (e instanceof HttpNotFoundError) {
-      // We received a message to download a file that should exist but doesn't.
-      // If we throw an error, the message will be sent to the DLQ, to be processed
-      // again in a re-drive. But given that this file will probably never be
-      // available, the re-drives will also fail, and we'll never be able to get rid
-      // of the message in the DLQ. Instead, we ignore this version by returning silently.
+      const ageMs = Date.now() - new Date(event.modified).getTime();
+      if (ageMs < FRESH_PACKAGE_WINDOW_MS) {
+        // The version was published very recently, so the tarball is most
+        // likely still propagating within npm and will become available soon.
+        // Throw so the Lambda async retries and the DLQ make this visible and
+        // re-drivable, instead of silently losing the version.
+        throw new Error(
+          `Tarball not found (yet?) for recently published version (${
+            event.name
+          }@${event.version}, modified ${event.modified}, ${Math.round(
+            ageMs / 1_000
+          )}s ago): ${event.tarballUrl}`
+        );
+      }
+      // The version is old, so the tarball should have long been available: it
+      // probably never will be (e.g: the version was unpublished). If we threw
+      // here, the message would bounce between the DLQ and this handler
+      // forever (a poison pill), so we ignore this version by returning
+      // silently. This also self-clears the DLQ: fresh-404 messages re-driven
+      // after the freshness window evaluate as old and are dropped.
+      console.log(
+        `Tarball not found for ${event.name}@${event.version} (modified ${event.modified}), ignoring this version: ${event.tarballUrl}`
+      );
       return;
     } else {
       throw e;
@@ -141,6 +177,47 @@ export interface PackageVersion {
   readonly integrity: string;
 
   readonly seq?: string;
+}
+
+/**
+ * Downloads the tarball for a package version, retrying HTTP 404 responses
+ * with jittered exponential back-off until `NOT_FOUND_RETRY.deadlineMs` has
+ * elapsed. This absorbs the common case where the tarball lags the metadata by
+ * a few seconds. If the tarball still cannot be found by the deadline, the
+ * last `HttpNotFoundError` is thrown for the caller to decide what to do.
+ */
+async function downloadTarball(event: PackageVersion): Promise<Buffer> {
+  const startTime = Date.now();
+  let attempt = 0;
+  while (true) {
+    try {
+      console.log(`Downloading tarball from URL: ${event.tarballUrl}`);
+      return await httpGet(event.tarballUrl);
+    } catch (e) {
+      if (
+        !(e instanceof HttpNotFoundError) ||
+        Date.now() - startTime >= NOT_FOUND_RETRY.deadlineMs
+      ) {
+        throw e;
+      }
+      const delay = Math.floor(
+        Math.random() *
+          Math.min(
+            NOT_FOUND_RETRY.baseDelayMs * Math.pow(2, attempt),
+            NOT_FOUND_RETRY.maxDelayMs
+          )
+      );
+      console.log(
+        `Tarball not found (HTTP 404), retrying in ${delay} ms: ${event.tarballUrl}`
+      );
+      await sleep(delay);
+      attempt++;
+    }
+  }
+}
+
+async function sleep(ms: number) {
+  return new Promise((ok) => setTimeout(ok, ms));
 }
 
 /**
