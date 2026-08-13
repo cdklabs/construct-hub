@@ -36,6 +36,16 @@ beforeEach(() => {
   process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
   process.env[ENV_DENY_LIST_OBJECT_KEY] = MOCK_DENY_LIST_OBJECT;
 
+  // empty deny list
+  mockS3
+    .on(GetObjectCommand, {
+      Bucket: MOCK_DENY_LIST_BUCKET,
+      Key: MOCK_DENY_LIST_OBJECT,
+    })
+    .resolves({
+      Body: stringToStream(JSON.stringify({})),
+    });
+
   // Keep the 404 retry loop fast in tests.
   NOT_FOUND_RETRY.baseDelayMs = 1;
   NOT_FOUND_RETRY.maxDelayMs = 5;
@@ -55,16 +65,6 @@ test('happy path', async () => {
   const uri = '@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
   const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${uri}`;
   const tarball = 'tarball';
-
-  // deny list
-  mockS3
-    .on(GetObjectCommand, {
-      Bucket: MOCK_DENY_LIST_BUCKET,
-      Key: MOCK_DENY_LIST_OBJECT,
-    })
-    .resolves({
-      Body: stringToStream(JSON.stringify({})),
-    });
 
   // registry response
   nock(basePath).get(`/${uri}`).reply(200, tarball);
@@ -118,16 +118,6 @@ test('ignores persistent 404', async () => {
   const basePath = 'https://registry.npmjs.org';
   const uri = '/@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
 
-  // deny list
-  mockS3
-    .on(GetObjectCommand, {
-      Bucket: MOCK_DENY_LIST_BUCKET,
-      Key: MOCK_DENY_LIST_OBJECT,
-    })
-    .resolves({
-      Body: stringToStream(JSON.stringify({})),
-    });
-
   // registry response
   nock(basePath).get(uri).reply(404).persist();
 
@@ -152,16 +142,6 @@ test('retries a 404 and stages the tarball once it becomes available', async () 
   const uri = '@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
   const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${uri}`;
   const tarball = 'tarball';
-
-  // deny list
-  mockS3
-    .on(GetObjectCommand, {
-      Bucket: MOCK_DENY_LIST_BUCKET,
-      Key: MOCK_DENY_LIST_OBJECT,
-    })
-    .resolves({
-      Body: stringToStream(JSON.stringify({})),
-    });
 
   // registry responses: metadata propagated before the tarball did
   nock(basePath)
@@ -203,16 +183,6 @@ test('retries a 404 and stages the tarball once it becomes available', async () 
 test('propagates non-404 errors without retrying', async () => {
   const basePath = 'https://registry.npmjs.org';
   const uri = '/@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
-
-  // deny list
-  mockS3
-    .on(GetObjectCommand, {
-      Bucket: MOCK_DENY_LIST_BUCKET,
-      Key: MOCK_DENY_LIST_OBJECT,
-    })
-    .resolves({
-      Body: stringToStream(JSON.stringify({})),
-    });
 
   // registry response (a single interceptor: a retry would fail differently)
   nock(basePath).get(uri).reply(500);
