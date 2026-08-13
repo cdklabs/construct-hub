@@ -10,6 +10,7 @@ import {
   Metric,
   MetricOptions,
   Statistic,
+  TextWidget,
   TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
@@ -20,7 +21,12 @@ import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { AlarmSeverity } from '../api';
-import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
+import {
+  lambdaFunctionUrl,
+  logAnalyticsUrl,
+  s3ObjectUrl,
+  sqsQueueUrl,
+} from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { addAlarm } from '../monitoring';
 import { NpmJsPackageCanary } from './npmjs/canary';
@@ -762,20 +768,23 @@ export class NpmJs implements IPackageSource {
           'sort maxDwellTimeSec desc',
         ],
       }),
-      new LogQueryWidget({
+      new TextWidget({
         height: 6,
-        width: 24,
-        title: `Canary Package Pipeline Trace (${packageName})`,
-        logGroupNames: [
-          `/aws/lambda/${follower.functionName}`,
-          `/aws/lambda/${stager.functionName}`,
-        ],
-        queryLines: [
-          'fields @timestamp, @log, @message',
-          `filter @message like /${packageName}/`,
-          'sort @timestamp desc',
-          'limit 100',
-        ],
+        width: 12,
+        markdown: [
+          '### Canary Package Pipeline Trace',
+          '',
+          `[button:primary:Pipeline Trace (Log Analytics)](${logAnalyticsUrl(
+            [follower, stager],
+            [
+              'fields @timestamp, @log, @message',
+              `| filter @message like /${packageName}/`,
+              '# filter @message like /<version>/ <- narrow down to a stuck version',
+              '| sort @timestamp desc',
+              '| limit 100',
+            ].join('\n')
+          )})`,
+        ].join('\n'),
       }),
     ];
   }

@@ -755,15 +755,18 @@ latest version was ingested out-of-SLA.
 
 Start with the *Package Canary* section of the backend dashboard. The *Stuck
 Versions* widget lists the tracked package versions the canary is still waiting
-for (with how long each has been outstanding), and the *Canary Package Pipeline
-Trace* widget shows every follower and stager log line mentioning the tracked
-package. A healthy version shows the full sequence (follower sends it for
-staging, stager downloads and stores the tarball, then notifies the ingestion
-queue); the point where a stuck version's trail stops indicates which component
-dropped it. For example, a `404` logged by the stager right after the download
-line means the tarball was not yet available on npm's CDN when the version was
-discovered, and the version was dropped (see the Resolution below to re-stage
-it).
+for (with how long each has been outstanding), and the *Pipeline Trace* button
+opens a Log Analytics query showing every follower and stager log line
+mentioning the tracked package (a comment in the query shows how to narrow it
+down to one stuck version). A healthy version shows the full sequence (follower
+sends it for staging, stager downloads and stores the tarball, then notifies
+the ingestion queue); the point where a stuck version's trail stops indicates
+which component dropped it. Lines that do not mention the package name are not
+part of the trace, so also check the surrounding log stream of the last
+component that saw the version. For example, a `404` logged by the stager right
+after the download line means the tarball was not yet available on npm's CDN
+when the version was discovered, and the version was dropped (see the
+Resolution below to re-stage it).
 
 If the alarm went off due to insufficient data, the canary might not be emitting
 metrics properly. In this case, start by ensuring the lambda function that

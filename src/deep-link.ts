@@ -30,6 +30,32 @@ export function logGroupUrl(logGroup: ILogGroup): string {
   )}`;
 }
 
+/**
+ * A deep link into CloudWatch Log Analytics (Logs Insights), with the given
+ * query and the Lambda functions' log groups pre-selected.
+ */
+export function logAnalyticsUrl(lambdas: IFunction[], query: string): string {
+  // The CloudWatch console encodes the URL fragment by percent-encoding, then
+  // replacing '%' with '*'. Lambda function names never contain characters
+  // that require encoding, so the (unresolved) function name tokens can be
+  // embedded as-is.
+  const sources = lambdas
+    .map((f) => `~'*2Faws*2Flambda*2F${f.functionName}`)
+    .join('');
+  return (
+    '/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400' +
+    `~timeType~'RELATIVE~unit~'seconds~editorString~'${consoleEncode(
+      query
+    )}~source~(${sources}))`
+  );
+}
+
+function consoleEncode(text: string): string {
+  return encodeURIComponent(text)
+    .replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)
+    .replace(/%/g, '*');
+}
+
 export function s3ObjectUrl(bucket: IBucket, objectKey?: string): string {
   if (objectKey) {
     return `/s3/object/${bucket.bucketName}?prefix=${objectKey}`;

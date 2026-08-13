@@ -56,9 +56,7 @@ export class NpmJsPackageCanary extends Construct {
   }
 
   /**
-   * The name of the CloudWatch Log Group of the canary Lambda function. The
-   * canary logs each version of the tracked package it is still waiting to
-   * see in the ConstructHub instance, which identifies stuck versions.
+   * The name of the CloudWatch Log Group of the canary Lambda function.
    */
   public get logGroupName(): string {
     return `/aws/lambda/${this.handler.functionName}`;
