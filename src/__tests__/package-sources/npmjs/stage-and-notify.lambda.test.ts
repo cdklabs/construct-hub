@@ -114,7 +114,7 @@ test('happy path', async () => {
   });
 });
 
-test('ignores 404 for old package versions', async () => {
+test('ignores persistent 404', async () => {
   const basePath = 'https://registry.npmjs.org';
   const uri = '/@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
 
@@ -198,41 +198,6 @@ test('retries a 404 and stages the tarball once it becomes available', async () 
     Metadata: expect.anything(),
   });
   expect(mockSQS).toHaveReceivedCommandTimes(SendMessageCommand, 1);
-});
-
-test('throws on persistent 404 for a freshly published version', async () => {
-  const basePath = 'https://registry.npmjs.org';
-  const uri = '/@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
-
-  // deny list
-  mockS3
-    .on(GetObjectCommand, {
-      Bucket: MOCK_DENY_LIST_BUCKET,
-      Key: MOCK_DENY_LIST_OBJECT,
-    })
-    .resolves({
-      Body: stringToStream(JSON.stringify({})),
-    });
-
-  // registry response
-  nock(basePath).get(uri).reply(404).persist();
-
-  const event: PackageVersion = {
-    tarballUrl: `${basePath}${uri}`,
-    integrity: '09d37ec93c5518bf4842ac8e381a5c06452500e5',
-    modified: new Date().toISOString(),
-    name: '@pepper/cdk-vpc',
-    seq: '26437963',
-    version: '0.0.785',
-  };
-
-  const context: Context = {} as any;
-
-  await expect(handler(event, context)).rejects.toThrow(
-    /Tarball not found \(yet\?\) for recently published version/
-  );
-  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
-  expect(mockSQS).not.toHaveReceivedCommand(SendMessageCommand);
 });
 
 test('propagates non-404 errors without retrying', async () => {
