@@ -813,7 +813,15 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":59,"properties":{"view":"timeSeries","title":"Follower Health","region":"",
+              ")\\n[button:Pipeline Trace (Log Analytics)](/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400~timeType~'RELATIVE~unit~'seconds~editorString~'fields*20*40timestamp*2C*20*40log*2C*20*40message*0A*7C*20filter*20*40message*20like*20*2Fconstruct-hub-probe*2F*0A*23*20filter*20*40message*20like*20*2F*3Cversion*3E*2F*20*3C-*20narrow*20down*20to*20a*20stuck*20version*0A*7C*20sort*20*40timestamp*20desc*0A*7C*20limit*20100~source~(~'*2Faws*2Flambda*2F",
+              {
+                "Ref": "ConstructHubSourcesNpmJs15A77D2D",
+              },
+              "~'*2Faws*2Flambda*2F",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              ")))"}},{"type":"metric","width":12,"height":6,"x":0,"y":59,"properties":{"view":"timeSeries","title":"Follower Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -878,7 +886,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell Time","stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time to Catalog","stat":"Maximum"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA (5 minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":12,"height":6,"x":0,"y":77,"properties":{"markdown":"Observed lag of replicate.npmjs.com\\n\\n----\\nreplica lag is no longer available due to NPM protocol changes"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell Time","stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time to Catalog","stat":"Maximum"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA (5 minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0}}}},{"type":"log","width":12,"height":6,"x":0,"y":77,"properties":{"view":"table","title":"Stuck Versions (still not visible in ConstructHub)","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","query":"SOURCE '/aws/lambda/",
+              {
+                "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+              },
+              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },

@@ -30,6 +30,25 @@ export function logGroupUrl(logGroup: ILogGroup): string {
   )}`;
 }
 
+export function logAnalyticsUrl(lambdas: IFunction[], query: string): string {
+  const sources = lambdas
+    .map((f) => `~'*2Faws*2Flambda*2F${f.functionName}`)
+    .join('');
+  return (
+    '/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400' +
+    `~timeType~'RELATIVE~unit~'seconds~editorString~'${consoleEncode(
+      query
+    )}~source~(${sources}))`
+  );
+}
+
+// The CloudWatch console expects percent-encoding with '%' replaced by '*'.
+function consoleEncode(text: string): string {
+  return encodeURIComponent(text)
+    .replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)
+    .replace(/%/g, '*');
+}
+
 export function s3ObjectUrl(bucket: IBucket, objectKey?: string): string {
   if (objectKey) {
     return `/s3/object/${bucket.bucketName}?prefix=${objectKey}`;

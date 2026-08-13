@@ -5,11 +5,11 @@ import {
   CompositeAlarm,
   GraphWidget,
   IWidget,
+  LogQueryWidget,
   MathExpression,
   Metric,
   MetricOptions,
   Statistic,
-  TextWidget,
   TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
@@ -20,7 +20,12 @@ import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { AlarmSeverity } from '../api';
-import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
+import {
+  lambdaFunctionUrl,
+  logAnalyticsUrl,
+  s3ObjectUrl,
+  sqsQueueUrl,
+} from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { addAlarm } from '../monitoring';
 import { NpmJsPackageCanary } from './npmjs/canary';
@@ -258,6 +263,21 @@ export class NpmJs implements IPackageSource {
         },
         { name: 'Stager', url: lambdaFunctionUrl(stager) },
         { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
+        {
+          name: 'Pipeline Trace (Log Analytics)',
+          url: logAnalyticsUrl(
+            [follower, stager],
+            [
+              'fields @timestamp, @log, @message',
+              `| filter @message like /${
+                this.props.canaryPackage ?? 'construct-hub-probe'
+              }/`,
+              '# filter @message like /<version>/ <- narrow down to a stuck version',
+              '| sort @timestamp desc',
+              '| limit 100',
+            ].join('\n')
+          ),
+        },
       ],
       dashboardWidgets: [
         [
@@ -746,15 +766,19 @@ export class NpmJs implements IPackageSource {
         ],
         leftYAxis: { min: 0 },
       }),
-      new TextWidget({
+      new LogQueryWidget({
         height: 6,
         width: 12,
-        markdown: [
-          'Observed lag of replicate.npmjs.com',
-          '',
-          '----',
-          'replica lag is no longer available due to NPM protocol changes',
-        ].join('\n'),
+        title: 'Stuck Versions (still not visible in ConstructHub)',
+        logGroupNames: [canary.logGroupName],
+        queryLines: [
+          'fields @timestamp, @message',
+          'filter @message like /"DwellTime"/',
+          `parse @message '"PackageVersion":"*"' as version`,
+          `parse @message '"DwellTime":*,' as dwellTimeSec`,
+          'stats max(dwellTimeSec) as maxDwellTimeSec by version',
+          'sort maxDwellTimeSec desc',
+        ],
       }),
     ];
   }
