@@ -30,13 +30,7 @@ export function logGroupUrl(logGroup: ILogGroup): string {
   )}`;
 }
 
-/**
- * A deep link into CloudWatch Log Analytics (Logs Insights), with the given
- * query and the Lambda functions' log groups pre-selected.
- */
 export function logAnalyticsUrl(lambdas: IFunction[], query: string): string {
-  // The CloudWatch console expects the URL fragment to be percent-encoded,
-  // with '%' then replaced by '*'.
   const sources = lambdas
     .map((f) => `~'*2Faws*2Flambda*2F${f.functionName}`)
     .join('');
@@ -48,6 +42,7 @@ export function logAnalyticsUrl(lambdas: IFunction[], query: string): string {
   );
 }
 
+// The CloudWatch console expects percent-encoding with '%' replaced by '*'.
 function consoleEncode(text: string): string {
   return encodeURIComponent(text)
     .replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)
