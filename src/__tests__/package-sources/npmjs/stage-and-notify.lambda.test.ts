@@ -12,13 +12,30 @@ import {
   ENV_DENY_LIST_BUCKET_NAME,
   ENV_DENY_LIST_OBJECT_KEY,
 } from '../../../backend/deny-list/constants';
+import type { now, sleep } from '../../../backend/shared/time.lambda-shared';
 import { S3KeyPrefix } from '../../../package-sources/npmjs/constants.lambda-shared';
 import {
   handler,
-  NOT_FOUND_RETRY,
   PackageVersion,
 } from '../../../package-sources/npmjs/stage-and-notify.lambda';
 import { stringToStream } from '../../streams';
+
+jest.mock('../../../backend/shared/time.lambda-shared');
+
+// Fake clock: `sleep` resolves immediately and advances the time returned by
+// `now`, so the 404 retry loop runs (and its deadline elapses) without any
+// real waiting.
+let fakeTime = 0;
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const mockTime = require('../../../backend/shared/time.lambda-shared');
+(mockTime.now as jest.MockedFunction<typeof now>).mockImplementation(
+  () => fakeTime
+);
+(mockTime.sleep as jest.MockedFunction<typeof sleep>).mockImplementation(
+  async (ms: number) => {
+    fakeTime += Math.max(ms, 1);
+  }
+);
 
 const MOCK_STAGING_BUCKET = 'foo';
 const MOCK_QUEUE_URL = 'bar';
@@ -31,6 +48,7 @@ const mockSQS = mockClient(SQSClient);
 beforeEach(() => {
   mockS3.reset();
   mockSQS.reset();
+  fakeTime = 0;
   process.env.BUCKET_NAME = MOCK_STAGING_BUCKET;
   process.env.QUEUE_URL = MOCK_QUEUE_URL;
   process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
@@ -45,11 +63,6 @@ beforeEach(() => {
     .resolves({
       Body: stringToStream(JSON.stringify({})),
     });
-
-  // Keep the 404 retry loop fast in tests.
-  NOT_FOUND_RETRY.baseDelayMs = 1;
-  NOT_FOUND_RETRY.maxDelayMs = 5;
-  NOT_FOUND_RETRY.deadlineMs = 100;
 });
 
 afterEach(() => {
