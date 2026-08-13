@@ -12,6 +12,7 @@ import {
   ENV_DENY_LIST_BUCKET_NAME,
   ENV_DENY_LIST_OBJECT_KEY,
 } from '../../../backend/deny-list/constants';
+import { now, sleep } from '../../../backend/shared/time.lambda-shared';
 import { S3KeyPrefix } from '../../../package-sources/npmjs/constants.lambda-shared';
 import {
   handler,
@@ -19,19 +20,13 @@ import {
 } from '../../../package-sources/npmjs/stage-and-notify.lambda';
 import { stringToStream } from '../../streams';
 
-/**
- * Advances fake timers until `promise` settles, flushing real I/O (nock)
- * between advances, then returns the promise.
- */
-async function advanceTimersUntilSettled<T>(promise: Promise<T>): Promise<T> {
-  let settled = false;
-  promise.finally(() => (settled = true)).catch(() => {});
-  while (!settled) {
-    await new Promise((ok) => setImmediate(ok));
-    await jest.advanceTimersByTimeAsync(1_000);
-  }
-  return promise;
-}
+jest.mock('../../../backend/shared/time.lambda-shared');
+
+let fakeTime = 0;
+jest.mocked(now).mockImplementation(() => fakeTime);
+jest.mocked(sleep).mockImplementation(async (ms) => {
+  fakeTime += ms;
+});
 
 const MOCK_STAGING_BUCKET = 'foo';
 const MOCK_QUEUE_URL = 'bar';
@@ -42,7 +37,7 @@ const mockS3 = mockClient(S3Client);
 const mockSQS = mockClient(SQSClient);
 
 beforeEach(() => {
-  jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+  fakeTime = 0;
   mockS3.reset();
   mockSQS.reset();
   process.env.BUCKET_NAME = MOCK_STAGING_BUCKET;
@@ -62,7 +57,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.useRealTimers();
   process.env.BUCKET_NAME = undefined;
   process.env.QUEUE_URL = undefined;
   delete process.env[ENV_DENY_LIST_BUCKET_NAME];
@@ -142,9 +136,7 @@ test('ignores persistent 404', async () => {
 
   const context: Context = {} as any;
 
-  await expect(
-    advanceTimersUntilSettled(handler(event, context))
-  ).resolves.toBe(undefined);
+  await expect(handler(event, context)).resolves.toBe(undefined);
   expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
   expect(mockSQS).not.toHaveReceivedCommand(SendMessageCommand);
 });
@@ -179,9 +171,7 @@ test('retries a 404 and stages the tarball once it becomes available', async () 
     awsRequestId: 'request-id',
   } as any;
 
-  await expect(
-    advanceTimersUntilSettled(handler(event, context))
-  ).resolves.toBe(undefined);
+  await expect(handler(event, context)).resolves.toBe(undefined);
 
   expect(mockS3).toHaveReceivedCommandTimes(PutObjectCommand, 1);
   expect(mockS3).toHaveReceivedCommandWith(PutObjectCommand, {

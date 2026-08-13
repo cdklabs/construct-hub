@@ -8,6 +8,7 @@ import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { S3_CLIENT, SQS_CLIENT } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
+import { now, sleep } from '../../backend/shared/time.lambda-shared';
 
 class HttpNotFoundError extends Error {}
 
@@ -162,7 +163,7 @@ export interface PackageVersion {
  * shortly.
  */
 async function downloadTarball(event: PackageVersion): Promise<Buffer> {
-  const startTime = Date.now();
+  const startTime = now();
   let attempt = 0;
   while (true) {
     try {
@@ -171,7 +172,7 @@ async function downloadTarball(event: PackageVersion): Promise<Buffer> {
     } catch (e) {
       if (
         !(e instanceof HttpNotFoundError) ||
-        Date.now() - startTime >= NOT_FOUND_RETRY.deadlineMs
+        now() - startTime >= NOT_FOUND_RETRY.deadlineMs
       ) {
         throw e;
       }
@@ -192,10 +193,6 @@ async function downloadTarball(event: PackageVersion): Promise<Buffer> {
       attempt++;
     }
   }
-}
-
-async function sleep(ms: number) {
-  return new Promise((ok) => setTimeout(ok, ms));
 }
 
 /**
