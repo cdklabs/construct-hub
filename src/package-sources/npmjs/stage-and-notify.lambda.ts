@@ -158,10 +158,9 @@ export interface PackageVersion {
 
 /**
  * Downloads the tarball for a package version, retrying HTTP 404 responses
- * with jittered exponential back-off until `NOT_FOUND_RETRY.deadlineMs` has
- * elapsed. This absorbs the common case where the tarball lags the metadata by
- * a few seconds. If the tarball still cannot be found by the deadline, the
- * last `HttpNotFoundError` is thrown for the caller to decide what to do.
+ * for a while: npm metadata may propagate faster than tarballs, so a freshly
+ * published version can transiently 404 even though it will be available
+ * shortly.
  */
 async function downloadTarball(event: PackageVersion): Promise<Buffer> {
   const startTime = Date.now();
