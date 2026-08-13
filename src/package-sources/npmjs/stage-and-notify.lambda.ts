@@ -8,7 +8,6 @@ import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { S3_CLIENT, SQS_CLIENT } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
-import { now, sleep } from '../../backend/shared/time.lambda-shared';
 
 class HttpNotFoundError extends Error {}
 
@@ -163,7 +162,7 @@ export interface PackageVersion {
  * shortly.
  */
 async function downloadTarball(event: PackageVersion): Promise<Buffer> {
-  const startTime = now();
+  const startTime = Date.now();
   let attempt = 0;
   while (true) {
     try {
@@ -172,16 +171,19 @@ async function downloadTarball(event: PackageVersion): Promise<Buffer> {
     } catch (e) {
       if (
         !(e instanceof HttpNotFoundError) ||
-        now() - startTime >= NOT_FOUND_RETRY.deadlineMs
+        Date.now() - startTime >= NOT_FOUND_RETRY.deadlineMs
       ) {
         throw e;
       }
-      const delay = Math.floor(
-        Math.random() *
-          Math.min(
-            NOT_FOUND_RETRY.baseDelayMs * Math.pow(2, attempt),
-            NOT_FOUND_RETRY.maxDelayMs
-          )
+      const delay = Math.max(
+        NOT_FOUND_RETRY.baseDelayMs,
+        Math.floor(
+          Math.random() *
+            Math.min(
+              NOT_FOUND_RETRY.baseDelayMs * Math.pow(2, attempt),
+              NOT_FOUND_RETRY.maxDelayMs
+            )
+        )
       );
       console.log(
         `Tarball not found (HTTP 404), retrying in ${delay} ms: ${event.tarballUrl}`
@@ -190,6 +192,10 @@ async function downloadTarball(event: PackageVersion): Promise<Buffer> {
       attempt++;
     }
   }
+}
+
+async function sleep(ms: number) {
+  return new Promise((ok) => setTimeout(ok, ms));
 }
 
 /**

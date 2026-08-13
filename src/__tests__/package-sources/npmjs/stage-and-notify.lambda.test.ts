@@ -12,7 +12,6 @@ import {
   ENV_DENY_LIST_BUCKET_NAME,
   ENV_DENY_LIST_OBJECT_KEY,
 } from '../../../backend/deny-list/constants';
-import type { now, sleep } from '../../../backend/shared/time.lambda-shared';
 import { S3KeyPrefix } from '../../../package-sources/npmjs/constants.lambda-shared';
 import {
   handler,
@@ -20,22 +19,19 @@ import {
 } from '../../../package-sources/npmjs/stage-and-notify.lambda';
 import { stringToStream } from '../../streams';
 
-jest.mock('../../../backend/shared/time.lambda-shared');
-
-// Fake clock: `sleep` resolves immediately and advances the time returned by
-// `now`, so the 404 retry loop runs (and its deadline elapses) without any
-// real waiting.
-let fakeTime = 0;
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const mockTime = require('../../../backend/shared/time.lambda-shared');
-(mockTime.now as jest.MockedFunction<typeof now>).mockImplementation(
-  () => fakeTime
-);
-(mockTime.sleep as jest.MockedFunction<typeof sleep>).mockImplementation(
-  async (ms: number) => {
-    fakeTime += Math.max(ms, 1);
+/**
+ * Advances fake timers until `promise` settles, flushing real I/O (nock)
+ * between advances, then returns the promise.
+ */
+async function advanceTimersUntilSettled<T>(promise: Promise<T>): Promise<T> {
+  let settled = false;
+  promise.finally(() => (settled = true)).catch(() => {});
+  while (!settled) {
+    await new Promise((ok) => setImmediate(ok));
+    await jest.advanceTimersByTimeAsync(1_000);
   }
-);
+  return promise;
+}
 
 const MOCK_STAGING_BUCKET = 'foo';
 const MOCK_QUEUE_URL = 'bar';
@@ -46,9 +42,9 @@ const mockS3 = mockClient(S3Client);
 const mockSQS = mockClient(SQSClient);
 
 beforeEach(() => {
+  jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
   mockS3.reset();
   mockSQS.reset();
-  fakeTime = 0;
   process.env.BUCKET_NAME = MOCK_STAGING_BUCKET;
   process.env.QUEUE_URL = MOCK_QUEUE_URL;
   process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
@@ -66,6 +62,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  jest.useRealTimers();
   process.env.BUCKET_NAME = undefined;
   process.env.QUEUE_URL = undefined;
   delete process.env[ENV_DENY_LIST_BUCKET_NAME];
@@ -145,7 +142,9 @@ test('ignores persistent 404', async () => {
 
   const context: Context = {} as any;
 
-  await expect(handler(event, context)).resolves.toBe(undefined);
+  await expect(
+    advanceTimersUntilSettled(handler(event, context))
+  ).resolves.toBe(undefined);
   expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
   expect(mockSQS).not.toHaveReceivedCommand(SendMessageCommand);
 });
@@ -180,7 +179,9 @@ test('retries a 404 and stages the tarball once it becomes available', async () 
     awsRequestId: 'request-id',
   } as any;
 
-  await expect(handler(event, context)).resolves.toBe(undefined);
+  await expect(
+    advanceTimersUntilSettled(handler(event, context))
+  ).resolves.toBe(undefined);
 
   expect(mockS3).toHaveReceivedCommandTimes(PutObjectCommand, 1);
   expect(mockS3).toHaveReceivedCommandWith(PutObjectCommand, {
