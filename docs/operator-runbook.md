@@ -776,11 +776,8 @@ can be found in the Lambda console: its description contains
 unable to evaluate the metric. It should clearly output which versions of the
 tracked package are expected, but missing.
 
-If the dashboard widgets do not explain the problem (e.g. the version made it
-past the stager), look for traces of the package version in the logs of each
-further step in the pipeline, for example with a CloudWatch Logs Insights query
-like `fields @timestamp, @log, @message | filter @message like /<version>/ |
-sort @timestamp asc` across the relevant log groups:
+Otherwise, look for traces of the package version in the logs of each step in
+the pipeline:
 
 - The NpmJs follower function
 - The NpmJs stager function
