@@ -35,10 +35,8 @@ export function logGroupUrl(logGroup: ILogGroup): string {
  * query and the Lambda functions' log groups pre-selected.
  */
 export function logAnalyticsUrl(lambdas: IFunction[], query: string): string {
-  // The CloudWatch console encodes the URL fragment by percent-encoding, then
-  // replacing '%' with '*'. Lambda function names never contain characters
-  // that require encoding, so the (unresolved) function name tokens can be
-  // embedded as-is.
+  // The CloudWatch console expects the URL fragment to be percent-encoded,
+  // with '%' then replaced by '*'.
   const sources = lambdas
     .map((f) => `~'*2Faws*2Flambda*2F${f.functionName}`)
     .join('');

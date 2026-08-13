@@ -10,7 +10,6 @@ import {
   Metric,
   MetricOptions,
   Statistic,
-  TextWidget,
   TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
@@ -264,6 +263,21 @@ export class NpmJs implements IPackageSource {
         },
         { name: 'Stager', url: lambdaFunctionUrl(stager) },
         { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
+        {
+          name: 'Pipeline Trace (Log Analytics)',
+          url: logAnalyticsUrl(
+            [follower, stager],
+            [
+              'fields @timestamp, @log, @message',
+              `| filter @message like /${
+                this.props.canaryPackage ?? 'construct-hub-probe'
+              }/`,
+              '# filter @message like /<version>/ <- narrow down to a stuck version',
+              '| sort @timestamp desc',
+              '| limit 100',
+            ].join('\n')
+          ),
+        },
       ],
       dashboardWidgets: [
         [
@@ -369,8 +383,7 @@ export class NpmJs implements IPackageSource {
                 this.props.canaryMaxStale ?? Duration.days(1),
                 bucket,
                 baseUrl,
-                monitoring,
-                stager
+                monitoring
               )
             : []),
         ],
@@ -603,7 +616,7 @@ export class NpmJs implements IPackageSource {
   }
 
   private registerCanary(
-    follower: NpmJsFollower,
+    scope: Construct,
     packageName: string,
     // A duration specifying how long we expect the probe package to appear on
     // Construct Hub after it gets published to npm, assuming the npm replica
@@ -614,10 +627,9 @@ export class NpmJs implements IPackageSource {
     maxStale: Duration,
     bucket: IBucket,
     constructHubBaseUrl: string,
-    monitoring: IMonitoring,
-    stager: StageAndNotify
+    monitoring: IMonitoring
   ): IWidget[] {
-    const canary = new NpmJsPackageCanary(follower, 'Canary', {
+    const canary = new NpmJsPackageCanary(scope, 'Canary', {
       bucket,
       constructHubBaseUrl,
       packageName,
@@ -767,24 +779,6 @@ export class NpmJs implements IPackageSource {
           'stats max(dwellTimeSec) as maxDwellTimeSec by version',
           'sort maxDwellTimeSec desc',
         ],
-      }),
-      new TextWidget({
-        height: 6,
-        width: 12,
-        markdown: [
-          '### Canary Package Pipeline Trace',
-          '',
-          `[button:primary:Pipeline Trace (Log Analytics)](${logAnalyticsUrl(
-            [follower, stager],
-            [
-              'fields @timestamp, @log, @message',
-              `| filter @message like /${packageName}/`,
-              '# filter @message like /<version>/ <- narrow down to a stuck version',
-              '| sort @timestamp desc',
-              '| limit 100',
-            ].join('\n')
-          )})`,
-        ].join('\n'),
       }),
     ];
   }
