@@ -12,10 +12,7 @@ import { integrity } from '../../backend/shared/integrity.lambda-shared';
 class HttpNotFoundError extends Error {}
 
 /**
- * Retry knobs for tarball downloads that return HTTP 404. npm metadata
- * propagates faster than tarballs, so a version published seconds ago may
- * transiently 404 on the tarball URL even though it will be available shortly.
- *
+ * Retry configuration for tarball downloads that return HTTP 404.
  * Exported (and mutable) so tests can shrink the delays.
  */
 export const NOT_FOUND_RETRY = {
