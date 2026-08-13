@@ -753,6 +753,18 @@ latest version was ingested out-of-SLA.
 
 #### Investigation
 
+Start with the *Package Canary* section of the backend dashboard. The *Stuck
+Versions* widget lists the tracked package versions the canary is still waiting
+for (with how long each has been outstanding), and the *Canary Package Pipeline
+Trace* widget shows every follower and stager log line mentioning the tracked
+package. A healthy version shows the full sequence (follower sends it for
+staging, stager downloads and stores the tarball, then notifies the ingestion
+queue); the point where a stuck version's trail stops indicates which component
+dropped it. For example, a `404` logged by the stager right after the download
+line means the tarball was not yet available on npm's CDN when the version was
+discovered, and the version was dropped (see the Resolution below to re-stage
+it).
+
 If the alarm went off due to insufficient data, the canary might not be emitting
 metrics properly. In this case, start by ensuring the lambda function that
 implements the canary is executing as intended. It is normally scheduled to run
@@ -764,8 +776,11 @@ can be found in the Lambda console: its description contains
 unable to evaluate the metric. It should clearly output which versions of the
 tracked package are expected, but missing.
 
-Otherwise, look for traces of the package version in the logs of each step in
-the pipeline:
+If the dashboard widgets do not explain the problem (e.g. the version made it
+past the stager), look for traces of the package version in the logs of each
+further step in the pipeline, for example with a CloudWatch Logs Insights query
+like `fields @timestamp, @log, @message | filter @message like /<version>/ |
+sort @timestamp asc` across the relevant log groups:
 
 - The NpmJs follower function
 - The NpmJs stager function

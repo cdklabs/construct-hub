@@ -55,6 +55,15 @@ export class NpmJsPackageCanary extends Construct {
     schedule.node.addDependency(grant);
   }
 
+  /**
+   * The name of the CloudWatch Log Group of the canary Lambda function. The
+   * canary logs each version of the tracked package it is still waiting to
+   * see in the ConstructHub instance, which identifies stuck versions.
+   */
+  public get logGroupName(): string {
+    return `/aws/lambda/${this.handler.functionName}`;
+  }
+
   public metricDwellTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: Duration.minutes(5),

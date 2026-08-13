@@ -5,11 +5,11 @@ import {
   CompositeAlarm,
   GraphWidget,
   IWidget,
+  LogQueryWidget,
   MathExpression,
   Metric,
   MetricOptions,
   Statistic,
-  TextWidget,
   TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
@@ -363,7 +363,8 @@ export class NpmJs implements IPackageSource {
                 this.props.canaryMaxStale ?? Duration.days(1),
                 bucket,
                 baseUrl,
-                monitoring
+                monitoring,
+                stager
               )
             : []),
         ],
@@ -596,7 +597,7 @@ export class NpmJs implements IPackageSource {
   }
 
   private registerCanary(
-    scope: Construct,
+    follower: NpmJsFollower,
     packageName: string,
     // A duration specifying how long we expect the probe package to appear on
     // Construct Hub after it gets published to npm, assuming the npm replica
@@ -607,9 +608,10 @@ export class NpmJs implements IPackageSource {
     maxStale: Duration,
     bucket: IBucket,
     constructHubBaseUrl: string,
-    monitoring: IMonitoring
+    monitoring: IMonitoring,
+    stager: StageAndNotify
   ): IWidget[] {
-    const canary = new NpmJsPackageCanary(scope, 'Canary', {
+    const canary = new NpmJsPackageCanary(follower, 'Canary', {
       bucket,
       constructHubBaseUrl,
       packageName,
@@ -746,15 +748,34 @@ export class NpmJs implements IPackageSource {
         ],
         leftYAxis: { min: 0 },
       }),
-      new TextWidget({
+      new LogQueryWidget({
         height: 6,
         width: 12,
-        markdown: [
-          'Observed lag of replicate.npmjs.com',
-          '',
-          '----',
-          'replica lag is no longer available due to NPM protocol changes',
-        ].join('\n'),
+        title: 'Stuck Versions (still not visible in ConstructHub)',
+        logGroupNames: [canary.logGroupName],
+        queryLines: [
+          'fields @timestamp, @message',
+          'filter @message like /"DwellTime"/',
+          `parse @message '"PackageVersion":"*"' as version`,
+          `parse @message '"DwellTime":*,' as dwellTimeSec`,
+          'stats max(dwellTimeSec) as maxDwellTimeSec by version',
+          'sort maxDwellTimeSec desc',
+        ],
+      }),
+      new LogQueryWidget({
+        height: 6,
+        width: 24,
+        title: `Canary Package Pipeline Trace (${packageName})`,
+        logGroupNames: [
+          `/aws/lambda/${follower.functionName}`,
+          `/aws/lambda/${stager.functionName}`,
+        ],
+        queryLines: [
+          'fields @timestamp, @log, @message',
+          `filter @message like /${packageName}/`,
+          'sort @timestamp desc',
+          'limit 100',
+        ],
       }),
     ];
   }
