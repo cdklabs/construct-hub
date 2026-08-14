@@ -69,6 +69,13 @@ const FOLLOWER_RUN_RATE = Duration.minutes(5);
  */
 const NO_CHANGES_ALARM_DURATION = Duration.hours(24);
 
+/**
+ * How recently the canary must have reported a version as not-yet-visible for
+ * the "Stuck Versions" widget to consider it still stuck. A few canary runs
+ * (which happen every 5 minutes), to tolerate a missed run.
+ */
+const STUCK_VERSION_WINDOW = Duration.minutes(15);
+
 export interface NpmJsProps {
   /**
    * The bucket to use for staging npm packages.
@@ -774,6 +781,14 @@ export class NpmJs implements IPackageSource {
         queryLines: [
           'fields @timestamp, @message',
           'filter @message like /"DwellTime"/',
+          // The canary only reports DwellTime for versions it still cannot see,
+          // so recent reports are the versions that are stuck right now. Without
+          // this, every version that was ever slow within the dashboard's time
+          // range shows up, including ones that have since been ingested.
+          // `now()` is in seconds, `toMillis` in milliseconds.
+          `filter toMillis(@timestamp) > (now() - ${
+            STUCK_VERSION_WINDOW.toSeconds()
+          }) * 1000`,
           `parse @message '"PackageVersion":"*"' as version`,
           `parse @message '"DwellTime":*,' as dwellTimeSec`,
           'stats max(dwellTimeSec) as maxDwellTimeSec by version',

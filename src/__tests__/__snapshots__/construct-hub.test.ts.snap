@@ -832,7 +832,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
               },
-              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| filter toMillis(@timestamp) > (now() - 900) * 1000\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -14922,7 +14922,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
               },
-              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| filter toMillis(@timestamp) > (now() - 900) * 1000\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -29324,7 +29324,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
               },
-              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| filter toMillis(@timestamp) > (now() - 900) * 1000\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -43500,7 +43500,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
               },
-              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| filter toMillis(@timestamp) > (now() - 900) * 1000\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -57861,7 +57861,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
               },
-              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| filter toMillis(@timestamp) > (now() - 900) * 1000\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
