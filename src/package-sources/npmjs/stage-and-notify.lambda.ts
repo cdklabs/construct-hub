@@ -8,8 +8,18 @@ import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { S3_CLIENT, SQS_CLIENT } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
+import { now, sleep } from '../../backend/shared/time.lambda-shared';
 
 class HttpNotFoundError extends Error {}
+
+/**
+ * Retry configuration for tarball downloads that return HTTP 404.
+ */
+const NOT_FOUND_RETRY = {
+  baseDelayMs: 1_000,
+  maxDelayMs: 8_000,
+  deadlineMs: 60_000,
+};
 
 /**
  * This function is invoked by the `npm-js-follower.lambda`  with a `PackageVersion` object, or by
@@ -42,18 +52,21 @@ export async function handler(
     return;
   }
 
-  let tarball: Buffer = Buffer.from('');
+  let tarball: Buffer;
   try {
-    // Download the tarball
-    console.log(`Downloading tarball from URL: ${event.tarballUrl}`);
-    tarball = await httpGet(event.tarballUrl);
+    tarball = await downloadTarball(event);
   } catch (e) {
     if (e instanceof HttpNotFoundError) {
-      // We received a message to download a file that should exist but doesn't.
-      // If we throw an error, the message will be sent to the DLQ, to be processed
-      // again in a re-drive. But given that this file will probably never be
-      // available, the re-drives will also fail, and we'll never be able to get rid
-      // of the message in the DLQ. Instead, we ignore this version by returning silently.
+      // The tarball is still not available, even after retrying for a while
+      // (see `downloadTarball`). It is probably permanently missing (e.g: the
+      // version was unpublished). If we throw an error, the message will be
+      // sent to the DLQ, to be processed again in a re-drive. But given that
+      // this file will probably never be available, the re-drives will also
+      // fail, and we'll never be able to get rid of the message in the DLQ.
+      // Instead, we ignore this version by returning silently.
+      console.log(
+        `Tarball not found for ${event.name}@${event.version} (modified ${event.modified}), ignoring this version: ${event.tarballUrl}`
+      );
       return;
     } else {
       throw e;
@@ -141,6 +154,45 @@ export interface PackageVersion {
   readonly integrity: string;
 
   readonly seq?: string;
+}
+
+/**
+ * Downloads the tarball for a package version, retrying HTTP 404 responses
+ * for a while: npm metadata may propagate faster than tarballs, so a freshly
+ * published version can transiently 404 even though it will be available
+ * shortly.
+ */
+async function downloadTarball(event: PackageVersion): Promise<Buffer> {
+  const startTime = now();
+  let attempt = 0;
+  while (true) {
+    try {
+      console.log(`Downloading tarball from URL: ${event.tarballUrl}`);
+      return await httpGet(event.tarballUrl);
+    } catch (e) {
+      if (
+        !(e instanceof HttpNotFoundError) ||
+        now() - startTime >= NOT_FOUND_RETRY.deadlineMs
+      ) {
+        throw e;
+      }
+      const delay = Math.max(
+        NOT_FOUND_RETRY.baseDelayMs,
+        Math.floor(
+          Math.random() *
+            Math.min(
+              NOT_FOUND_RETRY.baseDelayMs * Math.pow(2, attempt),
+              NOT_FOUND_RETRY.maxDelayMs
+            )
+        )
+      );
+      console.log(
+        `Tarball not found (HTTP 404), retrying in ${delay} ms: ${event.tarballUrl}`
+      );
+      await sleep(delay);
+      attempt++;
+    }
+  }
 }
 
 /**
