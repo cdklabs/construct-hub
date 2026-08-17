@@ -357,7 +357,6 @@ export class Orchestration extends Construct {
     // @cdktn/provider-awscc is the biggest known package (3,979 submodules) and runs in ~15min,
     // (aws-cdk-lib runs in ~8min).
     // We give the task some generous extra allowance to complete.
-    // bindings keep growing with cloud surface area.
     // If the task exceeds the runtime, it's very likely that there is an issue with the task execution.
     const transliteratorTimeout = Duration.minutes(30);
 
