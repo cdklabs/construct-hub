@@ -356,12 +356,10 @@ export class Orchestration extends Construct {
 
     // @cdktn/provider-awscc is the biggest known package (3,979 submodules) and runs in ~15min,
     // (aws-cdk-lib runs in ~8min).
-    // We give the task some extra allowance to complete.
+    // We give the task generous headroom to complete, since machine-generated provider
+    // bindings keep growing with cloud surface area.
     // If the task exceeds the runtime, it's very likely that there is an issue with the task execution.
-    //
-    // The timeout value is deliberately set close to the expected execution time,
-    // to avoid an excessive cumulative runtime with retries and to not normalize longer than necessary runtime.
-    const transliteratorTimeout = Duration.minutes(18);
+    const transliteratorTimeout = Duration.minutes(30);
 
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
