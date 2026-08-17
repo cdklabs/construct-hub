@@ -774,6 +774,7 @@ export class NpmJs implements IPackageSource {
         queryLines: [
           'fields @timestamp, @message',
           'filter @message like /"DwellTime"/',
+          'filter toMillis(@timestamp) > (now() - 900) * 1000',
           `parse @message '"PackageVersion":"*"' as version`,
           `parse @message '"DwellTime":*,' as dwellTimeSec`,
           'stats max(dwellTimeSec) as maxDwellTimeSec by version',
