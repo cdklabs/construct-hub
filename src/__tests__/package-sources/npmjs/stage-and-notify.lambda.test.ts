@@ -122,8 +122,15 @@ test('ignores persistent 404', async () => {
   const basePath = 'https://registry.npmjs.org';
   const uri = '/@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
 
-  // registry response
-  nock(basePath).get(uri).reply(404).persist();
+  // registry response: the plain URL 404s once, every cache-busted retry
+  // 404s as well
+  nock(basePath)
+    .get(uri)
+    .reply(404)
+    .get(uri)
+    .query((q) => q.cacheBust != null)
+    .reply(404)
+    .persist();
 
   const event: PackageVersion = {
     tarballUrl: `${basePath}${uri}`,
@@ -147,13 +154,16 @@ test('retries a 404 and stages the tarball once it becomes available', async () 
   const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${uri}`;
   const tarball = 'tarball';
 
-  // registry responses: metadata propagated before the tarball did
+  // registry responses: metadata propagated before the tarball did; retries
+  // must carry a cache-busting query, or these interceptors won't match
   nock(basePath)
     .get(`/${uri}`)
     .reply(404)
     .get(`/${uri}`)
+    .query((q) => q.cacheBust != null)
     .reply(404)
     .get(`/${uri}`)
+    .query((q) => q.cacheBust != null)
     .reply(200, tarball);
 
   const event: PackageVersion = {

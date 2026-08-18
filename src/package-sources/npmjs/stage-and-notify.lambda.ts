@@ -160,15 +160,21 @@ export interface PackageVersion {
  * Downloads the tarball for a package version, retrying HTTP 404 responses
  * for a while: npm metadata may propagate faster than tarballs, so a freshly
  * published version can transiently 404 even though it will be available
- * shortly.
+ * shortly. Retries carry a unique query string because registry.npmjs.org
+ * caches 404s at its CDN for 5 minutes: re-requesting the plain URL within
+ * the retry deadline would only ever see the first, cached 404.
  */
 async function downloadTarball(event: PackageVersion): Promise<Buffer> {
   const startTime = now();
   let attempt = 0;
   while (true) {
     try {
-      console.log(`Downloading tarball from URL: ${event.tarballUrl}`);
-      return await httpGet(event.tarballUrl);
+      const url =
+        attempt === 0
+          ? event.tarballUrl
+          : `${event.tarballUrl}?cacheBust=${now()}`;
+      console.log(`Downloading tarball from URL: ${url}`);
+      return await httpGet(url);
     } catch (e) {
       if (
         !(e instanceof HttpNotFoundError) ||
