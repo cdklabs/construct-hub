@@ -54,7 +54,7 @@ export async function handler(
 
   let tarball: Buffer;
   try {
-    tarball = await downloadTarball(event, context);
+    tarball = await downloadTarball(event);
   } catch (e) {
     if (e instanceof HttpNotFoundError) {
       // The tarball is still not available, even after retrying for a while
@@ -163,14 +163,8 @@ export interface PackageVersion {
  * shortly. Retries carry a unique query string because registry.npmjs.org
  * caches 404s at its CDN for 5 minutes: re-requesting the plain URL within
  * the retry deadline would only ever see the first, cached 404.
- *
- * Stops retrying early when the invocation nears its timeout, leaving room
- * to download and store a large tarball.
  */
-async function downloadTarball(
-  event: PackageVersion,
-  context: Context
-): Promise<Buffer> {
+async function downloadTarball(event: PackageVersion): Promise<Buffer> {
   const startTime = now();
   let attempt = 0;
   while (true) {
@@ -184,8 +178,7 @@ async function downloadTarball(
     } catch (e) {
       if (
         !(e instanceof HttpNotFoundError) ||
-        now() - startTime >= NOT_FOUND_RETRY.deadlineMs ||
-        context.getRemainingTimeInMillis() < 120_000
+        now() - startTime >= NOT_FOUND_RETRY.deadlineMs
       ) {
         throw e;
       }
