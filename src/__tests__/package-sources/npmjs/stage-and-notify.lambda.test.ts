@@ -122,6 +122,7 @@ test('ignores persistent 404', async () => {
   const basePath = 'https://registry.npmjs.org';
   const uri = '/@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
 
+
   // registry response: the plain URL 404s once, every cache-busted retry
   // 404s as well
   nock(basePath)
