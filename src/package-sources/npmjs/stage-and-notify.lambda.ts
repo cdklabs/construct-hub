@@ -17,8 +17,8 @@ class HttpNotFoundError extends Error {}
  */
 const NOT_FOUND_RETRY = {
   baseDelayMs: 1_000,
-  maxDelayMs: 8_000,
-  deadlineMs: 60_000,
+  maxDelayMs: 60_000,
+  deadlineMs: 10 * 60_000,
 };
 
 /**
@@ -54,7 +54,7 @@ export async function handler(
 
   let tarball: Buffer;
   try {
-    tarball = await downloadTarball(event);
+    tarball = await downloadTarball(event, context);
   } catch (e) {
     if (e instanceof HttpNotFoundError) {
       // The tarball is still not available, even after retrying for a while
@@ -163,8 +163,14 @@ export interface PackageVersion {
  * shortly. Retries carry a unique query string because registry.npmjs.org
  * caches 404s at its CDN for 5 minutes: re-requesting the plain URL within
  * the retry deadline would only ever see the first, cached 404.
+ *
+ * Stops retrying early when the invocation nears its timeout, leaving room
+ * to download and store a large tarball.
  */
-async function downloadTarball(event: PackageVersion): Promise<Buffer> {
+async function downloadTarball(
+  event: PackageVersion,
+  context: Context
+): Promise<Buffer> {
   const startTime = now();
   let attempt = 0;
   while (true) {
@@ -178,7 +184,8 @@ async function downloadTarball(event: PackageVersion): Promise<Buffer> {
     } catch (e) {
       if (
         !(e instanceof HttpNotFoundError) ||
-        now() - startTime >= NOT_FOUND_RETRY.deadlineMs
+        now() - startTime >= NOT_FOUND_RETRY.deadlineMs ||
+        context.getRemainingTimeInMillis() < 120_000
       ) {
         throw e;
       }

@@ -86,6 +86,7 @@ test('happy path', async () => {
     logGroupName: 'group',
     logStreamName: 'stream',
     awsRequestId: 'request-id',
+    getRemainingTimeInMillis: () => 15 * 60_000,
   } as any;
 
   await expect(handler(event, context)).resolves.toBe(undefined);
@@ -141,7 +142,9 @@ test('ignores persistent 404', async () => {
     version: '0.0.785',
   };
 
-  const context: Context = {} as any;
+  const context: Context = {
+    getRemainingTimeInMillis: () => 15 * 60_000,
+  } as any;
 
   await expect(handler(event, context)).resolves.toBe(undefined);
   expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
@@ -179,6 +182,7 @@ test('retries a 404 and stages the tarball once it becomes available', async () 
     logGroupName: 'group',
     logStreamName: 'stream',
     awsRequestId: 'request-id',
+    getRemainingTimeInMillis: () => 15 * 60_000,
   } as any;
 
   await expect(handler(event, context)).resolves.toBe(undefined);
@@ -192,6 +196,31 @@ test('retries a 404 and stages the tarball once it becomes available', async () 
     Metadata: expect.anything(),
   });
   expect(mockSQS).toHaveReceivedCommandTimes(SendMessageCommand, 1);
+});
+
+test('stops retrying a 404 when the invocation nears its timeout', async () => {
+  const basePath = 'https://registry.npmjs.org';
+  const uri = '/@pepperize/cdk-vpc/-/cdk-vpc-0.0.785.tgz';
+
+  // a single 404: the remaining-time guard must prevent any retry
+  nock(basePath).get(uri).reply(404);
+
+  const event: PackageVersion = {
+    tarballUrl: `${basePath}${uri}`,
+    integrity: '09d37ec93c5518bf4842ac8e381a5c06452500e5',
+    modified: new Date().toISOString(),
+    name: '@pepper/cdk-vpc',
+    seq: '26437963',
+    version: '0.0.785',
+  };
+
+  const context: Context = {
+    getRemainingTimeInMillis: () => 60_000,
+  } as any;
+
+  await expect(handler(event, context)).resolves.toBe(undefined);
+  expect(mockS3).not.toHaveReceivedCommand(PutObjectCommand);
+  expect(mockSQS).not.toHaveReceivedCommand(SendMessageCommand);
 });
 
 test('propagates non-404 errors without retrying', async () => {
@@ -210,7 +239,9 @@ test('propagates non-404 errors without retrying', async () => {
     version: '0.0.785',
   };
 
-  const context: Context = {} as any;
+  const context: Context = {
+    getRemainingTimeInMillis: () => 15 * 60_000,
+  } as any;
 
   await expect(handler(event, context)).rejects.toThrow(
     /Unsuccessful GET: 500/
