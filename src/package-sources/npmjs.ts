@@ -176,7 +176,9 @@ export class NpmJs implements IPackageSource {
       },
       memorySize: 10_024, // 10GiB
       retryAttempts: 2,
-      timeout: Duration.minutes(5),
+      // Long enough for the 10 minute tarball 404 retry window, plus margin
+      // to download and store a large tarball.
+      timeout: Duration.minutes(13),
       tracing: Tracing.ACTIVE,
     });
 

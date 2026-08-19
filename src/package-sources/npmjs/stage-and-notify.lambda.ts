@@ -17,8 +17,8 @@ class HttpNotFoundError extends Error {}
  */
 const NOT_FOUND_RETRY = {
   baseDelayMs: 1_000,
-  maxDelayMs: 8_000,
-  deadlineMs: 60_000,
+  maxDelayMs: 60_000,
+  deadlineMs: 10 * 60_000,
 };
 
 /**
