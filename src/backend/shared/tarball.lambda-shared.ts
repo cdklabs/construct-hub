@@ -25,9 +25,19 @@ export async function extractObjects<S extends Selector>(
   return new Promise((ok, ko) => {
     const result: { [name: string]: Buffer } = {};
 
+    // The types of `tar-stream` v3 are very bad.
+    // - The input parameters of `extract` aren't correctly typed (are typed as `streamx.WritableOptions`,
+    //   fully ignoring the additional `extract` arguments like `filenameEncoding`).
+    // - The `extract` stream is not typed as a Node.js `stream.Writable`, so we have to cast it at the `pipe` boundary.
+    const extractStream = extract({
+      filenameEncoding: 'utf-8',
+    } as Parameters<typeof extract>[0]);
+
     Readable.from([Buffer.from(tgz)])
       .pipe(createGunzip())
-      .pipe(extract({ filenameEncoding: 'utf-8' }), { end: true })
+      .pipe(extractStream as any, { end: true });
+
+    extractStream
       .once('error', ko)
       .once('finish', () => {
         for (const [name, { path, required }] of Object.entries(selector)) {
@@ -53,7 +63,9 @@ export async function extractObjects<S extends Selector>(
         );
         const chunks = selected != null ? new Array<Buffer>() : undefined;
         if (chunks != null) {
-          stream.on('data', (chunk) => chunks?.push(Buffer.from(chunk)));
+          stream.on('data', (chunk: unknown) =>
+            chunks?.push(Buffer.from(chunk as Buffer))
+          );
         }
         // Un-conditionally consume the `stream`, as not doing so will prevent the tar-stream from continuing to
         // process more entries...

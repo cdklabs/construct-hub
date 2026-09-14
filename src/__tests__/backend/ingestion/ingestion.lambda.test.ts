@@ -2419,7 +2419,11 @@ async function buildTarGz(
 ): Promise<StreamingBlobPayloadOutputTypes> {
   const tar = pack();
   const gzip = createGzip();
-  tar.pipe(gzip, { end: true });
+  // `tar-stream` v3 `Pack` is a `streamx` Readable whose `pipe()` expects a
+  // `streamx` Writable and always ends the destination when the source ends
+  // (so the previous `{ end: true }` is now the default). The Node.js `Gzip`
+  // interops at runtime, so cast at the boundary.
+  tar.pipe(gzip as unknown as Parameters<typeof tar.pipe>[0]);
 
   for (const [name, data] of Object.entries(entries)) {
     await new Promise<void>((tok, tko) => {

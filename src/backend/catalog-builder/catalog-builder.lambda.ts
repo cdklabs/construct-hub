@@ -330,7 +330,8 @@ async function appendPackage(
       if (err) {
         return ko(err);
       }
-      extract()
+      const extractStream = extract();
+      extractStream
         .on('entry', (header, stream, next) => {
           if (header.name !== 'package/package.json') {
             // Not the file we are looking for, skip ahead... We consume the `stream`, as not doing so will prevent the
@@ -343,21 +344,21 @@ async function appendPackage(
           }
           const chunks = new Array<Buffer>();
           return stream
-            .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+            .on('data', (chunk: unknown) => chunks.push(Buffer.from(chunk as Buffer)))
             .once('end', () => {
               ok(Buffer.concat(chunks));
               next();
             })
             .resume();
         })
+        .once('error', ko)
         .once('finish', () => {
           ko(new Error('Could not find package/package.json in tarball!'));
-        })
-        .write(tar, (writeErr) => {
-          if (writeErr) {
-            ko(writeErr);
-          }
         });
+      // `tar-stream` v3 (streamx) `write()`/`end()` take no callback; feed the
+      // whole decompressed tarball via `end()`, which writes and finishes the
+      // stream. Write errors surface via the `error` event handled above.
+      extractStream.end(tar);
     });
   });
   // Add the PackageInfo into the working set
