@@ -752,7 +752,10 @@ function mockNpmPackage(name: string, version: string) {
   tarball.finalize();
 
   const gzip = zip.createGzip();
-  tarball.pipe(gzip);
+  // `tar-stream` v3 `Pack` is a `streamx` Readable whose `pipe()` expects a
+  // `streamx` Writable; the Node.js `Gzip` interops at runtime, so cast at the
+  // boundary.
+  tarball.pipe(gzip as unknown as Parameters<typeof tarball.pipe>[0]);
 
   return Promise.resolve(sdkStreamMixin(gzip));
 }

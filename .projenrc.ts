@@ -51,7 +51,6 @@ const project = new CdklabsConstructLibrary({
     '@jsii/spec',
     '@types/fs-extra',
     '@types/semver',
-    '@types/tar-stream',
     '@types/tough-cookie',
     '@types/uuid',
     cdkCli,
@@ -91,6 +90,7 @@ const project = new CdklabsConstructLibrary({
     'markdown-it-emoji',
     '@types/markdown-it',
     '@types/markdown-it-emoji',
+    'streamx',
   ],
 
   peerDeps,
