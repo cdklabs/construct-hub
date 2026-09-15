@@ -61667,14 +61667,14 @@ Direct link to function: /lambda/home#/functions/",
               "","",
               {
                 "Fn::GetAtt": [
-                  "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a179884C095CF",
+                  "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f423FA536B",
                   "GroupId",
                 ],
               },
               "","",
               {
                 "Fn::GetAtt": [
-                  "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85B382FFE9",
+                  "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5cBFC4C88D",
                   "GroupId",
                 ],
               },
@@ -68465,13 +68465,13 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           {
             "Fn::GetAtt": [
-              "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a179884C095CF",
+              "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f423FA536B",
               "GroupId",
             ],
           },
           {
             "Fn::GetAtt": [
-              "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85B382FFE9",
+              "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5cBFC4C88D",
               "GroupId",
             ],
           },
@@ -68552,13 +68552,13 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           {
             "Fn::GetAtt": [
-              "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a179884C095CF",
+              "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f423FA536B",
               "GroupId",
             ],
           },
           {
             "Fn::GetAtt": [
-              "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85B382FFE9",
+              "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5cBFC4C88D",
               "GroupId",
             ],
           },
@@ -68662,13 +68662,13 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           {
             "Fn::GetAtt": [
-              "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a179884C095CF",
+              "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f423FA536B",
               "GroupId",
             ],
           },
           {
             "Fn::GetAtt": [
-              "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85B382FFE9",
+              "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5cBFC4C88D",
               "GroupId",
             ],
           },
@@ -71191,13 +71191,13 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           {
             "Fn::GetAtt": [
-              "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a179884C095CF",
+              "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f423FA536B",
               "GroupId",
             ],
           },
           {
             "Fn::GetAtt": [
-              "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85B382FFE9",
+              "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5cBFC4C88D",
               "GroupId",
             ],
           },
@@ -72361,7 +72361,50 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a17985441902B": {
+    "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f423FA536B": {
+      "Properties": {
+        "GroupDescription": "Test/ConstructHub/github.git-IPv4",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::GetAtt": [
+                "ConstructHubVPC16ECCEA2",
+                "CidrBlock",
+              ],
+            },
+            "Description": {
+              "Fn::Join": [
+                "",
+                [
+                  "from ",
+                  {
+                    "Fn::GetAtt": [
+                      "ConstructHubVPC16ECCEA2",
+                      "CidrBlock",
+                    ],
+                  },
+                  ":443",
+                ],
+              ],
+            },
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "github.git.IPv4",
+          },
+        ],
+        "VpcId": {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f4C8B7C282": {
       "Properties": {
         "AddressFamily": "IPv4",
         "Entries": [
@@ -72370,6 +72413,9 @@ function handler(event) {
           },
           {
             "Cidr": "143.55.64.0/20",
+          },
+          {
+            "Cidr": "172.182.252.130/32",
           },
           {
             "Cidr": "172.182.252.133/32",
@@ -72429,6 +72475,9 @@ function handler(event) {
             "Cidr": "20.207.73.83/32",
           },
           {
+            "Cidr": "20.217.135.1/32",
+          },
+          {
             "Cidr": "20.217.135.4/32",
           },
           {
@@ -72465,6 +72514,9 @@ function handler(event) {
             "Cidr": "20.29.134.19/32",
           },
           {
+            "Cidr": "20.29.134.22/32",
+          },
+          {
             "Cidr": "20.29.134.23/32",
           },
           {
@@ -72475,6 +72527,9 @@ function handler(event) {
           },
           {
             "Cidr": "20.87.245.4/32",
+          },
+          {
+            "Cidr": "4.208.26.193/32",
           },
           {
             "Cidr": "4.208.26.197/32",
@@ -72528,67 +72583,24 @@ function handler(event) {
             "Cidr": "48.204.201.6/32",
           },
         ],
-        "MaxEntries": 54,
+        "MaxEntries": 58,
         "PrefixListName": "github.git.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a179884C095CF": {
-      "Properties": {
-        "GroupDescription": "Test/ConstructHub/github.git-IPv4",
-        "SecurityGroupIngress": [
-          {
-            "CidrIp": {
-              "Fn::GetAtt": [
-                "ConstructHubVPC16ECCEA2",
-                "CidrBlock",
-              ],
-            },
-            "Description": {
-              "Fn::Join": [
-                "",
-                [
-                  "from ",
-                  {
-                    "Fn::GetAtt": [
-                      "ConstructHubVPC16ECCEA2",
-                      "CidrBlock",
-                    ],
-                  },
-                  ":443",
-                ],
-              ],
-            },
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443,
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "github.git.IPv4",
-          },
-        ],
-        "VpcId": {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a1798toTestConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a1798443DA79EE39": {
+    "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f4toTestConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f444381ADFF8B": {
       "Properties": {
         "Description": "to github.git (IPv4)",
         "DestinationPrefixListId": {
           "Fn::GetAtt": [
-            "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a17985441902B",
+            "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f4C8B7C282",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": {
           "Fn::GetAtt": [
-            "ConstructHubgithubgitIPv4174dea8856a4816cdc37d9c1b733c83f789a179884C095CF",
+            "ConstructHubgithubgitIPv4e23ab9a4b0baf5e809bac0601614d8b8888729f423FA536B",
             "GroupId",
           ],
         },
@@ -72597,7 +72609,131 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85B382FFE9": {
+    "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5c7D5F4993": {
+      "Properties": {
+        "AddressFamily": "IPv4",
+        "Entries": [
+          {
+            "Cidr": "140.82.112.0/20",
+          },
+          {
+            "Cidr": "143.55.64.0/20",
+          },
+          {
+            "Cidr": "172.182.252.130/32",
+          },
+          {
+            "Cidr": "172.182.252.133/32",
+          },
+          {
+            "Cidr": "185.199.108.0/22",
+          },
+          {
+            "Cidr": "192.30.252.0/22",
+          },
+          {
+            "Cidr": "20.175.192.147/32",
+          },
+          {
+            "Cidr": "20.199.39.232/32",
+          },
+          {
+            "Cidr": "20.200.245.244/32",
+          },
+          {
+            "Cidr": "20.200.245.247/32",
+          },
+          {
+            "Cidr": "20.201.28.151/32",
+          },
+          {
+            "Cidr": "20.205.243.161/32",
+          },
+          {
+            "Cidr": "20.205.243.166/32",
+          },
+          {
+            "Cidr": "20.207.73.81/32",
+          },
+          {
+            "Cidr": "20.207.73.82/32",
+          },
+          {
+            "Cidr": "20.217.135.1/32",
+          },
+          {
+            "Cidr": "20.217.135.5/32",
+          },
+          {
+            "Cidr": "20.233.83.145/32",
+          },
+          {
+            "Cidr": "20.233.83.148/32",
+          },
+          {
+            "Cidr": "20.26.156.213/32",
+          },
+          {
+            "Cidr": "20.26.156.215/32",
+          },
+          {
+            "Cidr": "20.27.177.113/32",
+          },
+          {
+            "Cidr": "20.27.177.119/32",
+          },
+          {
+            "Cidr": "20.29.134.22/32",
+          },
+          {
+            "Cidr": "20.29.134.23/32",
+          },
+          {
+            "Cidr": "20.87.245.0/32",
+          },
+          {
+            "Cidr": "20.87.245.2/32",
+          },
+          {
+            "Cidr": "4.208.26.193/32",
+          },
+          {
+            "Cidr": "4.208.26.197/32",
+          },
+          {
+            "Cidr": "4.225.11.194/32",
+          },
+          {
+            "Cidr": "4.225.11.199/32",
+          },
+          {
+            "Cidr": "4.228.31.144/32",
+          },
+          {
+            "Cidr": "4.228.31.150/32",
+          },
+          {
+            "Cidr": "4.237.22.36/32",
+          },
+          {
+            "Cidr": "4.237.22.38/32",
+          },
+          {
+            "Cidr": "4.249.131.164/32",
+          },
+          {
+            "Cidr": "48.202.248.40/32",
+          },
+          {
+            "Cidr": "48.204.201.5/32",
+          },
+        ],
+        "MaxEntries": 38,
+        "PrefixListName": "github.web.IPv4",
+      },
+      "Type": "AWS::EC2::PrefixList",
+    },
+    "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5cBFC4C88D": {
       "Properties": {
         "GroupDescription": "Test/ConstructHub/github.web-IPv4",
         "SecurityGroupIngress": [
@@ -72640,131 +72776,19 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85F9136747": {
-      "Properties": {
-        "AddressFamily": "IPv4",
-        "Entries": [
-          {
-            "Cidr": "140.82.112.0/20",
-          },
-          {
-            "Cidr": "143.55.64.0/20",
-          },
-          {
-            "Cidr": "172.182.252.133/32",
-          },
-          {
-            "Cidr": "185.199.108.0/22",
-          },
-          {
-            "Cidr": "192.30.252.0/22",
-          },
-          {
-            "Cidr": "20.175.192.147/32",
-          },
-          {
-            "Cidr": "20.199.39.232/32",
-          },
-          {
-            "Cidr": "20.200.245.244/32",
-          },
-          {
-            "Cidr": "20.200.245.247/32",
-          },
-          {
-            "Cidr": "20.201.28.151/32",
-          },
-          {
-            "Cidr": "20.205.243.161/32",
-          },
-          {
-            "Cidr": "20.205.243.166/32",
-          },
-          {
-            "Cidr": "20.207.73.81/32",
-          },
-          {
-            "Cidr": "20.207.73.82/32",
-          },
-          {
-            "Cidr": "20.217.135.5/32",
-          },
-          {
-            "Cidr": "20.233.83.145/32",
-          },
-          {
-            "Cidr": "20.233.83.148/32",
-          },
-          {
-            "Cidr": "20.26.156.213/32",
-          },
-          {
-            "Cidr": "20.26.156.215/32",
-          },
-          {
-            "Cidr": "20.27.177.113/32",
-          },
-          {
-            "Cidr": "20.27.177.119/32",
-          },
-          {
-            "Cidr": "20.29.134.23/32",
-          },
-          {
-            "Cidr": "20.87.245.0/32",
-          },
-          {
-            "Cidr": "20.87.245.2/32",
-          },
-          {
-            "Cidr": "4.208.26.197/32",
-          },
-          {
-            "Cidr": "4.225.11.194/32",
-          },
-          {
-            "Cidr": "4.225.11.199/32",
-          },
-          {
-            "Cidr": "4.228.31.144/32",
-          },
-          {
-            "Cidr": "4.228.31.150/32",
-          },
-          {
-            "Cidr": "4.237.22.36/32",
-          },
-          {
-            "Cidr": "4.237.22.38/32",
-          },
-          {
-            "Cidr": "4.249.131.164/32",
-          },
-          {
-            "Cidr": "48.202.248.40/32",
-          },
-          {
-            "Cidr": "48.204.201.5/32",
-          },
-        ],
-        "MaxEntries": 34,
-        "PrefixListName": "github.web.IPv4",
-      },
-      "Type": "AWS::EC2::PrefixList",
-    },
-    "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85toTestConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce854436C7DF0AC": {
+    "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5ctoTestConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5c44314DD1B34": {
       "Properties": {
         "Description": "to github.web (IPv4)",
         "DestinationPrefixListId": {
           "Fn::GetAtt": [
-            "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85F9136747",
+            "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5c7D5F4993",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": {
           "Fn::GetAtt": [
-            "ConstructHubgithubwebIPv4fe83518cd6c19f987c85dfcef25455dc9bd1ce85B382FFE9",
+            "ConstructHubgithubwebIPv48b09f54d49ce98209b0016d0a3962a93cdb24c5cBFC4C88D",
             "GroupId",
           ],
         },
