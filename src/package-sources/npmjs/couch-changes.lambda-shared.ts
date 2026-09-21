@@ -62,9 +62,13 @@ export class CouchChanges extends EventEmitter {
    *
    * @returns a page of changes.
    */
+  /**
+   * @param opts.ceiling drop changes with a seq beyond this value and cap
+   *                     `last_seq` to it.
+   */
   public async changes(
     since: string | number,
-    opts?: { readonly batchSize?: number }
+    opts?: { readonly batchSize?: number; readonly ceiling?: number }
   ): Promise<DatabaseChanges> {
     const batchSize = opts?.batchSize ?? DEFAULT_BATCH_SIZE;
 
@@ -74,13 +78,18 @@ export class CouchChanges extends EventEmitter {
 
     const result = (await this.https('get', changesUrl)) as any;
 
-    const last_seq = result.last_seq;
-    const results = await this.fetchAndFilterAllMetadata(result.results);
+    let rawResults = result.results as DatabaseChange[];
+    let last_seq = result.last_seq;
+    if (opts?.ceiling != null && Number(last_seq) > opts.ceiling) {
+      rawResults = rawResults.filter((c) => Number(c.seq) <= opts.ceiling!);
+      last_seq = opts.ceiling;
+    }
+    const results = await this.fetchAndFilterAllMetadata(rawResults);
 
     return {
       last_seq,
       actionableResults: results,
-      totalCount: result.results.length,
+      totalCount: rawResults.length,
     };
   }
 

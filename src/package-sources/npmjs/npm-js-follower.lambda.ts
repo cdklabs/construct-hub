@@ -48,6 +48,16 @@ const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set([
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
 /**
+ * How far behind the changes feed head the follower reads, in seq units.
+ * Feed entries can become visible at their seq position hours after the
+ * position was assigned; a position the follower has read past is never
+ * revisited. ~2h at typical weekday feed rates (~12k seq/hour).
+ */
+const VISIBILITY_MARGIN_SEQS = process.env.VISIBILITY_MARGIN_SEQS
+  ? Number(process.env.VISIBILITY_MARGIN_SEQS)
+  : 25_000;
+
+/**
  * The release date of `aws-cdk@0.8.0`. Anything earlier than this basically is
  * not a relevant package, as it cannot possibly be a constructs-based package.
  * This is used to fast-forward over boring stuff when the sequence number is
@@ -97,6 +107,12 @@ export async function handler(event: ScheduledEvent, context: Context) {
   // The last written marker seq id.
   let updatedMarker = initialMarker;
 
+  // Stay a safety margin behind the feed head: entries appearing late at
+  // already-passed positions would otherwise be lost forever
+  // (https://github.com/orgs/community/discussions/152515).
+  const feedHead = Number((await npm.info()).update_seq);
+  const readCeiling = feedHead - VISIBILITY_MARGIN_SEQS;
+
   // The slowest batch processing time so far (starts at 60 seconds). This is how much time should
   // be left before timeout if a new batch is to be fetched.
   let maxBatchProcessingTime = 60_000;
@@ -104,10 +120,19 @@ export async function handler(event: ScheduledEvent, context: Context) {
   // latest change is reached (i.e: next page of changes is empty).
   let shouldContinue = true;
 
+  if (readCeiling <= initialMarker) {
+    console.log(
+      `Feed head (${feedHead}) is within the visibility margin of the marker (${initialMarker}), nothing safe to read yet, exiting...`
+    );
+    return { initialMarker, updatedMarker };
+  }
+
   do {
     await metricScope((metrics) => async () => {
       console.log('Polling changes from npm replica');
-      const changes = await npm.changes(updatedMarker);
+      const changes = await npm.changes(updatedMarker, {
+        ceiling: readCeiling,
+      });
 
       // Clear automatically set dimensions - we don't need them (see https://github.com/awslabs/aws-embedded-metrics-node/issues/73)
       metrics.setDimensions({});
@@ -149,7 +174,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
             `Skipping batch as the latest modification is ${lastModified}, which is pre-Constructs`
           );
         } else if (changes.totalCount === 0) {
-          console.log('Received 0 changes, caught up to "now", exiting...');
+          console.log(
+            `Received 0 changes, caught up to the visibility margin (${readCeiling}), exiting...`
+          );
           shouldContinue = false;
         } else {
           // Obtain the modified package version from the update event, and filter
