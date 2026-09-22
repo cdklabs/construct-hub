@@ -55,7 +55,8 @@ async function* messagesToRedrive(queueUrl: string) {
     result = await SQS_CLIENT.send(
       new ReceiveMessageCommand({
         QueueUrl: queueUrl,
-        VisibilityTimeout: 900, // 15 minutes
+        VisibilityTimeout: 60,
+        WaitTimeSeconds: 3, // sometimes larger messages need a bit before being received
       })
     );
     if (result.Messages) {
