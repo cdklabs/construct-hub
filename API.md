@@ -2881,11 +2881,15 @@ new sources.NpmJs(props?: NpmJsProps)
 | <code><a href="#construct-hub.sources.NpmJs.metricBatchProcessingTime">metricBatchProcessingTime</a></code> | The average time it took to process a changes batch. |
 | <code><a href="#construct-hub.sources.NpmJs.metricChangeCount">metricChangeCount</a></code> | The total count of changes that were processed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricLastSeq">metricLastSeq</a></code> | The last sequence number that was processed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLateChangeCount">metricLateChangeCount</a></code> | The number of changes discovered by the overlap sweep that were missed by the regular head-of-feed pass (i.e. rows inserted into the CouchDB `_changes` feed behind the follower's cursor). |
+| <code><a href="#construct-hub.sources.NpmJs.metricLateChangeLag">metricLateChangeLag</a></code> | For each late change discovered by the overlap sweep, the time elapsed between the moment the follower first read past the change's sequence number and the moment the change was discovered. |
 | <code><a href="#construct-hub.sources.NpmJs.metricNpmJsChangeAge">metricNpmJsChangeAge</a></code> | *No description.* |
 | <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionAge">metricPackageVersionAge</a></code> | The age of the oldest package version that was processed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionCount">metricPackageVersionCount</a></code> | The total count of package versions that were inspected. |
 | <code><a href="#construct-hub.sources.NpmJs.metricRelevantPackageVersions">metricRelevantPackageVersions</a></code> | The total count of package versions that were deemed relevant. |
 | <code><a href="#construct-hub.sources.NpmJs.metricRemainingTime">metricRemainingTime</a></code> | The amount of time that was remaining when the lambda returned in order to avoid hitting a timeout. |
+| <code><a href="#construct-hub.sources.NpmJs.metricStaleMetadataDeferred">metricStaleMetadataDeferred</a></code> | The number of changes that were deferred to the stale-metadata retry queue because the npm registry metadata was still behind the revision announced by the `_changes` feed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricStaleMetadataRecovered">metricStaleMetadataRecovered</a></code> | The number of previously deferred changes that were successfully recovered from the stale-metadata retry queue. |
 | <code><a href="#construct-hub.sources.NpmJs.metricUnprocessableEntity">metricUnprocessableEntity</a></code> | The amount of changes that were not processed due to having an invalid format. |
 
 ---
@@ -2955,6 +2959,37 @@ discover when a sequence reset has happened in the CouchDB instance.
 
 ---
 
+##### `metricLateChangeCount` <a name="metricLateChangeCount" id="construct-hub.sources.NpmJs.metricLateChangeCount"></a>
+
+```typescript
+public metricLateChangeCount(opts?: MetricOptions): Metric
+```
+
+The number of changes discovered by the overlap sweep that were missed by the regular head-of-feed pass (i.e. rows inserted into the CouchDB `_changes` feed behind the follower's cursor).
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLateChangeCount.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricLateChangeLag` <a name="metricLateChangeLag" id="construct-hub.sources.NpmJs.metricLateChangeLag"></a>
+
+```typescript
+public metricLateChangeLag(opts?: MetricOptions): Metric
+```
+
+For each late change discovered by the overlap sweep, the time elapsed between the moment the follower first read past the change's sequence number and the moment the change was discovered.
+
+This is a lower bound on
+the feed's insertion lag, and can be used to tune the sweep margin.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLateChangeLag.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
 ##### `metricNpmJsChangeAge` <a name="metricNpmJsChangeAge" id="construct-hub.sources.NpmJs.metricNpmJsChangeAge"></a>
 
 ```typescript
@@ -3018,6 +3053,34 @@ public metricRemainingTime(opts?: MetricOptions): Metric
 The amount of time that was remaining when the lambda returned in order to avoid hitting a timeout.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricRemainingTime.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricStaleMetadataDeferred` <a name="metricStaleMetadataDeferred" id="construct-hub.sources.NpmJs.metricStaleMetadataDeferred"></a>
+
+```typescript
+public metricStaleMetadataDeferred(opts?: MetricOptions): Metric
+```
+
+The number of changes that were deferred to the stale-metadata retry queue because the npm registry metadata was still behind the revision announced by the `_changes` feed.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricStaleMetadataDeferred.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricStaleMetadataRecovered` <a name="metricStaleMetadataRecovered" id="construct-hub.sources.NpmJs.metricStaleMetadataRecovered"></a>
+
+```typescript
+public metricStaleMetadataRecovered(opts?: MetricOptions): Metric
+```
+
+The number of previously deferred changes that were successfully recovered from the stale-metadata retry queue.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricStaleMetadataRecovered.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 

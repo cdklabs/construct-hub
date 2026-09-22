@@ -582,6 +582,115 @@ but is disabled by default.
 Once all messages have cleared from the dead-letter queue, do not forget to
 disable the SQS Trigger again.
 
+### `ConstructHub/Sources/NpmJs/Follower/StaleMetadataDLQNotEmpty`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when a change from the npmjs.com registry could not be processed after
+repeated retries, because the registry kept serving package metadata older than
+the revision announced by the changes feed. The message was moved to the
+dead-letter queue.
+
+The package versions that were targeted by those messages have hence not been
+ingested into ConstructHub, and will only be discovered once the affected
+packages publish their next version.
+
+#### Investigation
+
+The *NpmJs Follower* fetches package metadata from `registry.npmjs.org` for
+each change announced by the CouchDB replica's `_changes` feed. The registry
+occasionally lags behind the feed. When it does, the change is placed on a
+retry queue and re-checked on subsequent runs, until the maximum receive count
+is exhausted.
+
+Each message in the dead-letter queue identifies the affected package name and
+the expected document revision. Verify what the registry currently serves for
+the package:
+
+```console
+$ curl https://registry.npmjs.org/<package-name> | jq ._rev
+```
+
+If the served revision is still older than the expected one, the problem is
+with upstream npmjs.com. Look at `npmjs.com` status updates and announcements.
+
+If you suspect the problem is with upstream npmjs.com, you can cut them a ticket. Log
+in to <https://npmjs.com>, visit the [Support Page](https://www.npmjs.com/support) and
+select *There is a problem with the npm registry*.
+
+#### Resolution
+
+The missed package versions will automatically be discovered once the affected
+packages publish their next version. To ingest a missed version immediately,
+invoke the *ReStagePackageVersion* Lambda function with the package name and
+version from the dead-letter queue message.
+
+Once all messages have been handled, purge them from the dead-letter queue so
+the alarm goes back to green.
+
+### `ConstructHub/Sources/NpmJs/Follower/LateChangeLagHigh`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when the *NpmJs Follower*'s overlap sweep discovers changes that were
+inserted into the CouchDB `_changes` feed with a delay approaching the sweep
+margin. Should the delay exceed the margin, the hourly sweep will miss those
+changes, and only the daily deep sweep would still discover them.
+
+#### Investigation
+
+The `_changes` feed occasionally inserts rows behind the follower's cursor
+(npm considers this normal feed behavior). The overlap sweep compensates by
+re-reading a trailing window of the feed, and the `LateChangeLag` metric
+records how far behind the cursor each late row was discovered.
+
+Review the *Feed Reliability (Overlap Sweep)* widget on the backend dashboard.
+A short burst of high-delay insertions usually indicates turbulence in the
+npmjs.com replication pipelines, and resolves on its own. Look at `npmjs.com`
+status updates and announcements.
+
+#### Resolution
+
+The alarm will automatically go back to green once the insertion delays
+subside. If elevated delays persist over multiple days, the sweep margin
+should be increased: adjust `SWEEP_MARGIN_MS` in
+`src/package-sources/npmjs/constants.lambda-shared.ts` (keeping it below
+`RECEIPTS_RETENTION_MS`) and deploy the updated construct.
+
+### `ConstructHub/Sources/NpmJs/Follower/SweepNotRunning`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when the *NpmJs Follower*'s overlap sweep has not reported in several
+hours. While the sweep is not running, changes inserted into the CouchDB
+`_changes` feed behind the follower's cursor will not be discovered.
+
+#### Investigation
+
+The overlap sweep runs at the tail of the *NpmJs Follower*'s scheduled
+executions, in the time remaining after the regular changes processing. The
+most common cause for sweeps not running is the follower being in extended
+catch-up (for example, after an npmjs.com outage), in which case the regular
+changes processing consumes the entire execution time budget.
+
+Review the logs of the *NpmJs Follower* for `sweep` entries, and verify the
+`LastSeq` metric is steadily progressing towards the feed head.
+
+For additional recommendations for diving into CloudWatch Logs, refer to the
+[Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
+
+#### Resolution
+
+The alarm will automatically go back to green once the follower has caught up
+with the feed head and sweeps resume. If the follower is not catching up,
+investigate that instead, following the
+[`ConstructHub/Sources/NpmJs/Follower/NoChanges`](#constructhubsourcesnpmjsfollowernochanges)
+instructions.
+
+
 --------------------------------------------------------------------------------
 
 ## :repeat: Bulk Re-processing

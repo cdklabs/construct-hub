@@ -6,6 +6,11 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
 } from '@aws-sdk/client-s3';
+import {
+  DeleteMessageCommand,
+  ReceiveMessageCommand,
+  SendMessageCommand,
+} from '@aws-sdk/client-sqs';
 import type {
   NodeJsRuntimeStreamingBlobPayloadOutputTypes,
   StreamingBlobPayloadInputTypes,
@@ -24,16 +29,27 @@ import {
   MARKER_FILE_NAME,
   METRICS_NAMESPACE,
   KNOWN_VERSIONS_FILE_NAME,
+  RECEIPTS_FILE_NAME,
 } from './constants.lambda-shared';
-import { CouchChanges, DatabaseChange } from './couch-changes.lambda-shared';
+import {
+  CouchChanges,
+  DatabaseChange,
+  getMaxSequentialRevision,
+  parseSequentialRevision,
+} from './couch-changes.lambda-shared';
+import { FollowerReceipts } from './follower-receipts.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
 import {
   LAMBDA_CLIENT,
   S3_CLIENT,
+  SQS_CLIENT,
 } from '../../backend/shared/aws.lambda-shared';
-import { decompressContent } from '../../backend/shared/compress-content.lambda-shared';
+import {
+  compressContent,
+  decompressContent,
+} from '../../backend/shared/compress-content.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
@@ -46,6 +62,33 @@ const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set([
   'cdktf',
 ]);
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
+
+/**
+ * The batch size used by the overlap sweep. The sweep discards
+ * already-received rows before fetching any package metadata, so it can
+ * afford much larger pages than the head-of-feed pass (the feed supports up
+ * to 10,000).
+ */
+const SWEEP_BATCH_SIZE = 10_000;
+
+/**
+ * A sweep batch is only started when at least this much time remains in the
+ * Lambda execution. When the budget runs out, the sweep position is persisted
+ * and the sweep resumes on the next scheduled run.
+ */
+const SWEEP_TIME_BUDGET_MS = 60_000;
+
+/**
+ * Stale-metadata retry messages are only received while at least this much
+ * time remains in the Lambda execution, so that retry processing cannot
+ * starve the head-of-feed pass.
+ */
+const RETRY_QUEUE_TIME_BUDGET_MS = 240_000;
+
+/**
+ * The maximum number of stale-metadata retry messages processed per run.
+ */
+const MAX_RETRY_MESSAGES_PER_RUN = 30;
 
 /**
  * The release date of `aws-cdk@0.8.0`. Anything earlier than this basically is
@@ -79,6 +122,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const stagingBucket = requireEnv('BUCKET_NAME');
   const stagingFunction = requireEnv('FUNCTION_NAME');
+  const retryQueueUrl = requireEnv('RETRY_QUEUE_URL');
 
   const denyList = await DenyListClient.newClient();
   const licenseList = await LicenseListClient.newClient();
@@ -91,8 +135,22 @@ export async function handler(event: ScheduledEvent, context: Context) {
     didLoadVersionsFromLegacy,
   } = await loadFollowerPosition(stagingBucket, npm);
 
+  const receipts = await loadReceipts(stagingBucket, initialMarker);
+
   // If we loaded from the old location, write to the new
   let writeKnownVersionsFile = didLoadVersionsFromLegacy;
+
+  // Process previously deferred changes whose registry metadata was stale.
+  const recoveredCount = await processRetryQueue(
+    context,
+    npm,
+    retryQueueUrl,
+    stagingFunction,
+    denyList,
+    licenseList,
+    knownVersions
+  );
+  writeKnownVersionsFile ||= recoveredCount > 0;
 
   // The last written marker seq id.
   let updatedMarker = initialMarker;
@@ -117,10 +175,25 @@ export async function handler(event: ScheduledEvent, context: Context) {
       updatedMarker = Number(changes.last_seq);
       metrics.setProperty('EndSeq', updatedMarker);
 
+      // Record a receipt for every row received in this batch, so the
+      // overlap sweep can cheaply identify rows that were inserted into the
+      // feed behind our cursor.
+      receipts.addSeqs(changes.seqs);
+
       const startTime = Date.now();
 
       try {
         const batch = changes.actionableResults as readonly Change[];
+
+        // Changes whose registry metadata was still stale after the maximum
+        // wait are deferred to the retry queue instead of being processed
+        // with a potentially incomplete document.
+        metrics.putMetric(
+          MetricName.STALE_METADATA_DEFERRED,
+          changes.staleResults.length,
+          Unit.Count
+        );
+        await deferStaleChanges(retryQueueUrl, changes.staleResults);
 
         // The most recent "modified" timestamp observed in the batch.
         let lastModified: Date | undefined;
@@ -174,29 +247,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           writeKnownVersionsFile ||= versionInfos.length > 0;
 
           // Process all remaining updates
-          await Promise.all(
-            versionInfos.map(async ({ infos, modified, seq }) => {
-              const invokeArgs: PackageVersion = {
-                integrity: infos.dist.shasum,
-                modified: modified.toISOString(),
-                name: infos.name,
-                seq: seq?.toString(),
-                tarballUrl: infos.dist.tarball,
-                version: infos.version,
-              };
-              // "Fire-and-forget" invocation here.
-              console.log(`Sending ${invokeArgs.tarballUrl} for staging`);
-              await LAMBDA_CLIENT.send(
-                new InvokeCommand({
-                  FunctionName: stagingFunction,
-                  InvocationType: 'Event',
-                  Payload: Buffer.from(JSON.stringify(invokeArgs)),
-                })
-              );
-              // Record that this is now a "known" version (no need to re-discover)
-              knownVersions.set(`${infos.name}@${infos.version}`, modified);
-            })
-          );
+          await stageVersions(versionInfos, stagingFunction, knownVersions);
         }
 
         // Updating the S3 stored marker with the new seq id and known versions concurrently
@@ -227,10 +278,348 @@ export async function handler(event: ScheduledEvent, context: Context) {
     context.getRemainingTimeInMillis() >= maxBatchProcessingTime
   );
 
+  // Record where the head-of-feed pass got to, so future sweeps can map
+  // times to sequence numbers (and know which ranges we have receipts for).
+  if (updatedMarker > 0) {
+    receipts.addCheckpoint(updatedMarker);
+  }
+
+  // Re-read a trailing window of the feed to discover rows that were
+  // inserted behind our cursor (the feed does not guarantee monotonic
+  // insertion), then persist the receipts.
+  const sweptCount = await runSweep(
+    context,
+    npm,
+    receipts,
+    retryQueueUrl,
+    stagingFunction,
+    denyList,
+    licenseList,
+    knownVersions,
+    updatedMarker
+  );
+
+  await Promise.all([
+    saveReceipts(context, stagingBucket, receipts),
+    ...(sweptCount > 0
+      ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
+      : []),
+  ]);
+
   console.log('All done here, we have success!');
 
   return { initialMarker, updatedMarker };
 }
+
+/**
+ * Sends the provided package version updates to the staging function
+ * ("fire-and-forget"), and records them as known versions.
+ */
+async function stageVersions(
+  versionInfos: readonly UpdatedVersion[],
+  stagingFunction: string,
+  knownVersions: Map<string, Date>
+): Promise<void> {
+  await Promise.all(
+    versionInfos.map(async ({ infos, modified, seq }) => {
+      const invokeArgs: PackageVersion = {
+        integrity: infos.dist.shasum,
+        modified: modified.toISOString(),
+        name: infos.name,
+        seq: seq?.toString(),
+        tarballUrl: infos.dist.tarball,
+        version: infos.version,
+      };
+      // "Fire-and-forget" invocation here.
+      console.log(`Sending ${invokeArgs.tarballUrl} for staging`);
+      await LAMBDA_CLIENT.send(
+        new InvokeCommand({
+          FunctionName: stagingFunction,
+          InvocationType: 'Event',
+          Payload: Buffer.from(JSON.stringify(invokeArgs)),
+        })
+      );
+      // Record that this is now a "known" version (no need to re-discover)
+      knownVersions.set(`${infos.name}@${infos.version}`, modified);
+    })
+  );
+}
+
+//#region Stale metadata retry queue
+/**
+ * The message payload used on the stale-metadata retry queue.
+ */
+interface StaleMetadataMessage {
+  readonly name: string;
+  readonly expectedRev: number;
+  readonly seq?: string | number;
+  readonly firstSeenAt?: string;
+}
+
+/**
+ * Defers the provided changes (whose registry metadata was stale) to the
+ * retry queue, for re-processing on subsequent runs once the registry has
+ * caught up with the revision announced by the changes feed.
+ */
+async function deferStaleChanges(
+  queueUrl: string,
+  changes: readonly DatabaseChange[]
+): Promise<void> {
+  for (const change of changes) {
+    const message: StaleMetadataMessage = {
+      name: change.id,
+      expectedRev: getMaxSequentialRevision(change),
+      seq: change.seq,
+      firstSeenAt: new Date().toISOString(),
+    };
+    console.log(
+      `Deferring change for ${change.id} (expected rev ${message.expectedRev}) to the stale-metadata retry queue`
+    );
+    await SQS_CLIENT.send(
+      new SendMessageCommand({
+        QueueUrl: queueUrl,
+        MessageBody: JSON.stringify(message),
+      })
+    );
+  }
+}
+
+/**
+ * Processes messages from the stale-metadata retry queue: for each deferred
+ * change, the registry metadata is fetched again. If it has caught up with
+ * the revision announced by the changes feed, the change is processed
+ * normally and the message is deleted. Otherwise the message is left on the
+ * queue for a later retry (it moves to the dead-letter queue once the maximum
+ * receive count is exhausted).
+ *
+ * @returns the number of package versions that were sent for staging.
+ */
+async function processRetryQueue(
+  context: Context,
+  npm: CouchChanges,
+  queueUrl: string,
+  stagingFunction: string,
+  denyList: DenyListClient,
+  licenseList: LicenseListClient,
+  knownVersions: Map<string, Date>
+): Promise<number> {
+  let staged = 0;
+  await metricScope((metrics) => async () => {
+    metrics.setDimensions({});
+    let recovered = 0;
+    let received = 0;
+    while (
+      received < MAX_RETRY_MESSAGES_PER_RUN &&
+      context.getRemainingTimeInMillis() > RETRY_QUEUE_TIME_BUDGET_MS
+    ) {
+      const response = await SQS_CLIENT.send(
+        new ReceiveMessageCommand({
+          QueueUrl: queueUrl,
+          MaxNumberOfMessages: 10,
+        })
+      );
+      const messages = response.Messages ?? [];
+      if (messages.length === 0) {
+        break;
+      }
+      received += messages.length;
+      for (const message of messages) {
+        if (message.Body == null) {
+          continue;
+        }
+        const payload: StaleMetadataMessage = JSON.parse(message.Body);
+        const doc = await npm.getPackageDoc(payload.name);
+        if (doc == null || doc._rev == null) {
+          console.log(
+            `Deferred package ${payload.name} is no longer available in the registry, dropping`
+          );
+          await SQS_CLIENT.send(
+            new DeleteMessageCommand({
+              QueueUrl: queueUrl,
+              ReceiptHandle: message.ReceiptHandle,
+            })
+          );
+          continue;
+        }
+        if (parseSequentialRevision(doc._rev as string) < payload.expectedRev) {
+          // Registry is still behind the announced revision: leave the
+          // message on the queue, it will be re-delivered after the
+          // visibility timeout expires.
+          console.log(
+            `Deferred package ${payload.name} is still stale (rev ${doc._rev} < expected ${payload.expectedRev})`
+          );
+          continue;
+        }
+        const change: DatabaseChange = {
+          changes: [{ rev: doc._rev as string }],
+          deleted: false,
+          id: payload.name,
+          seq: payload.seq,
+          doc,
+        };
+        const versionInfos = getRelevantVersionInfos(
+          [change as Change],
+          metrics,
+          denyList,
+          licenseList,
+          knownVersions
+        );
+        console.log(
+          `Recovered deferred change for ${payload.name}: ${versionInfos.length} relevant version(s)`
+        );
+        await stageVersions(versionInfos, stagingFunction, knownVersions);
+        staged += versionInfos.length;
+        recovered += 1;
+        await SQS_CLIENT.send(
+          new DeleteMessageCommand({
+            QueueUrl: queueUrl,
+            ReceiptHandle: message.ReceiptHandle,
+          })
+        );
+      }
+    }
+    metrics.putMetric(
+      MetricName.STALE_METADATA_RECOVERED,
+      recovered,
+      Unit.Count
+    );
+  })();
+  return staged;
+}
+//#endregion
+
+//#region Overlap sweep
+/**
+ * Re-reads a trailing window of the `_changes` feed and processes any row for
+ * which no receipt exists (i.e. rows that were inserted into the feed behind
+ * the follower's cursor). Rows beyond the current head-of-feed marker are
+ * left for the regular head-of-feed pass.
+ *
+ * @returns the number of package versions that were sent for staging.
+ */
+async function runSweep(
+  context: Context,
+  npm: CouchChanges,
+  receipts: FollowerReceipts,
+  retryQueueUrl: string,
+  stagingFunction: string,
+  denyList: DenyListClient,
+  licenseList: LicenseListClient,
+  knownVersions: Map<string, Date>,
+  headMarker: number
+): Promise<number> {
+  const kind = receipts.dueSweep();
+  if (kind == null || headMarker <= 0) {
+    return 0;
+  }
+  const startSeq = receipts.sweepStartSeq(kind);
+  if (startSeq == null) {
+    // No checkpoint history yet (e.g. first run): nothing to sweep over.
+    return 0;
+  }
+
+  console.log(
+    `Starting ${kind} sweep from seq ${startSeq} up to head marker ${headMarker}`
+  );
+  let staged = 0;
+  let sweepSeq = startSeq;
+  let completed = false;
+
+  while (
+    !completed &&
+    context.getRemainingTimeInMillis() > SWEEP_TIME_BUDGET_MS
+  ) {
+    await metricScope((metrics) => async () => {
+      metrics.setDimensions({});
+      metrics.setProperty('SweepKind', kind);
+      metrics.setProperty('SweepStartSeq', sweepSeq);
+
+      const raw = await npm.rawChanges(sweepSeq, {
+        batchSize: SWEEP_BATCH_SIZE,
+      });
+      const nextSeq = Number(raw.last_seq);
+      metrics.setProperty('SweepEndSeq', nextSeq);
+
+      // Rows beyond the head marker will be handled by the next head-of-feed
+      // pass; do not process (or record) them here.
+      const inScope = raw.results.filter(
+        (change) => change.seq != null && Number(change.seq) <= headMarker
+      );
+      const missed = inScope.filter(
+        (change) => !receipts.has(Number(change.seq))
+      );
+
+      metrics.putMetric(
+        MetricName.LATE_CHANGE_COUNT,
+        missed.length,
+        Unit.Count
+      );
+      const now = Date.now();
+      for (const change of missed) {
+        const crossedAt = receipts.timeCrossed(Number(change.seq));
+        if (crossedAt != null) {
+          metrics.putMetric(
+            MetricName.LATE_CHANGE_LAG,
+            now - crossedAt,
+            Unit.Milliseconds
+          );
+        }
+        console.log(
+          `[sweep] Late change discovered at seq ${change.seq}: ${change.id}`
+        );
+      }
+
+      const processable = missed.filter(
+        (change) => !change.deleted && change.id
+      );
+      if (processable.length > 0) {
+        const { ok, stale } = await npm.fetchAndFilterAllMetadata(processable);
+        metrics.putMetric(
+          MetricName.STALE_METADATA_DEFERRED,
+          stale.length,
+          Unit.Count
+        );
+        await deferStaleChanges(retryQueueUrl, stale);
+        const versionInfos = getRelevantVersionInfos(
+          ok as unknown as readonly Change[],
+          metrics,
+          denyList,
+          licenseList,
+          knownVersions
+        );
+        await stageVersions(versionInfos, stagingFunction, knownVersions);
+        staged += versionInfos.length;
+      }
+
+      // Record receipts for everything in scope (processed or deliberately
+      // skipped), so the next sweep does not revisit them.
+      receipts.addSeqs(
+        inScope.map((change) => Number(change.seq)).filter((seq) => !isNaN(seq))
+      );
+
+      if (
+        raw.totalCount === 0 ||
+        nextSeq >= headMarker ||
+        nextSeq <= sweepSeq
+      ) {
+        completed = true;
+        receipts.completeSweep(kind);
+        console.log(`Completed ${kind} sweep at seq ${nextSeq}`);
+      } else {
+        sweepSeq = nextSeq;
+      }
+    })();
+  }
+
+  if (!completed) {
+    receipts.sweepCursor = { seq: sweepSeq, deep: kind === 'deep' };
+    console.log(
+      `Sweep ran out of time at seq ${sweepSeq}; it will resume on the next run`
+    );
+  }
+  return staged;
+}
+//#endregion
 
 //#region Last known versions and marker
 /**
@@ -422,6 +811,65 @@ async function saveLastTransactionMarker(
     ContentType: 'application/json',
   });
   console.log('Successfully updated marker');
+}
+
+/**
+ * Loads the follower receipts (received sequence numbers, checkpoints, and
+ * sweep state) from S3. A fresh state is returned when the file is missing,
+ * cannot be parsed, or when the sequence space was reset (marker is 0), since
+ * receipts from a previous sequence space are meaningless.
+ */
+async function loadReceipts(
+  stagingBucket: string,
+  initialMarker: number
+): Promise<FollowerReceipts> {
+  if (initialMarker === 0) {
+    console.log(
+      'Marker is 0 (fresh start or sequence space reset), starting with fresh receipts'
+    );
+    return new FollowerReceipts();
+  }
+  const warningMessage = `Receipts object (s3://${stagingBucket}/${RECEIPTS_FILE_NAME}) does not exist, starting from scratch`;
+  const content = await loadContentFromS3(
+    stagingBucket,
+    RECEIPTS_FILE_NAME,
+    warningMessage
+  );
+  if (content === null) {
+    return new FollowerReceipts();
+  }
+  try {
+    const receipts = FollowerReceipts.fromText(content);
+    console.log(
+      `Loaded receipts: ${receipts.receiptCount} seq(s), ${receipts.checkpointCount} checkpoint(s)`
+    );
+    return receipts;
+  } catch (error) {
+    console.warn(`Could not parse receipts file, starting fresh: ${error}`);
+    return new FollowerReceipts();
+  }
+}
+
+/**
+ * Persists the follower receipts to S3 (gzip-compressed when large enough to
+ * warrant it).
+ */
+async function saveReceipts(
+  context: Context,
+  stagingBucket: string,
+  receipts: FollowerReceipts
+) {
+  const { buffer, contentEncoding } = compressContent(
+    Buffer.from(receipts.toText(), 'utf-8')
+  );
+  console.log(
+    `Updating receipts (${receipts.receiptCount} seq(s), ${receipts.checkpointCount} checkpoint(s))`
+  );
+  await putObject(context, stagingBucket, RECEIPTS_FILE_NAME, buffer, {
+    ContentType: 'text/plain',
+    ContentEncoding: contentEncoding,
+  });
+  console.log('Successfully updated receipts');
 }
 //#endregion
 

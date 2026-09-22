@@ -10,6 +10,7 @@ import {
   Metric,
   MetricOptions,
   Statistic,
+  Stats,
   TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
@@ -34,7 +35,9 @@ import {
   MARKER_FILE_NAME,
   METRICS_NAMESPACE,
   MetricName,
+  RECEIPTS_FILE_NAME,
   S3KeyPrefix,
+  SWEEP_MARGIN_MS,
 } from './npmjs/constants.lambda-shared';
 import { NpmJsFollower } from './npmjs/npm-js-follower';
 import { StageAndNotify } from './npmjs/stage-and-notify';
@@ -158,6 +161,12 @@ export class NpmJs implements IPackageSource {
             noncurrentVersionExpiration: Duration.days(30),
             expiredObjectDeleteMarker: true,
           },
+          // Permanently delete receipts file updates after 1 day (we don't need these)
+          {
+            prefix: RECEIPTS_FILE_NAME,
+            noncurrentVersionExpiration: Duration.days(1),
+            expiredObjectDeleteMarker: true,
+          },
         ],
       });
     bucket.grantRead(ingestion);
@@ -193,12 +202,36 @@ export class NpmJs implements IPackageSource {
       })
     );
 
+    // Queue for changes whose npm registry metadata was still stale (behind
+    // the revision announced by the CouchDB changes feed) when the follower
+    // first saw them. The follower re-checks these on subsequent runs, and
+    // messages that never recover end up in the dead-letter queue.
+    const staleMetadataRetryQueue = new Queue(
+      scope,
+      'NpmJs/StaleMetadataRetryQueue',
+      {
+        encryption: QueueEncryption.KMS_MANAGED,
+        retentionPeriod: Duration.days(14),
+        // The follower runs every 5 minutes; a 15 minute visibility timeout
+        // paces retries of still-stale messages.
+        visibilityTimeout: Duration.minutes(15),
+        deadLetterQueue: {
+          maxReceiveCount: 8,
+          queue: new Queue(scope, 'NpmJs/StaleMetadataRetryDLQ', {
+            encryption: QueueEncryption.KMS_MANAGED,
+            retentionPeriod: Duration.days(14),
+          }),
+        },
+      }
+    );
+
     const follower = new NpmJsFollower(scope, 'NpmJs', {
       description: `[${scope.node.path}/NpmJs] Periodically query npmjs.com index for new packages`,
       environment: {
         AWS_EMF_ENVIRONMENT: 'Local',
         BUCKET_NAME: bucket.bucketName,
         FUNCTION_NAME: stager.functionName,
+        RETRY_QUEUE_URL: staleMetadataRetryQueue.queueUrl,
       },
       memorySize: 10_024, // 10 GiB
       reservedConcurrentExecutions: 1, // Only one execution at a time, to avoid race conditions on the S3 marker object
@@ -208,9 +241,12 @@ export class NpmJs implements IPackageSource {
 
     bucket.grantReadWrite(follower, MARKER_FILE_NAME);
     bucket.grantReadWrite(follower, KNOWN_VERSIONS_FILE_NAME);
+    bucket.grantReadWrite(follower, RECEIPTS_FILE_NAME);
     denyList?.grantRead(follower);
     licenseList.grantRead(follower);
     stager.grantInvoke(follower);
+    staleMetadataRetryQueue.grantSendMessages(follower);
+    staleMetadataRetryQueue.grantConsumeMessages(follower);
 
     const restager = new ReStagePackageVersion(scope, 'ReStagePackageVersion', {
       description: `Manually re-stage a package version`,
@@ -229,7 +265,14 @@ export class NpmJs implements IPackageSource {
       targets: [new LambdaFunction(follower)],
     });
 
-    this.registerAlarms(scope, follower, stager, monitoring, rule);
+    this.registerAlarms(
+      scope,
+      follower,
+      stager,
+      monitoring,
+      rule,
+      staleMetadataRetryQueue
+    );
 
     stager.deadLetterQueue &&
       overviewDashboard.addDLQMetricToDashboard(
@@ -263,8 +306,20 @@ export class NpmJs implements IPackageSource {
           name: 'Known Versions',
           url: s3ObjectUrl(bucket, KNOWN_VERSIONS_FILE_NAME),
         },
+        {
+          name: 'Receipts Object',
+          url: s3ObjectUrl(bucket, RECEIPTS_FILE_NAME),
+        },
         { name: 'Stager', url: lambdaFunctionUrl(stager) },
         { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
+        {
+          name: 'Stale Metadata Retry Queue',
+          url: sqsQueueUrl(staleMetadataRetryQueue),
+        },
+        {
+          name: 'Stale Metadata Retry DLQ',
+          url: sqsQueueUrl(staleMetadataRetryQueue.deadLetterQueue!.queue),
+        },
         {
           name: 'Pipeline Trace (Log Analytics)',
           url: logAnalyticsUrl(
@@ -353,6 +408,73 @@ export class NpmJs implements IPackageSource {
           new GraphWidget({
             height: 6,
             width: 12,
+            title: 'Feed Reliability (Overlap Sweep)',
+            left: [
+              fillMetric(
+                this.metricLateChangeCount({ label: 'Late Changes' }),
+                0
+              ),
+              fillMetric(
+                this.metricStaleMetadataDeferred({
+                  label: 'Stale Metadata Deferred',
+                }),
+                0
+              ),
+              fillMetric(
+                this.metricStaleMetadataRecovered({
+                  label: 'Stale Metadata Recovered',
+                }),
+                0
+              ),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              this.metricLateChangeLag({ label: 'Late Change Lag (max)' }),
+            ],
+            rightAnnotations: [
+              {
+                color: '#ff0000',
+                label: 'Sweep Margin',
+                value: SWEEP_MARGIN_MS,
+              },
+            ],
+            rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
+            period: Duration.hours(1),
+          }),
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Stale Metadata Retry Queue',
+            left: [
+              fillMetric(
+                staleMetadataRetryQueue.metricApproximateNumberOfMessagesVisible(
+                  { label: 'Visible Messages' }
+                ),
+                0,
+                'retryQueue'
+              ),
+              fillMetric(
+                staleMetadataRetryQueue.deadLetterQueue!.queue.metricApproximateNumberOfMessagesVisible(
+                  { label: 'DLQ Visible Messages' }
+                ),
+                0,
+                'retryDlq'
+              ),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              staleMetadataRetryQueue.metricApproximateAgeOfOldestMessage({
+                label: 'Oldest Message',
+              }),
+            ],
+            rightYAxis: { min: 0 },
+            period: Duration.minutes(5),
+          }),
+        ],
+        [
+          new GraphWidget({
+            height: 6,
+            width: 12,
             title: 'Stager Dead-Letter Queue',
             left: [
               fillMetric(
@@ -429,6 +551,66 @@ export class NpmJs implements IPackageSource {
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.LAST_SEQ,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of changes discovered by the overlap sweep that were missed by
+   * the regular head-of-feed pass (i.e. rows inserted into the CouchDB
+   * `_changes` feed behind the follower's cursor).
+   */
+  public metricLateChangeCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.hours(1),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.LATE_CHANGE_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * For each late change discovered by the overlap sweep, the time elapsed
+   * between the moment the follower first read past the change's sequence
+   * number and the moment the change was discovered. This is a lower bound on
+   * the feed's insertion lag, and can be used to tune the sweep margin.
+   */
+  public metricLateChangeLag(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.hours(1),
+      statistic: Stats.MAXIMUM,
+      ...opts,
+      metricName: MetricName.LATE_CHANGE_LAG,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of changes that were deferred to the stale-metadata retry
+   * queue because the npm registry metadata was still behind the revision
+   * announced by the `_changes` feed.
+   */
+  public metricStaleMetadataDeferred(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.STALE_METADATA_DEFERRED,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of previously deferred changes that were successfully
+   * recovered from the stale-metadata retry queue.
+   */
+  public metricStaleMetadataRecovered(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.STALE_METADATA_RECOVERED,
       namespace: METRICS_NAMESPACE,
     });
   }
@@ -515,7 +697,8 @@ export class NpmJs implements IPackageSource {
     follower: NpmJsFollower,
     stager: StageAndNotify,
     monitoring: IMonitoring,
-    schedule: Rule
+    schedule: Rule,
+    staleMetadataRetryQueue: Queue
   ) {
     const failureAlarm = follower
       .metricErrors()
@@ -607,6 +790,85 @@ export class NpmJs implements IPackageSource {
     monitoring.addLowSeverityAlarm(
       'NpmJs/Stager DLQ Not Empty',
       dlqNotEmptyAlarm
+    );
+
+    const staleMetadataDlqNotEmptyAlarm = staleMetadataRetryQueue
+      .deadLetterQueue!.queue.metricApproximateNumberOfMessagesVisible({
+        period: Duration.minutes(5),
+      })
+      .createAlarm(scope, 'NpmJs/Follower/StaleMetadataDLQNotEmpty', {
+        alarmName: `${scope.node.path}/NpmJs/Follower/StaleMetadataDLQNotEmpty`,
+        alarmDescription: [
+          'The npm registry never caught up with the revision announced by the CouchDB changes feed',
+          'for one or more packages, even after repeated retries. The affected package versions were',
+          'NOT ingested, and will only be discovered when the package publishes its next version.',
+          'The messages in the dead-letter queue identify the affected packages, which can be',
+          'manually ingested using the ReStagePackageVersion function.',
+          '',
+          `Link to the dead letter queue: ${sqsQueueUrl(
+            staleMetadataRetryQueue.deadLetterQueue!.queue
+          )}`,
+          '',
+          `Runbook: ${RUNBOOK_URL}`,
+        ].join('\n'),
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+        treatMissingData: TreatMissingData.NOT_BREACHING,
+      });
+    monitoring.addLowSeverityAlarm(
+      'NpmJs/Follower Stale Metadata DLQ Not Empty',
+      staleMetadataDlqNotEmptyAlarm
+    );
+
+    const lateChangeLagAlarm = this.metricLateChangeLag({
+      period: Duration.hours(1),
+    }).createAlarm(scope, 'NpmJs/Follower/LateChangeLagHigh', {
+      alarmName: `${scope.node.path}/NpmJs/Follower/LateChangeLagHigh`,
+      alarmDescription: [
+        'The overlap sweep is discovering changes that were inserted into the CouchDB changes feed',
+        'with a lag approaching the sweep margin. If the lag exceeds the margin, the regular sweep',
+        'will miss those changes (only the daily deep sweep would catch them). Consider increasing',
+        'the sweep margin (SWEEP_MARGIN_MS).',
+        '',
+        `Runbook: ${RUNBOOK_URL}`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: 0.8 * SWEEP_MARGIN_MS,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+    monitoring.addLowSeverityAlarm(
+      'NpmJs/Follower Late Change Lag approaching sweep margin',
+      lateChangeLagAlarm
+    );
+
+    // The sweep emits LateChangeCount on every batch (including zero-hit
+    // ones), so a prolonged absence of datapoints means sweeps have stopped
+    // running (e.g. the follower is in extended catch-up and the head-of-feed
+    // pass starves the sweep), leaving late-insertion protection blind.
+    const sweepNotRunningAlarm = this.metricLateChangeCount({
+      period: Duration.hours(1),
+    }).createAlarm(scope, 'NpmJs/Follower/SweepNotRunning', {
+      alarmName: `${scope.node.path}/NpmJs/Follower/SweepNotRunning`,
+      alarmDescription: [
+        'The overlap sweep of the NpmJs follower has not reported in several hours. The follower',
+        'is currently blind to changes inserted into the CouchDB changes feed behind its cursor.',
+        'This usually means the follower is in extended catch-up and the head-of-feed pass is',
+        'consuming the entire execution time budget.',
+        '',
+        `Runbook: ${RUNBOOK_URL}`,
+      ].join('\n'),
+      // Any emitted value (including 0) is healthy; only missing data breaches.
+      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      evaluationPeriods: 6,
+      threshold: 0,
+      treatMissingData: TreatMissingData.BREACHING,
+    });
+    monitoring.addLowSeverityAlarm(
+      'NpmJs/Follower overlap sweep is not running',
+      sweepNotRunningAlarm
     );
 
     // Finally - the "not running" alarm depends on the schedule (it won't run until the schedule

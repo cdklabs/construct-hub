@@ -634,19 +634,19 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Received Bytes","expression":"FILL(m67cc14db3275d4a2af71847df2ebb376a00b015f62c4ff9d1aedb9bc615a6cf0, 0)"}],["ECS/ContainerInsights","NetworkRxBytes","ClusterName","",
+              "","metrics":[[{"label":"Received Bytes","expression":"FILL(mfc29e97ddb123822420c2c4832576b9b5a122defc55f65894354053a927177d1, 0)"}],["ECS/ContainerInsights","NetworkRxBytes","ClusterName","",
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"label":"Received Bytes","stat":"Maximum","visible":false,"id":"m67cc14db3275d4a2af71847df2ebb376a00b015f62c4ff9d1aedb9bc615a6cf0"}],[{"label":"Transmitted Bytes","expression":"FILL(md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1, 0)"}],["ECS/ContainerInsights","NetworkTxBytes","ClusterName","",
+              "",{"label":"Received Bytes","stat":"Maximum","visible":false,"id":"mfc29e97ddb123822420c2c4832576b9b5a122defc55f65894354053a927177d1"}],[{"label":"Transmitted Bytes","expression":"FILL(mef6349ff005c3fc912ee40b47726809d8007e2f6315c55bb831e4e0f526e0c70, 0)"}],["ECS/ContainerInsights","NetworkTxBytes","ClusterName","",
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"label":"Transmitted Bytes","stat":"Maximum","visible":false,"id":"md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1"}],[{"label":"Task Count","expression":"FILL(mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd, 0)","yAxis":"right"}],["ECS/ContainerInsights","TaskCount","ExecutionMetrics","",
+              "",{"label":"Transmitted Bytes","stat":"Maximum","visible":false,"id":"mef6349ff005c3fc912ee40b47726809d8007e2f6315c55bb831e4e0f526e0c70"}],[{"label":"Task Count","expression":"FILL(md923e869a0044de432ace532a4e4f8accf176ba0869e72d3322dd4cbd39e7c0c, 0)","yAxis":"right"}],["ECS/ContainerInsights","TaskCount","ExecutionMetrics","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Task Count","stat":"Sum","visible":false,"id":"mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":16,"properties":{"view":"timeSeries","title":"ECS Task Monitor","region":"",
+              "",{"label":"Task Count","stat":"Sum","visible":false,"id":"md923e869a0044de432ace532a4e4f8accf176ba0869e72d3322dd4cbd39e7c0c"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":16,"properties":{"view":"timeSeries","title":"ECS Task Monitor","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -702,7 +702,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-known-versions.2)\\n[button:Stager](/lambda/home#/functions/",
+              "?prefix=couchdb-known-versions.2)\\n[button:Receipts Object](/s3/object/",
+              {
+                "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+              },
+              "?prefix=couchdb-received-seqs)\\n[button:Stager](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -721,6 +725,36 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
+              ")\\n[button:Stale Metadata Retry Queue](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesNpmJsStaleMetadataRetryQueue2125C09B",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Stale Metadata Retry DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesNpmJsStaleMetadataRetryDLQ0E99D546",
+                  "QueueName",
+                ],
+              },
               ")\\n[button:Pipeline Trace (Log Analytics)](/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400~timeType~'RELATIVE~unit~'seconds~editorString~'fields*20*40timestamp*2C*20*40log*2C*20*40message*0A*7C*20filter*20*40message*20like*20*2Fconstruct-hub-probe*2F*0A*23*20filter*20*40message*20like*20*2F*3Cversion*3E*2F*20*3C-*20narrow*20down*20to*20a*20stuck*20version*0A*7C*20sort*20*40timestamp*20desc*0A*7C*20limit*20100~source~(~'*2Faws*2Flambda*2F",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -733,27 +767,27 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)"}],["AWS/Lambda","Invocations","FunctionName","",
+              "","metrics":[[{"label":"Invocations","expression":"FILL(m0ce71c87a23b5c835573bc90ecad01da1ebd4c248ce94f9c257d658bc6069aec, 0)"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
+              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m0ce71c87a23b5c835573bc90ecad01da1ebd4c248ce94f9c257d658bc6069aec"}],[{"label":"Errors","expression":"FILL(m60b1a9f536a27f3aaa3c2385cff8fac75b927f8690a6e416afafc4d63108c63e, 0)"}],["AWS/Lambda","Errors","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}],["ConstructHub/PackageSource/NpmJs/Follower","RemainingTime",{"label":"Remaining Time","stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":59,"properties":{"view":"timeSeries","title":"Stager Health","region":"",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m60b1a9f536a27f3aaa3c2385cff8fac75b927f8690a6e416afafc4d63108c63e"}],["ConstructHub/PackageSource/NpmJs/Follower","RemainingTime",{"label":"Remaining Time","stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":59,"properties":{"view":"timeSeries","title":"Stager Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)"}],["AWS/Lambda","Invocations","FunctionName","",
+              "","metrics":[[{"label":"Invocations","expression":"FILL(m0ce71c87a23b5c835573bc90ecad01da1ebd4c248ce94f9c257d658bc6069aec, 0)"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
-              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
+              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m0ce71c87a23b5c835573bc90ecad01da1ebd4c248ce94f9c257d658bc6069aec"}],[{"label":"Errors","expression":"FILL(m60b1a9f536a27f3aaa3c2385cff8fac75b927f8690a6e416afafc4d63108c63e, 0)"}],["AWS/Lambda","Errors","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}],["AWS/Lambda","Duration","FunctionName","",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m60b1a9f536a27f3aaa3c2385cff8fac75b927f8690a6e416afafc4d63108c63e"}],["AWS/Lambda","Duration","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -761,40 +795,69 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Change Count","expression":"FILL(mf6a938229aec623f5cf21e3ae3401901e7f7c6ebd5774ab6ac6e74af83efd121, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","ChangeCount",{"label":"Change Count","stat":"Sum","visible":false,"id":"mf6a938229aec623f5cf21e3ae3401901e7f7c6ebd5774ab6ac6e74af83efd121"}],[{"label":"Unprocessable","expression":"FILL(m5b235d813bd8ded65d7de9a1345c9b49a8cf2af40e7e98ddbb8cb73e00783a8a, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","UnprocessableEntity",{"label":"Unprocessable","stat":"Sum","visible":false,"id":"m5b235d813bd8ded65d7de9a1345c9b49a8cf2af40e7e98ddbb8cb73e00783a8a"}],[{"label":"Lag to npmjs.com","expression":"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","NpmJsChangeAge",{"label":"Lag to npmjs.com","stat":"Minimum","visible":false,"id":"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b"}],[{"label":"Package Version Age","expression":"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package Version Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":65,"properties":{"view":"timeSeries","title":"CouchDB Changes","region":"",
+              "","metrics":[[{"label":"Change Count","expression":"FILL(m7dd96da53b843cbea52ec982e51e6f10adf5c3450276be550dc1a37fd306d5c5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","ChangeCount",{"label":"Change Count","stat":"Sum","visible":false,"id":"m7dd96da53b843cbea52ec982e51e6f10adf5c3450276be550dc1a37fd306d5c5"}],[{"label":"Unprocessable","expression":"FILL(mc0b8edffe5268f2643cee6ab0dc182e9701a2c1acb2022fec1ad73ab6d04bc62, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","UnprocessableEntity",{"label":"Unprocessable","stat":"Sum","visible":false,"id":"mc0b8edffe5268f2643cee6ab0dc182e9701a2c1acb2022fec1ad73ab6d04bc62"}],[{"label":"Lag to npmjs.com","expression":"FILL(m071ea3a4182a8bb74be01c558e5f2b73374219944a0a21c421a2674d9aa6e6d7, REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","NpmJsChangeAge",{"label":"Lag to npmjs.com","stat":"Minimum","visible":false,"id":"m071ea3a4182a8bb74be01c558e5f2b73374219944a0a21c421a2674d9aa6e6d7"}],[{"label":"Package Version Age","expression":"FILL(m0964a38e961dedc0f8b3001db100c5e1d7274ca8abb122720a24dce627e9747a, REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package Version Age","stat":"Maximum","visible":false,"id":"m0964a38e961dedc0f8b3001db100c5e1d7274ca8abb122720a24dce627e9747a"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":65,"properties":{"view":"timeSeries","title":"CouchDB Changes","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Last Sequence Number","expression":"FILL(mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500, REPEAT)"}],["ConstructHub/PackageSource/NpmJs/Follower","LastSeq",{"label":"Last Sequence Number","stat":"Maximum","visible":false,"id":"mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500"}]],"yAxis":{},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":71,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
+              "","metrics":[[{"label":"Last Sequence Number","expression":"FILL(mfd9b322a892b6ebd4710f9bc5a30b1fbd118e20e47f9c8eaeee194d77322b72a, REPEAT)"}],["ConstructHub/PackageSource/NpmJs/Follower","LastSeq",{"label":"Last Sequence Number","stat":"Maximum","visible":false,"id":"mfd9b322a892b6ebd4710f9bc5a30b1fbd118e20e47f9c8eaeee194d77322b72a"}]],"yAxis":{},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":71,"properties":{"view":"timeSeries","title":"Feed Reliability (Overlap Sweep)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Visible Messages","expression":"FILL(m96c7bb4160011a049b6b07c0feab8fb02e5a8d4aa466939592829f864dde6400, 0)"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              "","metrics":[[{"label":"Late Changes","expression":"FILL(me5a01511901821ea0f462a1ed69195258d22bcdcf2e3401f0f50f5eaf57aeb1e, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"me5a01511901821ea0f462a1ed69195258d22bcdcf2e3401f0f50f5eaf57aeb1e"}],[{"label":"Stale Metadata Deferred","expression":"FILL(m484b96e9d8d4c74b70b5c05d0088abd203b88ce18b760b2c892a9f5c29b01610, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","StaleMetadataDeferred",{"label":"Stale Metadata Deferred","stat":"Sum","visible":false,"id":"m484b96e9d8d4c74b70b5c05d0088abd203b88ce18b760b2c892a9f5c29b01610"}],[{"label":"Stale Metadata Recovered","expression":"FILL(m03268eb1a78863792e9896c19cd19564761e6d8e79d770dc73b39c5b3132b30f, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","StaleMetadataRecovered",{"label":"Stale Metadata Recovered","stat":"Sum","visible":false,"id":"m03268eb1a78863792e9896c19cd19564761e6d8e79d770dc73b39c5b3132b30f"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","period":3600,"stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Sweep Margin","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":3600}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Stale Metadata Retry Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[[{"label":"Visible Messages","expression":"FILL(m850e080ca0cd99796703c3f041dcb994f126e8f9249f902d2d691c04dc3a977b, 0)"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesNpmJsStaleMetadataRetryQueue2125C09B",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Visible Messages","stat":"Maximum","visible":false,"id":"m850e080ca0cd99796703c3f041dcb994f126e8f9249f902d2d691c04dc3a977b"}],[{"label":"DLQ Visible Messages","expression":"FILL(m3bbc7927730cd5004ea9959c2786578dac68358d4d70f17f1c2645b5f778382b, 0)"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesNpmJsStaleMetadataRetryDLQ0E99D546",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"DLQ Visible Messages","stat":"Maximum","visible":false,"id":"m3bbc7927730cd5004ea9959c2786578dac68358d4d70f17f1c2645b5f778382b"}],["AWS/SQS","ApproximateAgeOfOldestMessage","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesNpmJsStaleMetadataRetryQueue2125C09B",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Oldest Message","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[[{"label":"Visible Messages","expression":"FILL(mf966fd33b8a743d601b8e64794dee25b745762e3add6ac1cff04ab82493507b5, 0)"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
               {
                 "Fn::GetAtt": [
                   "ConstructHubSourcesStagerDLQ80BD2600",
                   "QueueName",
                 ],
               },
-              "",{"label":"Visible Messages","stat":"Maximum","visible":false,"id":"m96c7bb4160011a049b6b07c0feab8fb02e5a8d4aa466939592829f864dde6400"}],[{"label":"Invisible Messages","expression":"FILL(mf74066283a392fc98a0cd7a405f2aa9b5af544d3a87542f06fff7fd069fd8578, 0)"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
+              "",{"label":"Visible Messages","stat":"Maximum","visible":false,"id":"mf966fd33b8a743d601b8e64794dee25b745762e3add6ac1cff04ab82493507b5"}],[{"label":"Invisible Messages","expression":"FILL(m4a2489d3e1658e50053af6351a1b6de6eedbf25cff1270c0c89ff187dad2876d, 0)"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
               {
                 "Fn::GetAtt": [
                   "ConstructHubSourcesStagerDLQ80BD2600",
                   "QueueName",
                 ],
               },
-              "",{"label":"Invisible Messages","stat":"Maximum","visible":false,"id":"mf74066283a392fc98a0cd7a405f2aa9b5af544d3a87542f06fff7fd069fd8578"}],["AWS/SQS","ApproximateAgeOfOldestMessage","QueueName","",
+              "",{"label":"Invisible Messages","stat":"Maximum","visible":false,"id":"m4a2489d3e1658e50053af6351a1b6de6eedbf25cff1270c0c89ff187dad2876d"}],["AWS/SQS","ApproximateAgeOfOldestMessage","QueueName","",
               {
                 "Fn::GetAtt": [
                   "ConstructHubSourcesStagerDLQ80BD2600",
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Package Canary","region":"",
+              "",{"label":"Oldest Message","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":77,"properties":{"view":"timeSeries","title":"Package Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell Time","stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time to Catalog","stat":"Maximum"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA (5 minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0}}}},{"type":"log","width":12,"height":6,"x":0,"y":77,"properties":{"view":"table","title":"Stuck Versions (still not visible in ConstructHub)","region":"",
+              "","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell Time","stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time to Catalog","stat":"Maximum"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA (5 minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0}}}},{"type":"log","width":12,"height":6,"x":0,"y":83,"properties":{"view":"table","title":"Stuck Versions (still not visible in ConstructHub)","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -802,7 +865,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
               },
-              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| filter toMillis(@timestamp) > (now() - 900) * 1000\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "' | fields @timestamp, @message\\n| filter @message like /\\"DwellTime\\"/\\n| filter toMillis(@timestamp) > (now() - 900) * 1000\\n| parse @message '\\"PackageVersion\\":\\"*\\"' as version\\n| parse @message '\\"DwellTime\\":*,' as dwellTimeSec\\n| stats max(dwellTimeSec) as maxDwellTimeSec by version\\n| sort maxDwellTimeSec desc"}},{"type":"text","width":24,"height":2,"x":0,"y":89,"properties":{"markdown":"# Ingestion Function\\n\\n[button:Ingestion Function](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -825,19 +888,19 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":85,"properties":{"view":"timeSeries","title":"Function Health","region":"",
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":91,"properties":{"view":"timeSeries","title":"Function Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)"}],["AWS/Lambda","Invocations","FunctionName","",
+              "","metrics":[[{"label":"Invocations","expression":"FILL(m0ce71c87a23b5c835573bc90ecad01da1ebd4c248ce94f9c257d658bc6069aec, 0)"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
+              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m0ce71c87a23b5c835573bc90ecad01da1ebd4c248ce94f9c257d658bc6069aec"}],[{"label":"Errors","expression":"FILL(m60b1a9f536a27f3aaa3c2385cff8fac75b927f8690a6e416afafc4d63108c63e, 0)"}],["AWS/Lambda","Errors","FunctionName","",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":85,"properties":{"view":"timeSeries","title":"Input Queue","region":"",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m60b1a9f536a27f3aaa3c2385cff8fac75b927f8690a6e416afafc4d63108c63e"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":91,"properties":{"view":"timeSeries","title":"Input Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -862,11 +925,11 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","period":60,"stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"10 Minutes","value":600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":0,"y":91,"properties":{"view":"timeSeries","title":"Input Quality","region":"",
+              "",{"label":"Oldest Message Age","period":60,"stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"10 Minutes","value":600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":0,"y":97,"properties":{"view":"timeSeries","title":"Input Quality","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","stacked":true,"metrics":[[{"label":"Invalid Assemblies","expression":"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)"}],["ConstructHub/Ingestion","InvalidAssembly",{"label":"Invalid Assemblies","stat":"Sum","visible":false,"id":"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3"}],[{"label":"Invalid Tarball","expression":"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)"}],["ConstructHub/Ingestion","InvalidTarball",{"label":"Invalid Tarball","stat":"Sum","visible":false,"id":"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1"}],[{"label":"Ineligible License","expression":"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)"}],["ConstructHub/Ingestion","IneligibleLicense",{"label":"Ineligible License","stat":"Sum","visible":false,"id":"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6"}],[{"label":"Mismatched Identity","expression":"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)"}],["ConstructHub/Ingestion","MismatchedIdentityRejections",{"label":"Mismatched Identity","stat":"Sum","visible":false,"id":"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b"}],[{"label":"Found License file","expression":"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)"}],["ConstructHub/Ingestion","FoundLicenseFile",{"label":"Found License file","stat":"Sum","visible":false,"id":"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661"}]],"yAxis":{"left":{"label":"Count","min":0,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":91,"properties":{"view":"timeSeries","title":"Dead Letters","region":"",
+              "","stacked":true,"metrics":[[{"label":"Invalid Assemblies","expression":"FILL(m722588e4526cf1b3f2a6e10a1b7c739c7ba78de7c2e3f632e81443bb12f0ae47, 0)"}],["ConstructHub/Ingestion","InvalidAssembly",{"label":"Invalid Assemblies","stat":"Sum","visible":false,"id":"m722588e4526cf1b3f2a6e10a1b7c739c7ba78de7c2e3f632e81443bb12f0ae47"}],[{"label":"Invalid Tarball","expression":"FILL(mdb9b4024d1d49a57800b806b32dac9a0b6af98dda0e792ba1df7c7a0b5d431e2, 0)"}],["ConstructHub/Ingestion","InvalidTarball",{"label":"Invalid Tarball","stat":"Sum","visible":false,"id":"mdb9b4024d1d49a57800b806b32dac9a0b6af98dda0e792ba1df7c7a0b5d431e2"}],[{"label":"Ineligible License","expression":"FILL(mb891ed2a7ce11d9e6a61621191ec41ae1b60c4f5d09df5974b3f47ebb7b1192a, 0)"}],["ConstructHub/Ingestion","IneligibleLicense",{"label":"Ineligible License","stat":"Sum","visible":false,"id":"mb891ed2a7ce11d9e6a61621191ec41ae1b60c4f5d09df5974b3f47ebb7b1192a"}],[{"label":"Mismatched Identity","expression":"FILL(m1264778e17e711d8c749484339ef7aea45da3c760f873cef8e2587ed717a1189, 0)"}],["ConstructHub/Ingestion","MismatchedIdentityRejections",{"label":"Mismatched Identity","stat":"Sum","visible":false,"id":"m1264778e17e711d8c749484339ef7aea45da3c760f873cef8e2587ed717a1189"}],[{"label":"Found License file","expression":"FILL(m0c4ef260dab72cfb5e163a1751cef2c9631aac2abafbc5ae964480e1befb5c95, 0)"}],["ConstructHub/Ingestion","FoundLicenseFile",{"label":"Found License file","stat":"Sum","visible":false,"id":"m0c4ef260dab72cfb5e163a1751cef2c9631aac2abafbc5ae964480e1befb5c95"}]],"yAxis":{"left":{"label":"Count","min":0,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":97,"properties":{"view":"timeSeries","title":"Dead Letters","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -891,7 +954,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":97,"properties":{"markdown":"# Orchestration\\n\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":103,"properties":{"markdown":"# Orchestration\\n\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -922,43 +985,43 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestrationRetryUninstallablePackagesA408F9B3",
               },
-              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":99,"properties":{"view":"timeSeries","title":"State Machine Executions","region":"",
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":105,"properties":{"view":"timeSeries","title":"State Machine Executions","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Started","expression":"FILL(m392141ff4cfa3bbe1889b2db42bcf20599513e199a0b9fb8dc736cde893c1d7c, 0)"}],["AWS/States","ExecutionsStarted","StateMachineArn","",
+              "","metrics":[[{"label":"Started","expression":"FILL(md743bc8e2d09dc13a3dcbcf31845985ef87f5821d2a8229c2132c0bf67d2d09b, 0)"}],["AWS/States","ExecutionsStarted","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Started","stat":"Sum","visible":false,"id":"m392141ff4cfa3bbe1889b2db42bcf20599513e199a0b9fb8dc736cde893c1d7c"}],[{"label":"Succeeded","expression":"FILL(md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1, 0)"}],["AWS/States","ExecutionsSucceeded","StateMachineArn","",
+              "",{"label":"Started","stat":"Sum","visible":false,"id":"md743bc8e2d09dc13a3dcbcf31845985ef87f5821d2a8229c2132c0bf67d2d09b"}],[{"label":"Succeeded","expression":"FILL(mac3fed2e8a56aee0460c9720a50bd361cdbbc4e39be589fcd2eb6101f99607f4, 0)"}],["AWS/States","ExecutionsSucceeded","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],["AWS/States","ExecutionTime","StateMachineArn","",
+              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"mac3fed2e8a56aee0460c9720a50bd361cdbbc4e39be589fcd2eb6101f99607f4"}],["AWS/States","ExecutionTime","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"State Machine Failures","region":"",
+              "",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":105,"properties":{"view":"timeSeries","title":"State Machine Failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Aborted","expression":"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
+              "","metrics":[[{"label":"Aborted","expression":"FILL(m5028722e11cc328c5056c293e01f101d5b0b645d7609cdb5342add75b70e81b5, 0)"}],["AWS/States","ExecutionsAborted","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Aborted","stat":"Sum","visible":false,"id":"m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08"}],[{"label":"Failed","expression":"FILL(m503cb5a7568675222eb2ac827982f88ad300c986505dabfafe1707080946e597, 0)"}],["AWS/States","ExecutionsFailed","StateMachineArn","",
+              "",{"label":"Aborted","stat":"Sum","visible":false,"id":"m5028722e11cc328c5056c293e01f101d5b0b645d7609cdb5342add75b70e81b5"}],[{"label":"Failed","expression":"FILL(mbccfe4119610b7cd90761ff728a29536ce8db96bb9796434e1b8ae1f6abf3ea3, 0)"}],["AWS/States","ExecutionsFailed","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Failed","stat":"Sum","visible":false,"id":"m503cb5a7568675222eb2ac827982f88ad300c986505dabfafe1707080946e597"}],[{"label":"Throttled","expression":"FILL(m278670a6ffa3ce32fec8fcb73c1cfdc4c965389617e2387ab5852ebb00b2a81f, 0)"}],["AWS/States","ExecutionThrottled","StateMachineArn","",
+              "",{"label":"Failed","stat":"Sum","visible":false,"id":"mbccfe4119610b7cd90761ff728a29536ce8db96bb9796434e1b8ae1f6abf3ea3"}],[{"label":"Throttled","expression":"FILL(m07bd2f11d05861ff62e3b67f34f4f3fb5484b6c3bcbd1e0ebaa30465c4809ffe, 0)"}],["AWS/States","ExecutionThrottled","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Throttled","stat":"Sum","visible":false,"id":"m278670a6ffa3ce32fec8fcb73c1cfdc4c965389617e2387ab5852ebb00b2a81f"}],[{"label":"Timed Out","expression":"FILL(m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21, 0)"}],["AWS/States","ExecutionsTimedOut","StateMachineArn","",
+              "",{"label":"Throttled","stat":"Sum","visible":false,"id":"m07bd2f11d05861ff62e3b67f34f4f3fb5484b6c3bcbd1e0ebaa30465c4809ffe"}],[{"label":"Timed Out","expression":"FILL(m9f26430a0433776283742de97841340a090adcb446f52bfb0cb37ce1271995a3, 0)"}],["AWS/States","ExecutionsTimedOut","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":105,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
+              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m9f26430a0433776283742de97841340a090adcb446f52bfb0cb37ce1271995a3"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":111,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -983,7 +1046,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":111,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
+              "",{"label":"Oldest Message Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10 days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14 days (DLQ Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":117,"properties":{"markdown":"# Deny List\\n\\n[button:primary:Deny List Object](/s3/object/",
               {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -1014,30 +1077,30 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":113,"properties":{"view":"timeSeries","title":"Deny List","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":119,"properties":{"view":"timeSeries","title":"Deny List","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Rules","expression":"FILL(m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f, REPEAT)"}],["ConstructHub/DenyList","DenyListRuleCount",{"label":"Rules","stat":"Maximum","visible":false,"id":"m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f"}],["AWS/SQS","NumberOfMessagesDeleted","QueueName","",
+              "","metrics":[[{"label":"Rules","expression":"FILL(m2fa15e0382effe051e052f96fdcb4b1528cdcfd05aba5663829d1c5e99c112d6, REPEAT)"}],["ConstructHub/DenyList","DenyListRuleCount",{"label":"Rules","stat":"Maximum","visible":false,"id":"m2fa15e0382effe051e052f96fdcb4b1528cdcfd05aba5663829d1c5e99c112d6"}],["AWS/SQS","NumberOfMessagesDeleted","QueueName","",
               {
                 "Fn::GetAtt": [
                   "ConstructHubDenyListPruneDeleteQueueBBF60185",
                   "QueueName",
                 ],
               },
-              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":113,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
+              "",{"label":"Deleted Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":119,"properties":{"view":"timeSeries","title":"Prune Function Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)"}],["AWS/Lambda","Invocations","FunctionName","",
+              "","metrics":[[{"label":"Invocations","expression":"FILL(m0ce71c87a23b5c835573bc90ecad01da1ebd4c248ce94f9c257d658bc6069aec, 0)"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
+              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m0ce71c87a23b5c835573bc90ecad01da1ebd4c248ce94f9c257d658bc6069aec"}],[{"label":"Errors","expression":"FILL(m60b1a9f536a27f3aaa3c2385cff8fac75b927f8690a6e416afafc4d63108c63e, 0)"}],["AWS/Lambda","Errors","FunctionName","",
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":119,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
+              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m60b1a9f536a27f3aaa3c2385cff8fac75b927f8690a6e416afafc4d63108c63e"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":125,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -1057,11 +1120,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStatsAggregator3345DB4E",
               },
-              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":121,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":127,"properties":{"view":"timeSeries","title":"Number of Package Stats Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":121,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Packages with stats","expression":"FILL(mcfaa85bc3bba4c6a19d9471c142866ca1b3e14e191b036a0e57f05f7dc775b87, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"mcfaa85bc3bba4c6a19d9471c142866ca1b3e14e191b036a0e57f05f7dc775b87"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":127,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1069,7 +1132,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubStatsStateMachine1A1DEC97",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"6 hours (State Machine timeout)","value":21600,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":127,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"6 hours (State Machine timeout)","value":21600,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":133,"properties":{"markdown":"# Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -1081,11 +1144,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":129,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
+              "/log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":135,"properties":{"view":"timeSeries","title":"Number of Package Versions Recorded","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":129,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(mafd748e1416b5c8063b187f4cdd8765c1a74c29a0e0ea4ab3c4d67aa2de263d7, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"mafd748e1416b5c8063b187f4cdd8765c1a74c29a0e0ea4ab3c4d67aa2de263d7"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":135,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1093,7 +1156,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubVersionTrackerD5E8AEAE",
               },
-              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"1 minutes (Lambda timeout)","value":60,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":135,"properties":{"markdown":"# Release Notes\\n\\n[button:primary:StateMachine](/states/home#/statemachines/view/",
+              "",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"1 minutes (Lambda timeout)","value":60,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":141,"properties":{"markdown":"# Release Notes\\n\\n[button:primary:StateMachine](/states/home#/statemachines/view/",
               {
                 "Ref": "ConstructHubReleaseNotesStateMachine8C711CC7",
               },
@@ -1154,19 +1217,19 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":137,"properties":{"view":"timeSeries","title":"Number of release Notes","region":"",
+              ")"}},{"type":"metric","width":12,"height":6,"x":0,"y":143,"properties":{"view":"timeSeries","title":"Number of release Notes","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with release notes","expression":"FILL(m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d, REPEAT)"}],["ConstructHub/ReleaseNotes","PackageWithChangeLog",{"label":"Packages with release notes","stat":"Sum","visible":false,"id":"m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":137,"properties":{"view":"timeSeries","title":"Release notes generation Errors","region":"",
+              "","metrics":[[{"label":"Packages with release notes","expression":"FILL(m2b837d3d9541bb2129b8500390287020ea25ecc79f811ffa09e55e57cac85cce, REPEAT)"}],["ConstructHub/ReleaseNotes","PackageWithChangeLog",{"label":"Packages with release notes","stat":"Sum","visible":false,"id":"m2b837d3d9541bb2129b8500390287020ea25ecc79f811ffa09e55e57cac85cce"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":143,"properties":{"view":"timeSeries","title":"Release notes generation Errors","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["ConstructHub/ReleaseNotes","AllErrors",{"label":"All Errors","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnknownError",{"label":"UnknownError","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidCredentials",{"label":"InvalidCredentials","stat":"Maximum"}],["ConstructHub/ReleaseNotes","RequestQuotaExhausted",{"label":"RequestQuotaExhausted","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnSupportedRepo",{"label":"UnSupportedRepo","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidPackageJson",{"label":"InvalidPackageJson","stat":"Maximum"}],["ConstructHub/ReleaseNotes","ChangelogFetchError",{"label":"ChangeLogFetchError","stat":"Maximum"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":0,"y":143,"properties":{"view":"timeSeries","title":"GitHub API Rate Limits","region":"",
+              "","metrics":[["ConstructHub/ReleaseNotes","AllErrors",{"label":"All Errors","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnknownError",{"label":"UnknownError","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidCredentials",{"label":"InvalidCredentials","stat":"Maximum"}],["ConstructHub/ReleaseNotes","RequestQuotaExhausted",{"label":"RequestQuotaExhausted","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnSupportedRepo",{"label":"UnSupportedRepo","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidPackageJson",{"label":"InvalidPackageJson","stat":"Maximum"}],["ConstructHub/ReleaseNotes","ChangelogFetchError",{"label":"ChangeLogFetchError","stat":"Maximum"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":0,"y":149,"properties":{"view":"timeSeries","title":"GitHub API Rate Limits","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Limit","expression":"FILL(mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d, REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsLimit",{"label":"Limit","stat":"Maximum","visible":false,"id":"mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d"}],[{"label":"Used","expression":"FILL(mc54991399581cec857a3c1773e2649cbfb65cef7ea4e459f2ada3ee31c60782e, REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsUsed",{"label":"Used","stat":"Maximum","visible":false,"id":"mc54991399581cec857a3c1773e2649cbfb65cef7ea4e459f2ada3ee31c60782e"}],[{"label":"Remaining","expression":"FILL(m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a, REPEAT)"}],["ConstructHub/ReleaseNotes","GhRateLimitsRemaining",{"label":"Remaining","stat":"Minimum","visible":false,"id":"m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a"}]],"yAxis":{}}}]}",
+              "","metrics":[[{"label":"Limit","expression":"FILL(m1a9dcabdab0ed918e0c045f7f467f637ea3dd3a90d362ab329916a09516c8da9, REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsLimit",{"label":"Limit","stat":"Maximum","visible":false,"id":"m1a9dcabdab0ed918e0c045f7f467f637ea3dd3a90d362ab329916a09516c8da9"}],[{"label":"Used","expression":"FILL(mf77a43d3843c077bbce01ef69848120e4600993b32b8680e5e558436cef53415, REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsUsed",{"label":"Used","stat":"Maximum","visible":false,"id":"mf77a43d3843c077bbce01ef69848120e4600993b32b8680e5e558436cef53415"}],[{"label":"Remaining","expression":"FILL(m5d3e24e985f04a097522cd3f1dd10067eebce2da0b207f99e090b9717600957f, REPEAT)"}],["ConstructHub/ReleaseNotes","GhRateLimitsRemaining",{"label":"Remaining","stat":"Minimum","visible":false,"id":"m5d3e24e985f04a097522cd3f1dd10067eebce2da0b207f99e090b9717600957f"}]],"yAxis":{}}}]}",
             ],
           ],
         },
@@ -11150,6 +11213,14 @@ Direct link to the function: /lambda/home#/functions/",
               "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-received-seqs",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -11233,7 +11304,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "70bbd5637676be1a0dd5cdb9e37372b27d89fd58f0e04ffbe4f442988717a4c2.zip",
+          "S3Key": "a0cc00d9c18e07c65112616e2da5da6fdc8cf2155dad9e4d76ca4f05fd7a2229.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -11253,6 +11324,9 @@ Direct link to the function: /lambda/home#/functions/",
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "RETRY_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesNpmJsStaleMetadataRetryQueue2125C09B",
+            },
           },
         },
         "Handler": "index.handler",
@@ -11684,6 +11758,26 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "ConstructHubSourcesNpmJsFollowerLateChangeLagHigh74C200AA": {
+      "Properties": {
+        "AlarmDescription": "The overlap sweep is discovering changes that were inserted into the CouchDB changes feed
+with a lag approaching the sweep margin. If the lag exceeds the margin, the regular sweep
+will miss those changes (only the daily deep sweep would catch them). Consider increasing
+the sweep margin (SWEEP_MARGIN_MS).
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "dev/ConstructHub/Sources/NpmJs/Follower/LateChangeLagHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "LateChangeLag",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 3600,
+        "Statistic": "Maximum",
+        "Threshold": 17280000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
     "ConstructHubSourcesNpmJsFollowerNoChanges2CB08C93": {
       "Properties": {
         "AlarmDescription": {
@@ -11750,6 +11844,82 @@ Direct link to Lambda function: /lambda/home#/functions/",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerStaleMetadataDLQNotEmpty68864A28": {
+      "Properties": {
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "The npm registry never caught up with the revision announced by the CouchDB changes feed
+for one or more packages, even after repeated retries. The affected package versions were
+NOT ingested, and will only be discovered when the package publishes its next version.
+The messages in the dead-letter queue identify the affected packages, which can be
+manually ingested using the ReStagePackageVersion function.
+
+Link to the dead letter queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesNpmJsStaleMetadataRetryDLQ0E99D546",
+                  "QueueName",
+                ],
+              },
+              "
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "dev/ConstructHub/Sources/NpmJs/Follower/StaleMetadataDLQNotEmpty",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "ConstructHubSourcesNpmJsStaleMetadataRetryDLQ0E99D546",
+                "QueueName",
+              ],
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 300,
+        "Statistic": "Maximum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerSweepNotRunningC7CA155E": {
+      "Properties": {
+        "AlarmDescription": "The overlap sweep of the NpmJs follower has not reported in several hours. The follower
+is currently blind to changes inserted into the CouchDB changes feed behind its cursor.
+This usually means the follower is in extended catch-up and the head-of-feed pass is
+consuming the entire execution time budget.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "dev/ConstructHub/Sources/NpmJs/Follower/SweepNotRunning",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 6,
+        "MetricName": "LateChangeCount",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 3600,
+        "Statistic": "Sum",
+        "Threshold": 0,
         "TreatMissingData": "breaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -11928,6 +12098,43 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-received-seqs",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -12009,6 +12216,36 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 },
               ],
             },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesNpmJsStaleMetadataRetryQueue2125C09B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesNpmJsStaleMetadataRetryQueue2125C09B",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -12034,7 +12271,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "846ba6dee713ab358e7132db46279fd65eb27e9e342e7e8eaee23d296d37ef30.zip",
+          "S3Key": "e34dcef0fa9dde1269f8a4cf5e401b4b8be2ffda10905a4279111e1477a65bfc.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -12290,6 +12527,14 @@ Direct link to Lambda function: /lambda/home#/functions/",
               "Prefix": "couchdb-known-versions.2",
               "Status": "Enabled",
             },
+            {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1,
+              },
+              "Prefix": "couchdb-received-seqs",
+              "Status": "Enabled",
+            },
           ],
         },
         "PublicAccessBlockConfiguration": {
@@ -12351,6 +12596,34 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubSourcesNpmJsStaleMetadataRetryDLQ0E99D546": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesNpmJsStaleMetadataRetryQueue2125C09B": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "ConstructHubSourcesNpmJsStaleMetadataRetryDLQ0E99D546",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 8,
+        },
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubSourcesReStagePackageVersion5E1211D1": {
       "DependsOn": [
