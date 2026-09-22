@@ -18,7 +18,7 @@ resources if Construct Hub is running in a VPC, etc.).
 
 ### `<Signals.SIGKILL: 9>`
 
-A `SIGKILL` error is likely a memory issue with a Custom Resource AWS Lambda Function 
+A `SIGKILL` error is likely a memory issue with a Custom Resource AWS Lambda Function
 that is running during deployment. One such example is the Web App Deploy construct
 that copies the Web App into an S3 Bucket using a Custom Resource. This is an AWS Lambda
 Function that is subject to memory constraints.
