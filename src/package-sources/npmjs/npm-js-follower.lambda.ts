@@ -24,8 +24,18 @@ import {
   MARKER_FILE_NAME,
   METRICS_NAMESPACE,
   KNOWN_VERSIONS_FILE_NAME,
+  FOLLOWER_STATE_FILE_NAME,
+  SCAN_WINDOW_MS,
+  STATE_RETENTION_MS,
+  LAGGY_PACKUMENT_GIVE_UP_MS,
 } from './constants.lambda-shared';
-import { CouchChanges, DatabaseChange } from './couch-changes.lambda-shared';
+import {
+  CouchChanges,
+  DatabaseChange,
+  DatabaseChanges,
+  parseSequentialRevision,
+} from './couch-changes.lambda-shared';
+import { FollowerState } from './follower-state.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
@@ -33,7 +43,10 @@ import {
   LAMBDA_CLIENT,
   S3_CLIENT,
 } from '../../backend/shared/aws.lambda-shared';
-import { decompressContent } from '../../backend/shared/compress-content.lambda-shared';
+import {
+  compressContent,
+  decompressContent,
+} from '../../backend/shared/compress-content.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
@@ -50,10 +63,36 @@ const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 /**
  * The release date of `aws-cdk@0.8.0`. Anything earlier than this basically is
  * not a relevant package, as it cannot possibly be a constructs-based package.
- * This is used to fast-forward over boring stuff when the sequence number is
- * reset.
+ * This is used to fast-forward over boring stuff when the follower state is
+ * seeded far in the past.
  */
 const DAWN_OF_CONSTRUCTS = new Date('2018-07-31T13:43:04.615Z');
+
+/**
+ * The page size used when scanning the `_changes` feed. Receipts discard
+ * already-received entries before any packument is fetched, so scans can
+ * afford the feed's maximum page size (10,000).
+ */
+const SCAN_BATCH_SIZE = 10_000;
+
+/**
+ * A scan batch is only started when at least this much time remains in the
+ * Lambda execution. An interrupted scan simply resumes on the next run: the
+ * receipts make re-reads cheap, and no checkpoint is recorded for an
+ * incomplete scan.
+ */
+const SCAN_TIME_BUDGET_MS = 60_000;
+
+/**
+ * Laggy packuments are only re-checked while at least this much time remains
+ * in the Lambda execution, so that re-checks cannot starve the scan.
+ */
+const LAGGY_RETRY_TIME_BUDGET_MS = 240_000;
+
+/**
+ * The maximum number of laggy packuments re-checked per run.
+ */
+const MAX_LAGGY_RETRIES_PER_RUN = 50;
 
 // Configure embedded metrics format
 Configuration.namespace = METRICS_NAMESPACE;
@@ -65,13 +104,30 @@ captureHTTPsGlobal(require('https'));
 captureHTTPsGlobal(require('http'));
 
 /**
- * This function triggers on a fixed schedule and reads a stream of changes from npmjs couchdb _changes endpoint.
- * Upon invocation the function starts reading from a sequence stored in an s3 object - the `marker`.
- * If the marker fails to load (or do not exist), the stream will start from `now` - the latest change.
- * For each change:
- *  - the package version tarball will be copied from the npm registry to a stating bucket.
- *  - a message will be sent to an sqs queue
+ * This function triggers on a fixed schedule and scans the npmjs CouchDB
+ * `_changes` feed for new package versions.
+ *
+ * The feed gives no guarantee that change entries become visible in sequence
+ * order (entries occasionally appear *behind* previously returned positions),
+ * so the follower does not track a single high-water mark. Instead it keeps a
+ * receipt for every change entry it has received, and every run re-reads a
+ * trailing window of the feed, processing any entry it has no receipt for:
+ *
+ * 1. Rolling checkpoints map times to feed positions a completed scan has
+ *    fully covered. The scan floor is the checkpointed position from
+ *    `SCAN_WINDOW_MS` ago (a periodic deep scan covers the full retention
+ *    window instead).
+ * 2. Each scan reads the window ascending from the floor. Receipts make
+ *    re-reads of already-covered ranges nearly free.
+ * 3. For each new entry, the packument is fetched from the registry and every
+ *    version it contains is processed (deny list, license, and known-versions
+ *    checks apply). If the packument is behind the revision announced by the
+ *    feed (a "laggy packument"), the served versions are still processed, and
+ *    the follower records the expectation and keeps re-checking on subsequent
+ *    runs until the announced revision appears or the expectation ages out.
+ *
  * npm registry API docs: https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md
+ *
  * @param context a Lambda execution context
  */
 export async function handler(event: ScheduledEvent, context: Context) {
@@ -85,154 +141,424 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry/_changes');
 
-  const {
-    marker: initialMarker,
-    knownVersions,
-    didLoadVersionsFromLegacy,
-  } = await loadFollowerPosition(stagingBucket, npm);
+  const head = Number((await npm.info()).update_seq);
 
-  // If we loaded from the old location, write to the new
+  const { knownVersions, didLoadVersionsFromLegacy } = await loadKnownVersions(
+    stagingBucket
+  );
   let writeKnownVersionsFile = didLoadVersionsFromLegacy;
 
-  // The last written marker seq id.
-  let updatedMarker = initialMarker;
+  const state = await loadFollowerState(stagingBucket, head);
 
-  // The slowest batch processing time so far (starts at 60 seconds). This is how much time should
-  // be left before timeout if a new batch is to be fetched.
-  let maxBatchProcessingTime = 60_000;
-  // Whether we should continue reading more items or not... This is set to false when the current
-  // latest change is reached (i.e: next page of changes is empty).
-  let shouldContinue = true;
+  // The feed's sequence space can change (entries can disappear from the end,
+  // moving the head backwards). Our position state is then meaningless.
+  const newestCheckpoint = state.newestCheckpointSeq();
+  if (newestCheckpoint != null && newestCheckpoint > head) {
+    console.warn(
+      `Feed head (${head}) is below our newest checkpoint (${newestCheckpoint}); the sequence space changed. Resetting position state.`
+    );
+    state.resetPosition();
+    state.addCheckpoint(head);
+  }
 
-  do {
-    await metricScope((metrics) => async () => {
-      console.log('Polling changes from npm replica');
-      const changes = await npm.changes(updatedMarker);
-
-      // Clear automatically set dimensions - we don't need them (see https://github.com/awslabs/aws-embedded-metrics-node/issues/73)
-      metrics.setDimensions({});
-
-      // Recording current seq range and updating the `updatedMarker`.
-      metrics.setProperty('StartSeq', updatedMarker);
-      updatedMarker = Number(changes.last_seq);
-      metrics.setProperty('EndSeq', updatedMarker);
-
-      const startTime = Date.now();
-
-      try {
-        const batch = changes.actionableResults as readonly Change[];
-
-        // The most recent "modified" timestamp observed in the batch.
-        let lastModified: Date | undefined;
-        // Emit npm.js replication lag
-        for (const { doc } of batch) {
-          if (doc?.time?.modified) {
-            const modified = new Date(doc.time.modified);
-            metrics.putMetric(
-              MetricName.NPMJS_CHANGE_AGE,
-              startTime - modified.getTime(),
-              Unit.Milliseconds
-            );
-            if (lastModified == null || lastModified < modified) {
-              lastModified = modified;
-            }
-          }
-        }
-
-        console.log(
-          `Received a batch of ${changes.totalCount} element(s), ${batch.length} after filtering`
-        );
-        metrics.putMetric(MetricName.CHANGE_COUNT, batch.length, Unit.Count);
-
-        if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
-          console.log(
-            `Skipping batch as the latest modification is ${lastModified}, which is pre-Constructs`
-          );
-        } else if (changes.totalCount === 0) {
-          console.log('Received 0 changes, caught up to "now", exiting...');
-          shouldContinue = false;
-        } else {
-          // Obtain the modified package version from the update event, and filter
-          // out packages that are not of interest to us (not construct libraries).
-          const versionInfos = getRelevantVersionInfos(
-            batch,
-            metrics,
-            denyList,
-            licenseList,
-            knownVersions
-          );
-          console.log(
-            `Identified ${versionInfos.length} relevant package version update(s)`
-          );
-          metrics.putMetric(
-            MetricName.RELEVANT_PACKAGE_VERSIONS,
-            versionInfos.length,
-            Unit.Count
-          );
-
-          // If we have versionInfos, we already added them to the knownVersions map and we should save it again
-          writeKnownVersionsFile ||= versionInfos.length > 0;
-
-          // Process all remaining updates
-          await Promise.all(
-            versionInfos.map(async ({ infos, modified, seq }) => {
-              const invokeArgs: PackageVersion = {
-                integrity: infos.dist.shasum,
-                modified: modified.toISOString(),
-                name: infos.name,
-                seq: seq?.toString(),
-                tarballUrl: infos.dist.tarball,
-                version: infos.version,
-              };
-              // "Fire-and-forget" invocation here.
-              console.log(`Sending ${invokeArgs.tarballUrl} for staging`);
-              await LAMBDA_CLIENT.send(
-                new InvokeCommand({
-                  FunctionName: stagingFunction,
-                  InvocationType: 'Event',
-                  Payload: Buffer.from(JSON.stringify(invokeArgs)),
-                })
-              );
-              // Record that this is now a "known" version (no need to re-discover)
-              knownVersions.set(`${infos.name}@${infos.version}`, modified);
-            })
-          );
-        }
-
-        // Updating the S3 stored marker with the new seq id and known versions concurrently
-        await Promise.all([
-          // always save the transaction marker
-          saveLastTransactionMarker(context, stagingBucket, updatedMarker),
-          // conditionally save known versions
-          ...(writeKnownVersionsFile
-            ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
-            : []),
-        ]);
-      } finally {
-        metrics.putMetric(MetricName.LAST_SEQ, updatedMarker, Unit.None);
-        metrics.putMetric(
-          MetricName.BATCH_PROCESSING_TIME,
-          Date.now() - startTime,
-          Unit.Milliseconds
-        );
-        metrics.putMetric(
-          MetricName.REMAINING_TIME,
-          context.getRemainingTimeInMillis(),
-          Unit.Milliseconds
-        );
-      }
-    })();
-  } while (
-    shouldContinue &&
-    context.getRemainingTimeInMillis() >= maxBatchProcessingTime
+  // Re-check laggy packuments (packages whose registry packument was behind
+  // the revision announced by the feed when we first saw them).
+  const laggyStaged = await retryLaggyPackuments(
+    context,
+    npm,
+    state,
+    stagingFunction,
+    denyList,
+    licenseList,
+    knownVersions
   );
+  writeKnownVersionsFile ||= laggyStaged > 0;
+
+  // Scan the trailing window of the feed.
+  const scanStaged = await runScan(
+    context,
+    npm,
+    state,
+    head,
+    stagingFunction,
+    denyList,
+    licenseList,
+    knownVersions
+  );
+  writeKnownVersionsFile ||= scanStaged > 0;
+
+  await Promise.all([
+    saveFollowerState(context, stagingBucket, state),
+    ...(writeKnownVersionsFile
+      ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
+      : []),
+  ]);
 
   console.log('All done here, we have success!');
 
-  return { initialMarker, updatedMarker };
+  return { head };
 }
 
-//#region Last known versions and marker
+//#region Scan
+/**
+ * Re-reads the trailing window of the feed and processes every change entry
+ * for which no receipt exists. A checkpoint is only recorded when the scan
+ * covered the entire window; an interrupted scan resumes naturally on the
+ * next run (receipts make the re-read cheap).
+ *
+ * @returns the number of package versions sent for staging.
+ */
+async function runScan(
+  context: Context,
+  npm: CouchChanges,
+  state: FollowerState,
+  head: number,
+  stagingFunction: string,
+  denyList: DenyListClient,
+  licenseList: LicenseListClient,
+  knownVersions: Map<string, Date>
+): Promise<number> {
+  const now = Date.now();
+  const deep = state.deepScanDue(now);
+  const windowMs = deep ? STATE_RETENTION_MS : SCAN_WINDOW_MS;
+  const floor = state.floorSeq(windowMs, now);
+  if (floor == null) {
+    // Cannot happen after seeding, but guards the type.
+    console.warn('No checkpoint history; skipping scan');
+    return 0;
+  }
+  // Entries discovered at or below this position were inserted into the feed
+  // behind a position we had already read past.
+  const lateBoundary = state.newestCheckpointSeq() ?? floor;
+
+  console.log(
+    `Starting ${
+      deep ? 'deep ' : ''
+    }scan of (${floor}, ${head}] (late boundary: ${lateBoundary})`
+  );
+
+  let staged = 0;
+  let completed = false;
+  let maxSeqSeen = head;
+
+  // Read the window ascending from the floor. Receipts make re-reads of
+  // already-covered ranges nearly free (no packuments are fetched for them).
+  let cursor = floor;
+  while (
+    !completed &&
+    context.getRemainingTimeInMillis() > SCAN_TIME_BUDGET_MS
+  ) {
+    await metricScope((metrics) => async () => {
+      metrics.setDimensions({});
+      metrics.setProperty('StartSeq', cursor);
+      const batch = await npm.changes(cursor, { batchSize: SCAN_BATCH_SIZE });
+      const next = Number(batch.last_seq);
+      metrics.setProperty('EndSeq', next);
+      if (batch.seqs.length > 0) {
+        maxSeqSeen = Math.max(maxSeqSeen, ...batch.seqs);
+      }
+      staged += await processBatch(
+        batch,
+        metrics,
+        context,
+        npm,
+        state,
+        lateBoundary,
+        head,
+        stagingFunction,
+        denyList,
+        licenseList,
+        knownVersions
+      );
+      if (batch.totalCount < SCAN_BATCH_SIZE || next <= cursor) {
+        // A short page means we are caught up with the feed head.
+        completed = true;
+      } else {
+        cursor = next;
+        // Coverage from the floor up to `next` is contiguous, so this is a
+        // valid checkpoint. Recording it makes an interrupted scan (most
+        // importantly: a backfill) resume from here instead of the floor.
+        if (next > (state.newestCheckpointSeq() ?? 0)) {
+          state.addCheckpoint(next);
+        }
+      }
+    })();
+  }
+
+  if (completed) {
+    // The scan covered the entire window: everything the feed served up to
+    // `maxSeqSeen` now has a receipt.
+    state.addCheckpoint(maxSeqSeen);
+    if (deep) {
+      state.completeDeepScan();
+      console.log(`Completed deep scan at seq ${maxSeqSeen}`);
+    }
+  } else {
+    console.log(
+      'Scan ran out of time; it will resume on the next run (no checkpoint recorded)'
+    );
+  }
+  return staged;
+}
+
+/**
+ * Processes one page of change entries: discards everything we already have a
+ * receipt for, fetches packuments for the remainder, stages new relevant
+ * package versions, records laggy packument expectations, and finally records
+ * receipts for every entry received.
+ *
+ * @returns the number of package versions sent for staging.
+ */
+async function processBatch(
+  batch: DatabaseChanges,
+  metrics: MetricsLogger,
+  context: Context,
+  npm: CouchChanges,
+  state: FollowerState,
+  lateBoundary: number,
+  head: number,
+  stagingFunction: string,
+  denyList: DenyListClient,
+  licenseList: LicenseListClient,
+  knownVersions: Map<string, Date>
+): Promise<number> {
+  const startTime = Date.now();
+  let staged = 0;
+  try {
+    const fresh = batch.results.filter(
+      (change) => change.seq != null && !state.has(Number(change.seq))
+    );
+    console.log(
+      `Received ${batch.totalCount} change entr(ies), ${fresh.length} without a receipt`
+    );
+    metrics.putMetric(MetricName.CHANGE_COUNT, fresh.length, Unit.Count);
+
+    // Entries below the late boundary were inserted into the feed behind a
+    // position a completed scan had already read past.
+    const late = fresh.filter((change) => Number(change.seq) <= lateBoundary);
+    metrics.putMetric(MetricName.LATE_CHANGE_COUNT, late.length, Unit.Count);
+    for (const change of late) {
+      const crossedAt = state.timeCrossed(Number(change.seq));
+      if (crossedAt != null) {
+        metrics.putMetric(
+          MetricName.LATE_CHANGE_LAG,
+          Date.now() - crossedAt,
+          Unit.Milliseconds
+        );
+      }
+      console.log(
+        `[late] Change entry discovered at seq ${change.seq} (behind ${lateBoundary}): ${change.id}`
+      );
+    }
+
+    const attached = await npm.attachAllMetadata(fresh);
+
+    // The most recent "modified" timestamp observed in the batch.
+    let lastModified: Date | undefined;
+    // Emit npm.js replication lag
+    for (const { change } of attached) {
+      const doc = change.doc as Change['doc'] | undefined;
+      if (doc?.time?.modified) {
+        const modified = new Date(doc.time.modified);
+        metrics.putMetric(
+          MetricName.NPMJS_CHANGE_AGE,
+          startTime - modified.getTime(),
+          Unit.Milliseconds
+        );
+        if (lastModified == null || lastModified < modified) {
+          lastModified = modified;
+        }
+      }
+    }
+
+    if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
+      console.log(
+        `Skipping batch as the latest modification is ${lastModified}, which is pre-Constructs`
+      );
+    } else {
+      // Laggy packuments: the registry served an older revision than the feed
+      // announced. Process the versions we did get, and record the
+      // expectation so the announced revision is re-checked on later runs.
+      for (const laggy of attached.filter((a) => a.laggy)) {
+        console.log(
+          `${laggy.change.id}: registry packument rev ${laggy.servedRev} is behind announced rev ${laggy.announcedRev}, recording laggy packument`
+        );
+        state.recordLaggyPackument(
+          laggy.change.id,
+          laggy.announcedRev,
+          isNaN(Number(laggy.change.seq)) ? undefined : Number(laggy.change.seq)
+        );
+      }
+
+      const versionInfos = getRelevantVersionInfos(
+        attached.map((a) => a.change) as unknown as readonly Change[],
+        metrics,
+        denyList,
+        licenseList,
+        knownVersions
+      );
+      console.log(
+        `Identified ${versionInfos.length} relevant package version update(s)`
+      );
+      metrics.putMetric(
+        MetricName.RELEVANT_PACKAGE_VERSIONS,
+        versionInfos.length,
+        Unit.Count
+      );
+      await stageVersions(versionInfos, stagingFunction, knownVersions);
+      staged = versionInfos.length;
+    }
+
+    // Record receipts for every entry received (including deleted or
+    // unreachable packages: they were received and deliberately skipped).
+    state.addSeqs(batch.seqs);
+  } finally {
+    metrics.putMetric(MetricName.LAST_SEQ, head, Unit.None);
+    metrics.putMetric(
+      MetricName.BATCH_PROCESSING_TIME,
+      Date.now() - startTime,
+      Unit.Milliseconds
+    );
+    metrics.putMetric(
+      MetricName.REMAINING_TIME,
+      context.getRemainingTimeInMillis(),
+      Unit.Milliseconds
+    );
+  }
+  return staged;
+}
+//#endregion
+
+//#region Laggy packuments
+/**
+ * Re-checks laggy packuments: packages whose registry packument was behind
+ * the revision announced by the changes feed. Each re-check processes
+ * whatever the registry serves now (new versions are staged), and the
+ * expectation is cleared when the announced revision appears - or aged out
+ * after `LAGGY_PACKUMENT_GIVE_UP_MS`, at which point a version announced by
+ * the feed may be missing until the package publishes again.
+ *
+ * @returns the number of package versions sent for staging.
+ */
+async function retryLaggyPackuments(
+  context: Context,
+  npm: CouchChanges,
+  state: FollowerState,
+  stagingFunction: string,
+  denyList: DenyListClient,
+  licenseList: LicenseListClient,
+  knownVersions: Map<string, Date>
+): Promise<number> {
+  let staged = 0;
+  await metricScope((metrics) => async () => {
+    metrics.setDimensions({});
+    let recovered = 0;
+    let gaveUp = 0;
+    const now = Date.now();
+    for (const laggy of state
+      .laggyPackuments()
+      .slice(0, MAX_LAGGY_RETRIES_PER_RUN)) {
+      if (context.getRemainingTimeInMillis() < LAGGY_RETRY_TIME_BUDGET_MS) {
+        break;
+      }
+      const doc = await npm.getPackageDoc(laggy.name);
+      if (doc == null || doc._rev == null) {
+        console.log(
+          `Laggy packument for ${laggy.name} is no longer available in the registry, dropping the expectation`
+        );
+        state.removeLaggyPackument(laggy.name);
+        continue;
+      }
+
+      // Process whatever the registry serves now; knownVersions dedupes.
+      const change: DatabaseChange = {
+        changes: [{ rev: doc._rev as string }],
+        deleted: false,
+        id: laggy.name,
+        seq: laggy.seq,
+        doc,
+      };
+      const versionInfos = getRelevantVersionInfos(
+        [change] as unknown as readonly Change[],
+        metrics,
+        denyList,
+        licenseList,
+        knownVersions
+      );
+      await stageVersions(versionInfos, stagingFunction, knownVersions);
+      staged += versionInfos.length;
+
+      if (parseSequentialRevision(doc._rev as string) >= laggy.expectedRev) {
+        console.log(
+          `Laggy packument for ${laggy.name} caught up (rev ${doc._rev} >= ${laggy.expectedRev})`
+        );
+        state.removeLaggyPackument(laggy.name);
+        recovered += 1;
+      } else if (now - laggy.firstSeen > LAGGY_PACKUMENT_GIVE_UP_MS) {
+        console.warn(
+          `Giving up on laggy packument for ${
+            laggy.name
+          }: the registry never served rev ${
+            laggy.expectedRev
+          } (first seen ${new Date(
+            laggy.firstSeen
+          ).toISOString()}). A version announced by the changes feed may be missing until the package publishes again.`
+        );
+        state.removeLaggyPackument(laggy.name);
+        gaveUp += 1;
+      }
+    }
+    metrics.putMetric(
+      MetricName.LAGGY_PACKUMENTS_RECOVERED,
+      recovered,
+      Unit.Count
+    );
+    metrics.putMetric(MetricName.LAGGY_PACKUMENT_GIVE_UPS, gaveUp, Unit.Count);
+    metrics.putMetric(
+      MetricName.LAGGY_PACKUMENTS,
+      state.laggyPackumentCount,
+      Unit.Count
+    );
+  })();
+  return staged;
+}
+//#endregion
+
+/**
+ * Sends the provided package version updates to the staging function
+ * ("fire-and-forget"), and records them as known versions.
+ */
+async function stageVersions(
+  versionInfos: readonly UpdatedVersion[],
+  stagingFunction: string,
+  knownVersions: Map<string, Date>
+): Promise<void> {
+  await Promise.all(
+    versionInfos.map(async ({ infos, modified, seq }) => {
+      const invokeArgs: PackageVersion = {
+        integrity: infos.dist.shasum,
+        modified: modified.toISOString(),
+        name: infos.name,
+        seq: seq?.toString(),
+        tarballUrl: infos.dist.tarball,
+        version: infos.version,
+      };
+      // "Fire-and-forget" invocation here.
+      console.log(`Sending ${invokeArgs.tarballUrl} for staging`);
+      await LAMBDA_CLIENT.send(
+        new InvokeCommand({
+          FunctionName: stagingFunction,
+          InvocationType: 'Event',
+          Payload: Buffer.from(JSON.stringify(invokeArgs)),
+        })
+      );
+      // Record that this is now a "known" version (no need to re-discover)
+      knownVersions.set(`${infos.name}@${infos.version}`, modified);
+    })
+  );
+}
+
+//#region State and known versions
 /**
  * Common function to load data from an S3 file with error handling
  *
@@ -270,113 +596,143 @@ async function loadContentFromS3(
   }
 }
 
-async function loadFollowerPosition(
+/**
+ * Loads the follower state from S3. When the state file does not exist (or
+ * cannot be parsed), a fresh state is seeded: from the legacy transaction
+ * marker if one exists (so existing deployments continue where the previous
+ * follower left off), or from the current feed head otherwise.
+ */
+async function loadFollowerState(
   stagingBucket: string,
-  registry: CouchChanges
-): Promise<{
-  marker: number;
-  knownVersions: Map<string, Date>;
-  didLoadVersionsFromLegacy: boolean;
-}> {
-  const [markerFile, knownVersions] = await Promise.all([
-    loadLastTransactionMarker(stagingBucket, registry),
-    loadLastKnownVersions(stagingBucket),
-  ]);
-
-  if (!knownVersions) {
-    // For legacy reasons, knownVersions could come from the transaction marker file
-    // If it does, then we take that as knownVersions but will migrate knownVersions
-    // to the modern file location
-    return {
-      marker: markerFile.marker,
-      knownVersions: markerFile.knownVersions ?? new Map(),
-      didLoadVersionsFromLegacy: true,
-    };
+  head: number
+): Promise<FollowerState> {
+  const warningMessage = `Follower state object (s3://${stagingBucket}/${FOLLOWER_STATE_FILE_NAME}) does not exist, seeding a fresh state`;
+  const content = await loadContentFromS3(
+    stagingBucket,
+    FOLLOWER_STATE_FILE_NAME,
+    warningMessage
+  );
+  if (content != null) {
+    try {
+      const state = FollowerState.fromText(content);
+      console.log(
+        `Loaded follower state: ${state.receiptCount} receipt(s), ${state.checkpointCount} checkpoint(s), ${state.laggyPackumentCount} laggy packument(s)`
+      );
+      return state;
+    } catch (error) {
+      console.warn(`Could not parse follower state, seeding fresh: ${error}`);
+    }
   }
 
-  return {
-    marker: markerFile.marker,
-    knownVersions,
-    didLoadVersionsFromLegacy: false,
-  };
+  const state = new FollowerState();
+  const seed = await loadLegacyMarker(stagingBucket);
+  if (seed != null && seed <= head) {
+    console.log(`Seeding follower state from legacy marker: ${seed}`);
+    state.addCheckpoint(seed);
+  } else {
+    // Brand-new deployment: start at the beginning of the feed, so the
+    // instance backfills the entire history automatically (interim
+    // checkpoints make the backfill incremental across runs).
+    console.log(
+      'Seeding follower state at the beginning of the feed (automatic backfill)'
+    );
+    state.addCheckpoint(0);
+  }
+  return state;
 }
 
 /**
- * Loads the last known versions from S3.
- *
- * @returns the value of the last known versions.
+ * Reads the sequence number from the legacy transaction marker file, if
+ * present. The previous follower implementation stored its position there.
  */
-async function loadLastKnownVersions(
+async function loadLegacyMarker(
   stagingBucket: string
-): Promise<Map<string, Date> | undefined> {
+): Promise<number | undefined> {
+  const content = await loadContentFromS3(
+    stagingBucket,
+    MARKER_FILE_NAME,
+    `No legacy marker object (s3://${stagingBucket}/${MARKER_FILE_NAME})`
+  );
+  if (content === null) {
+    return undefined;
+  }
+  try {
+    const parsed: MarkerFileSchema = JSON.parse(content);
+    const marker = typeof parsed === 'number' ? parsed : Number(parsed.marker);
+    return isNaN(marker) ? undefined : marker;
+  } catch (error) {
+    console.warn(`Could not parse legacy marker: ${error}`);
+    return undefined;
+  }
+}
+
+/**
+ * Persists the follower state to S3 (gzip-compressed when large enough to
+ * warrant it).
+ */
+async function saveFollowerState(
+  context: Context,
+  stagingBucket: string,
+  state: FollowerState
+) {
+  const { buffer, contentEncoding } = compressContent(
+    Buffer.from(state.toText(), 'utf-8')
+  );
+  console.log(
+    `Updating follower state (${state.receiptCount} receipt(s), ${state.checkpointCount} checkpoint(s), ${state.laggyPackumentCount} laggy packument(s))`
+  );
+  await putObject(context, stagingBucket, FOLLOWER_STATE_FILE_NAME, buffer, {
+    ContentType: 'text/plain',
+    ContentEncoding: contentEncoding,
+  });
+  console.log('Successfully updated follower state');
+}
+
+/**
+ * Loads the known versions from S3. For legacy reasons, the map may also be
+ * embedded in the transaction marker file; when the dedicated file does not
+ * exist, that location is used and the map is migrated on the next save.
+ */
+async function loadKnownVersions(stagingBucket: string): Promise<{
+  knownVersions: Map<string, Date>;
+  didLoadVersionsFromLegacy: boolean;
+}> {
   const warningMessage = `Known versions object (s3://${stagingBucket}/${KNOWN_VERSIONS_FILE_NAME}) does not exist, starting from scratch`;
   const content = await loadContentFromS3(
     stagingBucket,
     KNOWN_VERSIONS_FILE_NAME,
     warningMessage
   );
-
-  // Known Versions does not exist, starting from scratch
-  if (content === null) {
-    return undefined;
+  if (content != null) {
+    const contentsObj: KnownVersionsFileSchema = JSON.parse(content);
+    console.log('Loaded last known versions data');
+    return {
+      knownVersions: dateMapFromObj(contentsObj.knownVersions),
+      didLoadVersionsFromLegacy: false,
+    };
   }
 
-  // Known Versions exists, generating map from the data
-  const contentsObj: KnownVersionsFileSchema = JSON.parse(content);
-
-  console.log(`Loaded last known versions data`);
-
-  return dateMapFromObj(contentsObj.knownVersions);
-}
-
-/**
- * Loads the last transaction marker from S3.
- *
- * @param registry a Nano database corresponding to the Npmjs.com CouchDB instance.
- *
- * @returns the value of the last transaction marker.
- */
-async function loadLastTransactionMarker(
-  stagingBucket: string,
-  registry: CouchChanges
-): Promise<{ marker: number; knownVersions?: Map<string, Date> }> {
-  const warningMessage = `Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`;
-  const content = await loadContentFromS3(
+  // Legacy location: embedded in the transaction marker file.
+  const markerContent = await loadContentFromS3(
     stagingBucket,
     MARKER_FILE_NAME,
-    warningMessage
+    `No legacy marker object (s3://${stagingBucket}/${MARKER_FILE_NAME})`
   );
-
-  // Last transaction marker does not exist
-  if (content === null) {
-    return { marker: 0 };
+  if (markerContent != null) {
+    try {
+      const parsed: MarkerFileSchema = JSON.parse(markerContent);
+      if (typeof parsed !== 'number' && parsed.knownVersions) {
+        console.log('Loaded known versions from legacy marker file');
+        return {
+          knownVersions: dateMapFromObj(parsed.knownVersions),
+          didLoadVersionsFromLegacy: true,
+        };
+      }
+    } catch (error) {
+      console.warn(`Could not parse legacy marker: ${error}`);
+    }
   }
-
-  const parsedFile: MarkerFileSchema = JSON.parse(content);
-
-  let marker: number;
-  let knownVersions: Map<string, Date> | undefined;
-  if (typeof parsedFile === 'number') {
-    marker = parsedFile;
-  } else {
-    marker = Number(parsedFile.marker);
-    knownVersions = parsedFile.knownVersions
-      ? dateMapFromObj(parsedFile.knownVersions)
-      : undefined;
-  }
-
-  // amazonq-ignore-next-line
-  console.log(`Read last transaction marker: ${marker}`);
-
-  const dbUpdateSeq = Number((await registry.info()).update_seq);
-  if (dbUpdateSeq < marker) {
-    console.warn(
-      `Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`
-    );
-    return { marker: 0 };
-  }
-
-  return { marker, knownVersions };
+  return { knownVersions: new Map(), didLoadVersionsFromLegacy: true };
 }
 
 /**
@@ -404,24 +760,6 @@ async function saveLastKnownVersions(
     }
   );
   console.log('Successfully updated known versions');
-}
-
-/**
- * Updates the last transaction marker in S3.
- *
- * @param marker the last transaction marker value
- */
-async function saveLastTransactionMarker(
-  context: Context,
-  stagingBucket: string,
-  marker: number
-) {
-  const contents = JSON.stringify({ marker });
-  console.log(`Updating last transaction marker to ${marker}`);
-  await putObject(context, stagingBucket, MARKER_FILE_NAME, contents, {
-    ContentType: 'application/json',
-  });
-  console.log('Successfully updated marker');
 }
 //#endregion
 
@@ -698,7 +1036,8 @@ interface UpdatedVersion {
 }
 
 /**
- * We are accounting for a good bit of legacy data modeling here
+ * The legacy transaction marker file format, kept around to seed the follower
+ * state (and known versions) of existing deployments.
  *
  * The file can be a just a number, or a combination of a sequence number (which
  * is potentially encoded as a string) and a set of known versions and the dates
