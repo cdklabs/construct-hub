@@ -351,7 +351,13 @@ test('laggy packument: processes served versions and records the expectation', a
   expect(stagedPackages()).toEqual([
     { name: 'laggy-package', version: '1.0.0' },
   ]);
-  // ... and the expectation of rev 5 is recorded for later re-checks.
+  // ... and the expectation of rev 5 is recorded for later re-checks. The
+  // gauge is emitted at the end of the run and includes it.
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.LAGGY_PACKUMENTS,
+    1,
+    Unit.Count
+  );
   const state = savedState();
   expect(state.laggyPackuments()).toEqual([
     expect.objectContaining({
@@ -391,6 +397,11 @@ test('laggy packument: recovered once the registry catches up', async () => {
   expect(mockPutMetric).toHaveBeenCalledWith(
     MetricName.LAGGY_PACKUMENTS_RECOVERED,
     1,
+    Unit.Count
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.LAGGY_PACKUMENTS,
+    0,
     Unit.Count
   );
   expect(savedState().laggyPackumentCount).toBe(0);

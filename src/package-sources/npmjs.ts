@@ -381,6 +381,12 @@ export class NpmJs implements IPackageSource {
                 0
               ),
               fillMetric(
+                this.metricLaggyPackumentsRecovered({
+                  label: 'Laggy Packuments Recovered',
+                }),
+                0
+              ),
+              fillMetric(
                 this.metricLaggyPackumentGiveUps({
                   label: 'Laggy Packument Give-Ups',
                 }),
