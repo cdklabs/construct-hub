@@ -187,6 +187,19 @@ export async function handler(event: ScheduledEvent, context: Context) {
   );
   writeKnownVersionsFile ||= scanStaged > 0;
 
+  // The laggy packument gauge is emitted at the end of the run, so it
+  // reflects the expectations recorded by this run's scan (emitting it during
+  // the retry phase would always read the trough: after recoveries, before
+  // new expectations are recorded).
+  await metricScope((metrics) => async () => {
+    metrics.setDimensions({});
+    metrics.putMetric(
+      MetricName.LAGGY_PACKUMENTS,
+      state.laggyPackumentCount,
+      Unit.Count
+    );
+  })();
+
   await Promise.all([
     saveFollowerState(context, stagingBucket, state),
     ...(writeKnownVersionsFile
@@ -514,11 +527,6 @@ async function retryLaggyPackuments(
       Unit.Count
     );
     metrics.putMetric(MetricName.LAGGY_PACKUMENT_GIVE_UPS, gaveUp, Unit.Count);
-    metrics.putMetric(
-      MetricName.LAGGY_PACKUMENTS,
-      state.laggyPackumentCount,
-      Unit.Count
-    );
   })();
   return staged;
 }
