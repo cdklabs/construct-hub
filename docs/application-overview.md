@@ -37,18 +37,30 @@ ConstructHub provides two package source implementations: `NpmJs` and
 `CodeArtifact`.
 
 * The `NpmJs` source interfaces with the `npmjs.com` CouchDB replica (which is
-  at `replicate.npmjs.com/registry`) by following it's `_changes` stream in
+  at `replicate.npmjs.com/registry`) by scanning it's `_changes` stream in
   search of relevant packages. When such a package is identified, a stager
   function is invoked, which stages the package tarball into an S3 bucket then
   notifies the ConstructHub ingestion SQS queue. The CouchDB follower is
-  scheduled to run every `5 minutes`, and stores the current CouchDB sequence ID
-  in a specific object in the S3 bucket used for staging package tarballs.
+  scheduled to run every `5 minutes`, and stores its state (receipts for the
+  change entries received, time/sequence checkpoints, and laggy packument
+  expectations) in a specific object in the S3 bucket used for staging package
+  tarballs. See [npm-sync-protocol.md](./npm-sync-protocol.md) for the
+  guarantees the feed does and does not give, and how the follower compensates.
 
   > Back-filling is automatic for the `NpmJs` source. Upon initial deployment,
-  > it will start scanning the CouchDB `_changes` stream. Should there be a need
-  > to re-run a backfill of this source, the transaction marker object in S3 can
-  > be deleted to roll back to that initial transaction. The marker object is
-  > linked from the backend dashboard.
+  > it will start scanning the CouchDB `_changes` stream from the beginning,
+  > progressing incrementally across runs. Should there be a need to re-process
+  > a range of the stream, replace the follower state object in S3 with one
+  > that seeds a checkpoint at the desired starting sequence number:
+  >
+  > ```text
+  > #chfollower/1
+  > w -
+  > c <epoch-milliseconds> <sequence-number>
+  > ```
+  >
+  > The next scan then covers everything from that position to the feed head.
+  > The state object is linked from the backend dashboard.
 
   - A **high-severity** alarm triggers if the NpmJs Follower is not running at
     the scheduled cadence, or if it encounters failures for more than

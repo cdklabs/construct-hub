@@ -582,6 +582,82 @@ but is disabled by default.
 Once all messages have cleared from the dead-letter queue, do not forget to
 disable the SQS Trigger again.
 
+### `ConstructHub/Sources/NpmJs/Follower/LateChangeLagHigh`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when the *NpmJs Follower* discovers changes that were inserted into the
+CouchDB `_changes` feed with a delay approaching the scan window. Should the
+delay exceed the window, the regular scan will miss those changes, and only the
+daily deep scan would still discover them.
+
+#### Investigation
+
+The `_changes` feed occasionally makes change entries visible behind positions
+the follower has already read past (npm considers this normal feed behavior).
+The follower compensates by re-reading a trailing window of the feed on every
+run, and the `LateChangeLag` metric records how far behind each late entry was
+discovered. See [npm-sync-protocol.md](./npm-sync-protocol.md) for the details
+of the feed's behavior.
+
+Review the *Feed Reliability* widget on the backend dashboard. A short burst of
+high-delay insertions usually indicates turbulence in the npmjs.com replication
+pipelines, and resolves on its own. Look at `npmjs.com` status updates and
+announcements.
+
+#### Resolution
+
+The alarm will automatically go back to green once the insertion delays
+subside. If elevated delays persist over multiple days, the scan window should
+be increased: adjust `SCAN_WINDOW_MS` in
+`src/package-sources/npmjs/constants.lambda-shared.ts` (keeping it below
+`STATE_RETENTION_MS`) and deploy the updated construct.
+
+### `ConstructHub/Sources/NpmJs/Follower/LaggyPackumentGiveUps`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when the npm registry never served the packument revision announced by
+the CouchDB `_changes` feed for one or more packages, even after the follower
+re-checked for a prolonged period.
+
+All package versions the registry did serve have been processed. However, a
+version announced by the changes feed may be missing from ConstructHub until
+the affected package publishes its next version.
+
+#### Investigation
+
+The *NpmJs Follower* fetches package metadata from `registry.npmjs.org` for
+each change announced by the CouchDB `_changes` feed. The registry occasionally
+lags behind the feed. When it does, the follower processes the versions that
+were served, records the announced revision as a "laggy packument", and
+re-checks it on every run until the revision appears or the expectation ages
+out. This alarm fires for the latter.
+
+Review the logs of the *NpmJs Follower* for `Giving up on laggy packument`
+entries; they identify the affected package and the revision that never
+appeared. Verify what the registry currently serves for the package:
+
+```console
+$ curl https://registry.npmjs.org/<package-name> | jq ._rev
+```
+
+If the served revision is still older than the expected one, the problem is
+with upstream npmjs.com. Look at `npmjs.com` status updates and announcements.
+
+If you suspect the problem is with upstream npmjs.com, you can cut them a ticket. Log
+in to <https://npmjs.com>, visit the [Support Page](https://www.npmjs.com/support) and
+select *There is a problem with the npm registry*.
+
+#### Resolution
+
+The missed package versions will automatically be discovered once the affected
+packages publish their next version. To ingest a missed version immediately,
+invoke the *ReStagePackageVersion* Lambda function with the package name and
+version from the follower logs.
+
 --------------------------------------------------------------------------------
 
 ## :repeat: Bulk Re-processing

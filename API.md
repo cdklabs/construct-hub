@@ -2880,7 +2880,12 @@ new sources.NpmJs(props?: NpmJsProps)
 | <code><a href="#construct-hub.sources.NpmJs.bind">bind</a></code> | Binds the package source to a scope and target queue. |
 | <code><a href="#construct-hub.sources.NpmJs.metricBatchProcessingTime">metricBatchProcessingTime</a></code> | The average time it took to process a changes batch. |
 | <code><a href="#construct-hub.sources.NpmJs.metricChangeCount">metricChangeCount</a></code> | The total count of changes that were processed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackumentGiveUps">metricLaggyPackumentGiveUps</a></code> | The number of laggy packuments the follower gave up on: the registry never served the revision announced by the `_changes` feed within the maximum retry age. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackuments">metricLaggyPackuments</a></code> | The number of packages for which the registry packument is still behind the revision announced by the `_changes` feed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackumentsRecovered">metricLaggyPackumentsRecovered</a></code> | The number of laggy packuments for which the registry caught up with the revision announced by the `_changes` feed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricLastSeq">metricLastSeq</a></code> | The last sequence number that was processed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLateChangeCount">metricLateChangeCount</a></code> | The number of change entries discovered by a scan that were inserted into the `_changes` feed behind a position the follower had already read past. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLateChangeLag">metricLateChangeLag</a></code> | For each late change entry, the time elapsed between the moment the follower first read past the entry's sequence number and the moment the entry was discovered. |
 | <code><a href="#construct-hub.sources.NpmJs.metricNpmJsChangeAge">metricNpmJsChangeAge</a></code> | *No description.* |
 | <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionAge">metricPackageVersionAge</a></code> | The age of the oldest package version that was processed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionCount">metricPackageVersionCount</a></code> | The total count of package versions that were inspected. |
@@ -2938,6 +2943,55 @@ The total count of changes that were processed.
 
 ---
 
+##### `metricLaggyPackumentGiveUps` <a name="metricLaggyPackumentGiveUps" id="construct-hub.sources.NpmJs.metricLaggyPackumentGiveUps"></a>
+
+```typescript
+public metricLaggyPackumentGiveUps(opts?: MetricOptions): Metric
+```
+
+The number of laggy packuments the follower gave up on: the registry never served the revision announced by the `_changes` feed within the maximum retry age.
+
+A version announced by the feed may be missing until
+the affected package publishes again.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLaggyPackumentGiveUps.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricLaggyPackuments` <a name="metricLaggyPackuments" id="construct-hub.sources.NpmJs.metricLaggyPackuments"></a>
+
+```typescript
+public metricLaggyPackuments(opts?: MetricOptions): Metric
+```
+
+The number of packages for which the registry packument is still behind the revision announced by the `_changes` feed.
+
+The versions served so far
+have been processed; the follower keeps re-checking for the announced
+revision.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLaggyPackuments.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricLaggyPackumentsRecovered` <a name="metricLaggyPackumentsRecovered" id="construct-hub.sources.NpmJs.metricLaggyPackumentsRecovered"></a>
+
+```typescript
+public metricLaggyPackumentsRecovered(opts?: MetricOptions): Metric
+```
+
+The number of laggy packuments for which the registry caught up with the revision announced by the `_changes` feed.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLaggyPackumentsRecovered.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
 ##### `metricLastSeq` <a name="metricLastSeq" id="construct-hub.sources.NpmJs.metricLastSeq"></a>
 
 ```typescript
@@ -2950,6 +3004,37 @@ This metric can be used to
 discover when a sequence reset has happened in the CouchDB instance.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLastSeq.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricLateChangeCount` <a name="metricLateChangeCount" id="construct-hub.sources.NpmJs.metricLateChangeCount"></a>
+
+```typescript
+public metricLateChangeCount(opts?: MetricOptions): Metric
+```
+
+The number of change entries discovered by a scan that were inserted into the `_changes` feed behind a position the follower had already read past.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLateChangeCount.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricLateChangeLag` <a name="metricLateChangeLag" id="construct-hub.sources.NpmJs.metricLateChangeLag"></a>
+
+```typescript
+public metricLateChangeLag(opts?: MetricOptions): Metric
+```
+
+For each late change entry, the time elapsed between the moment the follower first read past the entry's sequence number and the moment the entry was discovered.
+
+This is a lower bound on the feed's insertion lag,
+and can be used to tune the scan window.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLateChangeLag.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 

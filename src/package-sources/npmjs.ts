@@ -10,6 +10,7 @@ import {
   Metric,
   MetricOptions,
   Statistic,
+  Stats,
   TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
@@ -30,11 +31,13 @@ import { fillMetric } from '../metric-utils';
 import { addAlarm } from '../monitoring';
 import { NpmJsPackageCanary } from './npmjs/canary';
 import {
+  FOLLOWER_STATE_FILE_NAME,
   KNOWN_VERSIONS_FILE_NAME,
   MARKER_FILE_NAME,
   METRICS_NAMESPACE,
   MetricName,
   S3KeyPrefix,
+  SCAN_WINDOW_MS,
 } from './npmjs/constants.lambda-shared';
 import { NpmJsFollower } from './npmjs/npm-js-follower';
 import { StageAndNotify } from './npmjs/stage-and-notify';
@@ -158,6 +161,12 @@ export class NpmJs implements IPackageSource {
             noncurrentVersionExpiration: Duration.days(30),
             expiredObjectDeleteMarker: true,
           },
+          // Permanently delete follower state updates after 1 day (we don't need these)
+          {
+            prefix: FOLLOWER_STATE_FILE_NAME,
+            noncurrentVersionExpiration: Duration.days(1),
+            expiredObjectDeleteMarker: true,
+          },
         ],
       });
     bucket.grantRead(ingestion);
@@ -208,6 +217,7 @@ export class NpmJs implements IPackageSource {
 
     bucket.grantReadWrite(follower, MARKER_FILE_NAME);
     bucket.grantReadWrite(follower, KNOWN_VERSIONS_FILE_NAME);
+    bucket.grantReadWrite(follower, FOLLOWER_STATE_FILE_NAME);
     denyList?.grantRead(follower);
     licenseList.grantRead(follower);
     stager.grantInvoke(follower);
@@ -258,7 +268,14 @@ export class NpmJs implements IPackageSource {
           url: lambdaFunctionUrl(follower),
           primary: true,
         },
-        { name: 'Marker Object', url: s3ObjectUrl(bucket, MARKER_FILE_NAME) },
+        {
+          name: 'Follower State',
+          url: s3ObjectUrl(bucket, FOLLOWER_STATE_FILE_NAME),
+        },
+        {
+          name: 'Marker Object (legacy)',
+          url: s3ObjectUrl(bucket, MARKER_FILE_NAME),
+        },
         {
           name: 'Known Versions',
           url: s3ObjectUrl(bucket, KNOWN_VERSIONS_FILE_NAME),
@@ -353,6 +370,42 @@ export class NpmJs implements IPackageSource {
           new GraphWidget({
             height: 6,
             width: 12,
+            title: 'Feed Reliability',
+            left: [
+              fillMetric(
+                this.metricLateChangeCount({ label: 'Late Changes' }),
+                0
+              ),
+              fillMetric(
+                this.metricLaggyPackuments({ label: 'Laggy Packuments' }),
+                0
+              ),
+              fillMetric(
+                this.metricLaggyPackumentGiveUps({
+                  label: 'Laggy Packument Give-Ups',
+                }),
+                0
+              ),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              this.metricLateChangeLag({ label: 'Late Change Lag (max)' }),
+            ],
+            rightAnnotations: [
+              {
+                color: '#ff0000',
+                label: 'Scan Window',
+                value: SCAN_WINDOW_MS,
+              },
+            ],
+            rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
+            period: Duration.minutes(5),
+          }),
+        ],
+        [
+          new GraphWidget({
+            height: 6,
+            width: 12,
             title: 'Stager Dead-Letter Queue',
             left: [
               fillMetric(
@@ -429,6 +482,82 @@ export class NpmJs implements IPackageSource {
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.LAST_SEQ,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of change entries discovered by a scan that were inserted into
+   * the `_changes` feed behind a position the follower had already read past.
+   */
+  public metricLateChangeCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.LATE_CHANGE_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * For each late change entry, the time elapsed between the moment the
+   * follower first read past the entry's sequence number and the moment the
+   * entry was discovered. This is a lower bound on the feed's insertion lag,
+   * and can be used to tune the scan window.
+   */
+  public metricLateChangeLag(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.MAXIMUM,
+      ...opts,
+      metricName: MetricName.LATE_CHANGE_LAG,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of packages for which the registry packument is still behind
+   * the revision announced by the `_changes` feed. The versions served so far
+   * have been processed; the follower keeps re-checking for the announced
+   * revision.
+   */
+  public metricLaggyPackuments(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.MAXIMUM,
+      ...opts,
+      metricName: MetricName.LAGGY_PACKUMENTS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of laggy packuments for which the registry caught up with the
+   * revision announced by the `_changes` feed.
+   */
+  public metricLaggyPackumentsRecovered(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.LAGGY_PACKUMENTS_RECOVERED,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of laggy packuments the follower gave up on: the registry
+   * never served the revision announced by the `_changes` feed within the
+   * maximum retry age. A version announced by the feed may be missing until
+   * the affected package publishes again.
+   */
+  public metricLaggyPackumentGiveUps(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.LAGGY_PACKUMENT_GIVE_UPS,
       namespace: METRICS_NAMESPACE,
     });
   }
@@ -607,6 +736,51 @@ export class NpmJs implements IPackageSource {
     monitoring.addLowSeverityAlarm(
       'NpmJs/Stager DLQ Not Empty',
       dlqNotEmptyAlarm
+    );
+
+    const lateChangeLagAlarm = this.metricLateChangeLag({
+      period: Duration.hours(1),
+    }).createAlarm(scope, 'NpmJs/Follower/LateChangeLagHigh', {
+      alarmName: `${scope.node.path}/NpmJs/Follower/LateChangeLagHigh`,
+      alarmDescription: [
+        'The NpmJs follower is discovering changes that were inserted into the CouchDB changes feed',
+        'with a delay approaching the scan window. If the delay exceeds the window, the regular scan',
+        'will miss those changes (only the daily deep scan would catch them). Consider increasing',
+        'the scan window (SCAN_WINDOW_MS).',
+        '',
+        `Runbook: ${RUNBOOK_URL}`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: 0.8 * SCAN_WINDOW_MS,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+    monitoring.addLowSeverityAlarm(
+      'NpmJs/Follower Late Change Lag approaching scan window',
+      lateChangeLagAlarm
+    );
+
+    const laggyPackumentGiveUpsAlarm = this.metricLaggyPackumentGiveUps({
+      period: Duration.hours(1),
+    }).createAlarm(scope, 'NpmJs/Follower/LaggyPackumentGiveUps', {
+      alarmName: `${scope.node.path}/NpmJs/Follower/LaggyPackumentGiveUps`,
+      alarmDescription: [
+        'The npm registry never served the packument revision announced by the CouchDB changes feed',
+        'for one or more packages, even after repeated re-checks. All versions the registry did serve',
+        'have been processed, but a version announced by the feed may be missing until the affected',
+        'package publishes again. The follower logs identify the affected packages, which can be',
+        'manually ingested using the ReStagePackageVersion function.',
+        '',
+        `Runbook: ${RUNBOOK_URL}`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: 1,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+    monitoring.addLowSeverityAlarm(
+      'NpmJs/Follower gave up on laggy packuments',
+      laggyPackumentGiveUpsAlarm
     );
 
     // Finally - the "not running" alarm depends on the schedule (it won't run until the schedule
