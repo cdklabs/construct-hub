@@ -8,7 +8,14 @@ import { createGunzip } from 'zlib';
 
 const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
 
-const REQUEST_DEADLINE_MS = 30_000;
+/**
+ * How long to keep retrying transient request failures. Can be overridden
+ * through the environment for testing purposes.
+ */
+function requestDeadlineMs(): number {
+  const fromEnv = process.env.REQUEST_DEADLINE_MS;
+  return fromEnv ? Number(fromEnv) : 30_000;
+}
 
 const REQUEST_ATTEMPT_TIMEOUT_MS = 5_000;
 
@@ -120,13 +127,31 @@ export class CouchChanges extends EventEmitter {
    */
   public async attachAllMetadata(
     changes: readonly DatabaseChange[]
-  ): Promise<AttachedChange[]> {
-    const outcomes = await Promise.all(
-      changes.map((change) => this.attachMetadata(change))
+  ): Promise<AttachedMetadata> {
+    const ok = new Array<AttachedChange>();
+    const failedSeqs = new Array<number>();
+    await Promise.all(
+      changes.map(async (change) => {
+        try {
+          const outcome = await this.attachMetadata(change);
+          if (outcome !== undefined) {
+            ok.push(outcome);
+          }
+        } catch (error) {
+          // One unreachable packument must not fail the whole batch. The
+          // entry is reported as failed so the caller does not record a
+          // receipt for it; a later scan retries it.
+          console.error(
+            `Failed to fetch metadata for ${change.id}, a later scan will retry it: ${error}`
+          );
+          const seq = Number(change.seq);
+          if (!isNaN(seq)) {
+            failedSeqs.push(seq);
+          }
+        }
+      })
     );
-    return outcomes.filter(
-      (outcome): outcome is AttachedChange => outcome !== undefined
-    );
+    return { ok, failedSeqs };
   }
 
   private async attachMetadata(
@@ -219,7 +244,7 @@ export class CouchChanges extends EventEmitter {
       timeout: REQUEST_ATTEMPT_TIMEOUT_MS,
     };
 
-    const deadline = Date.now() + REQUEST_DEADLINE_MS;
+    const deadline = Date.now() + requestDeadlineMs();
     let maxDelay = 100;
     while (true) {
       try {
@@ -301,7 +326,13 @@ function readResponseJson(
 class RetryableError extends Error {}
 
 function isRetryableError(e: Error): boolean {
-  return e instanceof RetryableError || (e as any).code === 'ECONNRESET';
+  return (
+    e instanceof RetryableError ||
+    (e as any).code === 'ECONNRESET' ||
+    // A truncated response body (the gunzip stream ends unexpectedly). Seen
+    // repeatedly from registry.npmjs.org; transient like a connection reset.
+    (e as any).code === 'Z_BUF_ERROR'
+  );
 }
 
 async function sleep(ms: number) {
@@ -350,6 +381,22 @@ export interface DatabaseChanges {
    * 0 indicates we are up to date with "now".
    */
   readonly totalCount: number;
+}
+
+/**
+ * The result of attaching registry metadata to a batch of change entries.
+ */
+export interface AttachedMetadata {
+  /**
+   * The change entries whose metadata could be fetched.
+   */
+  readonly ok: AttachedChange[];
+
+  /**
+   * The sequence numbers of change entries whose metadata fetch failed. No
+   * receipt must be recorded for these, so that a later scan retries them.
+   */
+  readonly failedSeqs: number[];
 }
 
 /**

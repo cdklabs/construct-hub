@@ -161,51 +161,56 @@ export async function handler(event: ScheduledEvent, context: Context) {
     state.addCheckpoint(head);
   }
 
-  // Re-check laggy packuments (packages whose registry packument was behind
-  // the revision announced by the feed when we first saw them).
-  const laggyStaged = await retryLaggyPackuments(
-    context,
-    npm,
-    state,
-    stagingFunction,
-    denyList,
-    licenseList,
-    knownVersions
-  );
-  writeKnownVersionsFile ||= laggyStaged > 0;
-
-  // Scan the trailing window of the feed.
-  const scanStaged = await runScan(
-    context,
-    npm,
-    state,
-    head,
-    stagingFunction,
-    denyList,
-    licenseList,
-    knownVersions
-  );
-  writeKnownVersionsFile ||= scanStaged > 0;
-
-  // The laggy packument gauge is emitted at the end of the run, so it
-  // reflects the expectations recorded by this run's scan (emitting it during
-  // the retry phase would always read the trough: after recoveries, before
-  // new expectations are recorded).
-  await metricScope((metrics) => async () => {
-    metrics.setDimensions({});
-    metrics.putMetric(
-      MetricName.LAGGY_PACKUMENTS,
-      state.laggyPackumentCount,
-      Unit.Count
+  try {
+    // Re-check laggy packuments (packages whose registry packument was behind
+    // the revision announced by the feed when we first saw them).
+    const laggyStaged = await retryLaggyPackuments(
+      context,
+      npm,
+      state,
+      stagingFunction,
+      denyList,
+      licenseList,
+      knownVersions
     );
-  })();
+    writeKnownVersionsFile ||= laggyStaged > 0;
 
-  await Promise.all([
-    saveFollowerState(context, stagingBucket, state),
-    ...(writeKnownVersionsFile
-      ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
-      : []),
-  ]);
+    // Scan the trailing window of the feed.
+    const scanStaged = await runScan(
+      context,
+      npm,
+      state,
+      head,
+      stagingFunction,
+      denyList,
+      licenseList,
+      knownVersions
+    );
+    writeKnownVersionsFile ||= scanStaged > 0;
+
+    // The laggy packument gauge is emitted at the end of the run, so it
+    // reflects the expectations recorded by this run's scan (emitting it during
+    // the retry phase would always read the trough: after recoveries, before
+    // new expectations are recorded).
+    await metricScope((metrics) => async () => {
+      metrics.setDimensions({});
+      metrics.putMetric(
+        MetricName.LAGGY_PACKUMENTS,
+        state.laggyPackumentCount,
+        Unit.Count
+      );
+    })();
+  } finally {
+    // Persist the state even when a scan failed part-way: receipts, interim
+    // checkpoints, and staged known versions represent completed work that
+    // the next run should not redo.
+    await Promise.all([
+      saveFollowerState(context, stagingBucket, state),
+      ...(writeKnownVersionsFile
+        ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
+        : []),
+    ]);
+  }
 
   console.log('All done here, we have success!');
 
@@ -364,7 +369,7 @@ async function processBatch(
       );
     }
 
-    const attached = await npm.attachAllMetadata(fresh);
+    const { ok: attached, failedSeqs } = await npm.attachAllMetadata(fresh);
 
     // The most recent "modified" timestamp observed in the batch.
     let lastModified: Date | undefined;
@@ -423,8 +428,11 @@ async function processBatch(
     }
 
     // Record receipts for every entry received (including deleted or
-    // unreachable packages: they were received and deliberately skipped).
-    state.addSeqs(batch.seqs);
+    // unpublished packages: they were received and deliberately skipped) -
+    // except entries whose metadata fetch failed, so a later scan retries
+    // them.
+    const failed = new Set(failedSeqs);
+    state.addSeqs(batch.seqs.filter((seq) => !failed.has(seq)));
   } finally {
     metrics.putMetric(MetricName.LAST_SEQ, head, Unit.None);
     metrics.putMetric(
