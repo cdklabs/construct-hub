@@ -175,7 +175,16 @@ export async function handler(event: ScheduledEvent, context: Context) {
     );
     writeKnownVersionsFile ||= laggyStaged > 0;
 
-    // Scan the trailing window of the feed.
+    // Scan the trailing window of the feed. Progress is persisted after
+    // every processed chunk (see PersistState), so even a run that is hard
+    // killed by the Lambda timeout keeps its completed work.
+    const persist: PersistState = async (saveKnownVersions) =>
+      void (await Promise.all([
+        saveFollowerState(context, stagingBucket, state),
+        ...(saveKnownVersions
+          ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
+          : []),
+      ]));
     const scanStaged = await runScan(
       context,
       npm,
@@ -184,7 +193,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
       stagingFunction,
       denyList,
       licenseList,
-      knownVersions
+      knownVersions,
+      persist
     );
     writeKnownVersionsFile ||= scanStaged > 0;
 
@@ -219,6 +229,16 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
 //#region Scan
 /**
+ * A callback persisting the follower state (and optionally the known
+ * versions) to S3. Called after every processed chunk, so that progress is
+ * durable even when the Lambda times out mid-scan: a timeout is a hard kill,
+ * and anything not persisted would be redone by the next run. Without this, a
+ * backlog too large for a single execution would never complete (every run
+ * would restart it from scratch).
+ */
+type PersistState = (saveKnownVersions: boolean) => Promise<void>;
+
+/**
  * Re-reads the trailing window of the feed and processes every change entry
  * for which no receipt exists. A checkpoint is only recorded when the scan
  * covered the entire window; an interrupted scan resumes naturally on the
@@ -234,7 +254,8 @@ async function runScan(
   stagingFunction: string,
   denyList: DenyListClient,
   licenseList: LicenseListClient,
-  knownVersions: Map<string, Date>
+  knownVersions: Map<string, Date>,
+  persist: PersistState
 ): Promise<number> {
   const now = Date.now();
   const deep = state.deepScanDue(now);
@@ -262,8 +283,10 @@ async function runScan(
   // Read the window ascending from the floor. Receipts make re-reads of
   // already-covered ranges nearly free (no packuments are fetched for them).
   let cursor = floor;
+  let outOfBudget = false;
   while (
     !completed &&
+    !outOfBudget &&
     context.getRemainingTimeInMillis() > SCAN_TIME_BUDGET_MS
   ) {
     await metricScope((metrics) => async () => {
@@ -275,7 +298,7 @@ async function runScan(
       if (batch.seqs.length > 0) {
         maxSeqSeen = Math.max(maxSeqSeen, ...batch.seqs);
       }
-      staged += await processBatch(
+      const outcome = await processBatch(
         batch,
         metrics,
         context,
@@ -286,9 +309,16 @@ async function runScan(
         stagingFunction,
         denyList,
         licenseList,
-        knownVersions
+        knownVersions,
+        persist
       );
-      if (batch.totalCount < SCAN_BATCH_SIZE || next <= cursor) {
+      staged += outcome.staged;
+      if (!outcome.fullyProcessed) {
+        // The batch was only partially processed (time budget): the
+        // unprocessed entries carry no receipt, so the next run picks them
+        // up. No checkpoint may be recorded past them.
+        outOfBudget = true;
+      } else if (batch.totalCount < SCAN_BATCH_SIZE || next <= cursor) {
         // A short page means we are caught up with the feed head.
         completed = true;
       } else {
@@ -298,6 +328,7 @@ async function runScan(
         // importantly: a backfill) resume from here instead of the floor.
         if (next > (state.newestCheckpointSeq() ?? 0)) {
           state.addCheckpoint(next);
+          await persist(false);
         }
       }
     })();
@@ -320,12 +351,25 @@ async function runScan(
 }
 
 /**
+ * The maximum number of packument fetches per processing chunk. Chunking
+ * bounds how much work is lost when the Lambda is killed mid-chunk, and lets
+ * the time budget be re-checked between chunks: during a catch-up, a single
+ * page can contain thousands of unreceipted entries, far more than fit into
+ * one execution.
+ */
+const METADATA_CHUNK_SIZE = 1_000;
+
+/**
  * Processes one page of change entries: discards everything we already have a
- * receipt for, fetches packuments for the remainder, stages new relevant
- * package versions, records laggy packument expectations, and finally records
- * receipts for every entry received.
+ * receipt for, then works through the remainder in chunks. Each chunk fetches
+ * packuments, stages new relevant package versions, records laggy packument
+ * expectations and receipts, and persists the state - so completed chunks
+ * survive a timeout. Processing stops between chunks when the time budget is
+ * exhausted; unprocessed entries carry no receipt and are picked up by the
+ * next run.
  *
- * @returns the number of package versions sent for staging.
+ * @returns the number of package versions sent for staging, and whether all
+ *          entries of the page were processed.
  */
 async function processBatch(
   batch: DatabaseChanges,
@@ -338,10 +382,12 @@ async function processBatch(
   stagingFunction: string,
   denyList: DenyListClient,
   licenseList: LicenseListClient,
-  knownVersions: Map<string, Date>
-): Promise<number> {
+  knownVersions: Map<string, Date>,
+  persist: PersistState
+): Promise<{ staged: number; fullyProcessed: boolean }> {
   const startTime = Date.now();
   let staged = 0;
+  let fullyProcessed = true;
   try {
     const fresh = batch.results.filter(
       (change) => change.seq != null && !state.has(Number(change.seq))
@@ -351,93 +397,116 @@ async function processBatch(
     );
     metrics.putMetric(MetricName.CHANGE_COUNT, fresh.length, Unit.Count);
 
-    // Entries below the late boundary were inserted into the feed behind a
-    // position a completed scan had already read past.
-    const late = fresh.filter((change) => Number(change.seq) <= lateBoundary);
-    metrics.putMetric(MetricName.LATE_CHANGE_COUNT, late.length, Unit.Count);
-    for (const change of late) {
-      const crossedAt = state.timeCrossed(Number(change.seq));
-      if (crossedAt != null) {
-        metrics.putMetric(
-          MetricName.LATE_CHANGE_LAG,
-          Date.now() - crossedAt,
-          Unit.Milliseconds
-        );
-      }
-      console.log(
-        `[late] Change entry discovered at seq ${change.seq} (behind ${lateBoundary}): ${change.id}`
-      );
-    }
-
-    const { ok: attached, failedSeqs } = await npm.attachAllMetadata(fresh);
-    metrics.putMetric(
-      MetricName.METADATA_FETCH_FAILURES,
-      failedSeqs.length,
-      Unit.Count
-    );
-
-    // The most recent "modified" timestamp observed in the batch.
-    let lastModified: Date | undefined;
-    // Emit npm.js replication lag
-    for (const { change } of attached) {
-      const doc = change.doc as Change['doc'] | undefined;
-      if (doc?.time?.modified) {
-        const modified = new Date(doc.time.modified);
-        metrics.putMetric(
-          MetricName.NPMJS_CHANGE_AGE,
-          startTime - modified.getTime(),
-          Unit.Milliseconds
-        );
-        if (lastModified == null || lastModified < modified) {
-          lastModified = modified;
-        }
-      }
-    }
-
-    if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
-      console.log(
-        `Skipping batch as the latest modification is ${lastModified}, which is pre-Constructs`
-      );
-    } else {
-      // Laggy packuments: the registry served an older revision than the feed
-      // announced. Process the versions we did get, and record the
-      // expectation so the announced revision is re-checked on later runs.
-      for (const laggy of attached.filter((a) => a.laggy)) {
+    for (let offset = 0; offset < fresh.length; offset += METADATA_CHUNK_SIZE) {
+      if (
+        offset > 0 &&
+        context.getRemainingTimeInMillis() < SCAN_TIME_BUDGET_MS
+      ) {
         console.log(
-          `${laggy.change.id}: registry packument rev ${laggy.servedRev} is behind announced rev ${laggy.announcedRev}, recording laggy packument`
+          `Time budget exhausted after ${offset} of ${fresh.length} entries; the rest carries no receipt and is picked up by the next run`
         );
-        state.recordLaggyPackument(
-          laggy.change.id,
-          laggy.announcedRev,
-          isNaN(Number(laggy.change.seq)) ? undefined : Number(laggy.change.seq)
+        fullyProcessed = false;
+        break;
+      }
+      const chunk = fresh.slice(offset, offset + METADATA_CHUNK_SIZE);
+
+      // Entries below the late boundary were inserted into the feed behind a
+      // position a completed scan had already read past.
+      const late = chunk.filter((change) => Number(change.seq) <= lateBoundary);
+      metrics.putMetric(MetricName.LATE_CHANGE_COUNT, late.length, Unit.Count);
+      for (const change of late) {
+        const crossedAt = state.timeCrossed(Number(change.seq));
+        if (crossedAt != null) {
+          metrics.putMetric(
+            MetricName.LATE_CHANGE_LAG,
+            Date.now() - crossedAt,
+            Unit.Milliseconds
+          );
+        }
+        console.log(
+          `[late] Change entry discovered at seq ${change.seq} (behind ${lateBoundary}): ${change.id}`
         );
       }
 
-      const versionInfos = getRelevantVersionInfos(
-        attached.map((a) => a.change) as unknown as readonly Change[],
-        metrics,
-        denyList,
-        licenseList,
-        knownVersions
-      );
-      console.log(
-        `Identified ${versionInfos.length} relevant package version update(s)`
-      );
+      const { ok: attached, failedSeqs } = await npm.attachAllMetadata(chunk);
       metrics.putMetric(
-        MetricName.RELEVANT_PACKAGE_VERSIONS,
-        versionInfos.length,
+        MetricName.METADATA_FETCH_FAILURES,
+        failedSeqs.length,
         Unit.Count
       );
-      await stageVersions(versionInfos, stagingFunction, knownVersions);
-      staged = versionInfos.length;
-    }
 
-    // Record receipts for every entry received (including deleted or
-    // unpublished packages: they were received and deliberately skipped) -
-    // except entries whose metadata fetch failed, so a later scan retries
-    // them.
-    const failed = new Set(failedSeqs);
-    state.addSeqs(batch.seqs.filter((seq) => !failed.has(seq)));
+      // The most recent "modified" timestamp observed in the chunk.
+      let lastModified: Date | undefined;
+      // Emit npm.js replication lag
+      for (const { change } of attached) {
+        const doc = change.doc as Change['doc'] | undefined;
+        if (doc?.time?.modified) {
+          const modified = new Date(doc.time.modified);
+          metrics.putMetric(
+            MetricName.NPMJS_CHANGE_AGE,
+            startTime - modified.getTime(),
+            Unit.Milliseconds
+          );
+          if (lastModified == null || lastModified < modified) {
+            lastModified = modified;
+          }
+        }
+      }
+
+      let chunkStaged = 0;
+      if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
+        console.log(
+          `Skipping chunk as the latest modification is ${lastModified}, which is pre-Constructs`
+        );
+      } else {
+        // Laggy packuments: the registry served an older revision than the
+        // feed announced. Process the versions we did get, and record the
+        // expectation so the announced revision is re-checked on later runs.
+        for (const laggy of attached.filter((a) => a.laggy)) {
+          console.log(
+            `${laggy.change.id}: registry packument rev ${laggy.servedRev} is behind announced rev ${laggy.announcedRev}, recording laggy packument`
+          );
+          state.recordLaggyPackument(
+            laggy.change.id,
+            laggy.announcedRev,
+            isNaN(Number(laggy.change.seq))
+              ? undefined
+              : Number(laggy.change.seq)
+          );
+        }
+
+        const versionInfos = getRelevantVersionInfos(
+          attached.map((a) => a.change) as unknown as readonly Change[],
+          metrics,
+          denyList,
+          licenseList,
+          knownVersions
+        );
+        console.log(
+          `Identified ${versionInfos.length} relevant package version update(s)`
+        );
+        metrics.putMetric(
+          MetricName.RELEVANT_PACKAGE_VERSIONS,
+          versionInfos.length,
+          Unit.Count
+        );
+        await stageVersions(versionInfos, stagingFunction, knownVersions);
+        chunkStaged = versionInfos.length;
+        staged += chunkStaged;
+      }
+
+      // Record receipts for every entry of the chunk (including deleted or
+      // unpublished packages: they were received and deliberately skipped) -
+      // except entries whose metadata fetch failed, so a later scan retries
+      // them. Then persist, so a timeout cannot undo this chunk.
+      const failed = new Set(failedSeqs);
+      state.addSeqs(
+        chunk
+          .map((change) => Number(change.seq))
+          .filter((seq) => !isNaN(seq) && !failed.has(seq))
+      );
+      await persist(chunkStaged > 0);
+    }
   } finally {
     metrics.putMetric(MetricName.LAST_SEQ, head, Unit.None);
     metrics.putMetric(
@@ -451,7 +520,7 @@ async function processBatch(
       Unit.Milliseconds
     );
   }
-  return staged;
+  return { staged, fullyProcessed };
 }
 //#endregion
 
