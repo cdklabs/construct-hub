@@ -1,4 +1,4 @@
-import { gunzipSync } from 'zlib';
+import { gunzipSync, gzipSync } from 'zlib';
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import {
   GetObjectCommand,
@@ -520,6 +520,116 @@ test('records interim checkpoints so an interrupted scan resumes mid-window', as
   expect(saved.newestCheckpointSeq()).toBe(20_000);
   // The interrupted (deep) scan did not complete.
   expect(saved.lastDeepScanAt).toBeUndefined();
+});
+
+test('retries truncated gzip responses from the registry', async () => {
+  givenHead(1_010);
+  givenNoStateFile();
+  givenLegacyMarker(1_000);
+
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '1000' })
+    .reply(200, {
+      results: [
+        {
+          seq: 1_005,
+          id: 'flaky-package',
+          changes: [{ rev: '1-aaaaaa' }],
+          deleted: false,
+        },
+      ],
+      last_seq: 1_005,
+    });
+  // First packument response is a truncated gzip body (Z_BUF_ERROR), the
+  // retry succeeds.
+  const fullBody = gzipSync(
+    Buffer.from(
+      JSON.stringify(packageDoc('flaky-package', '1-aaaaaa', '1.0.0'))
+    )
+  );
+  nock(REGISTRY)
+    .get('/flaky-package')
+    .reply(200, fullBody.subarray(0, fullBody.length - 8), {
+      'content-encoding': 'gzip',
+    });
+  nock(REGISTRY)
+    .get('/flaky-package')
+    .reply(200, packageDoc('flaky-package', '1-aaaaaa', '1.0.0'));
+
+  await handler(event, context);
+
+  expect(stagedPackages()).toEqual([
+    { name: 'flaky-package', version: '1.0.0' },
+  ]);
+  expect(savedState().has(1_005)).toBe(true);
+});
+
+test('does not receipt entries whose metadata fetch failed, so a later scan retries them', async () => {
+  givenHead(1_010);
+  givenNoStateFile();
+  givenLegacyMarker(1_000);
+
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '1000' })
+    .reply(200, {
+      results: [
+        {
+          seq: 1_004,
+          id: 'broken-package',
+          changes: [{ rev: '1-aaaaaa' }],
+          deleted: false,
+        },
+        {
+          seq: 1_006,
+          id: 'good-package',
+          changes: [{ rev: '1-bbbbbb' }],
+          deleted: false,
+        },
+      ],
+      last_seq: 1_006,
+    });
+  // A client error is used so the request is not retried until the
+  // transient-error deadline.
+  nock(REGISTRY).get('/broken-package').reply(403, 'forbidden');
+  nock(REGISTRY)
+    .get('/good-package')
+    .reply(200, packageDoc('good-package', '1-bbbbbb', '1.0.0'));
+
+  await handler(event, context);
+
+  // The healthy entry was processed and receipted; the failed one was not
+  // receipted, so the next scan will retry it.
+  expect(stagedPackages()).toEqual([
+    { name: 'good-package', version: '1.0.0' },
+  ]);
+  const state = savedState();
+  expect(state.has(1_006)).toBe(true);
+  expect(state.has(1_004)).toBe(false);
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.METADATA_FETCH_FAILURES,
+    1,
+    Unit.Count
+  );
+});
+
+test('persists its state even when the scan fails part-way', async () => {
+  givenHead(1_010);
+  givenNoStateFile();
+  givenLegacyMarker(1_000);
+
+  // The feed itself rejects the request: the scan throws. (A client error
+  // is used so the request is not retried until the transient-error deadline.)
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '1000' })
+    .reply(403, 'forbidden');
+
+  await expect(handler(event, context)).rejects.toThrow(/HTTP 403/);
+
+  // The state (here: the seeded checkpoint) was saved regardless.
+  expect(savedState().newestCheckpointSeq()).toBe(1_000);
 });
 
 test('resets its position when the feed head regresses below the newest checkpoint', async () => {

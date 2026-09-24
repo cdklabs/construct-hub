@@ -2886,6 +2886,7 @@ new sources.NpmJs(props?: NpmJsProps)
 | <code><a href="#construct-hub.sources.NpmJs.metricLastSeq">metricLastSeq</a></code> | The last sequence number that was processed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricLateChangeCount">metricLateChangeCount</a></code> | The number of change entries discovered by a scan that were inserted into the `_changes` feed behind a position the follower had already read past. |
 | <code><a href="#construct-hub.sources.NpmJs.metricLateChangeLag">metricLateChangeLag</a></code> | For each late change entry, the time elapsed between the moment the follower first read past the entry's sequence number and the moment the entry was discovered. |
+| <code><a href="#construct-hub.sources.NpmJs.metricMetadataFetchFailures">metricMetadataFetchFailures</a></code> | The number of change entries whose registry metadata could not be fetched (after transient-error retries). |
 | <code><a href="#construct-hub.sources.NpmJs.metricNpmJsChangeAge">metricNpmJsChangeAge</a></code> | *No description.* |
 | <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionAge">metricPackageVersionAge</a></code> | The age of the oldest package version that was processed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionCount">metricPackageVersionCount</a></code> | The total count of package versions that were inspected. |
@@ -3035,6 +3036,23 @@ This is a lower bound on the feed's insertion lag,
 and can be used to tune the scan window.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLateChangeLag.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricMetadataFetchFailures` <a name="metricMetadataFetchFailures" id="construct-hub.sources.NpmJs.metricMetadataFetchFailures"></a>
+
+```typescript
+public metricMetadataFetchFailures(opts?: MetricOptions): Metric
+```
+
+The number of change entries whose registry metadata could not be fetched (after transient-error retries).
+
+These entries are not receipted, so a
+later scan retries them.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricMetadataFetchFailures.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 

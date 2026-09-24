@@ -33,6 +33,13 @@ export const enum MetricName {
   LATE_CHANGE_LAG = 'LateChangeLag',
 
   /**
+   * Number of change entries whose registry metadata could not be fetched
+   * (after transient-error retries). These entries are not receipted, so a
+   * later scan retries them.
+   */
+  METADATA_FETCH_FAILURES = 'MetadataFetchFailures',
+
+  /**
    * The number of packages for which the registry packument is still behind
    * the revision announced by the `_changes` feed ("laggy packuments"). The
    * versions served so far have been processed; the follower keeps re-checking
