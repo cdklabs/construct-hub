@@ -121,7 +121,6 @@ afterEach(() => {
   delete process.env[ENV_DENY_LIST_OBJECT_KEY];
   delete process.env[LicenseListEnv.BUCKET_NAME];
   delete process.env[LicenseListEnv.OBJECT_KEY];
-  delete process.env.REQUEST_DEADLINE_MS;
   nock.cleanAll();
 });
 
@@ -567,7 +566,6 @@ test('retries truncated gzip responses from the registry', async () => {
 });
 
 test('does not receipt entries whose metadata fetch failed, so a later scan retries them', async () => {
-  process.env.REQUEST_DEADLINE_MS = '0'; // do not wait out transient retries
   givenHead(1_010);
   givenNoStateFile();
   givenLegacyMarker(1_000);
@@ -592,7 +590,9 @@ test('does not receipt entries whose metadata fetch failed, so a later scan retr
       ],
       last_seq: 1_006,
     });
-  nock(REGISTRY).get('/broken-package').reply(500, 'oops');
+  // A client error is used so the request is not retried until the
+  // transient-error deadline.
+  nock(REGISTRY).get('/broken-package').reply(403, 'forbidden');
   nock(REGISTRY)
     .get('/good-package')
     .reply(200, packageDoc('good-package', '1-bbbbbb', '1.0.0'));
@@ -607,21 +607,26 @@ test('does not receipt entries whose metadata fetch failed, so a later scan retr
   const state = savedState();
   expect(state.has(1_006)).toBe(true);
   expect(state.has(1_004)).toBe(false);
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.METADATA_FETCH_FAILURES,
+    1,
+    Unit.Count
+  );
 });
 
 test('persists its state even when the scan fails part-way', async () => {
-  process.env.REQUEST_DEADLINE_MS = '0';
   givenHead(1_010);
   givenNoStateFile();
   givenLegacyMarker(1_000);
 
-  // The feed itself is unavailable: the scan throws.
+  // The feed itself rejects the request: the scan throws. (A client error
+  // is used so the request is not retried until the transient-error deadline.)
   nock(REPLICA)
     .get('/registry/_changes')
     .query({ limit: '10000', since: '1000' })
-    .reply(503, 'unavailable');
+    .reply(403, 'forbidden');
 
-  await expect(handler(event, context)).rejects.toThrow(/HTTP 503/);
+  await expect(handler(event, context)).rejects.toThrow(/HTTP 403/);
 
   // The state (here: the seeded checkpoint) was saved regardless.
   expect(savedState().newestCheckpointSeq()).toBe(1_000);

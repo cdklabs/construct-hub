@@ -8,14 +8,7 @@ import { createGunzip } from 'zlib';
 
 const NPM_REGISTRY_URL = 'https://registry.npmjs.org/';
 
-/**
- * How long to keep retrying transient request failures. Can be overridden
- * through the environment for testing purposes.
- */
-function requestDeadlineMs(): number {
-  const fromEnv = process.env.REQUEST_DEADLINE_MS;
-  return fromEnv ? Number(fromEnv) : 30_000;
-}
+const REQUEST_DEADLINE_MS = 30_000;
 
 const REQUEST_ATTEMPT_TIMEOUT_MS = 5_000;
 
@@ -244,7 +237,7 @@ export class CouchChanges extends EventEmitter {
       timeout: REQUEST_ATTEMPT_TIMEOUT_MS,
     };
 
-    const deadline = Date.now() + requestDeadlineMs();
+    const deadline = Date.now() + REQUEST_DEADLINE_MS;
     let maxDelay = 100;
     while (true) {
       try {

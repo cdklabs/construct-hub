@@ -370,6 +370,11 @@ async function processBatch(
     }
 
     const { ok: attached, failedSeqs } = await npm.attachAllMetadata(fresh);
+    metrics.putMetric(
+      MetricName.METADATA_FETCH_FAILURES,
+      failedSeqs.length,
+      Unit.Count
+    );
 
     // The most recent "modified" timestamp observed in the batch.
     let lastModified: Date | undefined;

@@ -392,6 +392,12 @@ export class NpmJs implements IPackageSource {
                 }),
                 0
               ),
+              fillMetric(
+                this.metricMetadataFetchFailures({
+                  label: 'Metadata Fetch Failures',
+                }),
+                0
+              ),
             ],
             leftYAxis: { min: 0 },
             right: [
@@ -518,6 +524,21 @@ export class NpmJs implements IPackageSource {
       statistic: Stats.MAXIMUM,
       ...opts,
       metricName: MetricName.LATE_CHANGE_LAG,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of change entries whose registry metadata could not be fetched
+   * (after transient-error retries). These entries are not receipted, so a
+   * later scan retries them.
+   */
+  public metricMetadataFetchFailures(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.METADATA_FETCH_FAILURES,
       namespace: METRICS_NAMESPACE,
     });
   }
