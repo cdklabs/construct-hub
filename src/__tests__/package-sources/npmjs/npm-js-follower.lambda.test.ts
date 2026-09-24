@@ -632,6 +632,107 @@ test('persists its state even when the scan fails part-way', async () => {
   expect(savedState().newestCheckpointSeq()).toBe(1_000);
 });
 
+function nonConstructDoc(name: string) {
+  return {
+    _id: name,
+    _rev: '1-aaaaaa',
+    'dist-tags': { latest: '1.0.0' },
+    name,
+    time: {
+      created: '2023-01-01T00:00:00.000Z',
+      modified: '2023-06-01T00:00:00.000Z',
+      '1.0.0': '2023-06-01T00:00:00.000Z',
+    },
+    versions: {
+      '1.0.0': {
+        dist: { shasum: 'mock-shasum', tarball: `${REGISTRY}/${name}.tgz` },
+        name,
+        version: '1.0.0',
+      },
+    },
+  };
+}
+
+function statePutCount(): number {
+  return mockS3
+    .commandCalls(PutObjectCommand)
+    .filter((call) => call.args[0].input.Key === FOLLOWER_STATE_FILE_NAME)
+    .length;
+}
+
+test('persists its progress after every processed chunk', async () => {
+  givenHead(20_000);
+  givenNoStateFile();
+  givenLegacyMarker(1_000);
+
+  // 1,500 unreceipted entries: two chunks of work.
+  const entries = Array.from({ length: 1_500 }, (_, i) => ({
+    seq: 1_001 + i,
+    id: `bulk-package-${i}`,
+    changes: [{ rev: '1-aaaaaa' }],
+    deleted: false,
+  }));
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '1000' })
+    .reply(200, { results: entries, last_seq: 2_500 });
+  nock(REGISTRY)
+    .persist()
+    .get(/^\/bulk-package-\d+$/)
+    .reply(200, (uri) => nonConstructDoc(uri.slice(1)));
+
+  await handler(event, context);
+
+  // One state save per chunk (2), plus the final save.
+  expect(statePutCount()).toBeGreaterThanOrEqual(3);
+  const state = savedState();
+  expect(state.has(1_001)).toBe(true);
+  expect(state.has(2_500)).toBe(true);
+});
+
+test('stops between chunks when the time budget is exhausted, keeping completed chunks', async () => {
+  givenHead(20_000);
+  givenNoStateFile();
+  givenLegacyMarker(1_000);
+
+  const entries = Array.from({ length: 1_500 }, (_, i) => ({
+    seq: 1_001 + i,
+    id: `bulk-package-${i}`,
+    changes: [{ rev: '1-aaaaaa' }],
+    deleted: false,
+  }));
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '1000' })
+    .reply(200, { results: entries, last_seq: 2_500 });
+  nock(REGISTRY)
+    .persist()
+    .get(/^\/bulk-package-\d+$/)
+    .reply(200, (uri) => nonConstructDoc(uri.slice(1)));
+
+  // Exhaust the budget as soon as the first chunk persists.
+  let remaining = 300_000;
+  (context as any).getRemainingTimeInMillis = () => remaining;
+  mockS3.on(PutObjectCommand).callsFake(() => {
+    remaining = 30_000;
+    return {};
+  });
+
+  try {
+    await handler(event, context);
+  } finally {
+    (context as any).getRemainingTimeInMillis = () => 300_000;
+  }
+
+  // The first chunk (1,000 entries) was processed and persisted; the second
+  // was not: its entries carry no receipt and no checkpoint moved past them.
+  const state = savedState();
+  expect(state.has(1_001)).toBe(true);
+  expect(state.has(2_000)).toBe(true);
+  expect(state.has(2_001)).toBe(false);
+  expect(state.newestCheckpointSeq()).toBe(1_000);
+});
+
 test('resets its position when the feed head regresses below the newest checkpoint', async () => {
   const now = Date.now();
   // The feed head (3000) is below our newest checkpoint (5000).
