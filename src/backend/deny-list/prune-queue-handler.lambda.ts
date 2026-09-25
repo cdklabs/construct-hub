@@ -3,6 +3,7 @@ import { SQSEvent } from 'aws-lambda';
 import { ENV_DELETE_OBJECT_DATA_BUCKET_NAME } from './constants';
 import { S3_CLIENT } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
+import { STORAGE_KEY_FORMAT_REGEX } from '../shared/constants';
 
 export async function handler(event: SQSEvent) {
   console.log(JSON.stringify({ event }));
@@ -13,6 +14,10 @@ export async function handler(event: SQSEvent) {
 
   for (const record of records) {
     const objectKey = record.body;
+    if (!STORAGE_KEY_FORMAT_REGEX.test(objectKey)) {
+      console.log(`invalid object key: ${objectKey}`);
+      continue;
+    }
     console.log(`deleting s3://${bucket}/${objectKey}`);
     await S3_CLIENT.send(
       new DeleteObjectCommand({ Bucket: bucket, Key: objectKey })
