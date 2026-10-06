@@ -81,9 +81,26 @@ export const enum S3KeyPrefix {
 export const MARKER_FILE_NAME = 'couchdb-last-transaction-id.2';
 
 /**
- * The name of the object that contains the list of known versions.
+ * The name of the object that contains the list of known versions. Known
+ * versions are now kept in a DynamoDB table; this file is only read once, by
+ * the migration that seeds the table of an existing deployment.
  */
 export const KNOWN_VERSIONS_FILE_NAME = 'couchdb-known-versions.2';
+
+/**
+ * The environment variable holding the name of the known versions table.
+ */
+export const ENV_KNOWN_VERSIONS_TABLE_NAME = 'KNOWN_VERSIONS_TABLE_NAME';
+
+/**
+ * The attribute names of the known versions table. The table is keyed by
+ * package name (partition key) and version (sort key); an item exists for
+ * every package version the follower has processed.
+ */
+export const enum KnownVersionsAttribute {
+  NAME = 'name',
+  VERSION = 'version',
+}
 
 /**
  * The name of the object that contains the follower state: receipts for the

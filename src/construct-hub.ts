@@ -501,19 +501,18 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     feedBuilder.setConstructHubUrl(webApp.baseUrl);
 
     const sources = new Construct(this, 'Sources');
-    const packageSources = (
-      props.packageSources ?? [new NpmJs()]
-    ).map((source) =>
-      source.bind(sources, {
-        baseUrl: webApp.baseUrl,
-        denyList,
-        ingestion: this.ingestion,
-        licenseList,
-        monitoring: this.monitoring,
-        queue: this.ingestion.queue,
-        repository: codeArtifact,
-        overviewDashboard: overviewDashboard,
-      })
+    const packageSources = (props.packageSources ?? [new NpmJs()]).map(
+      (source) =>
+        source.bind(sources, {
+          baseUrl: webApp.baseUrl,
+          denyList,
+          ingestion: this.ingestion,
+          licenseList,
+          monitoring: this.monitoring,
+          queue: this.ingestion.queue,
+          repository: codeArtifact,
+          overviewDashboard: overviewDashboard,
+        })
     );
 
     const inventory = new Inventory(this, 'InventoryCanary', {

@@ -56,6 +56,7 @@ const project = new CdklabsConstructLibrary({
     cdkCli,
     '@aws-sdk/client-cloudwatch',
     '@aws-sdk/client-codeartifact',
+    '@aws-sdk/client-dynamodb',
     '@aws-sdk/client-lambda',
     '@aws-sdk/client-s3',
     '@aws-sdk/client-sfn',

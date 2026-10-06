@@ -44,7 +44,14 @@ ConstructHub provides two package source implementations: `NpmJs` and
   scheduled to run every `5 minutes`, and stores its state (receipts for the
   change entries received, time/sequence checkpoints, and laggy packument
   expectations) in a specific object in the S3 bucket used for staging package
-  tarballs. See [npm-sync-protocol.md](./npm-sync-protocol.md) for the
+  tarballs.
+  The package versions it has processed are recorded in a DynamoDB table, so
+  each version is only processed once.
+  Existing deployments kept this list in the S3 bucket; it is copied to the
+  table by a function that runs when the table is first deployed.
+  The follower is only updated once the copy completed, and the copy runs once
+  more afterwards, to pick up what the old follower recorded in the meantime.
+  See [npm-sync-protocol.md](./npm-sync-protocol.md) for the
   guarantees the feed does and does not give, and how the follower compensates.
 
   > Back-filling is automatic for the `NpmJs` source. Upon initial deployment,
@@ -60,6 +67,7 @@ ConstructHub provides two package source implementations: `NpmJs` and
   > ```
   >
   > The next scan then covers everything from that position to the feed head.
+  > Versions recorded in the known versions table are not staged again.
   > The state object is linked from the backend dashboard.
 
   - A **high-severity** alarm triggers if the NpmJs Follower is not running at

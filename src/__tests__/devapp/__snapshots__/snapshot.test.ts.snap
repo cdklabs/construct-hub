@@ -358,6 +358,114 @@ exports[`golden snapshot 1`] = `
       },
       "Type": "AWS::IAM::Role",
     },
+    "AWSCDKTriggerCustomResourceProviderCustomResourceProviderHandler97BECD91": {
+      "DependsOn": [
+        "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "b585179dc46d9100f31367c1eb03e063c4e1a396f99a6a188ac4a05a16ae4fa5.zip",
+        },
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+            "Arn",
+          ],
+        },
+        "Runtime": {
+          "Fn::FindInMap": [
+            "LatestNodeRuntimeMap",
+            {
+              "Ref": "AWS::Region",
+            },
+            "value",
+          ],
+        },
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "lambda:InvokeFunction",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionEB7112AF",
+                              "Arn",
+                            ],
+                          },
+                          ":*",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+                {
+                  "Action": [
+                    "lambda:InvokeFunction",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionEB7112AF",
+                              "Arn",
+                            ],
+                          },
+                          ":*",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "Inline",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
     "AppRegistryAssociation": {
       "Properties": {
         "Application": {
@@ -702,11 +810,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\n[button:Known Versions](/s3/object/",
+              "?prefix=couchdb-last-transaction-id.2)\\n[button:Known Versions](/dynamodbv2/home#table?name=",
               {
-                "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                "Ref": "ConstructHubSourcesKnownVersions1480B28B",
               },
-              "?prefix=couchdb-known-versions.2)\\n[button:Stager](/lambda/home#/functions/",
+              ")\\n[button:Stager](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -11234,10 +11342,52 @@ Direct link to the function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubSourcesKnownVersions1480B28B": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "name",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "version",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "name",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "version",
+            "KeyType": "RANGE",
+          },
+        ],
+        "Replicas": [
+          {
+            "PointInTimeRecoverySpecification": {
+              "PointInTimeRecoveryEnabled": true,
+            },
+            "Region": {
+              "Ref": "AWS::Region",
+            },
+          },
+        ],
+        "SSESpecification": {
+          "SSEEnabled": false,
+        },
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Retain",
+    },
     "ConstructHubSourcesNpmJs15A77D2D": {
       "DependsOn": [
         "ConstructHubLicenseListAwsCliLayer59592811",
         "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsKnownVersionsMigrationBeforeFollowerUpdateF06D8619",
         "ConstructHubSourcesNpmJsServiceRoleDefaultPolicy65FBFA22",
         "ConstructHubSourcesNpmJsServiceRoleAC3F7AA6",
       ],
@@ -11249,7 +11399,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "ffa98ec8d7f020c136187b40964432444ae3eb94878c781f5e02ad6297b3c7d8.zip",
+          "S3Key": "9df4ea6f33aadd84d0a7f36cbfad610289ea74b3849c6ff98f8d8731c9f9e93e.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -11264,6 +11414,9 @@ Direct link to the function: /lambda/home#/functions/",
             "DENY_LIST_OBJECT_KEY": "deny-list.json",
             "FUNCTION_NAME": {
               "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
+            "KNOWN_VERSIONS_TABLE_NAME": {
+              "Ref": "ConstructHubSourcesKnownVersions1480B28B",
             },
             "LICENSE_LIST_BUCKET_NAME": {
               "Ref": "ConstructHubLicenseListBucket9334047F",
@@ -11811,6 +11964,249 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationAfterFollowerUpdateDB1AA774": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJs15A77D2D",
+      ],
+      "Properties": {
+        "ExecuteOnHandlerChange": false,
+        "HandlerArn": {
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A7011fc689a372f2abb95be7d24b67a416cf",
+        },
+        "InvocationType": "Event",
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWSCDKTriggerCustomResourceProviderCustomResourceProviderHandler97BECD91",
+            "Arn",
+          ],
+        },
+        "Timeout": "120000",
+      },
+      "Type": "Custom::Trigger",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationBeforeFollowerUpdateF06D8619": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesKnownVersions1480B28B",
+      ],
+      "Properties": {
+        "ExecuteOnHandlerChange": false,
+        "HandlerArn": {
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A7011fc689a372f2abb95be7d24b67a416cf",
+        },
+        "InvocationType": "RequestResponse",
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWSCDKTriggerCustomResourceProviderCustomResourceProviderHandler97BECD91",
+            "Arn",
+          ],
+        },
+        "Timeout": "720000",
+      },
+      "Type": "Custom::Trigger",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A7011fc689a372f2abb95be7d24b67a416cf": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionEB7112AF",
+        },
+      },
+      "Type": "AWS::Lambda::Version",
+    },
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionEB7112AF": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionServiceRoleDefaultPolicy80D50218",
+        "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionServiceRoleAA17733A",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "8f27fe5ee9f5c0c99dfa0d66e98295ec31b3d124970fc7162d4b121f37b053a3.zip",
+        },
+        "Description": "[dev/ConstructHub/Sources/NpmJs] Copies the known versions from the staging bucket to the known versions table",
+        "Environment": {
+          "Variables": {
+            "BUCKET_NAME": {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "KNOWN_VERSIONS_TABLE_NAME": {
+              "Ref": "ConstructHubSourcesKnownVersions1480B28B",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 2048,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionServiceRoleAA17733A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 600,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionServiceRoleAA17733A": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionServiceRoleDefaultPolicy80D50218": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-known-versions.2",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/couchdb-last-transaction-id.2",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionServiceRoleDefaultPolicy80D50218",
+        "Roles": [
+          {
+            "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionServiceRoleAA17733A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubSourcesNpmJsSchedule34031870": {
       "DependsOn": [
         "ConstructHubSourcesNpmJsFollowerFailures86BCBA0D",
@@ -11911,13 +12307,6 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -11974,7 +12363,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                           "Arn",
                         ],
                       },
-                      "/couchdb-known-versions.2",
+                      "/couchdb-follower-state",
                     ],
                   ],
                 },
@@ -11982,40 +12371,26 @@ Direct link to Lambda function: /lambda/home#/functions/",
             },
             {
               "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
               ],
               "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
-                          "Arn",
-                        ],
-                      },
-                      "/couchdb-follower-state",
-                    ],
-                  ],
-                },
-              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
             },
             {
               "Action": [
@@ -12128,7 +12503,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e2b7f901593926244f91584643ade337341313ba64f6d0492691d5b148564261.zip",
+          "S3Key": "8625ecb0c4c91c2ca0404a682cb734f265ca9331fd380d51dd6759eb64acffdc.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {

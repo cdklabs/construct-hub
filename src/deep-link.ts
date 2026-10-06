@@ -1,5 +1,6 @@
 import { Fn, Stack } from 'aws-cdk-lib';
 import { CfnRepository } from 'aws-cdk-lib/aws-codeartifact';
+import { ITableV2 } from 'aws-cdk-lib/aws-dynamodb';
 import { ICluster } from 'aws-cdk-lib/aws-ecs';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup } from 'aws-cdk-lib/aws-logs';
@@ -9,6 +10,10 @@ import { IStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 
 export function codeArtifactRepositoryUrl(repository: CfnRepository) {
   return `/codesuite/codeartifact/d/${repository.attrDomainOwner}/${repository.attrDomainName}/r/${repository.attrName}`;
+}
+
+export function dynamoDbTableUrl(table: ITableV2): string {
+  return `/dynamodbv2/home#table?name=${table.tableName}`;
 }
 
 export function ecsClusterUrl(cluster: ICluster): string {

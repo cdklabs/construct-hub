@@ -1,4 +1,4 @@
-import { Duration } from 'aws-cdk-lib';
+import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import {
   AlarmRule,
   ComparisonOperator,
@@ -13,6 +13,12 @@ import {
   Stats,
   TreatMissingData,
 } from 'aws-cdk-lib/aws-cloudwatch';
+import {
+  AttributeType,
+  Billing,
+  TableEncryptionV2,
+  TableV2,
+} from 'aws-cdk-lib/aws-dynamodb';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Tracing } from 'aws-cdk-lib/aws-lambda';
@@ -22,6 +28,7 @@ import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { AlarmSeverity } from '../api';
 import {
+  dynamoDbTableUrl,
   lambdaFunctionUrl,
   logAnalyticsUrl,
   s3ObjectUrl,
@@ -29,18 +36,6 @@ import {
 } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { addAlarm } from '../monitoring';
-import { NpmJsPackageCanary } from './npmjs/canary';
-import {
-  FOLLOWER_STATE_FILE_NAME,
-  KNOWN_VERSIONS_FILE_NAME,
-  MARKER_FILE_NAME,
-  METRICS_NAMESPACE,
-  MetricName,
-  S3KeyPrefix,
-  SCAN_WINDOW_MS,
-} from './npmjs/constants.lambda-shared';
-import { NpmJsFollower } from './npmjs/npm-js-follower';
-import { StageAndNotify } from './npmjs/stage-and-notify';
 import { IMonitoring } from '../monitoring/api';
 import type {
   IPackageSource,
@@ -48,6 +43,21 @@ import type {
   PackageSourceBindResult,
 } from '../package-source';
 import { RUNBOOK_URL } from '../runbook-url';
+import { NpmJsPackageCanary } from './npmjs/canary';
+import {
+  ENV_KNOWN_VERSIONS_TABLE_NAME,
+  FOLLOWER_STATE_FILE_NAME,
+  KNOWN_VERSIONS_FILE_NAME,
+  KnownVersionsAttribute,
+  MARKER_FILE_NAME,
+  METRICS_NAMESPACE,
+  MetricName,
+  S3KeyPrefix,
+  SCAN_WINDOW_MS,
+} from './npmjs/constants.lambda-shared';
+import { KnownVersionsTableMigration } from './npmjs/known-versions-table-migration';
+import { NpmJsFollower } from './npmjs/npm-js-follower';
+import { StageAndNotify } from './npmjs/stage-and-notify';
 import { S3StorageFactory } from '../s3/storage';
 import { ReStagePackageVersion } from './npmjs/re-stage-package-version';
 
@@ -114,6 +124,28 @@ export interface NpmJsProps {
    * @default Duration.days(1)
    */
   readonly canaryMaxStale?: Duration;
+
+  /**
+   * The billing mode of the table in which the follower records the package
+   * versions it has processed.
+   *
+   * @default Billing.onDemand()
+   */
+  readonly knownVersionsTableBilling?: Billing;
+
+  /**
+   * Copies the known versions of a deployment created before the known
+   * versions table existed from the staging bucket to the table, when the
+   * table is created.
+   *
+   * Without the copy, an existing deployment starts with an empty table and
+   * processes every version of every construct library again, as their
+   * packages change. Turn this off for new deployments, or if the table was
+   * filled some other way.
+   *
+   * @default true
+   */
+  readonly enableKnownVersionsMigration?: boolean;
 }
 
 /**
@@ -202,22 +234,51 @@ export class NpmJs implements IPackageSource {
       })
     );
 
+    // The package versions the follower has processed. Losing this table
+    // means re-processing every construct library version ever published, so
+    // it is retained and backed up.
+    const knownVersions = new TableV2(scope, 'KnownVersions', {
+      partitionKey: {
+        name: KnownVersionsAttribute.NAME,
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: KnownVersionsAttribute.VERSION,
+        type: AttributeType.STRING,
+      },
+      billing: this.props.knownVersionsTableBilling ?? Billing.onDemand(),
+      encryption: TableEncryptionV2.dynamoOwnedKey(),
+      pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+
     const follower = new NpmJsFollower(scope, 'NpmJs', {
       description: `[${scope.node.path}/NpmJs] Periodically query npmjs.com index for new packages`,
       environment: {
         AWS_EMF_ENVIRONMENT: 'Local',
         BUCKET_NAME: bucket.bucketName,
         FUNCTION_NAME: stager.functionName,
+        [ENV_KNOWN_VERSIONS_TABLE_NAME]: knownVersions.tableName,
       },
       memorySize: 10_024, // 10 GiB
-      reservedConcurrentExecutions: 1, // Only one execution at a time, to avoid race conditions on the S3 marker object
+      reservedConcurrentExecutions: 1, // Only one execution at a time, to avoid race conditions on the S3 follower state object
       timeout: FOLLOWER_RUN_RATE,
       tracing: Tracing.ACTIVE,
     });
 
-    bucket.grantReadWrite(follower, MARKER_FILE_NAME);
-    bucket.grantReadWrite(follower, KNOWN_VERSIONS_FILE_NAME);
+    // The legacy marker is only read, to seed the follower state of existing
+    // deployments.
+    bucket.grantRead(follower, MARKER_FILE_NAME);
     bucket.grantReadWrite(follower, FOLLOWER_STATE_FILE_NAME);
+    knownVersions.grantReadWriteData(follower);
+
+    if (this.props.enableKnownVersionsMigration ?? true) {
+      new KnownVersionsTableMigration(follower, 'KnownVersionsMigration', {
+        bucket,
+        table: knownVersions,
+        follower,
+      });
+    }
     denyList?.grantRead(follower);
     licenseList.grantRead(follower);
     stager.grantInvoke(follower);
@@ -278,7 +339,7 @@ export class NpmJs implements IPackageSource {
         },
         {
           name: 'Known Versions',
-          url: s3ObjectUrl(bucket, KNOWN_VERSIONS_FILE_NAME),
+          url: dynamoDbTableUrl(knownVersions),
         },
         { name: 'Stager', url: lambdaFunctionUrl(stager) },
         { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
