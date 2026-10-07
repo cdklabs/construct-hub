@@ -1724,6 +1724,8 @@ const npmJsProps: sources.NpmJsProps = { ... }
 | <code><a href="#construct-hub.sources.NpmJsProps.property.canaryPackage">canaryPackage</a></code> | <code>string</code> | The package that is monitored by the package canary, if enabled by `enableCanary`. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.canarySla">canarySla</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.enableCanary">enableCanary</a></code> | <code>boolean</code> | Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics. |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.enableKnownVersionsMigration">enableKnownVersionsMigration</a></code> | <code>boolean</code> | Copies the known versions of a deployment created before the known versions table existed from the staging bucket to the table, when the table is created. |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.knownVersionsTableBilling">knownVersionsTableBilling</a></code> | <code>aws-cdk-lib.aws_dynamodb.Billing</code> | The billing mode of the table in which the follower records the package versions it has processed. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.stagingBucket">stagingBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The bucket to use for staging npm packages. |
 
 ---
@@ -1784,6 +1786,37 @@ public readonly enableCanary: boolean;
 - *Default:* true
 
 Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics.
+
+---
+
+##### `enableKnownVersionsMigration`<sup>Optional</sup> <a name="enableKnownVersionsMigration" id="construct-hub.sources.NpmJsProps.property.enableKnownVersionsMigration"></a>
+
+```typescript
+public readonly enableKnownVersionsMigration: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Copies the known versions of a deployment created before the known versions table existed from the staging bucket to the table, when the table is created.
+
+Without the copy, an existing deployment starts with an empty table and
+processes every version of every construct library again, as their
+packages change. Turn this off for new deployments, or if the table was
+filled some other way.
+
+---
+
+##### `knownVersionsTableBilling`<sup>Optional</sup> <a name="knownVersionsTableBilling" id="construct-hub.sources.NpmJsProps.property.knownVersionsTableBilling"></a>
+
+```typescript
+public readonly knownVersionsTableBilling: Billing;
+```
+
+- *Type:* aws-cdk-lib.aws_dynamodb.Billing
+- *Default:* Billing.onDemand()
+
+The billing mode of the table in which the follower records the package versions it has processed.
 
 ---
 

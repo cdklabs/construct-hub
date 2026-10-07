@@ -1,16 +1,6 @@
 import * as console from 'console';
 import { InvokeCommand } from '@aws-sdk/client-lambda';
 import {
-  GetObjectCommand,
-  NoSuchKey,
-  PutObjectCommand,
-  PutObjectCommandInput,
-} from '@aws-sdk/client-s3';
-import type {
-  NodeJsRuntimeStreamingBlobPayloadOutputTypes,
-  StreamingBlobPayloadInputTypes,
-} from '@smithy/types';
-import {
   metricScope,
   Configuration,
   MetricsLogger,
@@ -23,7 +13,7 @@ import {
   MetricName,
   MARKER_FILE_NAME,
   METRICS_NAMESPACE,
-  KNOWN_VERSIONS_FILE_NAME,
+  ENV_KNOWN_VERSIONS_TABLE_NAME,
   FOLLOWER_STATE_FILE_NAME,
   SCAN_WINDOW_MS,
   STATE_RETENTION_MS,
@@ -36,17 +26,17 @@ import {
   parseSequentialRevision,
 } from './couch-changes.lambda-shared';
 import { FollowerState } from './follower-state.lambda-shared';
+import { KnownVersions } from './known-versions.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
+import {
+  loadContentFromS3,
+  MarkerFileSchema,
+  putObject,
+} from './staging-bucket.lambda-shared';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
-import {
-  LAMBDA_CLIENT,
-  S3_CLIENT,
-} from '../../backend/shared/aws.lambda-shared';
-import {
-  compressContent,
-  decompressContent,
-} from '../../backend/shared/compress-content.lambda-shared';
+import { LAMBDA_CLIENT } from '../../backend/shared/aws.lambda-shared';
+import { compressContent } from '../../backend/shared/compress-content.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
@@ -135,6 +125,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const stagingBucket = requireEnv('BUCKET_NAME');
   const stagingFunction = requireEnv('FUNCTION_NAME');
+  const knownVersions = new KnownVersions(
+    requireEnv(ENV_KNOWN_VERSIONS_TABLE_NAME)
+  );
 
   const denyList = await DenyListClient.newClient();
   const licenseList = await LicenseListClient.newClient();
@@ -142,11 +135,6 @@ export async function handler(event: ScheduledEvent, context: Context) {
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry/_changes');
 
   const head = Number((await npm.info()).update_seq);
-
-  const { knownVersions, didLoadVersionsFromLegacy } = await loadKnownVersions(
-    stagingBucket
-  );
-  let writeKnownVersionsFile = didLoadVersionsFromLegacy;
 
   const state = await loadFollowerState(stagingBucket, head);
 
@@ -164,7 +152,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
   try {
     // Re-check laggy packuments (packages whose registry packument was behind
     // the revision announced by the feed when we first saw them).
-    const laggyStaged = await retryLaggyPackuments(
+    await retryLaggyPackuments(
       context,
       npm,
       state,
@@ -173,19 +161,13 @@ export async function handler(event: ScheduledEvent, context: Context) {
       licenseList,
       knownVersions
     );
-    writeKnownVersionsFile ||= laggyStaged > 0;
 
     // Scan the trailing window of the feed. Progress is persisted after
     // every processed chunk (see PersistState), so even a run that is hard
     // killed by the Lambda timeout keeps its completed work.
-    const persist: PersistState = async (saveKnownVersions) =>
-      void (await Promise.all([
-        saveFollowerState(context, stagingBucket, state),
-        ...(saveKnownVersions
-          ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
-          : []),
-      ]));
-    const scanStaged = await runScan(
+    const persist: PersistState = () =>
+      persistProgress(context, stagingBucket, state, knownVersions);
+    await runScan(
       context,
       npm,
       state,
@@ -196,7 +178,6 @@ export async function handler(event: ScheduledEvent, context: Context) {
       knownVersions,
       persist
     );
-    writeKnownVersionsFile ||= scanStaged > 0;
 
     // The laggy packument gauge is emitted at the end of the run, so it
     // reflects the expectations recorded by this run's scan (emitting it during
@@ -214,12 +195,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     // Persist the state even when a scan failed part-way: receipts, interim
     // checkpoints, and staged known versions represent completed work that
     // the next run should not redo.
-    await Promise.all([
-      saveFollowerState(context, stagingBucket, state),
-      ...(writeKnownVersionsFile
-        ? [saveLastKnownVersions(context, stagingBucket, knownVersions)]
-        : []),
-    ]);
+    await persistProgress(context, stagingBucket, state, knownVersions);
   }
 
   console.log('All done here, we have success!');
@@ -236,7 +212,27 @@ export async function handler(event: ScheduledEvent, context: Context) {
  * backlog too large for a single execution would never complete (every run
  * would restart it from scratch).
  */
-type PersistState = (saveKnownVersions: boolean) => Promise<void>;
+type PersistState = () => Promise<void>;
+
+/**
+ * Persists the known versions recorded since the last call, then the follower
+ * state. Known versions go first: if saving the state fails, the next run
+ * redoes the work, and the known versions prevent it from staging the same
+ * versions again. The reverse order could record receipts for entries whose
+ * staged versions were never recorded as known.
+ */
+async function persistProgress(
+  context: Context,
+  stagingBucket: string,
+  state: FollowerState,
+  knownVersions: KnownVersions
+): Promise<void> {
+  if (knownVersions.pendingCount > 0) {
+    console.log(`Recording ${knownVersions.pendingCount} known version(s)`);
+    await knownVersions.flush();
+  }
+  await saveFollowerState(context, stagingBucket, state);
+}
 
 /**
  * Re-reads the trailing window of the feed and processes every change entry
@@ -254,7 +250,7 @@ async function runScan(
   stagingFunction: string,
   denyList: DenyListClient,
   licenseList: LicenseListClient,
-  knownVersions: Map<string, Date>,
+  knownVersions: KnownVersions,
   persist: PersistState
 ): Promise<number> {
   const now = Date.now();
@@ -328,7 +324,7 @@ async function runScan(
         // importantly: a backfill) resume from here instead of the floor.
         if (next > (state.newestCheckpointSeq() ?? 0)) {
           state.addCheckpoint(next);
-          await persist(false);
+          await persist();
         }
       }
     })();
@@ -382,7 +378,7 @@ async function processBatch(
   stagingFunction: string,
   denyList: DenyListClient,
   licenseList: LicenseListClient,
-  knownVersions: Map<string, Date>,
+  knownVersions: KnownVersions,
   persist: PersistState
 ): Promise<{ staged: number; fullyProcessed: boolean }> {
   const startTime = Date.now();
@@ -475,7 +471,7 @@ async function processBatch(
           );
         }
 
-        const versionInfos = getRelevantVersionInfos(
+        const versionInfos = await getRelevantVersionInfos(
           attached.map((a) => a.change) as unknown as readonly Change[],
           metrics,
           denyList,
@@ -505,7 +501,7 @@ async function processBatch(
           .map((change) => Number(change.seq))
           .filter((seq) => !isNaN(seq) && !failed.has(seq))
       );
-      await persist(chunkStaged > 0);
+      await persist();
     }
   } finally {
     metrics.putMetric(MetricName.LAST_SEQ, head, Unit.None);
@@ -542,7 +538,7 @@ async function retryLaggyPackuments(
   stagingFunction: string,
   denyList: DenyListClient,
   licenseList: LicenseListClient,
-  knownVersions: Map<string, Date>
+  knownVersions: KnownVersions
 ): Promise<number> {
   let staged = 0;
   await metricScope((metrics) => async () => {
@@ -573,7 +569,7 @@ async function retryLaggyPackuments(
         seq: laggy.seq,
         doc,
       };
-      const versionInfos = getRelevantVersionInfos(
+      const versionInfos = await getRelevantVersionInfos(
         [change] as unknown as readonly Change[],
         metrics,
         denyList,
@@ -621,10 +617,10 @@ async function retryLaggyPackuments(
 async function stageVersions(
   versionInfos: readonly UpdatedVersion[],
   stagingFunction: string,
-  knownVersions: Map<string, Date>
+  knownVersions: KnownVersions
 ): Promise<void> {
   await Promise.all(
-    versionInfos.map(async ({ infos, modified, seq }) => {
+    versionInfos.map(async ({ packageName, infos, modified, seq }) => {
       const invokeArgs: PackageVersion = {
         integrity: infos.dist.shasum,
         modified: modified.toISOString(),
@@ -643,49 +639,12 @@ async function stageVersions(
         })
       );
       // Record that this is now a "known" version (no need to re-discover)
-      knownVersions.set(`${infos.name}@${infos.version}`, modified);
+      knownVersions.add(packageName, infos.version);
     })
   );
 }
 
-//#region State and known versions
-/**
- * Common function to load data from an S3 file with error handling
- *
- * @param stagingBucket The S3 bucket name
- * @param key The file key in the bucket
- * @param warningMessage Message to log when file doesn't exist
- * @returns The decompressed file content as string, or null if file doesn't exist
- */
-async function loadContentFromS3(
-  stagingBucket: string,
-  key: string,
-  warningMessage: string
-): Promise<string | null> {
-  try {
-    const response = await S3_CLIENT.send(
-      new GetObjectCommand({
-        Bucket: stagingBucket,
-        Key: key,
-      })
-    );
-    if (!response.Body) {
-      throw new Error(`Response Body for ${key} is empty`);
-    }
-    return await decompressContent(
-      response.Body as NodeJsRuntimeStreamingBlobPayloadOutputTypes,
-      response.ContentEncoding
-    );
-  } catch (error: any) {
-    if (error instanceof NoSuchKey || error.name === 'NoSuchKey') {
-      console.warn(warningMessage);
-      return null;
-    }
-    // re-throw unexpected errors
-    throw error;
-  }
-}
-
+//#region State
 /**
  * Loads the follower state from S3. When the state file does not exist (or
  * cannot be parsed), a fresh state is seeded: from the legacy transaction
@@ -778,113 +737,6 @@ async function saveFollowerState(
   console.log('Successfully updated follower state');
 }
 
-/**
- * Loads the known versions from S3. For legacy reasons, the map may also be
- * embedded in the transaction marker file; when the dedicated file does not
- * exist, that location is used and the map is migrated on the next save.
- */
-async function loadKnownVersions(stagingBucket: string): Promise<{
-  knownVersions: Map<string, Date>;
-  didLoadVersionsFromLegacy: boolean;
-}> {
-  const warningMessage = `Known versions object (s3://${stagingBucket}/${KNOWN_VERSIONS_FILE_NAME}) does not exist, starting from scratch`;
-  const content = await loadContentFromS3(
-    stagingBucket,
-    KNOWN_VERSIONS_FILE_NAME,
-    warningMessage
-  );
-  if (content != null) {
-    const contentsObj: KnownVersionsFileSchema = JSON.parse(content);
-    console.log('Loaded last known versions data');
-    return {
-      knownVersions: dateMapFromObj(contentsObj.knownVersions),
-      didLoadVersionsFromLegacy: false,
-    };
-  }
-
-  // Legacy location: embedded in the transaction marker file.
-  const markerContent = await loadContentFromS3(
-    stagingBucket,
-    MARKER_FILE_NAME,
-    `No legacy marker object (s3://${stagingBucket}/${MARKER_FILE_NAME})`
-  );
-  if (markerContent != null) {
-    try {
-      const parsed: MarkerFileSchema = JSON.parse(markerContent);
-      if (typeof parsed !== 'number' && parsed.knownVersions) {
-        console.log('Loaded known versions from legacy marker file');
-        return {
-          knownVersions: dateMapFromObj(parsed.knownVersions),
-          didLoadVersionsFromLegacy: true,
-        };
-      }
-    } catch (error) {
-      console.warn(`Could not parse legacy marker: ${error}`);
-    }
-  }
-  return { knownVersions: new Map(), didLoadVersionsFromLegacy: true };
-}
-
-/**
- * Updates the last known versions in S3.
- *
- * @param knownVersions the map of package name + version to last modified timestamp of packages that have been processed.
- */
-async function saveLastKnownVersions(
-  context: Context,
-  stagingBucket: string,
-  knownVersions: Map<string, Date>
-) {
-  const contentsObj: KnownVersionsFileSchema = {
-    knownVersions: objFromDateMap(knownVersions),
-  };
-
-  console.log(`Known versions changed, updating...`);
-  await putObject(
-    context,
-    stagingBucket,
-    KNOWN_VERSIONS_FILE_NAME,
-    JSON.stringify(contentsObj, undefined, 2),
-    {
-      ContentType: 'application/json',
-    }
-  );
-  console.log('Successfully updated known versions');
-}
-//#endregion
-
-//#region Asynchronous Primitives
-/**
- * Puts an object in the staging bucket, with standardized object metadata.
- *
- * @param key  the key for the object to be put.
- * @param body the body of the object to be put.
- * @param opts any other options to use when sending the S3 request.
- *
- * @returns the result of the S3 request.
- */
-function putObject(
-  context: Context,
-  bucket: string,
-  key: string,
-  body: StreamingBlobPayloadInputTypes,
-  opts: Omit<PutObjectCommandInput, 'Bucket' | 'Key' | 'Body'> = {}
-) {
-  return S3_CLIENT.send(
-    new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: body,
-      Metadata: {
-        'Lambda-Log-Group': context.logGroupName,
-        'Lambda-Log-Stream': context.logStreamName,
-        'Lambda-Run-Id': context.awsRequestId,
-        ...opts.Metadata,
-      },
-      ...opts,
-    })
-  );
-}
 //#endregion
 
 /**
@@ -892,22 +744,32 @@ function putObject(
  * provided `Change` objects, ensures they are relevant (construct libraries),
  * and returns those only.
  *
+ * Known versions are only looked up for packages that have at least one
+ * construct library version: only those versions are ever recorded, so every
+ * other package has no known versions by definition. Changes are processed
+ * concurrently; the result keeps their order.
+ *
  * @param changes the changes to be processed.
  * @param metrics the metrics logger to use.
  * @param denyList deny list client
  *
  * @returns a list of `VersionInfo` objects
  */
-function getRelevantVersionInfos(
+async function getRelevantVersionInfos(
   changes: readonly Change[],
   metrics: MetricsLogger,
   denyList: DenyListClient,
   licenseList: LicenseListClient,
-  knownVersions: Map<string, Date>
-): readonly UpdatedVersion[] {
-  const result = new Array<UpdatedVersion>();
+  knownVersions: KnownVersions
+): Promise<readonly UpdatedVersion[]> {
+  const perChange = await Promise.all(
+    changes.map((change) => relevantVersionInfosOf(change))
+  );
+  return perChange.flat();
 
-  for (const change of changes) {
+  async function relevantVersionInfosOf(
+    change: Change
+  ): Promise<readonly UpdatedVersion[]> {
     // Filter out all elements that don't have a "name" in the document, as
     // these are schemas, which are not relevant to our business here.
     if (change.doc.name === undefined) {
@@ -915,7 +777,7 @@ function getRelevantVersionInfos(
         `[${change.seq}] Changed document contains no 'name': ${change.id}`
       );
       metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      continue;
+      return [];
     }
 
     // The normalize function change the object in place, if the doc object is invalid it will return undefined
@@ -924,7 +786,7 @@ function getRelevantVersionInfos(
         `[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`
       );
       metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      continue;
+      return [];
     }
 
     // Sometimes, there are no versions in the document. We skip those.
@@ -933,7 +795,7 @@ function getRelevantVersionInfos(
         `[${change.seq}] Changed document contains no 'versions': ${change.id}`
       );
       metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      continue;
+      return [];
     }
 
     // Sometimes, there is no 'time' entry in the document. We skip those.
@@ -942,8 +804,13 @@ function getRelevantVersionInfos(
         `[${change.seq}] Changed document contains no 'time': ${change.id}`
       );
       metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      continue;
+      return [];
     }
+
+    const name = change.doc.name;
+    const isRelevant = Object.values(change.doc.versions).some(
+      (infos) => infos != null && isConstructLibrary(infos)
+    );
 
     // Get the last modification date from the change
     const packageVersionUpdates = Object.entries(change.doc.time)
@@ -957,54 +824,59 @@ function getRelevantVersionInfos(
       Unit.Count
     );
 
+    const result = new Array<UpdatedVersion>();
     const unpublishedVersions: string[] = [];
     for (const [version, modified] of packageVersionUpdates) {
-      const knownKey = `${change.doc.name}@${version}`;
-      const known = knownVersions.get(knownKey);
-      if (known == null || known < modified) {
-        const infos = change.doc.versions[version];
-        if (infos == null) {
-          // Could be the version in question was un-published.
-          unpublishedVersions.push(knownKey);
-        } else if (isConstructLibrary(infos)) {
-          // skip if this package is denied
-          const denied = denyList.lookup(infos.name, infos.version);
-          if (denied) {
-            console.log(
-              `[${change.seq}] Package denied: ${JSON.stringify(denied)}`
-            );
-            knownVersions.set(knownKey, modified);
-            metrics.putMetric(MetricName.DENY_LISTED_COUNT, 1, Unit.Count);
-            continue;
-          }
-
-          metrics.putMetric(
-            MetricName.PACKAGE_VERSION_AGE,
-            Date.now() - modified.getTime(),
-            Unit.Milliseconds
-          );
-          const isEligible =
-            licenseList.lookup(infos.license ?? 'UNLICENSED') != null;
-          metrics.putMetric(
-            MetricName.INELIGIBLE_LICENSE,
-            isEligible ? 0 : 1,
-            Unit.Count
-          );
-          if (isEligible) {
-            result.push({ infos, modified, seq: change.seq });
-          } else {
-            console.log(
-              `[${change.seq}] Package "${
-                change.doc.name
-              }@${version}" does not use allow-listed license: ${
-                infos.license ?? 'UNLICENSED'
-              }`
-            );
-            knownVersions.set(knownKey, modified);
-          }
-        }
-        // Else this is not a construct library, so we'll just ignore it...
+      if (isRelevant && (await knownVersions.has(name, version))) {
+        continue;
       }
+      const infos = change.doc.versions[version];
+      if (infos == null) {
+        // Could be the version in question was un-published.
+        unpublishedVersions.push(`${name}@${version}`);
+      } else if (isConstructLibrary(infos)) {
+        // skip if this package is denied
+        const denied = denyList.lookup(infos.name, infos.version);
+        if (denied) {
+          console.log(
+            `[${change.seq}] Package denied: ${JSON.stringify(denied)}`
+          );
+          knownVersions.add(name, version);
+          metrics.putMetric(MetricName.DENY_LISTED_COUNT, 1, Unit.Count);
+          continue;
+        }
+
+        metrics.putMetric(
+          MetricName.PACKAGE_VERSION_AGE,
+          Date.now() - modified.getTime(),
+          Unit.Milliseconds
+        );
+        const isEligible =
+          licenseList.lookup(infos.license ?? 'UNLICENSED') != null;
+        metrics.putMetric(
+          MetricName.INELIGIBLE_LICENSE,
+          isEligible ? 0 : 1,
+          Unit.Count
+        );
+        if (isEligible) {
+          result.push({
+            packageName: name,
+            infos,
+            modified,
+            seq: change.seq,
+          });
+        } else {
+          console.log(
+            `[${
+              change.seq
+            }] Package "${name}@${version}" does not use allow-listed license: ${
+              infos.license ?? 'UNLICENSED'
+            }`
+          );
+          knownVersions.add(name, version);
+        }
+      }
+      // Else this is not a construct library, so we'll just ignore it...
     }
 
     if (unpublishedVersions.length > 0) {
@@ -1016,8 +888,8 @@ function getRelevantVersionInfos(
         )}`
       );
     }
+    return result;
   }
-  return result;
 
   /**
    * This determines whether a package is "interesting" to ConstructHub or not. This is related but
@@ -1076,18 +948,6 @@ function getRelevantVersionInfos(
   }
 }
 
-function objFromDateMap(xs: Map<string, Date>): Record<string, string> {
-  return Object.fromEntries(
-    Array.from(xs).map(([k, v]) => [k, v.toISOString()])
-  );
-}
-
-function dateMapFromObj(
-  xs: Record<string, string | number>
-): Map<string, Date> {
-  return new Map(Object.entries(xs).map(([k, v]) => [k, new Date(v)]));
-}
-
 /**
  * The scheme of a package version in the update. Includes the package.json keys, as well as some additional npm metadata
  * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
@@ -1110,6 +970,12 @@ export interface VersionInfo {
 
 interface UpdatedVersion {
   /**
+   * The name of the package document the version was found in (the key under
+   * which known versions are recorded).
+   */
+  readonly packageName: string;
+
+  /**
    * The `VersionInfo` for the modified package version.
    */
   readonly infos: VersionInfo;
@@ -1123,26 +989,6 @@ interface UpdatedVersion {
    * The CouchDB transaction number for the update.
    */
   readonly seq?: string | number;
-}
-
-/**
- * The legacy transaction marker file format, kept around to seed the follower
- * state (and known versions) of existing deployments.
- *
- * The file can be a just a number, or a combination of a sequence number (which
- * is potentially encoded as a string) and a set of known versions and the dates
- * we first saw them. The date can be encoded as an ISO string, or a timestamp
- * number.
- */
-type MarkerFileSchema =
-  | number
-  | {
-      marker: number | string;
-      knownVersions?: Record<string, string | number>;
-    };
-
-interface KnownVersionsFileSchema {
-  knownVersions: Record<string, string>;
 }
 
 interface Document {

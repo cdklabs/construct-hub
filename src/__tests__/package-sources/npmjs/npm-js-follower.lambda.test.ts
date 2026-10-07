@@ -1,4 +1,9 @@
 import { gunzipSync, gzipSync } from 'zlib';
+import {
+  BatchWriteItemCommand,
+  DynamoDBClient,
+  QueryCommand,
+} from '@aws-sdk/client-dynamodb';
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import {
   GetObjectCommand,
@@ -17,8 +22,8 @@ import {
 } from '../../../backend/deny-list/constants';
 import { EnvironmentVariables as LicenseListEnv } from '../../../backend/license-list/constants';
 import {
+  ENV_KNOWN_VERSIONS_TABLE_NAME,
   FOLLOWER_STATE_FILE_NAME,
-  KNOWN_VERSIONS_FILE_NAME,
   MARKER_FILE_NAME,
   MetricName,
 } from '../../../package-sources/npmjs/constants.lambda-shared';
@@ -53,6 +58,7 @@ const REGISTRY = 'https://registry.npmjs.org';
 
 const MOCK_BUCKET = 'mock-staging-bucket';
 const MOCK_STAGING_FUNCTION = 'mock-staging-function';
+const MOCK_KNOWN_VERSIONS_TABLE = 'mock-known-versions-table';
 const MOCK_DENY_LIST_BUCKET = 'deny-list-bucket-name';
 const MOCK_DENY_LIST_OBJECT = 'my-deny-list.json';
 const MOCK_LICENSE_LIST_BUCKET = 'license-list-bucket-name';
@@ -62,6 +68,7 @@ const HOUR = 60 * 60 * 1_000;
 
 const mockS3 = mockClient(S3Client);
 const mockLambda = mockClient(LambdaClient);
+const mockDynamoDB = mockClient(DynamoDBClient);
 
 const context: Context = {
   awsRequestId: 'mock-request-id',
@@ -75,10 +82,12 @@ const event: ScheduledEvent = {} as any;
 beforeEach(() => {
   mockS3.reset();
   mockLambda.reset();
+  mockDynamoDB.reset();
   mockPutMetric.mockClear();
 
   process.env.BUCKET_NAME = MOCK_BUCKET;
   process.env.FUNCTION_NAME = MOCK_STAGING_FUNCTION;
+  process.env[ENV_KNOWN_VERSIONS_TABLE_NAME] = MOCK_KNOWN_VERSIONS_TABLE;
   process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
   process.env[ENV_DENY_LIST_OBJECT_KEY] = MOCK_DENY_LIST_OBJECT;
   process.env[LicenseListEnv.BUCKET_NAME] = MOCK_LICENSE_LIST_BUCKET;
@@ -98,17 +107,14 @@ beforeEach(() => {
       Key: MOCK_LICENSE_LIST_OBJECT,
     })
     .resolves({ Body: stringToStream(JSON.stringify(['Apache-2.0'])) });
-  // Empty known versions
-  mockS3
-    .on(GetObjectCommand, {
-      Bucket: MOCK_BUCKET,
-      Key: KNOWN_VERSIONS_FILE_NAME,
-    })
-    .resolves({ Body: stringToStream(JSON.stringify({ knownVersions: {} })) });
   // No legacy marker by default
   mockS3
     .on(GetObjectCommand, { Bucket: MOCK_BUCKET, Key: MARKER_FILE_NAME })
     .rejects(noSuchKey());
+
+  // Empty known versions table
+  mockDynamoDB.on(QueryCommand).resolves({ Items: [] });
+  mockDynamoDB.on(BatchWriteItemCommand).resolves({ UnprocessedItems: {} });
 
   mockS3.on(PutObjectCommand).resolves({});
   mockLambda.on(InvokeCommand).resolves({ StatusCode: 202 });
@@ -117,6 +123,7 @@ beforeEach(() => {
 afterEach(() => {
   delete process.env.BUCKET_NAME;
   delete process.env.FUNCTION_NAME;
+  delete process.env[ENV_KNOWN_VERSIONS_TABLE_NAME];
   delete process.env[ENV_DENY_LIST_BUCKET_NAME];
   delete process.env[ENV_DENY_LIST_OBJECT_KEY];
   delete process.env[LicenseListEnv.BUCKET_NAME];
@@ -757,3 +764,93 @@ test('resets its position when the feed head regresses below the newest checkpoi
   expect(saved.newestCheckpointSeq()).toBe(3_000);
   expect(saved.has(4_500)).toBe(false);
 });
+
+//#region Known versions table
+function givenKnownVersionsInTable(name: string, versions: string[]) {
+  mockDynamoDB
+    .on(QueryCommand, {
+      ExpressionAttributeValues: { ':name': { S: name } },
+    })
+    .resolves({
+      Items: versions.map((version) => ({ version: { S: version } })),
+    });
+}
+
+/** The `name@version` keys recorded in the table, sorted. */
+function recordedVersions(): string[] {
+  return mockDynamoDB
+    .commandCalls(BatchWriteItemCommand)
+    .flatMap(
+      (call) => call.args[0].input.RequestItems![MOCK_KNOWN_VERSIONS_TABLE]
+    )
+    .map(
+      (request) =>
+        `${request.PutRequest!.Item!.name.S}@${
+          request.PutRequest!.Item!.version.S
+        }`
+    )
+    .sort();
+}
+
+function givenOneChange(id: string, doc: object) {
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '1000' })
+    .reply(200, {
+      results: [
+        { seq: 1_005, id, changes: [{ rev: '1-aaaaaa' }], deleted: false },
+      ],
+      last_seq: 1_005,
+    });
+  nock(REGISTRY).get(`/${id}`).reply(200, doc);
+}
+
+test('stages only versions not recorded in the table, and records them', async () => {
+  givenHead(1_010);
+  givenNoStateFile();
+  givenLegacyMarker(1_000);
+  givenOneChange(
+    'known-package',
+    packageDoc('known-package', '1-aaaaaa', '1.0.0', '1.1.0')
+  );
+  givenKnownVersionsInTable('known-package', ['1.0.0']);
+
+  await handler(event, context);
+
+  expect(stagedPackages()).toEqual([
+    { name: 'known-package', version: '1.1.0' },
+  ]);
+  expect(recordedVersions()).toEqual(['known-package@1.1.0']);
+});
+
+test('records versions before the follower state, so a failed save never skips a version', async () => {
+  givenHead(1_010);
+  givenNoStateFile();
+  givenLegacyMarker(1_000);
+  givenOneChange(
+    'fresh-package',
+    packageDoc('fresh-package', '1-aaaaaa', '1.0.0')
+  );
+  mockDynamoDB.on(BatchWriteItemCommand).rejects(new Error('network'));
+
+  await expect(handler(event, context)).rejects.toThrow(/network/);
+
+  // The chunk's receipts were not saved: the next run processes it again.
+  const statePuts = mockS3
+    .commandCalls(PutObjectCommand)
+    .filter((call) => call.args[0].input.Key === FOLLOWER_STATE_FILE_NAME);
+  expect(statePuts).toHaveLength(0);
+});
+
+test('does not query the table for packages without construct library versions', async () => {
+  givenHead(1_010);
+  givenNoStateFile();
+  givenLegacyMarker(1_000);
+  givenOneChange('boring-package', nonConstructDoc('boring-package'));
+
+  await handler(event, context);
+
+  expect(mockDynamoDB).not.toHaveReceivedCommand(QueryCommand);
+  expect(mockLambda).not.toHaveReceivedCommand(InvokeCommand);
+});
+//#endregion

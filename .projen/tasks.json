@@ -83,6 +83,9 @@
           "spawn": "bundle:npm-js-follower"
         },
         {
+          "spawn": "bundle:known-versions-migration"
+        },
+        {
           "spawn": "bundle:npmjs-package-canary"
         },
         {
@@ -363,12 +366,30 @@
         }
       ]
     },
+    "bundle:known-versions-migration": {
+      "name": "bundle:known-versions-migration",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/known-versions-migration.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/known-versions-migration.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/known-versions-migration.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json"
+        }
+      ]
+    },
+    "bundle:known-versions-migration:watch": {
+      "name": "bundle:known-versions-migration:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/known-versions-migration.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/known-versions-migration.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/known-versions-migration.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.json --watch"
+        }
+      ]
+    },
     "bundle:lambda:watch": {
       "name": "bundle:lambda:watch",
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/re-stage-package-version.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats-processor.lambda.ts src/backend/package-stats/package-stats-chunker.lambda.ts src/backend/package-stats/package-stats-aggregator.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/read-uninstallable-report.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22 --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/re-stage-package-version.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/known-versions-migration.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats-processor.lambda.ts src/backend/package-stats/package-stats-chunker.lambda.ts src/backend/package-stats/package-stats-aggregator.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/read-uninstallable-report.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/mocks/prune-test.lambda.ts src/__tests__/backend/deny-list/mocks/client-test.lambda.ts src/__tests__/backend/deny-list/mocks/catalog-builder-mock.lambda.ts --target=\"node22 --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.json"
         }
       ]
     },
@@ -842,6 +863,9 @@
         },
         {
           "spawn": "bundle:npm-js-follower"
+        },
+        {
+          "spawn": "bundle:known-versions-migration"
         },
         {
           "spawn": "bundle:npmjs-package-canary"
@@ -1321,7 +1345,7 @@
             "--peer",
             "--no-deprecated",
             "--dep=dev",
-            "--filter=@aws-sdk/client-cloudwatch,@aws-sdk/client-codeartifact,@aws-sdk/client-ecs,@aws-sdk/client-lambda,@aws-sdk/client-s3,@aws-sdk/client-sfn,@aws-sdk/client-sqs,@jsii/spec,@octokit/rest,@smithy/types,@smithy/util-retry,@smithy/util-stream,@types/aws-lambda,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk-client-mock,aws-sdk-client-mock-jest,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,chalk,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,jsii-rosetta,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,uuid,yaml"
+            "--filter=@aws-sdk/client-cloudwatch,@aws-sdk/client-codeartifact,@aws-sdk/client-dynamodb,@aws-sdk/client-ecs,@aws-sdk/client-lambda,@aws-sdk/client-s3,@aws-sdk/client-sfn,@aws-sdk/client-sqs,@jsii/spec,@octokit/rest,@smithy/types,@smithy/util-retry,@smithy/util-stream,@types/aws-lambda,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/semver,@types/tough-cookie,@types/uuid,async-sema,aws-embedded-metrics,aws-sdk-client-mock,aws-sdk-client-mock-jest,aws-xray-sdk-core,case,cdk-dia,cdk-watchful,chalk,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,feed,fs-extra,glob,got,jest,jsii-diff,jsii-pacmak,jsii-rosetta,markdown-it,markdown-it-emoji,nock,normalize-registry-metadata,prettier,semver,spdx-license-list,streamcount,streamx,tar-stream,ts-node,uuid,yaml"
           ]
         },
         {
@@ -1337,6 +1361,7 @@
             "@aws-cdk/integ-tests-alpha",
             "@aws-sdk/client-cloudwatch",
             "@aws-sdk/client-codeartifact",
+            "@aws-sdk/client-dynamodb",
             "@aws-sdk/client-ecs",
             "@aws-sdk/client-lambda",
             "@aws-sdk/client-s3",
