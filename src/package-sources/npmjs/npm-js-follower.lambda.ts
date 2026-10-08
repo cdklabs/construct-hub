@@ -1,5 +1,4 @@
 import * as console from 'console';
-import { InvokeCommand } from '@aws-sdk/client-lambda';
 import {
   metricScope,
   Configuration,
@@ -17,17 +16,26 @@ import {
   FOLLOWER_STATE_FILE_NAME,
   SCAN_WINDOW_MS,
   STATE_RETENTION_MS,
-  LAGGY_PACKUMENT_GIVE_UP_MS,
+  ENV_PACKUMENT_QUEUE_URL,
+  NPM_REPLICA_REGISTRY_URL,
 } from './constants.lambda-shared';
 import {
   CouchChanges,
   DatabaseChange,
   DatabaseChanges,
-  parseSequentialRevision,
 } from './couch-changes.lambda-shared';
 import { FollowerState } from './follower-state.lambda-shared';
 import { KnownVersions } from './known-versions.lambda-shared';
-import { PackageVersion } from './stage-and-notify.lambda';
+import {
+  PackumentProcessingContext,
+  PackumentRequest,
+  PackumentRequestReason,
+  processPackuments,
+} from './packument-processing.lambda-shared';
+import {
+  enqueuePackumentRequests,
+  queuedPackumentRequests,
+} from './packument-queue.lambda-shared';
 import {
   loadContentFromS3,
   MarkerFileSchema,
@@ -35,20 +43,8 @@ import {
 } from './staging-bucket.lambda-shared';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
-import { LAMBDA_CLIENT } from '../../backend/shared/aws.lambda-shared';
 import { compressContent } from '../../backend/shared/compress-content.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const normalizeNPMMetadata = require('normalize-registry-metadata');
-
-const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set([
-  'cdk',
-  'aws-cdk',
-  'awscdk',
-  'cdk8s',
-  'cdktf',
-]);
-const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
 /**
  * The release date of `aws-cdk@0.8.0`. Anything earlier than this basically is
@@ -72,17 +68,6 @@ const SCAN_BATCH_SIZE = 10_000;
  * incomplete scan.
  */
 const SCAN_TIME_BUDGET_MS = 60_000;
-
-/**
- * Laggy packuments are only re-checked while at least this much time remains
- * in the Lambda execution, so that re-checks cannot starve the scan.
- */
-const LAGGY_RETRY_TIME_BUDGET_MS = 240_000;
-
-/**
- * The maximum number of laggy packuments re-checked per run.
- */
-const MAX_LAGGY_RETRIES_PER_RUN = 50;
 
 // Configure embedded metrics format
 Configuration.namespace = METRICS_NAMESPACE;
@@ -113,8 +98,9 @@ captureHTTPsGlobal(require('http'));
  *    version it contains is processed (deny list, license, and known-versions
  *    checks apply). If the packument is behind the revision announced by the
  *    feed (a "laggy packument"), the served versions are still processed, and
- *    the follower records the expectation and keeps re-checking on subsequent
- *    runs until the announced revision appears or the expectation ages out.
+ *    a request to check the package again is sent to the packument queue,
+ *    where it is retried until the announced revision appears or it is given
+ *    up on.
  *
  * npm registry API docs: https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md
  *
@@ -124,13 +110,16 @@ export async function handler(event: ScheduledEvent, context: Context) {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
   const stagingBucket = requireEnv('BUCKET_NAME');
-  const stagingFunction = requireEnv('FUNCTION_NAME');
+  const queueUrl = requireEnv(ENV_PACKUMENT_QUEUE_URL);
   const knownVersions = new KnownVersions(
     requireEnv(ENV_KNOWN_VERSIONS_TABLE_NAME)
   );
-
-  const denyList = await DenyListClient.newClient();
-  const licenseList = await LicenseListClient.newClient();
+  const processing: PackumentProcessingContext = {
+    stagingFunction: requireEnv('FUNCTION_NAME'),
+    denyList: await DenyListClient.newClient(),
+    licenseList: await LicenseListClient.newClient(),
+    knownVersions,
+  };
 
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry/_changes');
 
@@ -150,44 +139,20 @@ export async function handler(event: ScheduledEvent, context: Context) {
   }
 
   try {
-    // Re-check laggy packuments (packages whose registry packument was behind
-    // the revision announced by the feed when we first saw them).
-    await retryLaggyPackuments(
-      context,
-      npm,
-      state,
-      stagingFunction,
-      denyList,
-      licenseList,
-      knownVersions
-    );
-
     // Scan the trailing window of the feed. Progress is persisted after
     // every processed chunk (see PersistState), so even a run that is hard
     // killed by the Lambda timeout keeps its completed work.
     const persist: PersistState = () =>
       persistProgress(context, stagingBucket, state, knownVersions);
-    await runScan(
-      context,
-      npm,
-      state,
-      head,
-      stagingFunction,
-      denyList,
-      licenseList,
-      knownVersions,
-      persist
-    );
+    await runScan(context, npm, state, head, processing, queueUrl, persist);
 
-    // The laggy packument gauge is emitted at the end of the run, so it
-    // reflects the expectations recorded by this run's scan (emitting it during
-    // the retry phase would always read the trough: after recoveries, before
-    // new expectations are recorded).
+    // Requests waiting in the packument queue, including those this run sent.
+    const laggyPackuments = await queuedPackumentRequests(queueUrl);
     await metricScope((metrics) => async () => {
       metrics.setDimensions({});
       metrics.putMetric(
         MetricName.LAGGY_PACKUMENTS,
-        state.laggyPackumentCount,
+        laggyPackuments,
         Unit.Count
       );
     })();
@@ -247,10 +212,8 @@ async function runScan(
   npm: CouchChanges,
   state: FollowerState,
   head: number,
-  stagingFunction: string,
-  denyList: DenyListClient,
-  licenseList: LicenseListClient,
-  knownVersions: KnownVersions,
+  processing: PackumentProcessingContext,
+  queueUrl: string,
   persist: PersistState
 ): Promise<number> {
   const now = Date.now();
@@ -302,10 +265,8 @@ async function runScan(
         state,
         lateBoundary,
         head,
-        stagingFunction,
-        denyList,
-        licenseList,
-        knownVersions,
+        processing,
+        queueUrl,
         persist
       );
       staged += outcome.staged;
@@ -375,18 +336,19 @@ async function processBatch(
   state: FollowerState,
   lateBoundary: number,
   head: number,
-  stagingFunction: string,
-  denyList: DenyListClient,
-  licenseList: LicenseListClient,
-  knownVersions: KnownVersions,
+  processing: PackumentProcessingContext,
+  queueUrl: string,
   persist: PersistState
 ): Promise<{ staged: number; fullyProcessed: boolean }> {
   const startTime = Date.now();
   let staged = 0;
   let fullyProcessed = true;
   try {
+    // Entries for deleted packages are ignored, as if they were not in the
+    // feed: there is nothing to process, and no receipt is recorded.
     const fresh = batch.results.filter(
-      (change) => change.seq != null && !state.has(Number(change.seq))
+      (change) =>
+        !change.deleted && change.seq != null && !state.has(Number(change.seq))
     );
     console.log(
       `Received ${batch.totalCount} change entr(ies), ${fresh.length} without a receipt`
@@ -424,7 +386,11 @@ async function processBatch(
         );
       }
 
-      const { ok: attached, failedSeqs } = await npm.attachAllMetadata(chunk);
+      const {
+        ok: attached,
+        missing,
+        failedSeqs,
+      } = await npm.attachAllMetadata(chunk);
       metrics.putMetric(
         MetricName.METADATA_FETCH_FAILURES,
         failedSeqs.length,
@@ -435,7 +401,7 @@ async function processBatch(
       let lastModified: Date | undefined;
       // Emit npm.js replication lag
       for (const { change } of attached) {
-        const doc = change.doc as Change['doc'] | undefined;
+        const doc = change.doc as { time?: { modified?: string } } | undefined;
         if (doc?.time?.modified) {
           const modified = new Date(doc.time.modified);
           metrics.putMetric(
@@ -455,46 +421,60 @@ async function processBatch(
           `Skipping chunk as the latest modification is ${lastModified}, which is pre-Constructs`
         );
       } else {
+        chunkStaged = await processPackuments(
+          attached.map((a) => a.change),
+          metrics,
+          processing
+        );
+        staged += chunkStaged;
+
         // Laggy packuments: the registry served an older revision than the
-        // feed announced. Process the versions we did get, and record the
-        // expectation so the announced revision is re-checked on later runs.
-        for (const laggy of attached.filter((a) => a.laggy)) {
+        // feed announced (the versions we did get were processed above), or
+        // no packument at all yet. The packument queue checks the package
+        // again until the announced revision appears. This happens before the
+        // receipts are recorded, so a failure here makes the next run process
+        // the chunk again.
+        const laggy = attached.filter((a) => a.laggy);
+        for (const { change, servedRev, announcedRev } of laggy) {
           console.log(
-            `${laggy.change.id}: registry packument rev ${laggy.servedRev} is behind announced rev ${laggy.announcedRev}, recording laggy packument`
-          );
-          state.recordLaggyPackument(
-            laggy.change.id,
-            laggy.announcedRev,
-            isNaN(Number(laggy.change.seq))
-              ? undefined
-              : Number(laggy.change.seq)
+            `${change.id}: registry packument rev ${servedRev} is behind announced rev ${announcedRev}, sending it to the packument queue`
           );
         }
-
-        const versionInfos = await getRelevantVersionInfos(
-          attached.map((a) => a.change) as unknown as readonly Change[],
-          metrics,
-          denyList,
-          licenseList,
-          knownVersions
-        );
-        console.log(
-          `Identified ${versionInfos.length} relevant package version update(s)`
-        );
+        for (const { change } of missing) {
+          console.log(
+            `${change.id}: the registry has no packument for it yet, sending it to the packument queue`
+          );
+        }
         metrics.putMetric(
-          MetricName.RELEVANT_PACKAGE_VERSIONS,
-          versionInfos.length,
+          MetricName.MISSING_PACKUMENTS,
+          missing.length,
           Unit.Count
         );
-        await stageVersions(versionInfos, stagingFunction, knownVersions);
-        chunkStaged = versionInfos.length;
-        staged += chunkStaged;
+        const now = Date.now();
+        const request = (
+          change: DatabaseChange,
+          expectedRev: number,
+          reason: PackumentRequestReason
+        ): PackumentRequest => ({
+          name: change.id,
+          expectedRev,
+          seq: isNaN(Number(change.seq)) ? undefined : Number(change.seq),
+          firstSeen: now,
+          reason,
+        });
+        await enqueuePackumentRequests(queueUrl, [
+          ...laggy.map(({ change, announcedRev }) =>
+            request(change, announcedRev, 'laggy')
+          ),
+          ...missing.map(({ change, announcedRev }) =>
+            request(change, announcedRev, 'missing')
+          ),
+        ]);
       }
 
-      // Record receipts for every entry of the chunk (including deleted or
-      // unpublished packages: they were received and deliberately skipped) -
-      // except entries whose metadata fetch failed, so a later scan retries
-      // them. Then persist, so a timeout cannot undo this chunk.
+      // Record a receipt for every entry of the chunk, except those whose
+      // metadata fetch failed (a later scan retries them). Then persist, so a
+      // timeout cannot undo this chunk.
       const failed = new Set(failedSeqs);
       state.addSeqs(
         chunk
@@ -520,130 +500,6 @@ async function processBatch(
 }
 //#endregion
 
-//#region Laggy packuments
-/**
- * Re-checks laggy packuments: packages whose registry packument was behind
- * the revision announced by the changes feed. Each re-check processes
- * whatever the registry serves now (new versions are staged), and the
- * expectation is cleared when the announced revision appears - or aged out
- * after `LAGGY_PACKUMENT_GIVE_UP_MS`, at which point a version announced by
- * the feed may be missing until the package publishes again.
- *
- * @returns the number of package versions sent for staging.
- */
-async function retryLaggyPackuments(
-  context: Context,
-  npm: CouchChanges,
-  state: FollowerState,
-  stagingFunction: string,
-  denyList: DenyListClient,
-  licenseList: LicenseListClient,
-  knownVersions: KnownVersions
-): Promise<number> {
-  let staged = 0;
-  await metricScope((metrics) => async () => {
-    metrics.setDimensions({});
-    let recovered = 0;
-    let gaveUp = 0;
-    const now = Date.now();
-    for (const laggy of state
-      .laggyPackuments()
-      .slice(0, MAX_LAGGY_RETRIES_PER_RUN)) {
-      if (context.getRemainingTimeInMillis() < LAGGY_RETRY_TIME_BUDGET_MS) {
-        break;
-      }
-      const doc = await npm.getPackageDoc(laggy.name);
-      if (doc == null || doc._rev == null) {
-        console.log(
-          `Laggy packument for ${laggy.name} is no longer available in the registry, dropping the expectation`
-        );
-        state.removeLaggyPackument(laggy.name);
-        continue;
-      }
-
-      // Process whatever the registry serves now; knownVersions dedupes.
-      const change: DatabaseChange = {
-        changes: [{ rev: doc._rev as string }],
-        deleted: false,
-        id: laggy.name,
-        seq: laggy.seq,
-        doc,
-      };
-      const versionInfos = await getRelevantVersionInfos(
-        [change] as unknown as readonly Change[],
-        metrics,
-        denyList,
-        licenseList,
-        knownVersions
-      );
-      await stageVersions(versionInfos, stagingFunction, knownVersions);
-      staged += versionInfos.length;
-
-      if (parseSequentialRevision(doc._rev as string) >= laggy.expectedRev) {
-        console.log(
-          `Laggy packument for ${laggy.name} caught up (rev ${doc._rev} >= ${laggy.expectedRev})`
-        );
-        state.removeLaggyPackument(laggy.name);
-        recovered += 1;
-      } else if (now - laggy.firstSeen > LAGGY_PACKUMENT_GIVE_UP_MS) {
-        console.warn(
-          `Giving up on laggy packument for ${
-            laggy.name
-          }: the registry never served rev ${
-            laggy.expectedRev
-          } (first seen ${new Date(
-            laggy.firstSeen
-          ).toISOString()}). A version announced by the changes feed may be missing until the package publishes again.`
-        );
-        state.removeLaggyPackument(laggy.name);
-        gaveUp += 1;
-      }
-    }
-    metrics.putMetric(
-      MetricName.LAGGY_PACKUMENTS_RECOVERED,
-      recovered,
-      Unit.Count
-    );
-    metrics.putMetric(MetricName.LAGGY_PACKUMENT_GIVE_UPS, gaveUp, Unit.Count);
-  })();
-  return staged;
-}
-//#endregion
-
-/**
- * Sends the provided package version updates to the staging function
- * ("fire-and-forget"), and records them as known versions.
- */
-async function stageVersions(
-  versionInfos: readonly UpdatedVersion[],
-  stagingFunction: string,
-  knownVersions: KnownVersions
-): Promise<void> {
-  await Promise.all(
-    versionInfos.map(async ({ packageName, infos, modified, seq }) => {
-      const invokeArgs: PackageVersion = {
-        integrity: infos.dist.shasum,
-        modified: modified.toISOString(),
-        name: infos.name,
-        seq: seq?.toString(),
-        tarballUrl: infos.dist.tarball,
-        version: infos.version,
-      };
-      // "Fire-and-forget" invocation here.
-      console.log(`Sending ${invokeArgs.tarballUrl} for staging`);
-      await LAMBDA_CLIENT.send(
-        new InvokeCommand({
-          FunctionName: stagingFunction,
-          InvocationType: 'Event',
-          Payload: Buffer.from(JSON.stringify(invokeArgs)),
-        })
-      );
-      // Record that this is now a "known" version (no need to re-discover)
-      knownVersions.add(packageName, infos.version);
-    })
-  );
-}
-
 //#region State
 /**
  * Loads the follower state from S3. When the state file does not exist (or
@@ -665,7 +521,7 @@ async function loadFollowerState(
     try {
       const state = FollowerState.fromText(content);
       console.log(
-        `Loaded follower state: ${state.receiptCount} receipt(s), ${state.checkpointCount} checkpoint(s), ${state.laggyPackumentCount} laggy packument(s)`
+        `Loaded follower state: ${state.receiptCount} receipt(s), ${state.checkpointCount} checkpoint(s)`
       );
       return state;
     } catch (error) {
@@ -728,7 +584,7 @@ async function saveFollowerState(
     Buffer.from(state.toText(), 'utf-8')
   );
   console.log(
-    `Updating follower state (${state.receiptCount} receipt(s), ${state.checkpointCount} checkpoint(s), ${state.laggyPackumentCount} laggy packument(s))`
+    `Updating follower state (${state.receiptCount} receipt(s), ${state.checkpointCount} checkpoint(s))`
   );
   await putObject(context, stagingBucket, FOLLOWER_STATE_FILE_NAME, buffer, {
     ContentType: 'text/plain',
@@ -738,283 +594,3 @@ async function saveFollowerState(
 }
 
 //#endregion
-
-/**
- * Obtains the `VersionInfo` corresponding to the modified version(s) in the
- * provided `Change` objects, ensures they are relevant (construct libraries),
- * and returns those only.
- *
- * Known versions are only looked up for packages that have at least one
- * construct library version: only those versions are ever recorded, so every
- * other package has no known versions by definition. Changes are processed
- * concurrently; the result keeps their order.
- *
- * @param changes the changes to be processed.
- * @param metrics the metrics logger to use.
- * @param denyList deny list client
- *
- * @returns a list of `VersionInfo` objects
- */
-async function getRelevantVersionInfos(
-  changes: readonly Change[],
-  metrics: MetricsLogger,
-  denyList: DenyListClient,
-  licenseList: LicenseListClient,
-  knownVersions: KnownVersions
-): Promise<readonly UpdatedVersion[]> {
-  const perChange = await Promise.all(
-    changes.map((change) => relevantVersionInfosOf(change))
-  );
-  return perChange.flat();
-
-  async function relevantVersionInfosOf(
-    change: Change
-  ): Promise<readonly UpdatedVersion[]> {
-    // Filter out all elements that don't have a "name" in the document, as
-    // these are schemas, which are not relevant to our business here.
-    if (change.doc.name === undefined) {
-      console.error(
-        `[${change.seq}] Changed document contains no 'name': ${change.id}`
-      );
-      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      return [];
-    }
-
-    // The normalize function change the object in place, if the doc object is invalid it will return undefined
-    if (normalizeNPMMetadata(change.doc) === undefined) {
-      console.error(
-        `[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`
-      );
-      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      return [];
-    }
-
-    // Sometimes, there are no versions in the document. We skip those.
-    if (change.doc.versions == null) {
-      console.error(
-        `[${change.seq}] Changed document contains no 'versions': ${change.id}`
-      );
-      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      return [];
-    }
-
-    // Sometimes, there is no 'time' entry in the document. We skip those.
-    if (change.doc.time == null) {
-      console.error(
-        `[${change.seq}] Changed document contains no 'time': ${change.id}`
-      );
-      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      return [];
-    }
-
-    const name = change.doc.name;
-    const isRelevant = Object.values(change.doc.versions).some(
-      (infos) => infos != null && isConstructLibrary(infos)
-    );
-
-    // Get the last modification date from the change
-    const packageVersionUpdates = Object.entries(change.doc.time)
-      // Ignore the "created" and "modified" keys here
-      .filter(([key]) => key !== 'created' && key !== 'modified')
-      // Parse all the dates to ensure they are comparable
-      .map(([version, isoDate]) => [version, new Date(isoDate)] as const);
-    metrics.putMetric(
-      MetricName.PACKAGE_VERSION_COUNT,
-      packageVersionUpdates.length,
-      Unit.Count
-    );
-
-    const result = new Array<UpdatedVersion>();
-    const unpublishedVersions: string[] = [];
-    for (const [version, modified] of packageVersionUpdates) {
-      if (isRelevant && (await knownVersions.has(name, version))) {
-        continue;
-      }
-      const infos = change.doc.versions[version];
-      if (infos == null) {
-        // Could be the version in question was un-published.
-        unpublishedVersions.push(`${name}@${version}`);
-      } else if (isConstructLibrary(infos)) {
-        // skip if this package is denied
-        const denied = denyList.lookup(infos.name, infos.version);
-        if (denied) {
-          console.log(
-            `[${change.seq}] Package denied: ${JSON.stringify(denied)}`
-          );
-          knownVersions.add(name, version);
-          metrics.putMetric(MetricName.DENY_LISTED_COUNT, 1, Unit.Count);
-          continue;
-        }
-
-        metrics.putMetric(
-          MetricName.PACKAGE_VERSION_AGE,
-          Date.now() - modified.getTime(),
-          Unit.Milliseconds
-        );
-        const isEligible =
-          licenseList.lookup(infos.license ?? 'UNLICENSED') != null;
-        metrics.putMetric(
-          MetricName.INELIGIBLE_LICENSE,
-          isEligible ? 0 : 1,
-          Unit.Count
-        );
-        if (isEligible) {
-          result.push({
-            packageName: name,
-            infos,
-            modified,
-            seq: change.seq,
-          });
-        } else {
-          console.log(
-            `[${
-              change.seq
-            }] Package "${name}@${version}" does not use allow-listed license: ${
-              infos.license ?? 'UNLICENSED'
-            }`
-          );
-          knownVersions.add(name, version);
-        }
-      }
-      // Else this is not a construct library, so we'll just ignore it...
-    }
-
-    if (unpublishedVersions.length > 0) {
-      console.log(
-        `[${
-          change.seq
-        }] Could not find info for the following versions. Were they un-published?\n${unpublishedVersions.join(
-          ',\n'
-        )}`
-      );
-    }
-    return result;
-  }
-
-  /**
-   * This determines whether a package is "interesting" to ConstructHub or not. This is related but
-   * not necessarily identical to the logic in the ingestion process that annotates package metadata
-   * with a construct framework name + version (those could ultimately be re-factored to share more
-   * of the logic/heuristics, though).
-   *
-   * Concretely, it checks for a list of known "official" packages for various construct frameworks,
-   * and packages that have a dependency on such a package. It also has a keywords allow-list as a
-   * fall-back (the current dependency-based logic does not consider transitive dependencies and
-   * might hence miss certain rare use-cases, which keywords would rescue).
-   */
-  function isConstructLibrary(infos: VersionInfo): boolean {
-    if (infos.jsii == null) {
-      return false;
-    }
-    // The "constructs" package is a sign of a constructs library
-    return (
-      isConstructFrameworkPackage(infos.name) ||
-      // Recursively apply on dependencies
-      Object.keys(infos.dependencies ?? {}).some(isConstructFrameworkPackage) ||
-      Object.keys(infos.devDependencies ?? {}).some(
-        isConstructFrameworkPackage
-      ) ||
-      Object.keys(infos.peerDependencies ?? {}).some(
-        isConstructFrameworkPackage
-      ) ||
-      // Keyword-based fallback
-      infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw))
-    );
-  }
-
-  /**
-   * Package is one of the known construct framework's first party packages:
-   * - @aws-cdk/*
-   * - @cdktf/*
-   * - cdk8s or cdk8s-plus
-   */
-  function isConstructFrameworkPackage(name: string): boolean {
-    // IMPORTANT NOTE: Prefix matching should only be used for @scope/ names.
-
-    // The low-level constructs package
-    return (
-      name === 'constructs' ||
-      // AWS CDK Packages
-      name === 'aws-cdk-lib' ||
-      name === 'monocdk' ||
-      name.startsWith('@aws-cdk/') ||
-      // CDK8s packages
-      name === 'cdk8s' ||
-      /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(name) ||
-      // CDKTf packages
-      name === 'cdktf' ||
-      name.startsWith('@cdktf/')
-    );
-  }
-}
-
-/**
- * The scheme of a package version in the update. Includes the package.json keys, as well as some additional npm metadata
- * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
- */
-export interface VersionInfo {
-  readonly dependencies?: { readonly [name: string]: string };
-  readonly devDependencies?: { readonly [name: string]: string };
-  readonly peerDependencies?: { readonly [name: string]: string };
-  readonly jsii: unknown;
-  readonly license?: string;
-  readonly name: string;
-  readonly [key: string]: unknown;
-  readonly keywords: string[];
-  readonly dist: {
-    readonly shasum: string;
-    readonly tarball: string;
-  };
-  readonly version: string;
-}
-
-interface UpdatedVersion {
-  /**
-   * The name of the package document the version was found in (the key under
-   * which known versions are recorded).
-   */
-  readonly packageName: string;
-
-  /**
-   * The `VersionInfo` for the modified package version.
-   */
-  readonly infos: VersionInfo;
-
-  /**
-   * The time at which the `VersionInfo` was last modified.
-   */
-  readonly modified: Date;
-
-  /**
-   * The CouchDB transaction number for the update.
-   */
-  readonly seq?: string | number;
-}
-
-interface Document {
-  /**
-   * a List of all Version objects for the package
-   */
-  readonly versions: { [key: string]: VersionInfo | undefined };
-
-  /**
-   * The package's name.
-   */
-  readonly name: string;
-
-  /**
-   * Timestamps associated with this document. The values are ISO-8601 encoded
-   * timestamps.
-   */
-  readonly time: {
-    readonly created: string;
-    readonly modified: string;
-    readonly [version: string]: string;
-  };
-
-  readonly [key: string]: unknown;
-}
-
-interface Change extends DatabaseChange {
-  readonly doc: Document;
-}
