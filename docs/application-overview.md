@@ -42,9 +42,11 @@ ConstructHub provides two package source implementations: `NpmJs` and
   function is invoked, which stages the package tarball into an S3 bucket then
   notifies the ConstructHub ingestion SQS queue. The CouchDB follower is
   scheduled to run every `5 minutes`, and stores its state (receipts for the
-  change entries received, time/sequence checkpoints, and laggy packument
-  expectations) in a specific object in the S3 bucket used for staging package
-  tarballs.
+  change entries received, and time/sequence checkpoints) in a specific object
+  in the S3 bucket used for staging package tarballs.
+  When the registry serves an older revision of a package than the feed
+  announced, the package is sent to a queue, and a packument processor function
+  checks it again, with growing waits, for about a day.
   The package versions it has processed are recorded in a DynamoDB table, so
   each version is only processed once.
   Existing deployments kept this list in the S3 bucket; it is copied to the

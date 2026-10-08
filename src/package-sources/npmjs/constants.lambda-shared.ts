@@ -54,13 +54,39 @@ export const enum MetricName {
   LAGGY_PACKUMENTS_RECOVERED = 'LaggyPackumentsRecovered',
 
   /**
-   * Number of laggy packuments the follower gave up on: the registry never
+   * Number of laggy packuments given up on: the registry never
    * served the revision announced by the `_changes` feed within the maximum
    * retry age. Any versions the registry did serve have been processed, but a
    * version announced by the feed may be missing until the package publishes
    * again.
    */
   LAGGY_PACKUMENT_GIVE_UPS = 'LaggyPackumentGiveUps',
+
+  /**
+   * How long a laggy packument took to catch up (or until it was given up
+   * on), measured from when the follower first saw it.
+   */
+  LAGGY_PACKUMENT_LAG = 'LaggyPackumentLag',
+
+  /**
+   * Number of change entries for which the registry had no packument at all
+   * (HTTP 404) when the follower processed them. Usually a new package that
+   * has not replicated to the registry yet; they are re-checked like laggy
+   * packuments.
+   */
+  MISSING_PACKUMENTS = 'MissingPackuments',
+
+  /**
+   * Number of missing packuments the registry has since served.
+   */
+  MISSING_PACKUMENTS_RECOVERED = 'MissingPackumentsRecovered',
+
+  /**
+   * Number of missing packuments given up on: the registry never served a
+   * packument for the package within the maximum retry age. Usually an old
+   * change entry for a deleted package.
+   */
+  MISSING_PACKUMENT_GIVE_UPS = 'MissingPackumentGiveUps',
 }
 
 export const enum S3KeyPrefix {
@@ -133,8 +159,46 @@ export const DEEP_SCAN_INTERVAL_MS = 24 * 60 * 60 * 1_000; // 24 hours
 export const STATE_RETENTION_MS = 24 * 60 * 60 * 1_000; // 24 hours
 
 /**
- * How long the follower keeps re-checking a laggy packument (a package whose
- * registry packument is behind the revision announced by the `_changes` feed)
- * before giving up on the announced revision.
+ * The npm registry replica serving the `_changes` feed.
  */
-export const LAGGY_PACKUMENT_GIVE_UP_MS = 24 * 60 * 60 * 1_000; // 24 hours
+export const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
+
+/**
+ * The environment variable holding the URL of the packument queue: requests
+ * to process a package from the registry, retried with back-off until the
+ * registry serves the revision announced by the `_changes` feed.
+ */
+export const ENV_PACKUMENT_QUEUE_URL = 'PACKUMENT_QUEUE_URL';
+
+/**
+ * How long a new packument request waits before it is first processed.
+ */
+export const PACKUMENT_INITIAL_DELAY_SECONDS = 5 * 60; // 5 minutes
+
+/**
+ * How long a packument request waits before the next attempt, after an
+ * attempt that did not find the announced revision. Entry `n` is the wait
+ * after attempt `n + 1`. SQS caps a message's visibility timeout at 12 hours
+ * from when it was received, so no wait may be that long.
+ *
+ * Together with the initial delay, the last attempt happens about 27 hours
+ * after the request was made. A request that still finds an old revision
+ * then is given up on, and moves to the dead-letter queue.
+ */
+export const PACKUMENT_RETRY_BACKOFF_SECONDS: readonly number[] = [
+  5 * 60, // 5 minutes
+  15 * 60, // 15 minutes
+  30 * 60, // 30 minutes
+  60 * 60, // 1 hour
+  2 * 60 * 60, // 2 hours
+  4 * 60 * 60, // 4 hours
+  8 * 60 * 60, // 8 hours
+  11 * 60 * 60, // 11 hours
+];
+
+/**
+ * The number of attempts made for a packument request before it moves to the
+ * dead-letter queue (the queue's `maxReceiveCount`).
+ */
+export const PACKUMENT_MAX_ATTEMPTS =
+  PACKUMENT_RETRY_BACKOFF_SECONDS.length + 1;

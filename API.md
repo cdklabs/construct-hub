@@ -2913,13 +2913,17 @@ new sources.NpmJs(props?: NpmJsProps)
 | <code><a href="#construct-hub.sources.NpmJs.bind">bind</a></code> | Binds the package source to a scope and target queue. |
 | <code><a href="#construct-hub.sources.NpmJs.metricBatchProcessingTime">metricBatchProcessingTime</a></code> | The average time it took to process a changes batch. |
 | <code><a href="#construct-hub.sources.NpmJs.metricChangeCount">metricChangeCount</a></code> | The total count of changes that were processed. |
-| <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackumentGiveUps">metricLaggyPackumentGiveUps</a></code> | The number of laggy packuments the follower gave up on: the registry never served the revision announced by the `_changes` feed within the maximum retry age. |
-| <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackuments">metricLaggyPackuments</a></code> | The number of packages for which the registry packument is still behind the revision announced by the `_changes` feed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackumentGiveUps">metricLaggyPackumentGiveUps</a></code> | The number of laggy packuments given up on: the registry never served the revision announced by the `_changes` feed within the maximum retry age. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackumentLag">metricLaggyPackumentLag</a></code> | How long laggy packuments took to catch up (or until they were given up on), measured from when the follower first saw them. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackuments">metricLaggyPackuments</a></code> | The number of requests in the packument queue, for laggy and missing packuments. |
 | <code><a href="#construct-hub.sources.NpmJs.metricLaggyPackumentsRecovered">metricLaggyPackumentsRecovered</a></code> | The number of laggy packuments for which the registry caught up with the revision announced by the `_changes` feed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricLastSeq">metricLastSeq</a></code> | The last sequence number that was processed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricLateChangeCount">metricLateChangeCount</a></code> | The number of change entries discovered by a scan that were inserted into the `_changes` feed behind a position the follower had already read past. |
 | <code><a href="#construct-hub.sources.NpmJs.metricLateChangeLag">metricLateChangeLag</a></code> | For each late change entry, the time elapsed between the moment the follower first read past the entry's sequence number and the moment the entry was discovered. |
 | <code><a href="#construct-hub.sources.NpmJs.metricMetadataFetchFailures">metricMetadataFetchFailures</a></code> | The number of change entries whose registry metadata could not be fetched (after transient-error retries). |
+| <code><a href="#construct-hub.sources.NpmJs.metricMissingPackumentGiveUps">metricMissingPackumentGiveUps</a></code> | The number of missing packuments given up on: the registry never served a packument for the package within the maximum retry age. |
+| <code><a href="#construct-hub.sources.NpmJs.metricMissingPackuments">metricMissingPackuments</a></code> | The number of change entries for which the registry had no packument at all (HTTP 404). |
+| <code><a href="#construct-hub.sources.NpmJs.metricMissingPackumentsRecovered">metricMissingPackumentsRecovered</a></code> | The number of missing packuments the registry has since served. |
 | <code><a href="#construct-hub.sources.NpmJs.metricNpmJsChangeAge">metricNpmJsChangeAge</a></code> | *No description.* |
 | <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionAge">metricPackageVersionAge</a></code> | The age of the oldest package version that was processed. |
 | <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionCount">metricPackageVersionCount</a></code> | The total count of package versions that were inspected. |
@@ -2983,12 +2987,26 @@ The total count of changes that were processed.
 public metricLaggyPackumentGiveUps(opts?: MetricOptions): Metric
 ```
 
-The number of laggy packuments the follower gave up on: the registry never served the revision announced by the `_changes` feed within the maximum retry age.
+The number of laggy packuments given up on: the registry never served the revision announced by the `_changes` feed within the maximum retry age.
 
 A version announced by the feed may be missing until
 the affected package publishes again.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLaggyPackumentGiveUps.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricLaggyPackumentLag` <a name="metricLaggyPackumentLag" id="construct-hub.sources.NpmJs.metricLaggyPackumentLag"></a>
+
+```typescript
+public metricLaggyPackumentLag(opts?: MetricOptions): Metric
+```
+
+How long laggy packuments took to catch up (or until they were given up on), measured from when the follower first saw them.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLaggyPackumentLag.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
@@ -3000,11 +3018,10 @@ the affected package publishes again.
 public metricLaggyPackuments(opts?: MetricOptions): Metric
 ```
 
-The number of packages for which the registry packument is still behind the revision announced by the `_changes` feed.
+The number of requests in the packument queue, for laggy and missing packuments.
 
-The versions served so far
-have been processed; the follower keeps re-checking for the announced
-revision.
+A package that lagged in several change entries has several
+requests.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLaggyPackuments.parameter.opts"></a>
 
@@ -3086,6 +3103,54 @@ These entries are not receipted, so a
 later scan retries them.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricMetadataFetchFailures.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricMissingPackumentGiveUps` <a name="metricMissingPackumentGiveUps" id="construct-hub.sources.NpmJs.metricMissingPackumentGiveUps"></a>
+
+```typescript
+public metricMissingPackumentGiveUps(opts?: MetricOptions): Metric
+```
+
+The number of missing packuments given up on: the registry never served a packument for the package within the maximum retry age.
+
+Usually an old
+change entry for a package that no longer exists.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricMissingPackumentGiveUps.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricMissingPackuments` <a name="metricMissingPackuments" id="construct-hub.sources.NpmJs.metricMissingPackuments"></a>
+
+```typescript
+public metricMissingPackuments(opts?: MetricOptions): Metric
+```
+
+The number of change entries for which the registry had no packument at all (HTTP 404).
+
+Usually a new package that has not replicated to the
+registry yet; the packument processor keeps re-checking for it.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricMissingPackuments.parameter.opts"></a>
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
+
+---
+
+##### `metricMissingPackumentsRecovered` <a name="metricMissingPackumentsRecovered" id="construct-hub.sources.NpmJs.metricMissingPackumentsRecovered"></a>
+
+```typescript
+public metricMissingPackumentsRecovered(opts?: MetricOptions): Metric
+```
+
+The number of missing packuments the registry has since served.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricMissingPackumentsRecovered.parameter.opts"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 

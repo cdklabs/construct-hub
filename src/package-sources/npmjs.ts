@@ -21,7 +21,7 @@ import {
 } from 'aws-cdk-lib/aws-dynamodb';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
-import { Tracing } from 'aws-cdk-lib/aws-lambda';
+import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
@@ -57,6 +57,7 @@ import {
 } from './npmjs/constants.lambda-shared';
 import { KnownVersionsTableMigration } from './npmjs/known-versions-table-migration';
 import { NpmJsFollower } from './npmjs/npm-js-follower';
+import { PackumentQueueProcessor } from './npmjs/packument-queue-processor';
 import { StageAndNotify } from './npmjs/stage-and-notify';
 import { S3StorageFactory } from '../s3/storage';
 import { ReStagePackageVersion } from './npmjs/re-stage-package-version';
@@ -81,6 +82,19 @@ const FOLLOWER_RUN_RATE = Duration.minutes(5);
  * Let's be very very conservative here.
  */
 const NO_CHANGES_ALARM_DURATION = Duration.hours(24);
+
+/**
+ * Alarm if more change entries than this had no packument in the registry
+ * within 3 hours. In October 2026, a 3 hour window usually saw 170 of them,
+ * and at most about 500. Well above that means a registry outage.
+ */
+const MISSING_PACKUMENTS_ALARM_THRESHOLD = 1_500;
+
+/**
+ * Alarm if 90% of the laggy packuments that caught up (or were given up on)
+ * within 3 hours took longer than this.
+ */
+const LAGGY_PACKUMENT_LAG_ALARM_THRESHOLD = Duration.hours(6);
 
 export interface NpmJsProps {
   /**
@@ -283,6 +297,16 @@ export class NpmJs implements IPackageSource {
     licenseList.grantRead(follower);
     stager.grantInvoke(follower);
 
+    // Requests to process a package from the registry again, because the
+    // registry served an older revision than the changes feed announced, or
+    // no packument at all yet.
+    const packuments = new PackumentQueueProcessor(
+      scope,
+      'PackumentProcessor',
+      { knownVersions, stager, denyList, licenseList }
+    );
+    packuments.grantSendRequests(follower);
+
     const restager = new ReStagePackageVersion(scope, 'ReStagePackageVersion', {
       description: `Manually re-stage a package version`,
       environment: {
@@ -300,7 +324,14 @@ export class NpmJs implements IPackageSource {
       targets: [new LambdaFunction(follower)],
     });
 
-    this.registerAlarms(scope, follower, stager, monitoring, rule);
+    this.registerAlarms(
+      scope,
+      follower,
+      stager,
+      packuments.function,
+      monitoring,
+      rule
+    );
 
     stager.deadLetterQueue &&
       overviewDashboard.addDLQMetricToDashboard(
@@ -312,6 +343,10 @@ export class NpmJs implements IPackageSource {
         'NPM JS Follower DLQ',
         follower.deadLetterQueue
       );
+    overviewDashboard.addDLQMetricToDashboard(
+      'NPM JS Packument DLQ',
+      packuments.deadLetterQueue
+    );
     overviewDashboard.addConcurrentExecutionMetricToDashboard(
       follower,
       'NpmJsLambda'
@@ -343,6 +378,15 @@ export class NpmJs implements IPackageSource {
         },
         { name: 'Stager', url: lambdaFunctionUrl(stager) },
         { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
+        { name: 'Packument Queue', url: sqsQueueUrl(packuments.queue) },
+        {
+          name: 'Packument DLQ',
+          url: sqsQueueUrl(packuments.deadLetterQueue),
+        },
+        {
+          name: 'Packument Processor',
+          url: lambdaFunctionUrl(packuments.function),
+        },
         {
           name: 'Pipeline Trace (Log Analytics)',
           url: logAnalyticsUrl(
@@ -454,6 +498,22 @@ export class NpmJs implements IPackageSource {
                 0
               ),
               fillMetric(
+                this.metricMissingPackuments({ label: 'Missing Packuments' }),
+                0
+              ),
+              fillMetric(
+                this.metricMissingPackumentsRecovered({
+                  label: 'Missing Packuments Recovered',
+                }),
+                0
+              ),
+              fillMetric(
+                this.metricMissingPackumentGiveUps({
+                  label: 'Missing Packument Give-Ups',
+                }),
+                0
+              ),
+              fillMetric(
                 this.metricMetadataFetchFailures({
                   label: 'Metadata Fetch Failures',
                 }),
@@ -469,6 +529,39 @@ export class NpmJs implements IPackageSource {
                 color: '#ff0000',
                 label: 'Scan Window',
                 value: SCAN_WINDOW_MS,
+              },
+            ],
+            rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
+            period: Duration.minutes(5),
+          }),
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Packument Queue',
+            // SQS reports these every 5 minutes, so no gaps need filling.
+            left: [
+              packuments.queue.metricApproximateNumberOfMessagesVisible({
+                label: 'Waiting',
+              }),
+              packuments.queue.metricApproximateNumberOfMessagesNotVisible({
+                label: 'Waiting for next attempt',
+              }),
+              packuments.queue.metricApproximateNumberOfMessagesDelayed({
+                label: 'Delayed',
+              }),
+              packuments.deadLetterQueue.metricApproximateNumberOfMessagesVisible(
+                { label: 'Given up (DLQ)' }
+              ),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              this.metricLaggyPackumentLag({ label: 'Laggy Packument Lag (p90)' }),
+            ],
+            rightAnnotations: [
+              {
+                color: '#ff0000',
+                label: 'Alarm',
+                value: LAGGY_PACKUMENT_LAG_ALARM_THRESHOLD.toMilliseconds(),
               },
             ],
             rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
@@ -605,10 +698,9 @@ export class NpmJs implements IPackageSource {
   }
 
   /**
-   * The number of packages for which the registry packument is still behind
-   * the revision announced by the `_changes` feed. The versions served so far
-   * have been processed; the follower keeps re-checking for the announced
-   * revision.
+   * The number of requests in the packument queue, for laggy and missing
+   * packuments. A package that lagged in several change entries has several
+   * requests.
    */
   public metricLaggyPackuments(opts?: MetricOptions): Metric {
     return new Metric({
@@ -635,7 +727,7 @@ export class NpmJs implements IPackageSource {
   }
 
   /**
-   * The number of laggy packuments the follower gave up on: the registry
+   * The number of laggy packuments given up on: the registry
    * never served the revision announced by the `_changes` feed within the
    * maximum retry age. A version announced by the feed may be missing until
    * the affected package publishes again.
@@ -646,6 +738,63 @@ export class NpmJs implements IPackageSource {
       statistic: Stats.SUM,
       ...opts,
       metricName: MetricName.LAGGY_PACKUMENT_GIVE_UPS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * How long laggy packuments took to catch up (or until they were given up
+   * on), measured from when the follower first saw them.
+   */
+  public metricLaggyPackumentLag(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.p(90),
+      ...opts,
+      metricName: MetricName.LAGGY_PACKUMENT_LAG,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of change entries for which the registry had no packument at
+   * all (HTTP 404). Usually a new package that has not replicated to the
+   * registry yet; the packument processor keeps re-checking for it.
+   */
+  public metricMissingPackuments(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.MISSING_PACKUMENTS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of missing packuments the registry has since served.
+   */
+  public metricMissingPackumentsRecovered(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.MISSING_PACKUMENTS_RECOVERED,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The number of missing packuments given up on: the registry never served a
+   * packument for the package within the maximum retry age. Usually an old
+   * change entry for a package that no longer exists.
+   */
+  public metricMissingPackumentGiveUps(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+      ...opts,
+      metricName: MetricName.MISSING_PACKUMENT_GIVE_UPS,
       namespace: METRICS_NAMESPACE,
     });
   }
@@ -731,6 +880,7 @@ export class NpmJs implements IPackageSource {
     scope: Construct,
     follower: NpmJsFollower,
     stager: StageAndNotify,
+    packumentProcessor: IFunction,
     monitoring: IMonitoring,
     schedule: Rule
   ) {
@@ -848,27 +998,72 @@ export class NpmJs implements IPackageSource {
       lateChangeLagAlarm
     );
 
-    const laggyPackumentGiveUpsAlarm = this.metricLaggyPackumentGiveUps({
-      period: Duration.hours(1),
-    }).createAlarm(scope, 'NpmJs/Follower/LaggyPackumentGiveUps', {
-      alarmName: `${scope.node.path}/NpmJs/Follower/LaggyPackumentGiveUps`,
+    const missingPackumentsAlarm = this.metricMissingPackuments({
+      period: Duration.hours(3),
+    }).createAlarm(scope, 'NpmJs/Follower/MissingPackumentsHigh', {
+      alarmName: `${scope.node.path}/NpmJs/Follower/MissingPackumentsHigh`,
       alarmDescription: [
-        'The npm registry never served the packument revision announced by the CouchDB changes feed',
-        'for one or more packages, even after repeated re-checks. All versions the registry did serve',
-        'have been processed, but a version announced by the feed may be missing until the affected',
-        'package publishes again. The follower logs identify the affected packages, which can be',
-        'manually ingested using the ReStagePackageVersion function.',
+        'The npm registry had no packument for an unusually high number of packages announced by',
+        'the CouchDB changes feed. This usually means the registry has an outage or is far behind',
+        'the feed. The packument processor keeps re-checking these packages.',
         '',
         `Runbook: ${RUNBOOK_URL}`,
       ].join('\n'),
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
       evaluationPeriods: 1,
-      threshold: 1,
+      threshold: MISSING_PACKUMENTS_ALARM_THRESHOLD,
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
     monitoring.addLowSeverityAlarm(
-      'NpmJs/Follower gave up on laggy packuments',
-      laggyPackumentGiveUpsAlarm
+      'NpmJs/Follower Missing Packuments High',
+      missingPackumentsAlarm
+    );
+
+    const laggyPackumentLagAlarm = this.metricLaggyPackumentLag({
+      period: Duration.hours(3),
+      statistic: Stats.p(90),
+    }).createAlarm(scope, 'NpmJs/PackumentProcessor/LaggyPackumentLagHigh', {
+      alarmName: `${scope.node.path}/NpmJs/PackumentProcessor/LaggyPackumentLagHigh`,
+      alarmDescription: [
+        'Laggy packuments take unusually long to catch up: the npm registry serves older revisions',
+        'than the CouchDB changes feed announced, for hours. This usually means the registry has an',
+        'outage or is far behind the feed. The packument processor keeps re-checking these packages.',
+        '',
+        `Runbook: ${RUNBOOK_URL}`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: LAGGY_PACKUMENT_LAG_ALARM_THRESHOLD.toMilliseconds(),
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+    monitoring.addLowSeverityAlarm(
+      'NpmJs/PackumentProcessor Laggy Packument Lag High',
+      laggyPackumentLagAlarm
+    );
+
+    const packumentProcessorFailuresAlarm = packumentProcessor
+      .metricErrors({ period: Duration.minutes(15) })
+      .createAlarm(scope, 'NpmJs/PackumentProcessor/Failures', {
+        alarmName: `${scope.node.path}/NpmJs/PackumentProcessor/Failures`,
+        alarmDescription: [
+          'The packument processor function is failing (errors or time-outs). Requests in the',
+          'packument queue use up their attempts while it fails, and may be given up on early.',
+          '',
+          `Link to the lambda function: ${lambdaFunctionUrl(
+            packumentProcessor
+          )}`,
+          '',
+          `Runbook: ${RUNBOOK_URL}`,
+        ].join('\n'),
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 2,
+        threshold: 1,
+        treatMissingData: TreatMissingData.NOT_BREACHING,
+      });
+    monitoring.addLowSeverityAlarm(
+      'NpmJs/PackumentProcessor Failures',
+      packumentProcessorFailuresAlarm
     );
 
     // Finally - the "not running" alarm depends on the schedule (it won't run until the schedule

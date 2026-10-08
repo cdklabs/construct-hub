@@ -21,35 +21,6 @@ export interface Checkpoint {
 }
 
 /**
- * A package whose registry packument is behind the revision announced by the
- * `_changes` feed. The versions the registry did serve have been processed;
- * this expectation tracks the revision we are still waiting for.
- */
-export interface LaggyPackument {
-  /**
-   * The package name.
-   */
-  readonly name: string;
-
-  /**
-   * The revision (sequential prefix) announced by the changes feed.
-   */
-  readonly expectedRev: number;
-
-  /**
-   * The sequence number of the change entry that announced the revision, if
-   * known.
-   */
-  readonly seq?: number;
-
-  /**
-   * Epoch milliseconds at which the expectation was first recorded. Drives
-   * the give-up policy.
-   */
-  readonly firstSeen: number;
-}
-
-/**
  * The persisted state of the *NpmJs Follower*, in a newline-delimited
  * plain-text format so it can be scanned cheaply (e.g. `grep '^s 131711133$'`)
  * and parsed without materializing a large JSON document. Each line is a
@@ -59,7 +30,6 @@ export interface LaggyPackument {
  * #chfollower/1                        <- header (format magic + version)
  * w <lastDeepScanAt>                   <- deep scan bookkeeping ("-" when unset)
  * c <at> <seq>                         <- checkpoint (repeated, ascending by time)
- * l <firstSeen> <expectedRev> <seq> <name>  <- laggy packument (repeated; seq is "-" when unknown)
  * s <seq>                              <- received sequence number (repeated, ascending)
  * ```
  *
@@ -73,7 +43,7 @@ const STATE_FORMAT_HEADER = '#chfollower/1';
 /**
  * Tracks which `_changes` feed entries (by sequence number) the follower has
  * already received, rolling time/seq checkpoints mapping times to feed
- * positions, and the set of laggy packuments awaiting a registry catch-up.
+ * positions.
  *
  * The npm `_changes` feed does not guarantee that entries only ever become
  * visible above previously returned `last_seq` values. The receipt set
@@ -107,12 +77,7 @@ export class FollowerState {
           });
           break;
         case 'l':
-          state.laggy.set(parts.slice(4).join(' '), {
-            name: parts.slice(4).join(' '),
-            firstSeen: Number(parts[1]),
-            expectedRev: Number(parts[2]),
-            seq: parts[3] === '-' ? undefined : Number(parts[3]),
-          });
+          // Laggy packument, recorded by earlier versions: no longer used.
           break;
         case 'w':
           state.lastDeepScanAt =
@@ -129,7 +94,6 @@ export class FollowerState {
 
   private checkpoints: Checkpoint[] = [];
   private readonly seqs = new Set<number>();
-  private readonly laggy = new Map<string, LaggyPackument>();
   // The threshold below which receipts have already been pruned; avoids
   // re-iterating the (potentially large) receipt set on every checkpoint.
   private prunedBelow = 0;
@@ -228,8 +192,7 @@ export class FollowerState {
   /**
    * Discards all position state (receipts and checkpoints). Used when the
    * feed's sequence space is no longer compatible with the recorded state
-   * (e.g. the feed head regressed below our newest checkpoint). Laggy
-   * packument expectations are package-keyed and remain valid.
+   * (e.g. the feed head regressed below our newest checkpoint).
    */
   public resetPosition(): void {
     this.checkpoints = [];
@@ -257,66 +220,12 @@ export class FollowerState {
   }
   //#endregion
 
-  //#region Laggy packuments
-  /**
-   * Records (or extends) the expectation that the registry packument for the
-   * provided package should reach the provided revision. The earliest
-   * `firstSeen` is retained (so the give-up policy measures from the first
-   * occurrence), and the highest announced revision wins.
-   */
-  public recordLaggyPackument(
-    name: string,
-    expectedRev: number,
-    seq: number | undefined,
-    now: number = Date.now()
-  ): void {
-    const existing = this.laggy.get(name);
-    this.laggy.set(name, {
-      name,
-      expectedRev: Math.max(expectedRev, existing?.expectedRev ?? 0),
-      seq: existing?.seq ?? seq,
-      firstSeen: existing?.firstSeen ?? now,
-    });
-  }
-
-  /**
-   * Removes the expectation for the provided package (recovered, gone, or
-   * given up).
-   */
-  public removeLaggyPackument(name: string): void {
-    this.laggy.delete(name);
-  }
-
-  /**
-   * All laggy packument expectations, oldest first.
-   */
-  public laggyPackuments(): LaggyPackument[] {
-    return Array.from(this.laggy.values()).sort(
-      (a, b) => a.firstSeen - b.firstSeen
-    );
-  }
-
-  /**
-   * The number of laggy packument expectations currently tracked.
-   */
-  public get laggyPackumentCount(): number {
-    return this.laggy.size;
-  }
-  //#endregion
-
   public toText(): string {
     const lines = new Array<string>();
     lines.push(STATE_FORMAT_HEADER);
     lines.push(`w ${this.lastDeepScanAt ?? '-'}`);
     for (const { at, seq } of this.checkpoints) {
       lines.push(`c ${at} ${seq}`);
-    }
-    for (const laggy of this.laggyPackuments()) {
-      lines.push(
-        `l ${laggy.firstSeen} ${laggy.expectedRev} ${laggy.seq ?? '-'} ${
-          laggy.name
-        }`
-      );
     }
     for (const seq of Array.from(this.seqs).sort((a, b) => a - b)) {
       lines.push(`s ${seq}`);

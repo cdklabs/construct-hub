@@ -14,7 +14,6 @@ describe('text format', () => {
     state.addCheckpoint(90, T0);
     state.addCheckpoint(300, T0 + HOUR);
     state.addSeqs([100, 250]);
-    state.recordLaggyPackument('@scope/laggy-package', 5, 123, T0);
     state.completeDeepScan(T0 + HOUR);
 
     expect(state.toText()).toBe(
@@ -23,7 +22,6 @@ describe('text format', () => {
         `w ${T0 + HOUR}`,
         `c ${T0} 90`,
         `c ${T0 + HOUR} 300`,
-        `l ${T0} 5 123 @scope/laggy-package`,
         's 100',
         's 250',
         '', // trailing newline
@@ -35,7 +33,6 @@ describe('text format', () => {
     const state = new FollowerState();
     state.addCheckpoint(90, T0);
     state.addSeqs([100, 105, 250]);
-    state.recordLaggyPackument('laggy-package', 7, undefined, T0);
     state.completeDeepScan(T0);
 
     const restored = FollowerState.fromText(state.toText());
@@ -47,16 +44,28 @@ describe('text format', () => {
     expect(restored.receiptCount).toBe(3);
     expect(restored.checkpointCount).toBe(1);
     expect(restored.lastDeepScanAt).toBe(T0);
-    expect(restored.laggyPackuments()).toEqual([
-      { name: 'laggy-package', expectedRev: 7, seq: undefined, firstSeen: T0 },
-    ]);
+  });
+
+  test('ignores the laggy packuments recorded by earlier versions', () => {
+    const text = [
+      '#chfollower/1',
+      `w ${T0}`,
+      `c ${T0} 90`,
+      `l ${T0} 5 123 @scope/laggy-package`,
+      's 100',
+      '',
+    ].join('\n');
+
+    const restored = FollowerState.fromText(text);
+
+    expect(restored.has(100)).toBe(true);
+    expect(restored.toText()).not.toContain('laggy-package');
   });
 
   test('a fresh state round-trips', () => {
     const restored = FollowerState.fromText(new FollowerState().toText());
     expect(restored.receiptCount).toBe(0);
     expect(restored.checkpointCount).toBe(0);
-    expect(restored.laggyPackumentCount).toBe(0);
     expect(restored.lastDeepScanAt).toBeUndefined();
   });
 
@@ -64,7 +73,6 @@ describe('text format', () => {
     const state = new FollowerState();
     state.addCheckpoint(90, T0);
     state.addSeqs([100, 250, 251]);
-    state.recordLaggyPackument('laggy-package', 7, 200, T0);
 
     const once = state.toText();
     const twice = FollowerState.fromText(once).toText();
@@ -171,18 +179,16 @@ describe('checkpoints and receipts', () => {
     expect(state.has(500)).toBe(true);
   });
 
-  test('resetPosition clears receipts and checkpoints but keeps laggy packuments', () => {
+  test('resetPosition clears receipts and checkpoints', () => {
     const state = new FollowerState();
     state.addCheckpoint(100, T0);
     state.addSeqs([150]);
-    state.recordLaggyPackument('laggy-package', 5, 120, T0);
 
     state.resetPosition();
 
     expect(state.checkpointCount).toBe(0);
     expect(state.receiptCount).toBe(0);
     expect(state.newestCheckpointSeq()).toBeUndefined();
-    expect(state.laggyPackumentCount).toBe(1);
   });
 });
 
@@ -196,32 +202,5 @@ describe('deep scans', () => {
     state.completeDeepScan(T0);
     expect(state.deepScanDue(T0 + DEEP_SCAN_INTERVAL_MS - 1)).toBe(false);
     expect(state.deepScanDue(T0 + DEEP_SCAN_INTERVAL_MS)).toBe(true);
-  });
-});
-
-describe('laggy packuments', () => {
-  test('keeps the earliest firstSeen and the highest expected revision', () => {
-    const state = new FollowerState();
-    state.recordLaggyPackument('laggy-package', 5, 100, T0);
-    state.recordLaggyPackument('laggy-package', 7, 200, T0 + HOUR);
-    state.recordLaggyPackument('laggy-package', 6, 300, T0 + 2 * HOUR);
-
-    expect(state.laggyPackuments()).toEqual([
-      { name: 'laggy-package', expectedRev: 7, seq: 100, firstSeen: T0 },
-    ]);
-  });
-
-  test('lists expectations oldest first and removes them', () => {
-    const state = new FollowerState();
-    state.recordLaggyPackument('second', 2, undefined, T0 + HOUR);
-    state.recordLaggyPackument('first', 1, undefined, T0);
-
-    expect(state.laggyPackuments().map((l) => l.name)).toEqual([
-      'first',
-      'second',
-    ]);
-
-    state.removeLaggyPackument('first');
-    expect(state.laggyPackumentCount).toBe(1);
   });
 });
