@@ -110,6 +110,89 @@ test('the known versions migration can be turned off', () => {
   ).toHaveLength(0);
 });
 
+test('retries laggy packuments through a queue that moves give-ups to a dead-letter queue', () => {
+  const template = synth(new NpmJs());
+
+  const dlqs = template.findResources('AWS::SQS::Queue', {
+    Properties: { MessageRetentionPeriod: 14 * 24 * 60 * 60 },
+  });
+  template.hasResourceProperties('AWS::SQS::Queue', {
+    MessageRetentionPeriod: 4 * 24 * 60 * 60,
+    VisibilityTimeout: 30 * 60,
+    RedrivePolicy: {
+      deadLetterTargetArn: {
+        'Fn::GetAtt': [Match.stringLikeRegexp('PackumentProcessorDLQ'), 'Arn'],
+      },
+      maxReceiveCount: 9,
+    },
+  });
+  expect(
+    Object.keys(dlqs).some((id) => id.includes('PackumentProcessorDLQ'))
+  ).toBe(true);
+
+  const processors = template.findResources('AWS::Lambda::Function', {
+    Properties: {
+      Description: Match.stringLikeRegexp(
+        'Processes packages from the npm registry'
+      ),
+    },
+  });
+  expect(Object.keys(processors)).toHaveLength(1);
+  template.hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    FunctionName: { Ref: Object.keys(processors)[0] },
+    BatchSize: 10,
+    FunctionResponseTypes: ['ReportBatchItemFailures'],
+    ScalingConfig: { MaximumConcurrency: 2 },
+  });
+
+  // There is no alarm on the dead-letter queue (it is only graphed), and no
+  // alarm on the give-up metric.
+  const alarmNames = Object.values(
+    template.findResources('AWS::CloudWatch::Alarm')
+  ).map((alarm: any) => String(alarm.Properties.AlarmName));
+  expect(
+    alarmNames.some(
+      (name) =>
+        name.endsWith('DLQNotEmpty') && name.includes('PackumentProcessor')
+    )
+  ).toBe(false);
+  expect(
+    alarmNames.some((name) => name.endsWith('LaggyPackumentGiveUps'))
+  ).toBe(false);
+
+  // A burst of missing packuments within 3 hours raises an alarm.
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmName: 'Test/ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh',
+    MetricName: 'MissingPackuments',
+    Period: 3 * 60 * 60,
+    Statistic: 'Sum',
+    Threshold: 1_500,
+  });
+  // So does a high laggy packument lag.
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmName:
+      'Test/ConstructHub/Sources/NpmJs/PackumentProcessor/LaggyPackumentLagHigh',
+    MetricName: 'LaggyPackumentLag',
+    Period: 3 * 60 * 60,
+    ExtendedStatistic: 'p90',
+    Threshold: 6 * 60 * 60 * 1_000,
+  });
+
+  // Processor failures raise a low severity alarm too.
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+    AlarmName: 'Test/ConstructHub/Sources/NpmJs/PackumentProcessor/Failures',
+    MetricName: 'Errors',
+  });
+
+  // The follower sends laggy packuments to the queue.
+  template.hasResourceProperties('AWS::Lambda::Function', {
+    Description: Match.stringLikeRegexp('Periodically query npmjs.com'),
+    Environment: {
+      Variables: Match.objectLike({ PACKUMENT_QUEUE_URL: Match.anyValue() }),
+    },
+  });
+});
+
 test('the billing mode of the known versions table is configurable', () => {
   const template = synth(
     new NpmJs({

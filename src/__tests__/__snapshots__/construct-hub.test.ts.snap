@@ -771,6 +771,40 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
+              ")\\n[button:Packument Queue](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument Processor](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
               ")\\n[button:Pipeline Trace (Log Analytics)](/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400~timeType~'RELATIVE~unit~'seconds~editorString~'fields*20*40timestamp*2C*20*40log*2C*20*40message*0A*7C*20filter*20*40message*20like*20*2Fconstruct-hub-probe*2F*0A*23*20filter*20*40message*20like*20*2F*3Cversion*3E*2F*20*3C-*20narrow*20down*20to*20a*20stuck*20version*0A*7C*20sort*20*40timestamp*20desc*0A*7C*20limit*20100~source~(~'*2Faws*2Flambda*2F",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -819,7 +853,39 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
+              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Missing Packuments","expression":"FILL(m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackuments",{"label":"Missing Packuments","stat":"Sum","visible":false,"id":"m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62"}],[{"label":"Missing Packuments Recovered","expression":"FILL(m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentsRecovered",{"label":"Missing Packuments Recovered","stat":"Sum","visible":false,"id":"m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7"}],[{"label":"Missing Packument Give-Ups","expression":"FILL(m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentGiveUps",{"label":"Missing Packument Give-Ups","stat":"Sum","visible":false,"id":"m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Packument Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting for next attempt","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesDelayed","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Delayed","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Given up (DLQ)","stat":"Maximum"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentLag",{"label":"Laggy Packument Lag (p90)","stat":"p90","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Alarm","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -9777,6 +9843,20 @@ Request a service quota increase for lambda functions",
                   "QueueName",
                 ],
               },
+              ""},"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "":{"name":"NPM JS Packument DLQ","queueName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
               ""}}},"title":"SQS DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":16,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"",
               {
                 "Ref": "AWS::Region",
@@ -10124,7 +10204,7 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9df4ea6f33aadd84d0a7f36cbfad610289ea74b3849c6ff98f8d8731c9f9e93e.zip",
+          "S3Key": "af89e303b667afe7fab48f81c817215497844cd7567538a98c8153ddb6737dbc.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -10147,6 +10227,9 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
           },
         },
         "Handler": "index.handler",
@@ -10581,27 +10664,6 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubSourcesNpmJsFollowerLaggyPackumentGiveUps9CFECACE": {
-      "Properties": {
-        "AlarmDescription": "The npm registry never served the packument revision announced by the CouchDB changes feed
-for one or more packages, even after repeated re-checks. All versions the registry did serve
-have been processed, but a version announced by the feed may be missing until the affected
-package publishes again. The follower logs identify the affected packages, which can be
-manually ingested using the ReStagePackageVersion function.
-
-Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
-        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/LaggyPackumentGiveUps",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 1,
-        "MetricName": "LaggyPackumentGiveUps",
-        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
-        "Period": 3600,
-        "Statistic": "Sum",
-        "Threshold": 1,
-        "TreatMissingData": "notBreaching",
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
     "ConstructHubSourcesNpmJsFollowerLateChangeLagHigh74C200AA": {
       "Properties": {
         "AlarmDescription": "The NpmJs follower is discovering changes that were inserted into the CouchDB changes feed
@@ -10618,6 +10680,25 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "Period": 3600,
         "Statistic": "Maximum",
         "Threshold": 17280000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerMissingPackumentsHigh0AB93A32": {
+      "Properties": {
+        "AlarmDescription": "The npm registry had no packument for an unusually high number of packages announced by
+the CouchDB changes feed. This usually means the registry has an outage or is far behind
+the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "MissingPackuments",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Statistic": "Sum",
+        "Threshold": 1500,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -10705,7 +10786,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "Event",
         "ServiceToken": {
@@ -10729,7 +10810,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "RequestResponse",
         "ServiceToken": {
@@ -10743,7 +10824,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Type": "Custom::Trigger",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da": {
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564": {
       "DependsOn": [
         "ConstructHubLicenseListAwsCliLayer59592811",
         "ConstructHubLicenseListCustomResource323F0FD4",
@@ -10770,7 +10851,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8f27fe5ee9f5c0c99dfa0d66e98295ec31b3d124970fc7162d4b121f37b053a3.zip",
+          "S3Key": "d6ee84ab47908ff703017eb563a87210719fe6180c73e82957731157fd5c7780.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Copies the known versions from the staging bucket to the known versions table",
         "Environment": {
@@ -10937,6 +11018,64 @@ Direct link to Lambda function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorFailuresC6FC837A": {
+      "Properties": {
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "The packument processor function is failing (errors or time-outs). Requests in the
+packument queue use up their attempts while it fails, and may be given up on early.
+
+Link to the lambda function: /lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
+              "
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/Failures",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 900,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorLaggyPackumentLagHigh863AFDFC": {
+      "Properties": {
+        "AlarmDescription": "Laggy packuments take unusually long to catch up: the npm registry serves older revisions
+than the CouchDB changes feed announced, for hours. This usually means the registry has an
+outage or is far behind the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/LaggyPackumentLagHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "ExtendedStatistic": "p90",
+        "MetricName": "LaggyPackumentLag",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Threshold": 21600000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubSourcesNpmJsSchedule34031870": {
       "DependsOn": [
@@ -11209,6 +11348,20 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 },
               ],
             },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -11234,7 +11387,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8625ecb0c4c91c2ca0404a682cb734f265ca9331fd380d51dd6759eb64acffdc.zip",
+          "S3Key": "aa49d81f3c9ee821e6328d0dfa4c1a3eaa8cc58c8af11d16159064b9d48289cf.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -11560,6 +11713,303 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubSourcesPackumentProcessorDLQF401BD77": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesPackumentProcessorFunction0E5F8177": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "b768d6521a3b26b9ab2bd7991f7779e0b259d8079a7719cf1a90c7282080d038.zip",
+        },
+        "Description": "[Test/ConstructHub/Sources/PackumentProcessor] Processes packages from the npm registry, retrying until the registry serves the revision announced by the changes feed",
+        "Environment": {
+          "Variables": {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "DENY_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
+            "KNOWN_VERSIONS_TABLE_NAME": {
+              "Ref": "ConstructHubSourcesKnownVersions1480B28B",
+            },
+            "LICENSE_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 2048,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubDenyListBucket1B3C2C2E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubLicenseListBucket9334047F",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubLicenseListBucket9334047F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "Roles": [
+          {
+            "Ref": "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionSqsEventSourceTestConstructHubSourcesPackumentProcessorQueue026064FBB2863D38": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+        "ScalingConfig": {
+          "MaximumConcurrency": 2,
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "ConstructHubSourcesPackumentProcessorQueue34BDE578": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 345600,
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 9,
+        },
+        "VisibilityTimeout": 1800,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ConstructHubSourcesReStagePackageVersion5E1211D1": {
       "DependsOn": [
         "ConstructHubSourcesReStagePackageVersionServiceRoleDefaultPolicyB4F9CE40",
@@ -11573,7 +12023,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a48fc19d951650367e00f718a33dd3a3cc8bea938b8d17670ed97e1a41e31e36.zip",
+          "S3Key": "01c626beeb88883b8b17b12888e86afede015e6264f4c9d212c6b1a55f4fa81e.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -15225,6 +15675,40 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
+              ")\\n[button:Packument Queue](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument Processor](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
               ")\\n[button:Pipeline Trace (Log Analytics)](/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400~timeType~'RELATIVE~unit~'seconds~editorString~'fields*20*40timestamp*2C*20*40log*2C*20*40message*0A*7C*20filter*20*40message*20like*20*2Fconstruct-hub-probe*2F*0A*23*20filter*20*40message*20like*20*2F*3Cversion*3E*2F*20*3C-*20narrow*20down*20to*20a*20stuck*20version*0A*7C*20sort*20*40timestamp*20desc*0A*7C*20limit*20100~source~(~'*2Faws*2Flambda*2F",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -15273,7 +15757,39 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
+              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Missing Packuments","expression":"FILL(m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackuments",{"label":"Missing Packuments","stat":"Sum","visible":false,"id":"m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62"}],[{"label":"Missing Packuments Recovered","expression":"FILL(m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentsRecovered",{"label":"Missing Packuments Recovered","stat":"Sum","visible":false,"id":"m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7"}],[{"label":"Missing Packument Give-Ups","expression":"FILL(m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentGiveUps",{"label":"Missing Packument Give-Ups","stat":"Sum","visible":false,"id":"m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Packument Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting for next attempt","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesDelayed","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Delayed","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Given up (DLQ)","stat":"Maximum"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentLag",{"label":"Laggy Packument Lag (p90)","stat":"p90","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Alarm","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -24605,6 +25121,20 @@ Request a service quota increase for lambda functions",
                   "QueueName",
                 ],
               },
+              ""},"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "":{"name":"NPM JS Packument DLQ","queueName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
               ""}}},"title":"SQS DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":16,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"",
               {
                 "Ref": "AWS::Region",
@@ -24952,7 +25482,7 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9df4ea6f33aadd84d0a7f36cbfad610289ea74b3849c6ff98f8d8731c9f9e93e.zip",
+          "S3Key": "af89e303b667afe7fab48f81c817215497844cd7567538a98c8153ddb6737dbc.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -24975,6 +25505,9 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
           },
         },
         "Handler": "index.handler",
@@ -25409,27 +25942,6 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubSourcesNpmJsFollowerLaggyPackumentGiveUps9CFECACE": {
-      "Properties": {
-        "AlarmDescription": "The npm registry never served the packument revision announced by the CouchDB changes feed
-for one or more packages, even after repeated re-checks. All versions the registry did serve
-have been processed, but a version announced by the feed may be missing until the affected
-package publishes again. The follower logs identify the affected packages, which can be
-manually ingested using the ReStagePackageVersion function.
-
-Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
-        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/LaggyPackumentGiveUps",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 1,
-        "MetricName": "LaggyPackumentGiveUps",
-        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
-        "Period": 3600,
-        "Statistic": "Sum",
-        "Threshold": 1,
-        "TreatMissingData": "notBreaching",
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
     "ConstructHubSourcesNpmJsFollowerLateChangeLagHigh74C200AA": {
       "Properties": {
         "AlarmDescription": "The NpmJs follower is discovering changes that were inserted into the CouchDB changes feed
@@ -25446,6 +25958,25 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "Period": 3600,
         "Statistic": "Maximum",
         "Threshold": 17280000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerMissingPackumentsHigh0AB93A32": {
+      "Properties": {
+        "AlarmDescription": "The npm registry had no packument for an unusually high number of packages announced by
+the CouchDB changes feed. This usually means the registry has an outage or is far behind
+the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "MissingPackuments",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Statistic": "Sum",
+        "Threshold": 1500,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -25533,7 +26064,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "Event",
         "ServiceToken": {
@@ -25557,7 +26088,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "RequestResponse",
         "ServiceToken": {
@@ -25571,7 +26102,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Type": "Custom::Trigger",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da": {
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564": {
       "DependsOn": [
         "ConstructHubLicenseListAwsCliLayer59592811",
         "ConstructHubLicenseListCustomResource323F0FD4",
@@ -25598,7 +26129,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8f27fe5ee9f5c0c99dfa0d66e98295ec31b3d124970fc7162d4b121f37b053a3.zip",
+          "S3Key": "d6ee84ab47908ff703017eb563a87210719fe6180c73e82957731157fd5c7780.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Copies the known versions from the staging bucket to the known versions table",
         "Environment": {
@@ -25765,6 +26296,64 @@ Direct link to Lambda function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorFailuresC6FC837A": {
+      "Properties": {
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "The packument processor function is failing (errors or time-outs). Requests in the
+packument queue use up their attempts while it fails, and may be given up on early.
+
+Link to the lambda function: /lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
+              "
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/Failures",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 900,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorLaggyPackumentLagHigh863AFDFC": {
+      "Properties": {
+        "AlarmDescription": "Laggy packuments take unusually long to catch up: the npm registry serves older revisions
+than the CouchDB changes feed announced, for hours. This usually means the registry has an
+outage or is far behind the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/LaggyPackumentLagHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "ExtendedStatistic": "p90",
+        "MetricName": "LaggyPackumentLag",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Threshold": 21600000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubSourcesNpmJsSchedule34031870": {
       "DependsOn": [
@@ -26037,6 +26626,20 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 },
               ],
             },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -26062,7 +26665,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8625ecb0c4c91c2ca0404a682cb734f265ca9331fd380d51dd6759eb64acffdc.zip",
+          "S3Key": "aa49d81f3c9ee821e6328d0dfa4c1a3eaa8cc58c8af11d16159064b9d48289cf.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -26388,6 +26991,303 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubSourcesPackumentProcessorDLQF401BD77": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesPackumentProcessorFunction0E5F8177": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "b768d6521a3b26b9ab2bd7991f7779e0b259d8079a7719cf1a90c7282080d038.zip",
+        },
+        "Description": "[Test/ConstructHub/Sources/PackumentProcessor] Processes packages from the npm registry, retrying until the registry serves the revision announced by the changes feed",
+        "Environment": {
+          "Variables": {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "DENY_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
+            "KNOWN_VERSIONS_TABLE_NAME": {
+              "Ref": "ConstructHubSourcesKnownVersions1480B28B",
+            },
+            "LICENSE_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 2048,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubDenyListBucket1B3C2C2E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubLicenseListBucket9334047F",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubLicenseListBucket9334047F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "Roles": [
+          {
+            "Ref": "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionSqsEventSourceTestConstructHubSourcesPackumentProcessorQueue026064FBB2863D38": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+        "ScalingConfig": {
+          "MaximumConcurrency": 2,
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "ConstructHubSourcesPackumentProcessorQueue34BDE578": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 345600,
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 9,
+        },
+        "VisibilityTimeout": 1800,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ConstructHubSourcesReStagePackageVersion5E1211D1": {
       "DependsOn": [
         "ConstructHubSourcesReStagePackageVersionServiceRoleDefaultPolicyB4F9CE40",
@@ -26401,7 +27301,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a48fc19d951650367e00f718a33dd3a3cc8bea938b8d17670ed97e1a41e31e36.zip",
+          "S3Key": "01c626beeb88883b8b17b12888e86afede015e6264f4c9d212c6b1a55f4fa81e.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -29991,6 +30891,40 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
+              ")\\n[button:Packument Queue](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument Processor](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
               ")\\n[button:Pipeline Trace (Log Analytics)](/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400~timeType~'RELATIVE~unit~'seconds~editorString~'fields*20*40timestamp*2C*20*40log*2C*20*40message*0A*7C*20filter*20*40message*20like*20*2Fconstruct-hub-probe*2F*0A*23*20filter*20*40message*20like*20*2F*3Cversion*3E*2F*20*3C-*20narrow*20down*20to*20a*20stuck*20version*0A*7C*20sort*20*40timestamp*20desc*0A*7C*20limit*20100~source~(~'*2Faws*2Flambda*2F",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -30039,7 +30973,39 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
+              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Missing Packuments","expression":"FILL(m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackuments",{"label":"Missing Packuments","stat":"Sum","visible":false,"id":"m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62"}],[{"label":"Missing Packuments Recovered","expression":"FILL(m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentsRecovered",{"label":"Missing Packuments Recovered","stat":"Sum","visible":false,"id":"m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7"}],[{"label":"Missing Packument Give-Ups","expression":"FILL(m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentGiveUps",{"label":"Missing Packument Give-Ups","stat":"Sum","visible":false,"id":"m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Packument Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting for next attempt","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesDelayed","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Delayed","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Given up (DLQ)","stat":"Maximum"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentLag",{"label":"Laggy Packument Lag (p90)","stat":"p90","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Alarm","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -38997,6 +39963,20 @@ Request a service quota increase for lambda functions",
                   "QueueName",
                 ],
               },
+              ""},"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "":{"name":"NPM JS Packument DLQ","queueName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
               ""}}},"title":"SQS DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":16,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"",
               {
                 "Ref": "AWS::Region",
@@ -39344,7 +40324,7 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9df4ea6f33aadd84d0a7f36cbfad610289ea74b3849c6ff98f8d8731c9f9e93e.zip",
+          "S3Key": "af89e303b667afe7fab48f81c817215497844cd7567538a98c8153ddb6737dbc.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -39367,6 +40347,9 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
           },
         },
         "Handler": "index.handler",
@@ -39801,27 +40784,6 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubSourcesNpmJsFollowerLaggyPackumentGiveUps9CFECACE": {
-      "Properties": {
-        "AlarmDescription": "The npm registry never served the packument revision announced by the CouchDB changes feed
-for one or more packages, even after repeated re-checks. All versions the registry did serve
-have been processed, but a version announced by the feed may be missing until the affected
-package publishes again. The follower logs identify the affected packages, which can be
-manually ingested using the ReStagePackageVersion function.
-
-Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
-        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/LaggyPackumentGiveUps",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 1,
-        "MetricName": "LaggyPackumentGiveUps",
-        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
-        "Period": 3600,
-        "Statistic": "Sum",
-        "Threshold": 1,
-        "TreatMissingData": "notBreaching",
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
     "ConstructHubSourcesNpmJsFollowerLateChangeLagHigh74C200AA": {
       "Properties": {
         "AlarmDescription": "The NpmJs follower is discovering changes that were inserted into the CouchDB changes feed
@@ -39838,6 +40800,25 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "Period": 3600,
         "Statistic": "Maximum",
         "Threshold": 17280000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerMissingPackumentsHigh0AB93A32": {
+      "Properties": {
+        "AlarmDescription": "The npm registry had no packument for an unusually high number of packages announced by
+the CouchDB changes feed. This usually means the registry has an outage or is far behind
+the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "MissingPackuments",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Statistic": "Sum",
+        "Threshold": 1500,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -39925,7 +40906,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "Event",
         "ServiceToken": {
@@ -39949,7 +40930,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "RequestResponse",
         "ServiceToken": {
@@ -39963,7 +40944,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Type": "Custom::Trigger",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da": {
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564": {
       "DependsOn": [
         "ConstructHubLicenseListAwsCliLayer59592811",
         "ConstructHubLicenseListCustomResource323F0FD4",
@@ -39990,7 +40971,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8f27fe5ee9f5c0c99dfa0d66e98295ec31b3d124970fc7162d4b121f37b053a3.zip",
+          "S3Key": "d6ee84ab47908ff703017eb563a87210719fe6180c73e82957731157fd5c7780.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Copies the known versions from the staging bucket to the known versions table",
         "Environment": {
@@ -40157,6 +41138,64 @@ Direct link to Lambda function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorFailuresC6FC837A": {
+      "Properties": {
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "The packument processor function is failing (errors or time-outs). Requests in the
+packument queue use up their attempts while it fails, and may be given up on early.
+
+Link to the lambda function: /lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
+              "
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/Failures",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 900,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorLaggyPackumentLagHigh863AFDFC": {
+      "Properties": {
+        "AlarmDescription": "Laggy packuments take unusually long to catch up: the npm registry serves older revisions
+than the CouchDB changes feed announced, for hours. This usually means the registry has an
+outage or is far behind the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/LaggyPackumentLagHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "ExtendedStatistic": "p90",
+        "MetricName": "LaggyPackumentLag",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Threshold": 21600000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubSourcesNpmJsSchedule34031870": {
       "DependsOn": [
@@ -40429,6 +41468,20 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 },
               ],
             },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -40454,7 +41507,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8625ecb0c4c91c2ca0404a682cb734f265ca9331fd380d51dd6759eb64acffdc.zip",
+          "S3Key": "aa49d81f3c9ee821e6328d0dfa4c1a3eaa8cc58c8af11d16159064b9d48289cf.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -40780,6 +41833,303 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubSourcesPackumentProcessorDLQF401BD77": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesPackumentProcessorFunction0E5F8177": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "b768d6521a3b26b9ab2bd7991f7779e0b259d8079a7719cf1a90c7282080d038.zip",
+        },
+        "Description": "[Test/ConstructHub/Sources/PackumentProcessor] Processes packages from the npm registry, retrying until the registry serves the revision announced by the changes feed",
+        "Environment": {
+          "Variables": {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "DENY_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
+            "KNOWN_VERSIONS_TABLE_NAME": {
+              "Ref": "ConstructHubSourcesKnownVersions1480B28B",
+            },
+            "LICENSE_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 2048,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubDenyListBucket1B3C2C2E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubLicenseListBucket9334047F",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubLicenseListBucket9334047F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "Roles": [
+          {
+            "Ref": "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionSqsEventSourceTestConstructHubSourcesPackumentProcessorQueue026064FBB2863D38": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+        "ScalingConfig": {
+          "MaximumConcurrency": 2,
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "ConstructHubSourcesPackumentProcessorQueue34BDE578": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 345600,
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 9,
+        },
+        "VisibilityTimeout": 1800,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ConstructHubSourcesReStagePackageVersion5E1211D1": {
       "DependsOn": [
         "ConstructHubSourcesReStagePackageVersionServiceRoleDefaultPolicyB4F9CE40",
@@ -40793,7 +42143,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a48fc19d951650367e00f718a33dd3a3cc8bea938b8d17670ed97e1a41e31e36.zip",
+          "S3Key": "01c626beeb88883b8b17b12888e86afede015e6264f4c9d212c6b1a55f4fa81e.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -44531,6 +45881,40 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
+              ")\\n[button:Packument Queue](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument Processor](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
               ")\\n[button:Pipeline Trace (Log Analytics)](/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400~timeType~'RELATIVE~unit~'seconds~editorString~'fields*20*40timestamp*2C*20*40log*2C*20*40message*0A*7C*20filter*20*40message*20like*20*2Fconstruct-hub-probe*2F*0A*23*20filter*20*40message*20like*20*2F*3Cversion*3E*2F*20*3C-*20narrow*20down*20to*20a*20stuck*20version*0A*7C*20sort*20*40timestamp*20desc*0A*7C*20limit*20100~source~(~'*2Faws*2Flambda*2F",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -44579,7 +45963,39 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
+              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Missing Packuments","expression":"FILL(m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackuments",{"label":"Missing Packuments","stat":"Sum","visible":false,"id":"m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62"}],[{"label":"Missing Packuments Recovered","expression":"FILL(m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentsRecovered",{"label":"Missing Packuments Recovered","stat":"Sum","visible":false,"id":"m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7"}],[{"label":"Missing Packument Give-Ups","expression":"FILL(m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentGiveUps",{"label":"Missing Packument Give-Ups","stat":"Sum","visible":false,"id":"m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Packument Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting for next attempt","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesDelayed","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Delayed","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Given up (DLQ)","stat":"Maximum"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentLag",{"label":"Laggy Packument Lag (p90)","stat":"p90","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Alarm","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -53546,6 +54962,20 @@ Request a service quota increase for lambda functions",
                   "QueueName",
                 ],
               },
+              ""},"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "":{"name":"NPM JS Packument DLQ","queueName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
               ""}}},"title":"SQS DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":16,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"",
               {
                 "Ref": "AWS::Region",
@@ -53893,7 +55323,7 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9df4ea6f33aadd84d0a7f36cbfad610289ea74b3849c6ff98f8d8731c9f9e93e.zip",
+          "S3Key": "af89e303b667afe7fab48f81c817215497844cd7567538a98c8153ddb6737dbc.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -53916,6 +55346,9 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
           },
         },
         "Handler": "index.handler",
@@ -54337,27 +55770,6 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubSourcesNpmJsFollowerLaggyPackumentGiveUps9CFECACE": {
-      "Properties": {
-        "AlarmDescription": "The npm registry never served the packument revision announced by the CouchDB changes feed
-for one or more packages, even after repeated re-checks. All versions the registry did serve
-have been processed, but a version announced by the feed may be missing until the affected
-package publishes again. The follower logs identify the affected packages, which can be
-manually ingested using the ReStagePackageVersion function.
-
-Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
-        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/LaggyPackumentGiveUps",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 1,
-        "MetricName": "LaggyPackumentGiveUps",
-        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
-        "Period": 3600,
-        "Statistic": "Sum",
-        "Threshold": 1,
-        "TreatMissingData": "notBreaching",
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
     "ConstructHubSourcesNpmJsFollowerLateChangeLagHigh74C200AA": {
       "Properties": {
         "AlarmDescription": "The NpmJs follower is discovering changes that were inserted into the CouchDB changes feed
@@ -54374,6 +55786,25 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "Period": 3600,
         "Statistic": "Maximum",
         "Threshold": 17280000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerMissingPackumentsHigh0AB93A32": {
+      "Properties": {
+        "AlarmDescription": "The npm registry had no packument for an unusually high number of packages announced by
+the CouchDB changes feed. This usually means the registry has an outage or is far behind
+the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "MissingPackuments",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Statistic": "Sum",
+        "Threshold": 1500,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -54461,7 +55892,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "Event",
         "ServiceToken": {
@@ -54485,7 +55916,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "RequestResponse",
         "ServiceToken": {
@@ -54499,7 +55930,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Type": "Custom::Trigger",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da": {
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564": {
       "DependsOn": [
         "ConstructHubLicenseListAwsCliLayer59592811",
         "ConstructHubLicenseListCustomResource323F0FD4",
@@ -54526,7 +55957,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8f27fe5ee9f5c0c99dfa0d66e98295ec31b3d124970fc7162d4b121f37b053a3.zip",
+          "S3Key": "d6ee84ab47908ff703017eb563a87210719fe6180c73e82957731157fd5c7780.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Copies the known versions from the staging bucket to the known versions table",
         "Environment": {
@@ -54693,6 +56124,64 @@ Direct link to Lambda function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorFailuresC6FC837A": {
+      "Properties": {
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "The packument processor function is failing (errors or time-outs). Requests in the
+packument queue use up their attempts while it fails, and may be given up on early.
+
+Link to the lambda function: /lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
+              "
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/Failures",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 900,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorLaggyPackumentLagHigh863AFDFC": {
+      "Properties": {
+        "AlarmDescription": "Laggy packuments take unusually long to catch up: the npm registry serves older revisions
+than the CouchDB changes feed announced, for hours. This usually means the registry has an
+outage or is far behind the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/LaggyPackumentLagHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "ExtendedStatistic": "p90",
+        "MetricName": "LaggyPackumentLag",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Threshold": 21600000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubSourcesNpmJsSchedule34031870": {
       "DependsOn": [
@@ -54965,6 +56454,20 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 },
               ],
             },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -54990,7 +56493,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8625ecb0c4c91c2ca0404a682cb734f265ca9331fd380d51dd6759eb64acffdc.zip",
+          "S3Key": "aa49d81f3c9ee821e6328d0dfa4c1a3eaa8cc58c8af11d16159064b9d48289cf.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -55316,6 +56819,303 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubSourcesPackumentProcessorDLQF401BD77": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesPackumentProcessorFunction0E5F8177": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "b768d6521a3b26b9ab2bd7991f7779e0b259d8079a7719cf1a90c7282080d038.zip",
+        },
+        "Description": "[Test/ConstructHub/Sources/PackumentProcessor] Processes packages from the npm registry, retrying until the registry serves the revision announced by the changes feed",
+        "Environment": {
+          "Variables": {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "DENY_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
+            "KNOWN_VERSIONS_TABLE_NAME": {
+              "Ref": "ConstructHubSourcesKnownVersions1480B28B",
+            },
+            "LICENSE_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 2048,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubDenyListBucket1B3C2C2E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubLicenseListBucket9334047F",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubLicenseListBucket9334047F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "Roles": [
+          {
+            "Ref": "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionSqsEventSourceTestConstructHubSourcesPackumentProcessorQueue026064FBB2863D38": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+        "ScalingConfig": {
+          "MaximumConcurrency": 2,
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "ConstructHubSourcesPackumentProcessorQueue34BDE578": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 345600,
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 9,
+        },
+        "VisibilityTimeout": 1800,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ConstructHubSourcesReStagePackageVersion5E1211D1": {
       "DependsOn": [
         "ConstructHubSourcesReStagePackageVersionServiceRoleDefaultPolicyB4F9CE40",
@@ -55329,7 +57129,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a48fc19d951650367e00f718a33dd3a3cc8bea938b8d17670ed97e1a41e31e36.zip",
+          "S3Key": "01c626beeb88883b8b17b12888e86afede015e6264f4c9d212c6b1a55f4fa81e.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {
@@ -59256,6 +61056,40 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
+              ")\\n[button:Packument Queue](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              ")\\n[button:Packument Processor](/lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
               ")\\n[button:Pipeline Trace (Log Analytics)](/cloudwatch/home#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-86400~timeType~'RELATIVE~unit~'seconds~editorString~'fields*20*40timestamp*2C*20*40log*2C*20*40message*0A*7C*20filter*20*40message*20like*20*2Fconstruct-hub-probe*2F*0A*23*20filter*20*40message*20like*20*2F*3Cversion*3E*2F*20*3C-*20narrow*20down*20to*20a*20stuck*20version*0A*7C*20sort*20*40timestamp*20desc*0A*7C*20limit*20100~source~(~'*2Faws*2Flambda*2F",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -59304,7 +61138,39 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
+              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Missing Packuments","expression":"FILL(m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackuments",{"label":"Missing Packuments","stat":"Sum","visible":false,"id":"m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62"}],[{"label":"Missing Packuments Recovered","expression":"FILL(m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentsRecovered",{"label":"Missing Packuments Recovered","stat":"Sum","visible":false,"id":"m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7"}],[{"label":"Missing Packument Give-Ups","expression":"FILL(m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentGiveUps",{"label":"Missing Packument Give-Ups","stat":"Sum","visible":false,"id":"m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Packument Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Waiting for next attempt","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesDelayed","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Delayed","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "",{"label":"Given up (DLQ)","stat":"Maximum"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentLag",{"label":"Laggy Packument Lag (p90)","stat":"p90","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Alarm","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -68016,6 +69882,20 @@ Request a service quota increase for lambda functions",
                   "QueueName",
                 ],
               },
+              ""},"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
+              "":{"name":"NPM JS Packument DLQ","queueName":"",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                  "QueueName",
+                ],
+              },
               ""}}},"title":"SQS DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":16,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"",
               {
                 "Ref": "AWS::Region",
@@ -68425,7 +70305,7 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9df4ea6f33aadd84d0a7f36cbfad610289ea74b3849c6ff98f8d8731c9f9e93e.zip",
+          "S3Key": "af89e303b667afe7fab48f81c817215497844cd7567538a98c8153ddb6737dbc.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -68448,6 +70328,9 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
           },
         },
         "Handler": "index.handler",
@@ -68882,27 +70765,6 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubSourcesNpmJsFollowerLaggyPackumentGiveUps9CFECACE": {
-      "Properties": {
-        "AlarmDescription": "The npm registry never served the packument revision announced by the CouchDB changes feed
-for one or more packages, even after repeated re-checks. All versions the registry did serve
-have been processed, but a version announced by the feed may be missing until the affected
-package publishes again. The follower logs identify the affected packages, which can be
-manually ingested using the ReStagePackageVersion function.
-
-Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
-        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/LaggyPackumentGiveUps",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 1,
-        "MetricName": "LaggyPackumentGiveUps",
-        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
-        "Period": 3600,
-        "Statistic": "Sum",
-        "Threshold": 1,
-        "TreatMissingData": "notBreaching",
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
     "ConstructHubSourcesNpmJsFollowerLateChangeLagHigh74C200AA": {
       "Properties": {
         "AlarmDescription": "The NpmJs follower is discovering changes that were inserted into the CouchDB changes feed
@@ -68919,6 +70781,25 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "Period": 3600,
         "Statistic": "Maximum",
         "Threshold": 17280000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerMissingPackumentsHigh0AB93A32": {
+      "Properties": {
+        "AlarmDescription": "The npm registry had no packument for an unusually high number of packages announced by
+the CouchDB changes feed. This usually means the registry has an outage or is far behind
+the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "MissingPackuments",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Statistic": "Sum",
+        "Threshold": 1500,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -69006,7 +70887,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "Event",
         "ServiceToken": {
@@ -69030,7 +70911,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564",
         },
         "InvocationType": "RequestResponse",
         "ServiceToken": {
@@ -69044,7 +70925,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Type": "Custom::Trigger",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A70125de5fd221ef5bc3c75774031d1fa6da": {
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701faa0028b5b69c55ba8d8164e73f8f564": {
       "DependsOn": [
         "ConstructHubLicenseListAwsCliLayer59592811",
         "ConstructHubLicenseListCustomResource323F0FD4",
@@ -69071,7 +70952,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8f27fe5ee9f5c0c99dfa0d66e98295ec31b3d124970fc7162d4b121f37b053a3.zip",
+          "S3Key": "d6ee84ab47908ff703017eb563a87210719fe6180c73e82957731157fd5c7780.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Copies the known versions from the staging bucket to the known versions table",
         "Environment": {
@@ -69238,6 +71119,64 @@ Direct link to Lambda function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorFailuresC6FC837A": {
+      "Properties": {
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "The packument processor function is failing (errors or time-outs). Requests in the
+packument queue use up their attempts while it fails, and may be given up on early.
+
+Link to the lambda function: /lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+              },
+              "
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/Failures",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 900,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsPackumentProcessorLaggyPackumentLagHigh863AFDFC": {
+      "Properties": {
+        "AlarmDescription": "Laggy packuments take unusually long to catch up: the npm registry serves older revisions
+than the CouchDB changes feed announced, for hours. This usually means the registry has an
+outage or is far behind the feed. The packument processor keeps re-checking these packages.
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/PackumentProcessor/LaggyPackumentLagHigh",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "ExtendedStatistic": "p90",
+        "MetricName": "LaggyPackumentLag",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 10800,
+        "Threshold": 21600000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubSourcesNpmJsSchedule34031870": {
       "DependsOn": [
@@ -69510,6 +71449,20 @@ Direct link to Lambda function: /lambda/home#/functions/",
                 },
               ],
             },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -69535,7 +71488,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8625ecb0c4c91c2ca0404a682cb734f265ca9331fd380d51dd6759eb64acffdc.zip",
+          "S3Key": "aa49d81f3c9ee821e6328d0dfa4c1a3eaa8cc58c8af11d16159064b9d48289cf.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -69861,6 +71814,303 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubSourcesPackumentProcessorDLQF401BD77": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesPackumentProcessorFunction0E5F8177": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "b768d6521a3b26b9ab2bd7991f7779e0b259d8079a7719cf1a90c7282080d038.zip",
+        },
+        "Description": "[Test/ConstructHub/Sources/PackumentProcessor] Processes packages from the npm registry, retrying until the registry serves the revision announced by the changes feed",
+        "Environment": {
+          "Variables": {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "DENY_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
+            "KNOWN_VERSIONS_TABLE_NAME": {
+              "Ref": "ConstructHubSourcesKnownVersions1480B28B",
+            },
+            "LICENSE_LIST_BUCKET_NAME": {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_QUEUE_URL": {
+              "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 2048,
+        "Role": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubDenyListBucket1B3C2C2E",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubLicenseListBucket9334047F",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubLicenseListBucket9334047F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesPackumentProcessorFunctionServiceRoleDefaultPolicy4D1F4AD4",
+        "Roles": [
+          {
+            "Ref": "ConstructHubSourcesPackumentProcessorFunctionServiceRole384F57F3",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubSourcesPackumentProcessorFunctionSqsEventSourceTestConstructHubSourcesPackumentProcessorQueue026064FBB2863D38": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+        "ScalingConfig": {
+          "MaximumConcurrency": 2,
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "ConstructHubSourcesPackumentProcessorQueue34BDE578": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 345600,
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 9,
+        },
+        "VisibilityTimeout": 1800,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ConstructHubSourcesReStagePackageVersion5E1211D1": {
       "DependsOn": [
         "ConstructHubSourcesReStagePackageVersionServiceRoleDefaultPolicyB4F9CE40",
@@ -69874,7 +72124,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a48fc19d951650367e00f718a33dd3a3cc8bea938b8d17670ed97e1a41e31e36.zip",
+          "S3Key": "01c626beeb88883b8b17b12888e86afede015e6264f4c9d212c6b1a55f4fa81e.zip",
         },
         "Description": "Manually re-stage a package version",
         "Environment": {

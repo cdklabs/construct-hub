@@ -10,6 +10,11 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import {
+  GetQueueAttributesCommand,
+  SendMessageBatchCommand,
+  SQSClient,
+} from '@aws-sdk/client-sqs';
 import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Unit } from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
@@ -23,9 +28,11 @@ import {
 import { EnvironmentVariables as LicenseListEnv } from '../../../backend/license-list/constants';
 import {
   ENV_KNOWN_VERSIONS_TABLE_NAME,
+  ENV_PACKUMENT_QUEUE_URL,
   FOLLOWER_STATE_FILE_NAME,
   MARKER_FILE_NAME,
   MetricName,
+  PACKUMENT_INITIAL_DELAY_SECONDS,
 } from '../../../package-sources/npmjs/constants.lambda-shared';
 import { FollowerState } from '../../../package-sources/npmjs/follower-state.lambda-shared';
 import { handler } from '../../../package-sources/npmjs/npm-js-follower.lambda';
@@ -59,6 +66,8 @@ const REGISTRY = 'https://registry.npmjs.org';
 const MOCK_BUCKET = 'mock-staging-bucket';
 const MOCK_STAGING_FUNCTION = 'mock-staging-function';
 const MOCK_KNOWN_VERSIONS_TABLE = 'mock-known-versions-table';
+const MOCK_PACKUMENT_QUEUE_URL =
+  'https://sqs.us-east-1.amazonaws.com/123456789012/mock-packument-queue';
 const MOCK_DENY_LIST_BUCKET = 'deny-list-bucket-name';
 const MOCK_DENY_LIST_OBJECT = 'my-deny-list.json';
 const MOCK_LICENSE_LIST_BUCKET = 'license-list-bucket-name';
@@ -69,6 +78,7 @@ const HOUR = 60 * 60 * 1_000;
 const mockS3 = mockClient(S3Client);
 const mockLambda = mockClient(LambdaClient);
 const mockDynamoDB = mockClient(DynamoDBClient);
+const mockSQS = mockClient(SQSClient);
 
 const context: Context = {
   awsRequestId: 'mock-request-id',
@@ -83,11 +93,13 @@ beforeEach(() => {
   mockS3.reset();
   mockLambda.reset();
   mockDynamoDB.reset();
+  mockSQS.reset();
   mockPutMetric.mockClear();
 
   process.env.BUCKET_NAME = MOCK_BUCKET;
   process.env.FUNCTION_NAME = MOCK_STAGING_FUNCTION;
   process.env[ENV_KNOWN_VERSIONS_TABLE_NAME] = MOCK_KNOWN_VERSIONS_TABLE;
+  process.env[ENV_PACKUMENT_QUEUE_URL] = MOCK_PACKUMENT_QUEUE_URL;
   process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
   process.env[ENV_DENY_LIST_OBJECT_KEY] = MOCK_DENY_LIST_OBJECT;
   process.env[LicenseListEnv.BUCKET_NAME] = MOCK_LICENSE_LIST_BUCKET;
@@ -116,6 +128,16 @@ beforeEach(() => {
   mockDynamoDB.on(QueryCommand).resolves({ Items: [] });
   mockDynamoDB.on(BatchWriteItemCommand).resolves({ UnprocessedItems: {} });
 
+  // Empty packument queue
+  mockSQS.on(SendMessageBatchCommand).resolves({ Successful: [], Failed: [] });
+  mockSQS.on(GetQueueAttributesCommand).resolves({
+    Attributes: {
+      ApproximateNumberOfMessages: '0',
+      ApproximateNumberOfMessagesNotVisible: '0',
+      ApproximateNumberOfMessagesDelayed: '0',
+    },
+  });
+
   mockS3.on(PutObjectCommand).resolves({});
   mockLambda.on(InvokeCommand).resolves({ StatusCode: 202 });
 });
@@ -124,6 +146,7 @@ afterEach(() => {
   delete process.env.BUCKET_NAME;
   delete process.env.FUNCTION_NAME;
   delete process.env[ENV_KNOWN_VERSIONS_TABLE_NAME];
+  delete process.env[ENV_PACKUMENT_QUEUE_URL];
   delete process.env[ENV_DENY_LIST_BUCKET_NAME];
   delete process.env[ENV_DENY_LIST_OBJECT_KEY];
   delete process.env[LicenseListEnv.BUCKET_NAME];
@@ -328,7 +351,17 @@ test('discovers and stages late-inserted changes', async () => {
   expect(saved.newestCheckpointSeq()).toBe(1_000);
 });
 
-test('laggy packument: processes served versions and records the expectation', async () => {
+/** The packument requests sent to the packument queue. */
+function queuedRequests(): any[] {
+  return mockSQS.commandCalls(SendMessageBatchCommand).flatMap((call) =>
+    call.args[0].input.Entries!.map((entry) => ({
+      ...JSON.parse(entry.MessageBody!),
+      delaySeconds: entry.DelaySeconds,
+    }))
+  );
+}
+
+test('laggy packument: processes served versions and sends it to the packument queue', async () => {
   givenHead(2_010);
   givenNoStateFile();
   givenLegacyMarker(2_000);
@@ -351,101 +384,164 @@ test('laggy packument: processes served versions and records the expectation', a
   nock(REGISTRY)
     .get('/laggy-package')
     .reply(200, packageDoc('laggy-package', '3-ffffff', '1.0.0'));
+  mockSQS.on(GetQueueAttributesCommand).resolves({
+    Attributes: {
+      ApproximateNumberOfMessages: '0',
+      ApproximateNumberOfMessagesNotVisible: '0',
+      ApproximateNumberOfMessagesDelayed: '1',
+    },
+  });
 
+  const before = Date.now();
   await handler(event, context);
 
   // The versions the registry did serve are processed anyway.
   expect(stagedPackages()).toEqual([
     { name: 'laggy-package', version: '1.0.0' },
   ]);
-  // ... and the expectation of rev 5 is recorded for later re-checks. The
-  // gauge is emitted at the end of the run and includes it.
+  // ... and a request to check for rev 5 is queued, delayed.
+  const [request] = queuedRequests();
+  expect(request).toMatchObject({
+    name: 'laggy-package',
+    expectedRev: 5,
+    seq: 2_005,
+    reason: 'laggy',
+    delaySeconds: PACKUMENT_INITIAL_DELAY_SECONDS,
+  });
+  expect(request.firstSeen).toBeGreaterThanOrEqual(before);
+  expect(mockSQS).toHaveReceivedCommandWith(SendMessageBatchCommand, {
+    QueueUrl: MOCK_PACKUMENT_QUEUE_URL,
+  });
+  // The gauge reports the size of the packument queue.
   expect(mockPutMetric).toHaveBeenCalledWith(
     MetricName.LAGGY_PACKUMENTS,
     1,
     Unit.Count
   );
-  const state = savedState();
-  expect(state.laggyPackuments()).toEqual([
-    expect.objectContaining({
-      name: 'laggy-package',
-      expectedRev: 5,
-      seq: 2_005,
-    }),
-  ]);
+  // The receipt is recorded.
+  expect(savedState().has(2_005)).toBe(true);
 });
 
-test('laggy packument: recovered once the registry catches up', async () => {
-  const now = Date.now();
-  givenHead(3_000);
-
-  const state = new FollowerState();
-  state.addCheckpoint(3_000, now - 5 * 60_000);
-  state.completeDeepScan(now - HOUR);
-  state.recordLaggyPackument('recovered-package', 4, 1_500, now - HOUR);
-  givenStateFile(state);
-
-  // The registry has now caught up (rev 4 >= expected 4), serving a version
-  // we don't know yet.
-  nock(REGISTRY)
-    .get('/recovered-package')
-    .reply(200, packageDoc('recovered-package', '4-gggggg', '2.0.0'));
-  // The scan itself is empty.
+test('laggy packument: a failure to queue it leaves the entry without a receipt', async () => {
+  givenHead(2_010);
+  givenNoStateFile();
+  givenLegacyMarker(2_000);
   nock(REPLICA)
     .get('/registry/_changes')
-    .query({ limit: '10000', since: '3000' })
-    .reply(200, { results: [], last_seq: 3_000 });
+    .query({ limit: '10000', since: '2000' })
+    .reply(200, {
+      results: [
+        {
+          seq: 2_005,
+          id: 'laggy-package',
+          changes: [{ rev: '5-eeeeee' }],
+          deleted: false,
+        },
+      ],
+      last_seq: 2_005,
+    });
+  nock(REGISTRY)
+    .get('/laggy-package')
+    .reply(200, packageDoc('laggy-package', '3-ffffff', '1.0.0'));
+  mockSQS.on(SendMessageBatchCommand).rejects(new Error('network'));
+
+  await expect(handler(event, context)).rejects.toThrow(/network/);
+
+  // The next run processes the entry again.
+  expect(savedState().has(2_005)).toBe(false);
+});
+
+test('missing packument: a change entry the registry has no packument for yet is sent to the packument queue', async () => {
+  givenHead(2_010);
+  givenNoStateFile();
+  givenLegacyMarker(2_000);
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '2000' })
+    .reply(200, {
+      results: [
+        {
+          seq: 2_005,
+          id: 'brand-new-package',
+          changes: [{ rev: '1-aaaaaa' }],
+          deleted: false,
+        },
+      ],
+      last_seq: 2_005,
+    });
+  nock(REGISTRY).get('/brand-new-package').reply(404, 'not found');
 
   await handler(event, context);
 
-  expect(stagedPackages()).toEqual([
-    { name: 'recovered-package', version: '2.0.0' },
+  expect(stagedPackages()).toEqual([]);
+  expect(queuedRequests()).toEqual([
+    expect.objectContaining({
+      name: 'brand-new-package',
+      expectedRev: 1,
+      seq: 2_005,
+      reason: 'missing',
+    }),
   ]);
   expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.LAGGY_PACKUMENTS_RECOVERED,
+    MetricName.MISSING_PACKUMENTS,
     1,
     Unit.Count
   );
+  expect(savedState().has(2_005)).toBe(true);
+});
+
+test('missing packument: an entry that announces no revision expects any packument', async () => {
+  givenHead(2_010);
+  givenNoStateFile();
+  givenLegacyMarker(2_000);
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '2000' })
+    .reply(200, {
+      results: [
+        { seq: 2_005, id: 'no-rev-package', changes: [], deleted: false },
+      ],
+      last_seq: 2_005,
+    });
+  nock(REGISTRY).get('/no-rev-package').reply(404, 'not found');
+
+  await handler(event, context);
+
+  expect(queuedRequests()).toEqual([
+    expect.objectContaining({ name: 'no-rev-package', expectedRev: 0 }),
+  ]);
+});
+
+test('ignores change entries for deleted packages, as if they were not in the feed', async () => {
+  givenHead(2_010);
+  givenNoStateFile();
+  givenLegacyMarker(2_000);
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: '2000' })
+    .reply(200, {
+      results: [
+        {
+          seq: 2_005,
+          id: 'deleted-package',
+          changes: [{ rev: '3-aaaaaa' }],
+          deleted: true,
+        },
+      ],
+      last_seq: 2_005,
+    });
+
+  await handler(event, context);
+
+  // No packument fetch (nock would fail on an unexpected request), nothing
+  // queued, nothing counted, and no receipt.
+  expect(queuedRequests()).toEqual([]);
   expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.LAGGY_PACKUMENTS,
+    MetricName.CHANGE_COUNT,
     0,
     Unit.Count
   );
-  expect(savedState().laggyPackumentCount).toBe(0);
-});
-
-test('laggy packument: gives up after the maximum age, still processing what is served', async () => {
-  const now = Date.now();
-  givenHead(3_000);
-
-  const state = new FollowerState();
-  state.addCheckpoint(3_000, now - 5 * 60_000);
-  state.completeDeepScan(now - HOUR);
-  // First seen 25 hours ago: beyond the give-up age.
-  state.recordLaggyPackument('stuck-package', 9, 1_600, now - 25 * HOUR);
-  givenStateFile(state);
-
-  // The registry still serves rev 7 < expected 9 - but with a version we
-  // don't know, which is processed regardless.
-  nock(REGISTRY)
-    .get('/stuck-package')
-    .reply(200, packageDoc('stuck-package', '7-hhhhhh', '3.0.0'));
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '3000' })
-    .reply(200, { results: [], last_seq: 3_000 });
-
-  await handler(event, context);
-
-  expect(stagedPackages()).toEqual([
-    { name: 'stuck-package', version: '3.0.0' },
-  ]);
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.LAGGY_PACKUMENT_GIVE_UPS,
-    1,
-    Unit.Count
-  );
-  expect(savedState().laggyPackumentCount).toBe(0);
+  expect(savedState().has(2_005)).toBe(false);
 });
 
 test('seeds at the beginning of the feed on first deployment (automatic backfill)', async () => {
