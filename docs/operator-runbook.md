@@ -614,49 +614,92 @@ be increased: adjust `SCAN_WINDOW_MS` in
 `src/package-sources/npmjs/constants.lambda-shared.ts` (keeping it below
 `STATE_RETENTION_MS`) and deploy the updated construct.
 
-### `ConstructHub/Sources/NpmJs/Follower/LaggyPackumentGiveUps`
+### `ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh`
 
 #### Description
 
 This alarm is only provisioned when the `NpmJs` package source is configured. It
-triggers when the npm registry never served the packument revision announced by
-the CouchDB `_changes` feed for one or more packages, even after the follower
-re-checked for a prolonged period.
-
-All package versions the registry did serve have been processed. However, a
-version announced by the changes feed may be missing from ConstructHub until
-the affected package publishes its next version.
+triggers when the npm registry had no packument (HTTP 404) for an unusually high
+number of packages announced by the CouchDB `_changes` feed, within 3 hours.
+This usually means the registry has an outage, or is far behind the feed.
 
 #### Investigation
 
 The *NpmJs Follower* fetches package metadata from `registry.npmjs.org` for
-each change announced by the CouchDB `_changes` feed. The registry occasionally
-lags behind the feed. When it does, the follower processes the versions that
-were served, records the announced revision as a "laggy packument", and
-re-checks it on every run until the revision appears or the expectation ages
-out. This alarm fires for the latter.
+each change announced by the CouchDB `_changes` feed. Some of these always
+return 404, usually because a new package has not replicated to the registry
+yet (a *missing* packument). The follower sends them to the *Packument Queue*,
+where the *Packument Processor* checks them again with growing waits, for about
+a day. A normal 3 hour window has a couple of hundred of them.
 
-Review the logs of the *NpmJs Follower* for `Giving up on laggy packument`
-entries; they identify the affected package and the revision that never
-appeared. Verify what the registry currently serves for the package:
+Check the `Missing Packuments` line on the *Feed Reliability* graph of the
+backend dashboard, and pick a few affected packages from the logs of the
+*NpmJs Follower* (`the registry has no packument for it yet`). Verify whether
+the registry serves them now:
+
+```console
+$ curl -s -o /dev/null -w '%{http_code}\n' https://registry.npmjs.org/<package-name>
+```
+
+If most still return 404 while the feed keeps announcing them, the problem is
+with upstream npmjs.com. Look at `npmjs.com` status updates and announcements.
+If you suspect the problem is with upstream npmjs.com, you can cut them a
+ticket. Log in to <https://npmjs.com>, visit the
+[Support Page](https://www.npmjs.com/support) and select
+*There is a problem with the npm registry*.
+
+#### Resolution
+
+The packument processor processes the packages once the registry serves them.
+Packages it gives up on are logged (`Giving up on missing packument`) and then
+dropped. They show up again when the package next publishes. To ingest one
+right away, invoke the *ReStagePackageVersion* Lambda function with the package
+name and version.
+
+--------------------------------------------------------------------------------
+
+### `ConstructHub/Sources/NpmJs/PackumentProcessor/LaggyPackumentLagHigh`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when laggy packuments take unusually long to catch up: in a 3 hour
+window, 90% of them took longer than 6 hours. This usually means the registry
+has an outage, or is far behind the feed.
+
+All package versions the registry did serve have been processed. However,
+versions announced by the changes feed may be missing from ConstructHub until
+the registry catches up.
+
+#### Investigation
+
+The registry occasionally serves an older revision of a package than the
+changes feed announced (a *laggy* packument). The follower processes the
+versions that were served, and sends the package to the *Packument Queue*. The
+*Packument Processor* checks it again with growing waits, for about 29 hours,
+and reports how long each laggy packument took to catch up. Most catch up within
+minutes, and nearly all within 6 hours.
+
+Check the *Packument Queue* graph of the backend dashboard for how many
+requests are waiting, and the `Laggy Packument Give-Ups` line on the
+*Feed Reliability* graph for how many were given up on. The logs of the
+*Packument Processor* show `caught up` and `Giving up on laggy packument`
+entries. Verify what the registry serves for a few affected packages:
 
 ```console
 $ curl https://registry.npmjs.org/<package-name> | jq ._rev
 ```
 
 If the served revision is still older than the expected one, the problem is
-with upstream npmjs.com. Look at `npmjs.com` status updates and announcements.
-
-If you suspect the problem is with upstream npmjs.com, you can cut them a ticket. Log
-in to <https://npmjs.com>, visit the [Support Page](https://www.npmjs.com/support) and
-select *There is a problem with the npm registry*.
+with upstream npmjs.com (see the previous alarm for how to reach them).
 
 #### Resolution
 
-The missed package versions will automatically be discovered once the affected
-packages publish their next version. To ingest a missed version immediately,
-invoke the *ReStagePackageVersion* Lambda function with the package name and
-version from the follower logs.
+The packument processor processes the missed versions once the registry serves
+them. Packages it gives up on are logged and then dropped; there is nothing to
+redrive. The missed versions show up again when the package next publishes. To
+ingest one right away, invoke the *ReStagePackageVersion* Lambda function with
+the package name and version.
 
 --------------------------------------------------------------------------------
 
@@ -808,6 +851,30 @@ When documentation for a package is not available, it could be due to several re
 - Set up alerts for increases in missing documentation
 - Regularly review and update the documentation generation tooling
 - Ensure proper testing of changes to the transliterator pipeline
+
+--------------------------------------------------------------------------------
+
+### `ConstructHub/Sources/NpmJs/PackumentProcessor/Failures`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when the *Packument Processor* function fails or times out. While it
+fails, the requests in the *Packument Queue* keep using up their attempts, so
+they can be given up on earlier than the usual 29 hours.
+
+#### Investigation
+
+Review the logs of the *Packument Processor* (linked from the backend
+dashboard). Errors while setting up a batch (for example reading the deny list
+or license list) fail the whole batch; errors for a single package only fail
+that request. Time-outs usually mean the npm registry is slow to respond.
+
+#### Resolution
+
+Fix the cause. Requests that were given up on in the meantime are lost. Their
+versions show up again when the packages next publish, or can be ingested
+right away with the *ReStagePackageVersion* Lambda function.
 
 --------------------------------------------------------------------------------
 

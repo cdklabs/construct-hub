@@ -1,5 +1,5 @@
 import { InvokeCommand } from '@aws-sdk/client-lambda';
-import { VersionInfo } from './npm-js-follower.lambda';
+import type { VersionInfo } from './packument-processing.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
 import { LAMBDA_CLIENT } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';

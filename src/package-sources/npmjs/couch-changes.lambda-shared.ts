@@ -109,26 +109,32 @@ export class CouchChanges extends EventEmitter {
 
   /**
    * Fetches the registry metadata for each of the provided change entries and
-   * attaches it to the entry. Entries for deleted or unreachable packages are
-   * dropped.
+   * attaches it to the entry. Entries for deleted packages are dropped.
    *
    * The registry is a separate system from the changes feed and can serve a
    * packument revision older than the revision the feed announced (a "laggy
    * packument"). Such entries are returned with `laggy: true`: the caller
    * should process the versions that were served, and separately track the
    * expectation that the announced revision will eventually appear.
+   *
+   * The registry can also have no packument at all yet (HTTP 404), usually
+   * because a new package has not replicated to it yet. Such entries are
+   * returned in `missing`, and should be tracked the same way.
    */
   public async attachAllMetadata(
     changes: readonly DatabaseChange[]
   ): Promise<AttachedMetadata> {
     const ok = new Array<AttachedChange>();
+    const missing = new Array<MissingPackument>();
     const failedSeqs = new Array<number>();
     await Promise.all(
       changes.map(async (change) => {
         try {
           const outcome = await this.attachMetadata(change);
-          if (outcome !== undefined) {
-            ok.push(outcome);
+          if (outcome?.attached) {
+            ok.push(outcome.attached);
+          } else if (outcome?.missing) {
+            missing.push(outcome.missing);
           }
         } catch (error) {
           // One unreachable packument must not fail the whole batch. The
@@ -144,12 +150,16 @@ export class CouchChanges extends EventEmitter {
         }
       })
     );
-    return { ok, failedSeqs };
+    return { ok, missing, failedSeqs };
   }
 
   private async attachMetadata(
     change: DatabaseChange
-  ): Promise<AttachedChange | undefined> {
+  ): Promise<
+    | { attached: AttachedChange; missing?: undefined }
+    | { attached?: undefined; missing: MissingPackument }
+    | undefined
+  > {
     // Filter out deleted packages or null ids
     if (change.deleted || !change.id) {
       console.log(`Skipping ${change.id}: deleted or null id`);
@@ -168,9 +178,11 @@ export class CouchChanges extends EventEmitter {
     } catch (e: any) {
       if (e.message?.includes('HTTP 404')) {
         console.log(
-          `Skipping ${change.id} because of HTTP 404 (Not Found) error`
+          `${change.id}: the registry has no packument for it yet (HTTP 404)`
         );
-        return undefined;
+        return {
+          missing: { change, announcedRev: getMaxSequentialRevision(change) },
+        };
       }
       throw e;
     }
@@ -191,10 +203,12 @@ export class CouchChanges extends EventEmitter {
     change.doc = meta; // add metadata to the change object
 
     return {
-      change,
-      announcedRev,
-      servedRev,
-      laggy: servedRev < announcedRev,
+      attached: {
+        change,
+        announcedRev,
+        servedRev,
+        laggy: servedRev < announcedRev,
+      },
     };
   }
 
@@ -344,7 +358,9 @@ export function parseSequentialRevision(rev: string): number {
  * The highest sequential revision announced by a change entry.
  */
 export function getMaxSequentialRevision(change: DatabaseChange): number {
+  // 0 when the entry announces no revision, so any packument satisfies it.
   return Math.max(
+    0,
     ...change.changes
       .map((c) => parseSequentialRevision(c.rev))
       .filter((num) => !isNaN(num))
@@ -386,10 +402,31 @@ export interface AttachedMetadata {
   readonly ok: AttachedChange[];
 
   /**
+   * The change entries for which the registry has no packument (yet).
+   */
+  readonly missing: MissingPackument[];
+
+  /**
    * The sequence numbers of change entries whose metadata fetch failed. No
    * receipt must be recorded for these, so that a later scan retries them.
    */
   readonly failedSeqs: number[];
+}
+
+/**
+ * A change entry for which the registry has no packument (HTTP 404). Usually
+ * a new package that has not replicated to the registry yet; rarely an old
+ * change entry for a package that no longer exists.
+ */
+export interface MissingPackument {
+  /** The change entry. */
+  readonly change: DatabaseChange;
+
+  /**
+   * The highest sequential revision announced by the changes feed for this
+   * entry.
+   */
+  readonly announcedRev: number;
 }
 
 /**
