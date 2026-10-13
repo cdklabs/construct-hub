@@ -19,10 +19,11 @@ import {
 import { EnvironmentVariables as LicenseListEnv } from '../../../backend/license-list/constants';
 import {
   ENV_KNOWN_VERSIONS_TABLE_NAME,
+  ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN,
   ENV_PACKUMENT_QUEUE_URL,
   MetricName,
-  PACKUMENT_MAX_ATTEMPTS,
-  PACKUMENT_RETRY_BACKOFF_SECONDS,
+  PACKUMENT_MAX_RETRY_DELAY_SECONDS,
+  PACKUMENT_MIN_RETRY_DELAY_SECONDS,
 } from '../../../package-sources/npmjs/constants.lambda-shared';
 import type { PackumentRequest } from '../../../package-sources/npmjs/packument-processing.lambda-shared';
 import { handler } from '../../../package-sources/npmjs/packument-processor.lambda';
@@ -49,6 +50,10 @@ mockMetricScope.mockImplementation((cb) => {
 const REGISTRY = 'https://registry.npmjs.org';
 const QUEUE_URL =
   'https://sqs.us-east-1.amazonaws.com/123456789012/mock-packument-queue';
+const QUEUE_ARN = 'arn:aws:sqs:us-east-1:123456789012:mock-packument-queue';
+const DLQ_ARN = 'arn:aws:sqs:us-east-1:123456789012:mock-packument-dlq';
+const MINUTE = 60 * 1_000;
+const HOUR = 60 * MINUTE;
 const TABLE = 'mock-known-versions-table';
 const STAGING_FUNCTION = 'mock-staging-function';
 const DENY_LIST_BUCKET = 'deny-list-bucket-name';
@@ -72,6 +77,9 @@ beforeEach(() => {
 
   process.env.FUNCTION_NAME = STAGING_FUNCTION;
   process.env[ENV_PACKUMENT_QUEUE_URL] = QUEUE_URL;
+  process.env[ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN] = DLQ_ARN;
+  // No jitter, unless a test says otherwise.
+  jest.spyOn(Math, 'random').mockReturnValue(0.5);
   process.env[ENV_KNOWN_VERSIONS_TABLE_NAME] = TABLE;
   process.env[ENV_DENY_LIST_BUCKET_NAME] = DENY_LIST_BUCKET;
   process.env[ENV_DENY_LIST_OBJECT_KEY] = DENY_LIST_OBJECT;
@@ -97,6 +105,7 @@ afterEach(() => {
   for (const name of [
     'FUNCTION_NAME',
     ENV_PACKUMENT_QUEUE_URL,
+    ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN,
     ENV_KNOWN_VERSIONS_TABLE_NAME,
     ENV_DENY_LIST_BUCKET_NAME,
     ENV_DENY_LIST_OBJECT_KEY,
@@ -106,25 +115,27 @@ afterEach(() => {
     delete process.env[name];
   }
   nock.cleanAll();
+  jest.restoreAllMocks();
 });
 
 function record(
   messageId: string,
   request: Partial<PackumentRequest> | string,
-  attempt = 1
+  { source = QUEUE_ARN, age = 0 }: { source?: string; age?: number } = {}
 ): SQSRecord {
   return {
     messageId,
     receiptHandle: `receipt-${messageId}`,
+    eventSourceARN: source,
     body:
       typeof request === 'string'
         ? request
         : JSON.stringify({
             seq: 1_000,
-            firstSeen: 1_700_000_000_000,
+            firstSeen: Date.now() - age,
             ...request,
           }),
-    attributes: { ApproximateReceiveCount: attempt.toString() },
+    attributes: { ApproximateReceiveCount: '1' },
   } as any;
 }
 
@@ -196,13 +207,19 @@ test('completes a request once the registry serves the expected revision', async
   );
 });
 
-test('processes what is served, and retries later with back-off while the registry is behind', async () => {
+test('processes what is served, and waits as long as the request is old before the next attempt', async () => {
   nock(REGISTRY)
     .get('/still-laggy')
     .reply(200, packageDoc('still-laggy', '3-aaaaaa', '1.0.0'));
 
   const result = await handler(
-    event(record('m1', { name: 'still-laggy', expectedRev: 5 }, 3)),
+    event(
+      record(
+        'm1',
+        { name: 'still-laggy', expectedRev: 5 },
+        { age: 40 * MINUTE }
+      )
+    ),
     context
   );
 
@@ -211,35 +228,54 @@ test('processes what is served, and retries later with back-off while the regist
   expect(mockSQS).toHaveReceivedCommandWith(ChangeMessageVisibilityCommand, {
     QueueUrl: QUEUE_URL,
     ReceiptHandle: 'receipt-m1',
-    VisibilityTimeout: PACKUMENT_RETRY_BACKOFF_SECONDS[2],
+    VisibilityTimeout: 40 * 60,
   });
 });
 
-test('gives up on the last attempt, so the request moves to the dead-letter queue', async () => {
+test('keeps the wait within the minimum and maximum delay', async () => {
   nock(REGISTRY)
-    .get('/stuck')
-    .reply(200, packageDoc('stuck', '3-aaaaaa', '1.0.0'));
+    .persist()
+    .get('/still-laggy')
+    .reply(200, packageDoc('still-laggy', '3-aaaaaa', '1.0.0'));
 
-  const result = await handler(
+  await handler(
     event(
-      record('m1', { name: 'stuck', expectedRev: 5 }, PACKUMENT_MAX_ATTEMPTS)
+      record('young', { name: 'still-laggy', expectedRev: 5 }, { age: 0 }),
+      record('old', { name: 'still-laggy', expectedRev: 5 }, { age: 20 * HOUR })
     ),
     context
   );
 
-  // Failing the message on its last receive moves it to the dead-letter
-  // queue; it becomes visible right away so that happens promptly.
-  expect(result.batchItemFailures).toEqual([{ itemIdentifier: 'm1' }]);
   expect(mockSQS).toHaveReceivedCommandWith(ChangeMessageVisibilityCommand, {
-    VisibilityTimeout: 0,
+    ReceiptHandle: 'receipt-young',
+    VisibilityTimeout: PACKUMENT_MIN_RETRY_DELAY_SECONDS,
   });
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.LAGGY_PACKUMENT_GIVE_UPS,
-    1,
-    Unit.Count
+  expect(mockSQS).toHaveReceivedCommandWith(ChangeMessageVisibilityCommand, {
+    ReceiptHandle: 'receipt-old',
+    VisibilityTimeout: PACKUMENT_MAX_RETRY_DELAY_SECONDS,
+  });
+});
+
+test('adds jitter to the wait', async () => {
+  nock(REGISTRY)
+    .persist()
+    .get('/still-laggy')
+    .reply(200, packageDoc('still-laggy', '3-aaaaaa', '1.0.0'));
+  jest.spyOn(Math, 'random').mockReturnValueOnce(0).mockReturnValueOnce(1);
+
+  await handler(
+    event(
+      record('m1', { name: 'still-laggy', expectedRev: 5 }, { age: HOUR }),
+      record('m2', { name: 'still-laggy', expectedRev: 5 }, { age: HOUR })
+    ),
+    context
   );
-  // What the registry served was still processed.
-  expect(stagedPackages()).toEqual([{ name: 'stuck', version: '1.0.0' }]);
+
+  const timeouts = mockSQS
+    .commandCalls(ChangeMessageVisibilityCommand)
+    .map((call) => call.args[0].input.VisibilityTimeout)
+    .sort();
+  expect(timeouts).toEqual([0.8 * 3_600, 1.2 * 3_600]);
 });
 
 test('retries a request while the registry has no packument for the package yet', async () => {
@@ -252,51 +288,9 @@ test('retries a request while the registry has no packument for the package yet'
 
   expect(result.batchItemFailures).toEqual([{ itemIdentifier: 'm1' }]);
   expect(mockSQS).toHaveReceivedCommandWith(ChangeMessageVisibilityCommand, {
-    VisibilityTimeout: PACKUMENT_RETRY_BACKOFF_SECONDS[0],
+    VisibilityTimeout: PACKUMENT_MIN_RETRY_DELAY_SECONDS,
   });
   expect(stagedPackages()).toEqual([]);
-});
-
-test('counts missing packuments separately from laggy ones', async () => {
-  nock(REGISTRY)
-    .get('/arrived')
-    .reply(200, packageDoc('arrived', '1-aaaaaa', '1.0.0'));
-  nock(REGISTRY).get('/never-arrived').reply(404, 'not found');
-
-  const result = await handler(
-    event(
-      record('m1', { name: 'arrived', expectedRev: 1, reason: 'missing' }),
-      record(
-        'm2',
-        { name: 'never-arrived', expectedRev: 1, reason: 'missing' },
-        PACKUMENT_MAX_ATTEMPTS
-      )
-    ),
-    context
-  );
-
-  // Both kinds of give-up go to the dead-letter queue.
-  expect(result.batchItemFailures).toEqual([{ itemIdentifier: 'm2' }]);
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.MISSING_PACKUMENTS_RECOVERED,
-    1,
-    Unit.Count
-  );
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.MISSING_PACKUMENT_GIVE_UPS,
-    1,
-    Unit.Count
-  );
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.LAGGY_PACKUMENTS_RECOVERED,
-    0,
-    Unit.Count
-  );
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.LAGGY_PACKUMENT_GIVE_UPS,
-    0,
-    Unit.Count
-  );
 });
 
 test('retries a request that failed with an error, without failing the others', async () => {
@@ -337,7 +331,7 @@ test('does not stage versions that are already known', async () => {
   expect(stagedPackages()).toEqual([{ name: 'known', version: '1.1.0' }]);
 });
 
-test('keeps the back-off when the whole batch fails to set up', async () => {
+test('keeps the usual waits when the whole batch fails to set up', async () => {
   mockS3
     .on(GetObjectCommand, { Bucket: DENY_LIST_BUCKET, Key: DENY_LIST_OBJECT })
     .rejects(new Error('s3 is down'));
@@ -345,41 +339,21 @@ test('keeps the back-off when the whole batch fails to set up', async () => {
   await expect(
     handler(
       event(
-        record('m1', { name: 'one', expectedRev: 5 }, 2),
-        record('m2', { name: 'two', expectedRev: 5 }, 4)
+        record('m1', { name: 'one', expectedRev: 5 }, { age: 20 * MINUTE }),
+        record('m2', { name: 'two', expectedRev: 5 }, { age: 2 * HOUR })
       ),
       context
     )
   ).rejects.toThrow(/s3 is down/);
 
-  // Both messages get their normal next attempt, instead of returning after
-  // the queue's visibility timeout and using up their attempts quickly.
   expect(mockSQS).toHaveReceivedCommandWith(ChangeMessageVisibilityCommand, {
     ReceiptHandle: 'receipt-m1',
-    VisibilityTimeout: PACKUMENT_RETRY_BACKOFF_SECONDS[1],
+    VisibilityTimeout: 20 * 60,
   });
   expect(mockSQS).toHaveReceivedCommandWith(ChangeMessageVisibilityCommand, {
     ReceiptHandle: 'receipt-m2',
-    VisibilityTimeout: PACKUMENT_RETRY_BACKOFF_SECONDS[3],
+    VisibilityTimeout: 2 * 3_600,
   });
-});
-
-test('counts an error on the last attempt as a give-up', async () => {
-  nock(REGISTRY).get('/broken').reply(403, 'forbidden');
-
-  const result = await handler(
-    event(
-      record('m1', { name: 'broken', expectedRev: 5 }, PACKUMENT_MAX_ATTEMPTS)
-    ),
-    context
-  );
-
-  expect(result.batchItemFailures).toEqual([{ itemIdentifier: 'm1' }]);
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.LAGGY_PACKUMENT_GIVE_UPS,
-    1,
-    Unit.Count
-  );
 });
 
 test('checks caught-up packages again when their versions could not be recorded', async () => {
@@ -395,47 +369,7 @@ test('checks caught-up packages again when their versions could not be recorded'
 
   expect(result.batchItemFailures).toEqual([{ itemIdentifier: 'm1' }]);
   expect(mockSQS).toHaveReceivedCommandWith(ChangeMessageVisibilityCommand, {
-    VisibilityTimeout: PACKUMENT_RETRY_BACKOFF_SECONDS[0],
-  });
-});
-
-test('does not dead-letter a caught-up request when recording fails on its last attempt', async () => {
-  nock(REGISTRY)
-    .get('/caught-up')
-    .reply(200, packageDoc('caught-up', '5-aaaaaa', '1.0.0'));
-  mockDynamoDB.on(BatchWriteItemCommand).rejects(new Error('dynamodb is down'));
-
-  const result = await handler(
-    event(
-      record(
-        'm1',
-        { name: 'caught-up', expectedRev: 5 },
-        PACKUMENT_MAX_ATTEMPTS
-      )
-    ),
-    context
-  );
-
-  expect(result.batchItemFailures).toEqual([]);
-});
-
-test('dead-letters a missing request whose last check failed', async () => {
-  nock(REGISTRY).get('/unknown').reply(403, 'forbidden');
-
-  const result = await handler(
-    event(
-      record(
-        'm1',
-        { name: 'unknown', expectedRev: 1, reason: 'missing' },
-        PACKUMENT_MAX_ATTEMPTS
-      )
-    ),
-    context
-  );
-
-  expect(result.batchItemFailures).toEqual([{ itemIdentifier: 'm1' }]);
-  expect(mockSQS).toHaveReceivedCommandWith(ChangeMessageVisibilityCommand, {
-    VisibilityTimeout: 0,
+    VisibilityTimeout: PACKUMENT_MIN_RETRY_DELAY_SECONDS,
   });
 });
 
@@ -443,21 +377,22 @@ test('reports how long laggy packuments took to catch up', async () => {
   nock(REGISTRY)
     .get('/caught-up')
     .reply(200, packageDoc('caught-up', '5-aaaaaa', '1.0.0'));
-  const firstSeen = Date.now() - 2 * 60 * 60 * 1_000;
 
   await handler(
-    event(record('m1', { name: 'caught-up', expectedRev: 5, firstSeen })),
+    event(
+      record('m1', { name: 'caught-up', expectedRev: 5 }, { age: 2 * HOUR })
+    ),
     context
   );
 
   const lag = mockPutMetric.mock.calls.find(
     ([name]) => name === MetricName.LAGGY_PACKUMENT_LAG
   );
-  expect(lag?.[1]).toBeGreaterThanOrEqual(2 * 60 * 60 * 1_000);
+  expect(lag?.[1]).toBeGreaterThanOrEqual(2 * HOUR);
   expect(lag?.[2]).toBe(Unit.Milliseconds);
 });
 
-test('does not report a lag for missing packuments', async () => {
+test('counts missing packuments that arrived separately from laggy ones, without a lag', async () => {
   nock(REGISTRY)
     .get('/arrived')
     .reply(200, packageDoc('arrived', '1-aaaaaa', '1.0.0'));
@@ -467,9 +402,97 @@ test('does not report a lag for missing packuments', async () => {
     context
   );
 
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISSING_PACKUMENTS_RECOVERED,
+    1,
+    Unit.Count
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.LAGGY_PACKUMENTS_RECOVERED,
+    0,
+    Unit.Count
+  );
   expect(mockPutMetric).not.toHaveBeenCalledWith(
     MetricName.LAGGY_PACKUMENT_LAG,
     expect.anything(),
     expect.anything()
   );
+});
+
+describe('dead-letter queue', () => {
+  test('logs, counts and deletes requests that were given up on, without checking them', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const result = await handler(
+      event(
+        record(
+          'm1',
+          { name: 'stuck', expectedRev: 5 },
+          { source: DLQ_ARN, age: 29 * HOUR }
+        ),
+        record(
+          'm2',
+          { name: 'never-arrived', expectedRev: 1, reason: 'missing' },
+          { source: DLQ_ARN }
+        )
+      ),
+      context
+    );
+
+    // Deleted (no fetch: nock would reject one).
+    expect(result.batchItemFailures).toEqual([]);
+    expect(mockSQS).not.toHaveReceivedCommand(ChangeMessageVisibilityCommand);
+    expect(stagedPackages()).toEqual([]);
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      MetricName.LAGGY_PACKUMENT_GIVE_UPS,
+      1,
+      Unit.Count
+    );
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      MetricName.MISSING_PACKUMENT_GIVE_UPS,
+      1,
+      Unit.Count
+    );
+    const lag = mockPutMetric.mock.calls.find(
+      ([name]) => name === MetricName.LAGGY_PACKUMENT_LAG
+    );
+    expect(lag?.[1]).toBeGreaterThanOrEqual(29 * HOUR);
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('Giving up on laggy packument for stuck')
+    );
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'Giving up on missing packument for never-arrived'
+      )
+    );
+  });
+
+  test('deletes an invalid request it was given up on', async () => {
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const result = await handler(
+      event(record('m1', 'not json', { source: DLQ_ARN })),
+      context
+    );
+
+    expect(result.batchItemFailures).toEqual([]);
+  });
+
+  test('handles a batch from either queue on its own', async () => {
+    nock(REGISTRY)
+      .get('/caught-up')
+      .reply(200, packageDoc('caught-up', '5-aaaaaa', '1.0.0'));
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const result = await handler(
+      event(
+        record('m1', { name: 'caught-up', expectedRev: 5 }),
+        record('m2', { name: 'stuck', expectedRev: 5 }, { source: DLQ_ARN })
+      ),
+      context
+    );
+
+    expect(result.batchItemFailures).toEqual([]);
+    expect(stagedPackages()).toEqual([{ name: 'caught-up', version: '1.0.0' }]);
+  });
 });

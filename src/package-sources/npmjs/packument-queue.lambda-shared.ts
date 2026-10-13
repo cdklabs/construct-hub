@@ -6,7 +6,9 @@ import {
 } from '@aws-sdk/client-sqs';
 import {
   PACKUMENT_INITIAL_DELAY_SECONDS,
-  PACKUMENT_RETRY_BACKOFF_SECONDS,
+  PACKUMENT_MAX_RETRY_DELAY_SECONDS,
+  PACKUMENT_MIN_RETRY_DELAY_SECONDS,
+  PACKUMENT_RETRY_JITTER,
 } from './constants.lambda-shared';
 import type { PackumentRequest } from './packument-processing.lambda-shared';
 import { SQS_CLIENT } from '../../backend/shared/aws.lambda-shared';
@@ -84,15 +86,24 @@ export function parsePackumentRequest(body: string): PackumentRequest {
 }
 
 /**
- * How long to wait before the next attempt, after the given attempt
- * (1-based) did not succeed.
+ * How long to wait before the next attempt. A request waits as long as it is
+ * already old, within the minimum and maximum delay, plus or minus some jitter.
+ * This doubles the wait with each attempt, without counting attempts.
+ *
+ * @param firstSeen when the request was made (epoch milliseconds), if known.
  */
-export function retryDelaySeconds(attempt: number): number {
-  const index = Math.min(
-    Math.max(attempt, 1) - 1,
-    PACKUMENT_RETRY_BACKOFF_SECONDS.length - 1
+export function retryDelaySeconds(
+  firstSeen: number | undefined,
+  now: number = Date.now(),
+  random: () => number = Math.random
+): number {
+  const ageSeconds = firstSeen == null ? 0 : (now - firstSeen) / 1_000;
+  const delay = Math.min(
+    Math.max(ageSeconds, PACKUMENT_MIN_RETRY_DELAY_SECONDS),
+    PACKUMENT_MAX_RETRY_DELAY_SECONDS
   );
-  return PACKUMENT_RETRY_BACKOFF_SECONDS[index];
+  const jitter = 1 + PACKUMENT_RETRY_JITTER * (2 * random() - 1);
+  return Math.round(delay * jitter);
 }
 
 /**

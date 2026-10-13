@@ -13,18 +13,18 @@ import type {
 import { captureHTTPsGlobal } from 'aws-xray-sdk-core';
 import {
   ENV_KNOWN_VERSIONS_TABLE_NAME,
+  ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN,
   ENV_PACKUMENT_QUEUE_URL,
   METRICS_NAMESPACE,
   MetricName,
   NPM_REPLICA_REGISTRY_URL,
-  PACKUMENT_MAX_ATTEMPTS,
 } from './constants.lambda-shared';
 import { CouchChanges } from './couch-changes.lambda-shared';
 import { KnownVersions } from './known-versions.lambda-shared';
 import {
   checkPackument,
-  PackumentCheckResult,
   PackumentProcessingContext,
+  PackumentRequest,
   PackumentRequestReason,
 } from './packument-processing.lambda-shared';
 import {
@@ -44,19 +44,31 @@ captureHTTPsGlobal(require('https'));
 /**
  * Processes packument requests: fetches each package from the registry and
  * processes the versions it serves. A request is done once the registry serves
- * the announced revision. Otherwise it is retried with back-off, for about 27
- * hours, and then moves to the dead-letter queue.
+ * the announced revision. Otherwise it is checked again later, with growing
+ * waits. After about 29 hours the queue moves it to the dead-letter queue.
  *
- * Every message that is not done gets its next attempt scheduled, even when
- * the whole batch fails. Otherwise a broken processor would use up all
- * attempts within a few hours.
+ * This function also reads the dead-letter queue. A request that arrives from
+ * there was given up on: it is logged, counted, and deleted.
  */
 export async function handler(
   event: SQSEvent,
   _context: Context
 ): Promise<SQSBatchResponse> {
-  const queueUrl = requireEnv(ENV_PACKUMENT_QUEUE_URL);
+  const deadLetterQueueArn = requireEnv(ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN);
+  const givenUp = event.Records.filter(
+    (record) => record.eventSourceARN === deadLetterQueueArn
+  );
+  const pending = event.Records.filter(
+    (record) => record.eventSourceARN !== deadLetterQueueArn
+  );
+  if (givenUp.length > 0) {
+    await reportGiveUps(givenUp);
+  }
+  if (pending.length === 0) {
+    return { batchItemFailures: [] };
+  }
 
+  const queueUrl = requireEnv(ENV_PACKUMENT_QUEUE_URL);
   let processing: PackumentProcessingContext;
   try {
     processing = {
@@ -68,9 +80,11 @@ export async function handler(
       ),
     };
   } catch (error) {
+    // Keep the usual waits; otherwise a broken processor would use up all
+    // attempts at the queue's visibility timeout.
     console.error(`Could not set up processing, retrying the batch: ${error}`);
     await Promise.all(
-      event.Records.map((record) => scheduleNextAttempt(record, queueUrl))
+      pending.map((record) => scheduleNextAttempt(record, queueUrl))
     );
     throw error;
   }
@@ -80,30 +94,18 @@ export async function handler(
   await metricScope((metrics) => async () => {
     metrics.setDimensions({});
     outcomes = await Promise.all(
-      event.Records.map((record) =>
-        processRecord(record, npm, metrics, processing)
-      )
+      pending.map((record) => processRecord(record, npm, metrics, processing))
     );
-    const count = (result: RecordResult, reason: PackumentRequestReason) =>
-      outcomes.filter((o) => o.result === result && o.reason === reason).length;
+    const recovered = (reason: PackumentRequestReason) =>
+      outcomes.filter((o) => o.done && o.reason === reason).length;
     metrics.putMetric(
       MetricName.LAGGY_PACKUMENTS_RECOVERED,
-      count('caught-up', 'laggy'),
-      Unit.Count
-    );
-    metrics.putMetric(
-      MetricName.LAGGY_PACKUMENT_GIVE_UPS,
-      count('given-up', 'laggy'),
+      recovered('laggy'),
       Unit.Count
     );
     metrics.putMetric(
       MetricName.MISSING_PACKUMENTS_RECOVERED,
-      count('caught-up', 'missing'),
-      Unit.Count
-    );
-    metrics.putMetric(
-      MetricName.MISSING_PACKUMENT_GIVE_UPS,
-      count('given-up', 'missing'),
+      recovered('missing'),
       Unit.Count
     );
     for (const { lag } of outcomes) {
@@ -121,21 +123,16 @@ export async function handler(
     await processing.knownVersions.flush();
   } catch (error) {
     // The versions were staged but not recorded. Check these packages again
-    // so they get recorded, unless that was their last attempt.
+    // so they get recorded.
     console.error(`Could not record the known versions: ${error}`);
-    for (const [i, outcome] of outcomes.entries()) {
-      if (
-        outcome.result === 'caught-up' &&
-        attemptOf(event.Records[i]) < PACKUMENT_MAX_ATTEMPTS
-      ) {
-        outcome.done = false;
-      }
+    for (const outcome of outcomes) {
+      outcome.done = false;
     }
   }
 
   const failures = new Array<string>();
   await Promise.all(
-    event.Records.map(async (record, i) => {
+    pending.map(async (record, i) => {
       if (!outcomes[i].done) {
         failures.push(record.messageId);
         await scheduleNextAttempt(record, queueUrl);
@@ -147,12 +144,9 @@ export async function handler(
   };
 }
 
-type RecordResult = PackumentCheckResult | 'given-up' | 'error';
-
 interface RecordOutcome {
-  readonly result: RecordResult;
   readonly reason?: PackumentRequestReason;
-  /** For a laggy packument that caught up or was given up on: since when. */
+  /** For a laggy packument that caught up: how long it took. */
   readonly lag?: number;
   /** Whether the message can be deleted from the queue. */
   done: boolean;
@@ -167,89 +161,114 @@ async function processRecord(
   metrics: MetricsLogger,
   processing: PackumentProcessingContext
 ): Promise<RecordOutcome> {
-  const attempt = attemptOf(record);
-  let result: RecordResult;
-  let reason: PackumentRequestReason | undefined;
   let name = record.messageId;
-  let problem: string;
-  let firstSeen: number | undefined;
+  let reason: PackumentRequestReason | undefined;
   try {
     const request = parsePackumentRequest(record.body);
     name = request.name;
     reason = request.reason ?? 'laggy';
-    firstSeen = request.firstSeen;
-    result = await checkPackument(npm, request, metrics, processing);
-    if (result === 'caught-up') {
-      console.log(
-        `Packument for ${name} caught up with rev ${request.expectedRev} (attempt ${attempt}, ${reason})`
-      );
-      return { result, reason, lag: lagOf(reason, firstSeen), done: true };
+    const result = await checkPackument(npm, request, metrics, processing);
+    if (result !== 'caught-up') {
+      return { reason, done: false };
     }
-    problem =
-      result === 'missing'
-        ? 'never served a packument for it'
-        : `never served rev ${request.expectedRev}`;
+    console.log(
+      `Packument for ${name} caught up with rev ${request.expectedRev} (${reason})`
+    );
+    return { reason, lag: lagOf(request), done: true };
   } catch (error) {
     console.error(
       `Failed to process the packument request for ${name}: ${error}`
     );
-    result = 'error';
-    problem = `could not be checked (${error})`;
+    return { reason, done: false };
   }
-
-  if (attempt < PACKUMENT_MAX_ATTEMPTS) {
-    return { result, reason, done: false };
-  }
-  const since =
-    firstSeen != null
-      ? ` (first seen ${new Date(firstSeen).toISOString()})`
-      : '';
-  console.warn(
-    `Giving up on ${
-      reason ?? 'unknown'
-    } packument for ${name}: the registry ${problem}${since}. A version announced by the changes feed may be missing until the package publishes again.`
-  );
-  // Unparseable requests also go to the dead-letter queue, but are not
-  // counted as given up.
-  return {
-    result: reason == null ? result : 'given-up',
-    reason,
-    lag: lagOf(reason, firstSeen),
-    done: false,
-  };
 }
 
-/** How long a laggy packument has been waiting. */
-function lagOf(
-  reason: PackumentRequestReason | undefined,
-  firstSeen: number | undefined
-): number | undefined {
-  return reason === 'laggy' && firstSeen != null
-    ? Date.now() - firstSeen
+/**
+ * Logs and counts requests that were given up on. They are deleted from the
+ * dead-letter queue afterwards: nothing would redrive them.
+ */
+async function reportGiveUps(records: readonly SQSRecord[]): Promise<void> {
+  await metricScope((metrics) => async () => {
+    metrics.setDimensions({});
+    const counts: Record<PackumentRequestReason, number> = {
+      laggy: 0,
+      missing: 0,
+    };
+    for (const record of records) {
+      let request: PackumentRequest;
+      try {
+        request = parsePackumentRequest(record.body);
+      } catch {
+        console.warn(
+          `Giving up on an invalid packument request: ${record.body}`
+        );
+        continue;
+      }
+      const reason = request.reason ?? 'laggy';
+      counts[reason] += 1;
+      const problem =
+        reason === 'missing'
+          ? 'never served a packument for it'
+          : `never served rev ${request.expectedRev}`;
+      console.warn(
+        `Giving up on ${reason} packument for ${
+          request.name
+        }: the registry ${problem} (first seen ${new Date(
+          request.firstSeen
+        ).toISOString()}). A version announced by the changes feed may be missing until the package publishes again.`
+      );
+      const lag = lagOf(request);
+      if (lag != null) {
+        metrics.putMetric(
+          MetricName.LAGGY_PACKUMENT_LAG,
+          lag,
+          Unit.Milliseconds
+        );
+      }
+    }
+    metrics.putMetric(
+      MetricName.LAGGY_PACKUMENT_GIVE_UPS,
+      counts.laggy,
+      Unit.Count
+    );
+    metrics.putMetric(
+      MetricName.MISSING_PACKUMENT_GIVE_UPS,
+      counts.missing,
+      Unit.Count
+    );
+  })();
+}
+
+/** How long a request has been waiting. */
+function lagOf(request: PackumentRequest): number | undefined {
+  return (request.reason ?? 'laggy') === 'laggy'
+    ? Date.now() - request.firstSeen
     : undefined;
 }
 
 /**
- * Makes a message visible again for its next attempt. After the last attempt
- * that is right away, so it moves to the dead-letter queue.
+ * Makes a message visible again for its next attempt.
  */
 async function scheduleNextAttempt(
   record: SQSRecord,
   queueUrl: string
 ): Promise<void> {
-  const attempt = attemptOf(record);
-  const delay =
-    attempt >= PACKUMENT_MAX_ATTEMPTS ? 0 : retryDelaySeconds(attempt);
+  let firstSeen: number | undefined;
   try {
-    await setVisibilityTimeout(queueUrl, record.receiptHandle, delay);
+    firstSeen = parsePackumentRequest(record.body).firstSeen;
+  } catch {
+    // An invalid request gets the shortest wait, and ends up given up on.
+  }
+  try {
+    await setVisibilityTimeout(
+      queueUrl,
+      record.receiptHandle,
+      retryDelaySeconds(firstSeen)
+    );
   } catch (error) {
     // The message returns after the queue's visibility timeout instead.
     console.error(
       `Could not schedule the next attempt for ${record.messageId}: ${error}`
     );
   }
-}
-
-function attemptOf(record: SQSRecord): number {
-  return Number(record.attributes.ApproximateReceiveCount);
 }

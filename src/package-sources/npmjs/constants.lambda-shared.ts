@@ -171,34 +171,34 @@ export const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 export const ENV_PACKUMENT_QUEUE_URL = 'PACKUMENT_QUEUE_URL';
 
 /**
+ * The environment variable holding the ARN of the packument dead-letter queue.
+ * The packument processor reads both queues, and tells them apart by this.
+ */
+export const ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN =
+  'PACKUMENT_DEAD_LETTER_QUEUE_ARN';
+
+/**
  * How long a new packument request waits before it is first processed.
  */
 export const PACKUMENT_INITIAL_DELAY_SECONDS = 5 * 60; // 5 minutes
 
 /**
- * How long a packument request waits before the next attempt, after an
- * attempt that did not find the announced revision. Entry `n` is the wait
- * after attempt `n + 1`. SQS caps a message's visibility timeout at 12 hours
- * from when it was received, so no wait may be that long.
- *
- * Together with the initial delay, the last attempt happens about 27 hours
- * after the request was made. A request that still finds an old revision
- * then is given up on, and moves to the dead-letter queue.
+ * The shortest and longest wait before the next attempt. In between, a request
+ * waits as long as it is already old, so waits double with each attempt. SQS
+ * caps a visibility timeout at 12 hours.
  */
-export const PACKUMENT_RETRY_BACKOFF_SECONDS: readonly number[] = [
-  5 * 60, // 5 minutes
-  15 * 60, // 15 minutes
-  30 * 60, // 30 minutes
-  60 * 60, // 1 hour
-  2 * 60 * 60, // 2 hours
-  4 * 60 * 60, // 4 hours
-  8 * 60 * 60, // 8 hours
-  11 * 60 * 60, // 11 hours
-];
+export const PACKUMENT_MIN_RETRY_DELAY_SECONDS = 5 * 60; // 5 minutes
+export const PACKUMENT_MAX_RETRY_DELAY_SECONDS = 6 * 60 * 60; // 6 hours
 
 /**
- * The number of attempts made for a packument request before it moves to the
- * dead-letter queue (the queue's `maxReceiveCount`).
+ * Waits are randomly shortened or lengthened by up to this fraction, so that
+ * requests made together do not keep coming back together.
  */
-export const PACKUMENT_MAX_ATTEMPTS =
-  PACKUMENT_RETRY_BACKOFF_SECONDS.length + 1;
+export const PACKUMENT_RETRY_JITTER = 0.2;
+
+/**
+ * The number of attempts before a request moves to the dead-letter queue (the
+ * queue's `maxReceiveCount`). With the waits above, that is after about 29
+ * hours.
+ */
+export const PACKUMENT_MAX_ATTEMPTS = 10;

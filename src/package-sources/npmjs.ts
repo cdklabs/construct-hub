@@ -343,10 +343,6 @@ export class NpmJs implements IPackageSource {
         'NPM JS Follower DLQ',
         follower.deadLetterQueue
       );
-    overviewDashboard.addDLQMetricToDashboard(
-      'NPM JS Packument DLQ',
-      packuments.deadLetterQueue
-    );
     overviewDashboard.addConcurrentExecutionMetricToDashboard(
       follower,
       'NpmJsLambda'
@@ -379,10 +375,6 @@ export class NpmJs implements IPackageSource {
         { name: 'Stager', url: lambdaFunctionUrl(stager) },
         { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
         { name: 'Packument Queue', url: sqsQueueUrl(packuments.queue) },
-        {
-          name: 'Packument DLQ',
-          url: sqsQueueUrl(packuments.deadLetterQueue),
-        },
         {
           name: 'Packument Processor',
           url: lambdaFunctionUrl(packuments.function),
@@ -549,13 +541,12 @@ export class NpmJs implements IPackageSource {
               packuments.queue.metricApproximateNumberOfMessagesDelayed({
                 label: 'Delayed',
               }),
-              packuments.deadLetterQueue.metricApproximateNumberOfMessagesVisible(
-                { label: 'Given up (DLQ)' }
-              ),
             ],
             leftYAxis: { min: 0 },
             right: [
-              this.metricLaggyPackumentLag({ label: 'Laggy Packument Lag (p90)' }),
+              this.metricLaggyPackumentLag({
+                label: 'Laggy Packument Lag (p90)',
+              }),
             ],
             rightAnnotations: [
               {

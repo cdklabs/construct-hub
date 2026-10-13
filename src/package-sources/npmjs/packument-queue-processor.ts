@@ -6,6 +6,7 @@ import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import {
   ENV_KNOWN_VERSIONS_TABLE_NAME,
+  ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN,
   ENV_PACKUMENT_QUEUE_URL,
   PACKUMENT_MAX_ATTEMPTS,
 } from './constants.lambda-shared';
@@ -27,8 +28,9 @@ export interface PackumentQueueProcessorProps {
 /**
  * A queue of requests to process a package from the npm registry, and the
  * function that works through it. A request is retried with back-off until the
- * registry serves the revision the changes feed announced; after about a day
- * it is given up on, and moves to the dead-letter queue.
+ * registry serves the revision the changes feed announced. After about 29
+ * hours it moves to the dead-letter queue, where the same function logs it as
+ * given up on.
  */
 export class PackumentQueueProcessor extends Construct {
   /** The packument requests. */
@@ -47,13 +49,15 @@ export class PackumentQueueProcessor extends Construct {
   ) {
     super(scope, id);
 
+    // Given-up requests. The function logs and deletes them right away; they
+    // are only kept while it is broken.
     this.deadLetterQueue = new Queue(this, 'DLQ', {
       encryption: QueueEncryption.KMS_MANAGED,
       retentionPeriod: Duration.days(14),
     });
     this.queue = new Queue(this, 'Queue', {
       encryption: QueueEncryption.KMS_MANAGED,
-      retentionPeriod: Duration.days(4),
+      retentionPeriod: Duration.days(14),
       // Only used when the processor cannot schedule the next attempt itself,
       // for example on a timeout. AWS recommends 6x the function timeout.
       visibilityTimeout: Duration.minutes(30),
@@ -70,6 +74,7 @@ export class PackumentQueueProcessor extends Construct {
         FUNCTION_NAME: props.stager.functionName,
         [ENV_KNOWN_VERSIONS_TABLE_NAME]: props.knownVersions.tableName,
         [ENV_PACKUMENT_QUEUE_URL]: this.queue.queueUrl,
+        [ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN]: this.deadLetterQueue.queueArn,
       },
       memorySize: 2_048,
       timeout: Duration.minutes(5),
@@ -81,6 +86,12 @@ export class PackumentQueueProcessor extends Construct {
         reportBatchItemFailures: true,
         // Be gentle with the npm registry.
         maxConcurrency: 2,
+      })
+    );
+    this.function.addEventSource(
+      new SqsEventSource(this.deadLetterQueue, {
+        batchSize: 10,
+        reportBatchItemFailures: true,
       })
     );
     props.knownVersions.grantReadWriteData(this.function);

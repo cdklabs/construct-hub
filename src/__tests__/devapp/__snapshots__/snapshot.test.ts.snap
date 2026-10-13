@@ -848,21 +848,6 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              ")\\n[button:Packument DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
-              {
-                "Ref": "AWS::Region",
-              },
-              ".amazonaws.com%2F",
-              {
-                "Ref": "AWS::AccountId",
-              },
-              "%2F",
-              {
-                "Fn::GetAtt": [
-                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
-                  "QueueName",
-                ],
-              },
               ")\\n[button:Packument Processor](/lambda/home#/functions/",
               {
                 "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
@@ -940,14 +925,7 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Delayed","stat":"Maximum"}],["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
-              {
-                "Fn::GetAtt": [
-                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
-                  "QueueName",
-                ],
-              },
-              "",{"label":"Given up (DLQ)","stat":"Maximum"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentLag",{"label":"Laggy Packument Lag (p90)","stat":"p90","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Alarm","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
+              "",{"label":"Delayed","stat":"Maximum"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentLag",{"label":"Laggy Packument Lag (p90)","stat":"p90","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Alarm","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Stager Dead-Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -10187,20 +10165,6 @@ Request a service quota increase for lambda functions",
                   "QueueName",
                 ],
               },
-              ""},"",
-              {
-                "Fn::GetAtt": [
-                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
-                  "QueueName",
-                ],
-              },
-              "":{"name":"NPM JS Packument DLQ","queueName":"",
-              {
-                "Fn::GetAtt": [
-                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
-                  "QueueName",
-                ],
-              },
               ""}}},"title":"SQS DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":16,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"",
               {
                 "Ref": "AWS::Region",
@@ -11479,7 +11443,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "16560ea01eb63ebefcc78973f4010e525b5a2f285f135606e85b26416e184355.zip",
+          "S3Key": "93295fa0a1f1d54bc071e064c57c7713c38f4487ba3fcb3d574aa9536b376cd0.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": {
@@ -12055,7 +12019,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701bce79df81d41d50a0ac4ad780930bcd7",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A7018914ee7ebabff12cadb11438c85d3bec",
         },
         "InvocationType": "Event",
         "ServiceToken": {
@@ -12079,7 +12043,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": {
         "ExecuteOnHandlerChange": false,
         "HandlerArn": {
-          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701bce79df81d41d50a0ac4ad780930bcd7",
+          "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A7018914ee7ebabff12cadb11438c85d3bec",
         },
         "InvocationType": "RequestResponse",
         "ServiceToken": {
@@ -12093,7 +12057,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Type": "Custom::Trigger",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A701bce79df81d41d50a0ac4ad780930bcd7": {
+    "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionCurrentVersionA8B4A7018914ee7ebabff12cadb11438c85d3bec": {
       "DependsOn": [
         "ConstructHubLicenseListAwsCliLayer59592811",
         "ConstructHubLicenseListCustomResource323F0FD4",
@@ -12120,7 +12084,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "525b426ddca6cf79b665e7449a4c94b34681473c42770cefbebb66ae0fbbb858.zip",
+          "S3Key": "8d0e24c004f0022d0e6e92031e898d0eb9643d03e18273a9abc71da4fe2820d3.zip",
         },
         "Description": "[dev/ConstructHub/Sources/NpmJs] Copies the known versions from the staging bucket to the known versions table",
         "Environment": {
@@ -12656,7 +12620,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "58ee8f1c32ce8092a5841887c87511f6db9ab848cb58f12f36f15742ab364e22.zip",
+          "S3Key": "e3822146d5e137d4bf9e0ac71dbab1cd07c63186f8140df399e0f49b919c8838.zip",
         },
         "DeadLetterConfig": {
           "TargetArn": {
@@ -13006,7 +12970,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "20063444ab6ef95601a7f75425e4c45d656341ff748be8d7a203b3cf8915ff28.zip",
+          "S3Key": "000d20d8d7ff39f223c25a1804c1a3a71cd97426b5c45c2cc1e045fd83d9c718.zip",
         },
         "Description": "[dev/ConstructHub/Sources/PackumentProcessor] Processes packages from the npm registry, retrying until the registry serves the revision announced by the changes feed",
         "Environment": {
@@ -13026,6 +12990,12 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
+            "PACKUMENT_DEAD_LETTER_QUEUE_ARN": {
+              "Fn::GetAtt": [
+                "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+                "Arn",
+              ],
+            },
             "PACKUMENT_QUEUE_URL": {
               "Ref": "ConstructHubSourcesPackumentProcessorQueue34BDE578",
             },
@@ -13110,6 +13080,22 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
               "Resource": {
                 "Fn::GetAtt": [
                   "ConstructHubSourcesPackumentProcessorQueue34BDE578",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesPackumentProcessorDLQF401BD77",
                   "Arn",
                 ],
               },
@@ -13235,6 +13221,28 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubSourcesPackumentProcessorFunctionSqsEventSourcedevConstructHubSourcesPackumentProcessorDLQBB0F158EFDD9B731": {
+      "DependsOn": [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "ConstructHubSourcesPackumentProcessorDLQF401BD77",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "ConstructHubSourcesPackumentProcessorFunction0E5F8177",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
     "ConstructHubSourcesPackumentProcessorFunctionSqsEventSourcedevConstructHubSourcesPackumentProcessorQueueB1811D0E3C6BE98A": {
       "DependsOn": [
         "ConstructHubLicenseListAwsCliLayer59592811",
@@ -13264,7 +13272,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
       "DeletionPolicy": "Delete",
       "Properties": {
         "KmsMasterKeyId": "alias/aws/sqs",
-        "MessageRetentionPeriod": 345600,
+        "MessageRetentionPeriod": 1209600,
         "RedrivePolicy": {
           "deadLetterTargetArn": {
             "Fn::GetAtt": [
@@ -13272,7 +13280,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
               "Arn",
             ],
           },
-          "maxReceiveCount": 9,
+          "maxReceiveCount": 10,
         },
         "VisibilityTimeout": 1800,
       },

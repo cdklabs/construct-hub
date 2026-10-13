@@ -651,9 +651,10 @@ ticket. Log in to <https://npmjs.com>, visit the
 #### Resolution
 
 The packument processor processes the packages once the registry serves them.
-Packages it gives up on after about a day move to the *Packument DLQ*. Once the
-registry is healthy again, redrive the *Packument DLQ* to the *Packument Queue*
-(from the SQS console) to check them again.
+Packages it gives up on are logged (`Giving up on missing packument`) and then
+dropped. They show up again when the package next publishes. To ingest one
+right away, invoke the *ReStagePackageVersion* Lambda function with the package
+name and version.
 
 --------------------------------------------------------------------------------
 
@@ -675,12 +676,13 @@ the registry catches up.
 The registry occasionally serves an older revision of a package than the
 changes feed announced (a *laggy* packument). The follower processes the
 versions that were served, and sends the package to the *Packument Queue*. The
-*Packument Processor* checks it again with growing waits, for about a day, and
-reports how long each laggy packument took to catch up. Most catch up within
+*Packument Processor* checks it again with growing waits, for about 29 hours,
+and reports how long each laggy packument took to catch up. Most catch up within
 minutes, and nearly all within 6 hours.
 
-Check the *Packument Queue* graph of the backend dashboard: how many requests
-are waiting, and how many were given up on (*Packument DLQ*). The logs of the
+Check the *Packument Queue* graph of the backend dashboard for how many
+requests are waiting, and the `Laggy Packument Give-Ups` line on the
+*Feed Reliability* graph for how many were given up on. The logs of the
 *Packument Processor* show `caught up` and `Giving up on laggy packument`
 entries. Verify what the registry serves for a few affected packages:
 
@@ -694,13 +696,10 @@ with upstream npmjs.com (see the previous alarm for how to reach them).
 #### Resolution
 
 The packument processor processes the missed versions once the registry serves
-them. Packages it gives up on move to the *Packument DLQ*. Once the registry is
-healthy again, redrive the *Packument DLQ* to the *Packument Queue* (from the
-SQS console). To ingest a missed version immediately, invoke the
-*ReStagePackageVersion* Lambda function with the package name and version.
-
-The *Packument DLQ* has no alarm of its own. Given-up requests stay in it for
-14 days, and it is graphed on the backend dashboard.
+them. Packages it gives up on are logged and then dropped; there is nothing to
+redrive. The missed versions show up again when the package next publishes. To
+ingest one right away, invoke the *ReStagePackageVersion* Lambda function with
+the package name and version.
 
 --------------------------------------------------------------------------------
 
@@ -862,8 +861,7 @@ When documentation for a package is not available, it could be due to several re
 This alarm is only provisioned when the `NpmJs` package source is configured. It
 triggers when the *Packument Processor* function fails or times out. While it
 fails, the requests in the *Packument Queue* keep using up their attempts, so
-laggy packuments can be given up on (and move to the *Packument DLQ*) earlier
-than the usual day.
+they can be given up on earlier than the usual 29 hours.
 
 #### Investigation
 
@@ -874,8 +872,9 @@ that request. Time-outs usually mean the npm registry is slow to respond.
 
 #### Resolution
 
-Fix the cause. Requests that were given up on in the meantime can be redriven
-from the *Packument DLQ* to the *Packument Queue* (from the SQS console).
+Fix the cause. Requests that were given up on in the meantime are lost. Their
+versions show up again when the packages next publish, or can be ingested
+right away with the *ReStagePackageVersion* Lambda function.
 
 --------------------------------------------------------------------------------
 

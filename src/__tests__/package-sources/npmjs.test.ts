@@ -117,13 +117,13 @@ test('retries laggy packuments through a queue that moves give-ups to a dead-let
     Properties: { MessageRetentionPeriod: 14 * 24 * 60 * 60 },
   });
   template.hasResourceProperties('AWS::SQS::Queue', {
-    MessageRetentionPeriod: 4 * 24 * 60 * 60,
+    MessageRetentionPeriod: 14 * 24 * 60 * 60,
     VisibilityTimeout: 30 * 60,
     RedrivePolicy: {
       deadLetterTargetArn: {
         'Fn::GetAtt': [Match.stringLikeRegexp('PackumentProcessorDLQ'), 'Arn'],
       },
-      maxReceiveCount: 9,
+      maxReceiveCount: 10,
     },
   });
   expect(
@@ -144,6 +144,17 @@ test('retries laggy packuments through a queue that moves give-ups to a dead-let
     FunctionResponseTypes: ['ReportBatchItemFailures'],
     ScalingConfig: { MaximumConcurrency: 2 },
   });
+
+  // The same function reads the dead-letter queue, to log give-ups.
+  const mappings = Object.values(
+    template.findResources('AWS::Lambda::EventSourceMapping', {
+      Properties: { FunctionName: { Ref: Object.keys(processors)[0] } },
+    })
+  ).map((mapping: any) => JSON.stringify(mapping.Properties.EventSourceArn));
+  expect(mappings).toHaveLength(2);
+  expect(mappings.some((arn) => arn.includes('PackumentProcessorDLQ'))).toBe(
+    true
+  );
 
   // There is no alarm on the dead-letter queue (it is only graphed), and no
   // alarm on the give-up metric.
