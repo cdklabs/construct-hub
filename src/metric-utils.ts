@@ -1,4 +1,5 @@
 import { createHash } from 'crypto';
+import { Token } from 'aws-cdk-lib';
 import { MathExpression, Metric } from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
@@ -9,16 +10,13 @@ export function fillMetric(
   metric: Metric,
   value: number | 'REPEAT' = 0
 ): MathExpression {
-  // We assume namespace + name is enough to uniquely identify a metric here.
-  // This is true locally at this time, but in case this ever changes, consider
-  // also processing dimensions and period.
-  const h = createHash('sha256')
-    .update(metric.namespace)
-    .update('\0')
-    .update(metric.metricName)
-    .digest('hex');
-
-  const metricName = `m${h}`;
+  // Token dimensions (resource references) are left out: their string form
+  // depends on construction order, so the id would not be stable.
+  const dimensions = Object.entries(metric.dimensions ?? {})
+    .filter(([, dimension]) => !Token.isUnresolved(dimension))
+    .sort();
+  const key = JSON.stringify([metric.namespace, metric.metricName, dimensions]);
+  const metricName = `m${createHash('sha256').update(key).digest('hex')}`;
 
   return new MathExpression({
     expression: `FILL(${metricName}, ${value})`,

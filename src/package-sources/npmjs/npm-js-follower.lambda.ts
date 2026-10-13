@@ -12,7 +12,6 @@ import {
   MetricName,
   MARKER_FILE_NAME,
   METRICS_NAMESPACE,
-  ENV_KNOWN_VERSIONS_TABLE_NAME,
   FOLLOWER_STATE_FILE_NAME,
   SCAN_WINDOW_MS,
   STATE_RETENTION_MS,
@@ -21,38 +20,19 @@ import {
 } from './constants.lambda-shared';
 import {
   CouchChanges,
-  DatabaseChange,
   DatabaseChanges,
+  getMaxSequentialRevision,
 } from './couch-changes.lambda-shared';
 import { FollowerState } from './follower-state.lambda-shared';
-import { KnownVersions } from './known-versions.lambda-shared';
-import {
-  PackumentProcessingContext,
-  PackumentRequest,
-  PackumentRequestReason,
-  processPackuments,
-} from './packument-processing.lambda-shared';
-import {
-  enqueuePackumentRequests,
-  queuedPackumentRequests,
-} from './packument-queue.lambda-shared';
+import { PackumentRequest } from './packument-processing.lambda-shared';
+import { enqueuePackumentRequests } from './packument-queue.lambda-shared';
 import {
   loadContentFromS3,
   MarkerFileSchema,
   putObject,
 } from './staging-bucket.lambda-shared';
-import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
-import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
 import { compressContent } from '../../backend/shared/compress-content.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
-
-/**
- * The release date of `aws-cdk@0.8.0`. Anything earlier than this basically is
- * not a relevant package, as it cannot possibly be a constructs-based package.
- * This is used to fast-forward over boring stuff when the follower state is
- * seeded far in the past.
- */
-const DAWN_OF_CONSTRUCTS = new Date('2018-07-31T13:43:04.615Z');
 
 /**
  * The page size used when scanning the `_changes` feed. Receipts discard
@@ -94,13 +74,9 @@ captureHTTPsGlobal(require('http'));
  *    window instead).
  * 2. Each scan reads the window ascending from the floor. Receipts make
  *    re-reads of already-covered ranges nearly free.
- * 3. For each new entry, the packument is fetched from the registry and every
- *    version it contains is processed (deny list, license, and known-versions
- *    checks apply). If the packument is behind the revision announced by the
- *    feed (a "laggy packument"), the served versions are still processed, and
- *    a request to check the package again is sent to the packument queue,
- *    where it is retried until the announced revision appears or it is given
- *    up on.
+ * 3. Each new entry is sent to the packument queue, where the packument
+ *    processor fetches the package from the registry and processes it. The
+ *    follower itself never fetches packuments.
  *
  * npm registry API docs: https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md
  *
@@ -111,15 +87,6 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const stagingBucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv(ENV_PACKUMENT_QUEUE_URL);
-  const knownVersions = new KnownVersions(
-    requireEnv(ENV_KNOWN_VERSIONS_TABLE_NAME)
-  );
-  const processing: PackumentProcessingContext = {
-    stagingFunction: requireEnv('FUNCTION_NAME'),
-    denyList: await DenyListClient.newClient(),
-    licenseList: await LicenseListClient.newClient(),
-    knownVersions,
-  };
 
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry/_changes');
 
@@ -143,24 +110,12 @@ export async function handler(event: ScheduledEvent, context: Context) {
     // every processed chunk (see PersistState), so even a run that is hard
     // killed by the Lambda timeout keeps its completed work.
     const persist: PersistState = () =>
-      persistProgress(context, stagingBucket, state, knownVersions);
-    await runScan(context, npm, state, head, processing, queueUrl, persist);
-
-    // Requests waiting in the packument queue, including those this run sent.
-    const laggyPackuments = await queuedPackumentRequests(queueUrl);
-    await metricScope((metrics) => async () => {
-      metrics.setDimensions({});
-      metrics.putMetric(
-        MetricName.LAGGY_PACKUMENTS,
-        laggyPackuments,
-        Unit.Count
-      );
-    })();
+      saveFollowerState(context, stagingBucket, state);
+    await runScan(context, npm, state, head, queueUrl, persist);
   } finally {
-    // Persist the state even when a scan failed part-way: receipts, interim
-    // checkpoints, and staged known versions represent completed work that
-    // the next run should not redo.
-    await persistProgress(context, stagingBucket, state, knownVersions);
+    // Persist the state even when a scan failed part-way: receipts and
+    // interim checkpoints are completed work the next run should not redo.
+    await saveFollowerState(context, stagingBucket, state);
   }
 
   console.log('All done here, we have success!');
@@ -170,34 +125,13 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
 //#region Scan
 /**
- * A callback persisting the follower state (and optionally the known
- * versions) to S3. Called after every processed chunk, so that progress is
+ * A callback persisting the follower state to S3. Called after every processed chunk, so that progress is
  * durable even when the Lambda times out mid-scan: a timeout is a hard kill,
  * and anything not persisted would be redone by the next run. Without this, a
  * backlog too large for a single execution would never complete (every run
  * would restart it from scratch).
  */
 type PersistState = () => Promise<void>;
-
-/**
- * Persists the known versions recorded since the last call, then the follower
- * state. Known versions go first: if saving the state fails, the next run
- * redoes the work, and the known versions prevent it from staging the same
- * versions again. The reverse order could record receipts for entries whose
- * staged versions were never recorded as known.
- */
-async function persistProgress(
-  context: Context,
-  stagingBucket: string,
-  state: FollowerState,
-  knownVersions: KnownVersions
-): Promise<void> {
-  if (knownVersions.pendingCount > 0) {
-    console.log(`Recording ${knownVersions.pendingCount} known version(s)`);
-    await knownVersions.flush();
-  }
-  await saveFollowerState(context, stagingBucket, state);
-}
 
 /**
  * Re-reads the trailing window of the feed and processes every change entry
@@ -212,10 +146,9 @@ async function runScan(
   npm: CouchChanges,
   state: FollowerState,
   head: number,
-  processing: PackumentProcessingContext,
   queueUrl: string,
   persist: PersistState
-): Promise<number> {
+): Promise<void> {
   const now = Date.now();
   const deep = state.deepScanDue(now);
   const windowMs = deep ? STATE_RETENTION_MS : SCAN_WINDOW_MS;
@@ -223,7 +156,7 @@ async function runScan(
   if (floor == null) {
     // Cannot happen after seeding, but guards the type.
     console.warn('No checkpoint history; skipping scan');
-    return 0;
+    return;
   }
   // Entries discovered at or below this position were inserted into the feed
   // behind a position we had already read past.
@@ -235,7 +168,6 @@ async function runScan(
     }scan of (${floor}, ${head}] (late boundary: ${lateBoundary})`
   );
 
-  let staged = 0;
   let completed = false;
   let maxSeqSeen = head;
 
@@ -261,15 +193,12 @@ async function runScan(
         batch,
         metrics,
         context,
-        npm,
         state,
         lateBoundary,
         head,
-        processing,
         queueUrl,
         persist
       );
-      staged += outcome.staged;
       if (!outcome.fullyProcessed) {
         // The batch was only partially processed (time budget): the
         // unprocessed entries carry no receipt, so the next run picks them
@@ -304,58 +233,52 @@ async function runScan(
       'Scan ran out of time; it will resume on the next run (no checkpoint recorded)'
     );
   }
-  return staged;
 }
 
 /**
- * The maximum number of packument fetches per processing chunk. Chunking
- * bounds how much work is lost when the Lambda is killed mid-chunk, and lets
- * the time budget be re-checked between chunks: during a catch-up, a single
- * page can contain thousands of unreceipted entries, far more than fit into
- * one execution.
+ * The maximum number of change entries per chunk. The follower persists its
+ * state after every chunk, and re-checks its time budget in between.
  */
-const METADATA_CHUNK_SIZE = 1_000;
+const CHUNK_SIZE = 1_000;
 
 /**
  * Processes one page of change entries: discards everything we already have a
- * receipt for, then works through the remainder in chunks. Each chunk fetches
- * packuments, stages new relevant package versions, records laggy packument
- * expectations and receipts, and persists the state - so completed chunks
+ * receipt for, then works through the remainder in chunks. Each chunk is sent
+ * to the packument queue, receipted, and persisted, so completed chunks
  * survive a timeout. Processing stops between chunks when the time budget is
  * exhausted; unprocessed entries carry no receipt and are picked up by the
  * next run.
  *
- * @returns the number of package versions sent for staging, and whether all
- *          entries of the page were processed.
+ * @returns whether all entries of the page were processed.
  */
 async function processBatch(
   batch: DatabaseChanges,
   metrics: MetricsLogger,
   context: Context,
-  npm: CouchChanges,
   state: FollowerState,
   lateBoundary: number,
   head: number,
-  processing: PackumentProcessingContext,
   queueUrl: string,
   persist: PersistState
-): Promise<{ staged: number; fullyProcessed: boolean }> {
+): Promise<{ fullyProcessed: boolean }> {
   const startTime = Date.now();
-  let staged = 0;
   let fullyProcessed = true;
   try {
     // Entries for deleted packages are ignored, as if they were not in the
     // feed: there is nothing to process, and no receipt is recorded.
     const fresh = batch.results.filter(
       (change) =>
-        !change.deleted && change.seq != null && !state.has(Number(change.seq))
+        !change.deleted &&
+        change.id &&
+        change.seq != null &&
+        !state.has(Number(change.seq))
     );
     console.log(
       `Received ${batch.totalCount} change entr(ies), ${fresh.length} without a receipt`
     );
     metrics.putMetric(MetricName.CHANGE_COUNT, fresh.length, Unit.Count);
 
-    for (let offset = 0; offset < fresh.length; offset += METADATA_CHUNK_SIZE) {
+    for (let offset = 0; offset < fresh.length; offset += CHUNK_SIZE) {
       if (
         offset > 0 &&
         context.getRemainingTimeInMillis() < SCAN_TIME_BUDGET_MS
@@ -366,7 +289,7 @@ async function processBatch(
         fullyProcessed = false;
         break;
       }
-      const chunk = fresh.slice(offset, offset + METADATA_CHUNK_SIZE);
+      const chunk = fresh.slice(offset, offset + CHUNK_SIZE);
 
       // Entries below the late boundary were inserted into the feed behind a
       // position a completed scan had already read past.
@@ -386,101 +309,22 @@ async function processBatch(
         );
       }
 
-      const {
-        ok: attached,
-        missing,
-        failedSeqs,
-      } = await npm.attachAllMetadata(chunk);
-      metrics.putMetric(
-        MetricName.METADATA_FETCH_FAILURES,
-        failedSeqs.length,
-        Unit.Count
+      // The packument processor fetches and processes each package. Receipts
+      // are only recorded once the requests are sent, so a failure here makes
+      // the next run send the chunk again.
+      const now = Date.now();
+      await enqueuePackumentRequests(
+        queueUrl,
+        chunk.map(
+          (change): PackumentRequest => ({
+            name: change.id,
+            expectedRev: getMaxSequentialRevision(change),
+            seq: Number(change.seq),
+            firstSeen: now,
+          })
+        )
       );
-
-      // The most recent "modified" timestamp observed in the chunk.
-      let lastModified: Date | undefined;
-      // Emit npm.js replication lag
-      for (const { change } of attached) {
-        const doc = change.doc as { time?: { modified?: string } } | undefined;
-        if (doc?.time?.modified) {
-          const modified = new Date(doc.time.modified);
-          metrics.putMetric(
-            MetricName.NPMJS_CHANGE_AGE,
-            startTime - modified.getTime(),
-            Unit.Milliseconds
-          );
-          if (lastModified == null || lastModified < modified) {
-            lastModified = modified;
-          }
-        }
-      }
-
-      let chunkStaged = 0;
-      if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
-        console.log(
-          `Skipping chunk as the latest modification is ${lastModified}, which is pre-Constructs`
-        );
-      } else {
-        chunkStaged = await processPackuments(
-          attached.map((a) => a.change),
-          metrics,
-          processing
-        );
-        staged += chunkStaged;
-
-        // Laggy packuments: the registry served an older revision than the
-        // feed announced (the versions we did get were processed above), or
-        // no packument at all yet. The packument queue checks the package
-        // again until the announced revision appears. This happens before the
-        // receipts are recorded, so a failure here makes the next run process
-        // the chunk again.
-        const laggy = attached.filter((a) => a.laggy);
-        for (const { change, servedRev, announcedRev } of laggy) {
-          console.log(
-            `${change.id}: registry packument rev ${servedRev} is behind announced rev ${announcedRev}, sending it to the packument queue`
-          );
-        }
-        for (const { change } of missing) {
-          console.log(
-            `${change.id}: the registry has no packument for it yet, sending it to the packument queue`
-          );
-        }
-        metrics.putMetric(
-          MetricName.MISSING_PACKUMENTS,
-          missing.length,
-          Unit.Count
-        );
-        const now = Date.now();
-        const request = (
-          change: DatabaseChange,
-          expectedRev: number,
-          reason: PackumentRequestReason
-        ): PackumentRequest => ({
-          name: change.id,
-          expectedRev,
-          seq: isNaN(Number(change.seq)) ? undefined : Number(change.seq),
-          firstSeen: now,
-          reason,
-        });
-        await enqueuePackumentRequests(queueUrl, [
-          ...laggy.map(({ change, announcedRev }) =>
-            request(change, announcedRev, 'laggy')
-          ),
-          ...missing.map(({ change, announcedRev }) =>
-            request(change, announcedRev, 'missing')
-          ),
-        ]);
-      }
-
-      // Record a receipt for every entry of the chunk, except those whose
-      // metadata fetch failed (a later scan retries them). Then persist, so a
-      // timeout cannot undo this chunk.
-      const failed = new Set(failedSeqs);
-      state.addSeqs(
-        chunk
-          .map((change) => Number(change.seq))
-          .filter((seq) => !isNaN(seq) && !failed.has(seq))
-      );
+      state.addSeqs(chunk.map((change) => Number(change.seq)));
       await persist();
     }
   } finally {
@@ -496,7 +340,7 @@ async function processBatch(
       Unit.Milliseconds
     );
   }
-  return { staged, fullyProcessed };
+  return { fullyProcessed };
 }
 //#endregion
 

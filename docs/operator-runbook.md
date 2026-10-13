@@ -614,47 +614,50 @@ be increased: adjust `SCAN_WINDOW_MS` in
 `src/package-sources/npmjs/constants.lambda-shared.ts` (keeping it below
 `STATE_RETENTION_MS`) and deploy the updated construct.
 
-### `ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh`
+### `ConstructHub/Sources/NpmJs/PackumentProcessor/PendingPackumentsHigh`
 
 #### Description
 
 This alarm is only provisioned when the `NpmJs` package source is configured. It
-triggers when the npm registry had no packument (HTTP 404) for an unusually high
-number of packages announced by the CouchDB `_changes` feed, within 3 hours.
-This usually means the registry has an outage, or is far behind the feed.
+triggers when an unusually high number of packages wait, for 3 hours, for the
+npm registry to serve the revision the CouchDB `_changes` feed announced. This
+usually means the registry has an outage, or is far behind the feed.
 
 #### Investigation
 
-The *NpmJs Follower* fetches package metadata from `registry.npmjs.org` for
-each change announced by the CouchDB `_changes` feed. Some of these always
-return 404, usually because a new package has not replicated to the registry
-yet (a *missing* packument). The follower sends them to the *Packument Queue*,
-where the *Packument Processor* checks them again with growing waits, for about
-a day. A normal 3 hour window has a couple of hundred of them.
+The *NpmJs Follower* sends each change announced by the CouchDB `_changes`
+feed to the *Packument Queue*, and the *Packument Processor* fetches the
+package from `registry.npmjs.org`. When the registry serves an older revision,
+no packument at all (HTTP 404, usually a new package that has not replicated
+yet), or cannot be reached, the request waits in the queue for its next check,
+with growing waits, for up to a day. Each waiting request is one package. A
+normal day has a few hundred of them.
 
-Check the `Missing Packuments` line on the *Feed Reliability* graph of the
-backend dashboard, and pick a few affected packages from the logs of the
-*NpmJs Follower* (`the registry has no packument for it yet`). Verify whether
-the registry serves them now:
+Check the `Waiting for next attempt` line on the *Packument Queue* graph, and
+the `Failed Packument Retrievals` line on the *Feed Reliability* graph of the
+backend dashboard. Pick a few affected packages from the logs of the
+*Packument Processor* (`checking again later`), and verify what the registry
+serves now:
 
 ```console
 $ curl -s -o /dev/null -w '%{http_code}\n' https://registry.npmjs.org/<package-name>
+$ curl -s https://registry.npmjs.org/<package-name> | jq ._rev
 ```
 
-If most still return 404 while the feed keeps announcing them, the problem is
-with upstream npmjs.com. Look at `npmjs.com` status updates and announcements.
-If you suspect the problem is with upstream npmjs.com, you can cut them a
-ticket. Log in to <https://npmjs.com>, visit the
+If most are still missing or behind while the feed keeps announcing them, the
+problem is with upstream npmjs.com. Look at `npmjs.com` status updates and
+announcements. If you suspect the problem is with upstream npmjs.com, you can
+cut them a ticket. Log in to <https://npmjs.com>, visit the
 [Support Page](https://www.npmjs.com/support) and select
 *There is a problem with the npm registry*.
 
 #### Resolution
 
 The packument processor processes the packages once the registry serves them.
-Packages it gives up on are logged (`Giving up on missing packument`) and then
-dropped. They show up again when the package next publishes. To ingest one
-right away, invoke the *ReStagePackageVersion* Lambda function with the package
-name and version.
+Packages it gives up on are logged (`Giving up on`) and counted in the
+`PackumentGiveUps` metric, by the reason the last check found. They show up
+again when the package next publishes. To ingest one right away, invoke the
+*ReStagePackageVersion* Lambda function with the package name and version.
 
 --------------------------------------------------------------------------------
 
@@ -663,8 +666,8 @@ name and version.
 #### Description
 
 This alarm is only provisioned when the `NpmJs` package source is configured. It
-triggers when laggy packuments take unusually long to catch up: in a 3 hour
-window, 90% of them took longer than 6 hours. This usually means the registry
+triggers when packuments the registry served late took unusually long: in a 3
+hour window, 90% of them took longer than 6 hours. This usually means the registry
 has an outage, or is far behind the feed.
 
 All package versions the registry did serve have been processed. However,
@@ -674,17 +677,16 @@ the registry catches up.
 #### Investigation
 
 The registry occasionally serves an older revision of a package than the
-changes feed announced (a *laggy* packument). The follower processes the
-versions that were served, and sends the package to the *Packument Queue*. The
-*Packument Processor* checks it again with growing waits, for about 29 hours,
-and reports how long each laggy packument took to catch up. Most catch up within
-minutes, and nearly all within 6 hours.
+changes feed announced (a *laggy* packument), or none at all yet. The
+*Packument Processor* processes the versions that were served, checks the
+package again with growing waits, for up to a day, and reports how long it
+took for the announced revision to arrive (`PackumentDelay`). Most arrive
+within minutes, and nearly all within 6 hours.
 
 Check the *Packument Queue* graph of the backend dashboard for how many
-requests are waiting, and the `Laggy Packument Give-Ups` line on the
+requests are waiting, and the `Packument Give-Ups` lines on the
 *Feed Reliability* graph for how many were given up on. The logs of the
-*Packument Processor* show `caught up` and `Giving up on laggy packument`
-entries. Verify what the registry serves for a few affected packages:
+*Packument Processor* show `caught up` and `Giving up on` entries. Verify what the registry serves for a few affected packages:
 
 ```console
 $ curl https://registry.npmjs.org/<package-name> | jq ._rev
@@ -859,9 +861,8 @@ When documentation for a package is not available, it could be due to several re
 #### Description
 
 This alarm is only provisioned when the `NpmJs` package source is configured. It
-triggers when the *Packument Processor* function fails or times out. While it
-fails, the requests in the *Packument Queue* keep using up their attempts, so
-they can be given up on earlier than the usual 29 hours.
+triggers when the *Packument Processor* function fails or times out. Requests
+that keep failing it move to the packument dead-letter queue.
 
 #### Investigation
 
@@ -872,7 +873,7 @@ that request. Time-outs usually mean the npm registry is slow to respond.
 
 #### Resolution
 
-Fix the cause. Requests that were given up on in the meantime are lost. Their
+Fix the cause. Requests in the dead-letter queue are not processed again. Their
 versions show up again when the packages next publish, or can be ingested
 right away with the *ReStagePackageVersion* Lambda function.
 
