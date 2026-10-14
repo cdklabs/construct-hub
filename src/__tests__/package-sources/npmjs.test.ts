@@ -204,6 +204,34 @@ test('retries laggy packuments through a queue that moves give-ups to a dead-let
   });
 });
 
+test('every queue the packument processor reads hides messages for longer than the function runs', () => {
+  const template = synth(new NpmJs());
+
+  const [processorId, processor] = Object.entries(
+    template.findResources('AWS::Lambda::Function', {
+      Properties: {
+        Description: Match.stringLikeRegexp(
+          'Processes packages from the npm registry'
+        ),
+      },
+    })
+  )[0] as [string, any];
+  const queues = template.findResources('AWS::SQS::Queue');
+  const mappings = Object.values(
+    template.findResources('AWS::Lambda::EventSourceMapping', {
+      Properties: { FunctionName: { Ref: processorId } },
+    })
+  ) as any[];
+
+  expect(mappings).toHaveLength(2);
+  for (const mapping of mappings) {
+    const queueId = mapping.Properties.EventSourceArn['Fn::GetAtt'][0];
+    // Unset means the SQS default of 30 seconds.
+    const visibility = queues[queueId].Properties.VisibilityTimeout ?? 30;
+    expect(visibility).toBeGreaterThanOrEqual(processor.Properties.Timeout);
+  }
+});
+
 test('the billing mode of the known versions table is configurable', () => {
   const template = synth(
     new NpmJs({
