@@ -128,15 +128,7 @@
       "Arn"
      ]
     },
-    "Runtime": {
-     "Fn::FindInMap": [
-      "LatestNodeRuntimeMap",
-      {
-       "Ref": "AWS::Region"
-      },
-      "value"
-     ]
-    },
+    "Runtime": "nodejs24.x",
     "Description": {
      "Fn::Join": [
       "",
@@ -161,7 +153,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "d3adb8f8245549682ed42bc738adfed018ab3d9442ade840a7f42553830499d4.zip"
+     "S3Key": "98f62bef9320f8c0a0a7be21d7c746f069131f196f51ffe3008a6bb730b368ec.zip"
     },
     "Description": "/opt/awscli/aws"
    }
@@ -186,6 +178,7 @@
     "DestinationBucketName": {
      "Ref": "MockDataBucket4719A0C1"
     },
+    "WaitForDistributionInvalidation": true,
     "Prune": true,
     "OutputObjectKeys": true
    },
@@ -340,11 +333,14 @@
   "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "9a1fcb4a7ecba81ad70e9d3fb241f6794497da945dae5f25924e4dd002b65f2d.zip"
+     "S3Key": "35328da138f26fbd9160297abc9a2522d93dbf75878cd5114a9c050419fc1ce0.zip"
     },
     "Environment": {
      "Variables": {
@@ -357,19 +353,39 @@
       "Ref": "MockDataAwsCliLayerE631E742"
      }
     ],
+    "MemorySize": 1024,
     "Role": {
      "Fn::GetAtt": [
       "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
       "Arn"
      ]
     },
-    "Runtime": "python3.11",
+    "Runtime": "python3.13",
     "Timeout": 900
    },
    "DependsOn": [
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
    ]
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CLogGroup817B64E9": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
   },
   "MonitoringWatchfulDashboard9EB9FD4D": {
    "Type": "AWS::CloudWatch::Dashboard",
@@ -483,7 +499,6 @@
   "MonitoringWatchfulDenyListIntegDenyListPrunePruneHandlerC4DB2510ErrorsAlarm995F83FE": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "AlarmActions": [],
     "AlarmDescription": "Over 0 errors per minute",
     "ComparisonOperator": "GreaterThanThreshold",
     "Dimensions": [
@@ -505,7 +520,6 @@
   "MonitoringWatchfulDenyListIntegDenyListPrunePruneHandlerC4DB2510ThrottlesAlarm5428B763": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "AlarmActions": [],
     "AlarmDescription": "Over 0 throttles per minute",
     "ComparisonOperator": "GreaterThanThreshold",
     "Dimensions": [
@@ -527,7 +541,6 @@
   "MonitoringWatchfulDenyListIntegDenyListPrunePruneHandlerC4DB2510DurationAlarm24781D9D": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "AlarmActions": [],
     "AlarmDescription": "p99 latency >= 720s (80%)",
     "ComparisonOperator": "GreaterThanThreshold",
     "EvaluationPeriods": 3,
@@ -560,7 +573,6 @@
   "MonitoringWatchfulDenyListIntegDenyListPrunePruneQueueHandler8511ABABErrorsAlarm59832D86": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "AlarmActions": [],
     "AlarmDescription": "Over 0 errors per minute",
     "ComparisonOperator": "GreaterThanThreshold",
     "Dimensions": [
@@ -582,7 +594,6 @@
   "MonitoringWatchfulDenyListIntegDenyListPrunePruneQueueHandler8511ABABThrottlesAlarmCE48028D": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "AlarmActions": [],
     "AlarmDescription": "Over 0 throttles per minute",
     "ComparisonOperator": "GreaterThanThreshold",
     "Dimensions": [
@@ -604,7 +615,6 @@
   "MonitoringWatchfulDenyListIntegDenyListPrunePruneQueueHandler8511ABABDurationAlarmE4892A24": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
-    "AlarmActions": [],
     "AlarmDescription": "p99 latency >= 48s (80%)",
     "ComparisonOperator": "GreaterThanThreshold",
     "EvaluationPeriods": 3,
@@ -651,15 +661,15 @@
        {
         "Ref": "AWS::Region"
        },
-       "\",\"metrics\":[[{\"label\":\"Concurrent executions quota usage %\",\"expression\":\"mLambdaUsage / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"ConcurrentExecutions\",{\"stat\":\"Maximum\",\"visible\":false,\"id\":\"mLambdaUsage\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"mLambdaQuota\"}],[{\"label\":\"PruneHandlerLambda quota usage %\",\"expression\":\"m1 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+       "\",\"metrics\":[[{\"label\":\"Concurrent executions quota usage %\",\"expression\":\"mLambdaUsage / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"ConcurrentExecutions\",{\"id\":\"mLambdaUsage\",\"visible\":false,\"stat\":\"Maximum\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"mLambdaQuota\"}],[{\"label\":\"PruneHandlerLambda quota usage %\",\"expression\":\"m1 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
        {
         "Ref": "DenyListPrunePruneHandler5F946B07"
        },
-       "\",{\"label\":\"PruneHandlerLambda\",\"stat\":\"Maximum\",\"visible\":false,\"id\":\"m1\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"lambdaQuotaLimit\"}],[{\"label\":\"PruneQueueHandlerLambda quota usage %\",\"expression\":\"m2 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+       "\",{\"label\":\"PruneHandlerLambda\",\"id\":\"m1\",\"visible\":false,\"stat\":\"Maximum\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"lambdaQuotaLimit\"}],[{\"label\":\"PruneQueueHandlerLambda quota usage %\",\"expression\":\"m2 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
        {
         "Ref": "DenyListPrunePruneQueueHandler087D6B50"
        },
-       "\",{\"label\":\"PruneQueueHandlerLambda\",\"stat\":\"Maximum\",\"visible\":false,\"id\":\"m2\"}]],\"annotations\":{\"horizontal\":[{\"value\":70,\"yAxis\":\"right\"}]},\"yAxis\":{\"right\":{\"label\":\"Quota Percent\",\"min\":0,\"max\":100}}}}]}"
+       "\",{\"label\":\"PruneQueueHandlerLambda\",\"id\":\"m2\",\"visible\":false,\"stat\":\"Maximum\"}]],\"annotations\":{\"horizontal\":[{\"value\":70,\"yAxis\":\"right\"}]},\"yAxis\":{\"right\":{\"label\":\"Quota Percent\",\"min\":0,\"max\":100}}}}]}"
       ]
      ]
     }
@@ -675,7 +685,8 @@
      {
       "Expression": "mLambdaUsage / mLambdaQuota * 100",
       "Id": "expr_1",
-      "Label": "Concurrent executions quota usage %"
+      "Label": "Concurrent executions quota usage %",
+      "ReturnData": true
      },
      {
       "Id": "mLambdaUsage",
@@ -839,6 +850,32 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
+  "DenyListBucketNotificationsHandlerPolicy0758C22B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:PutBucketNotification",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "DenyListBucketC1C9D3D9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "DenyListBucketNotificationsHandlerPolicy0758C22B",
+    "Roles": [
+     {
+      "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+     }
+    ]
+   }
+  },
   "DenyListBucketNotificationsEF0449EB": {
    "Type": "Custom::S3BucketNotifications",
    "Properties": {
@@ -885,6 +922,7 @@
    },
    "DependsOn": [
     "DenyListBucketAllowBucketNotificationsToDenyListIntegDenyListPrunePruneHandlerC4DB2510985F7135",
+    "DenyListBucketNotificationsHandlerPolicy0758C22B",
     "DenyListBucketPolicyFE28C82A"
    ]
   },
@@ -1057,7 +1095,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "d3adb8f8245549682ed42bc738adfed018ab3d9442ade840a7f42553830499d4.zip"
+     "S3Key": "98f62bef9320f8c0a0a7be21d7c746f069131f196f51ffe3008a6bb730b368ec.zip"
     },
     "Description": "/opt/awscli/aws"
    }
@@ -1082,11 +1120,13 @@
     "DestinationBucketName": {
      "Ref": "DenyListBucketC1C9D3D9"
     },
+    "WaitForDistributionInvalidation": true,
     "RetainOnDelete": true,
     "Prune": true,
     "OutputObjectKeys": true
    },
    "DependsOn": [
+    "DenyListBucketNotificationsHandlerPolicy0758C22B",
     "DenyListBucketNotificationsEF0449EB"
    ],
    "UpdateReplacePolicy": "Delete",
@@ -1247,7 +1287,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "146757e3eb7e655e0c483557ec6a7492ce1a3bdf0045edb7a6473236a455d7cd.zip"
+     "S3Key": "e285075ac17af21bbe0101670d8f5f3cde4fb2e676122115fef252d0655d69dd.zip"
     },
     "Description": "backend/deny-list/prune-handler.lambda.ts",
     "Environment": {
@@ -1285,6 +1325,25 @@
     "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
     "DenyListPrunePruneHandlerServiceRole234C8EF9"
    ]
+  },
+  "DenyListPrunePruneHandlerLogGroup781A2660": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "DenyListPrunePruneHandler5F946B07"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
   },
   "DenyListPrunePruneQueueHandlerServiceRole9BB94361": {
    "Type": "AWS::IAM::Role",
@@ -1377,7 +1436,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "4ba1c5ad42722ebe391a8b80bd9f3eb6645f32b9f8ec2e022daf48a9a24350d0.zip"
+     "S3Key": "63e04f5db225ea7a39bec60ff63164da44f2c84d3233c1b89b3b629b72f00533.zip"
     },
     "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
     "Environment": {
@@ -1401,6 +1460,25 @@
     "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
     "DenyListPrunePruneQueueHandlerServiceRole9BB94361"
    ]
+  },
+  "DenyListPrunePruneQueueHandlerLogGroupD3CE25C9": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
   },
   "DenyListPrunePruneQueueHandlerSqsEventSourceDenyListIntegDenyListPruneDeleteQueue2561B517CA29A6BC": {
    "Type": "AWS::Lambda::EventSourceMapping",
@@ -1484,27 +1562,6 @@
     ]
    }
   },
-  "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": {
-   "Type": "AWS::IAM::Policy",
-   "Properties": {
-    "PolicyDocument": {
-     "Statement": [
-      {
-       "Action": "s3:PutBucketNotification",
-       "Effect": "Allow",
-       "Resource": "*"
-      }
-     ],
-     "Version": "2012-10-17"
-    },
-    "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-    "Roles": [
-     {
-      "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
-     }
-    ]
-   }
-  },
   "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -1519,11 +1576,10 @@
       "Arn"
      ]
     },
-    "Runtime": "python3.11",
+    "Runtime": "python3.13",
     "Timeout": 300
    },
    "DependsOn": [
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
     "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
    ]
   },
@@ -1583,136 +1639,25 @@
    "DependsOn": [
     "CatalogBuilderMockServiceRole8558CA02"
    ]
-  }
- },
- "Mappings": {
-  "LatestNodeRuntimeMap": {
-   "af-south-1": {
-    "value": "nodejs20.x"
+  },
+  "CatalogBuilderMockLogGroup12617586": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "CatalogBuilderMock263D4D67"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
    },
-   "ap-east-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-east-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-3": {
-    "value": "nodejs20.x"
-   },
-   "ap-south-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-south-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-3": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-4": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-5": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-7": {
-    "value": "nodejs20.x"
-   },
-   "ca-central-1": {
-    "value": "nodejs20.x"
-   },
-   "ca-west-1": {
-    "value": "nodejs20.x"
-   },
-   "cn-north-1": {
-    "value": "nodejs20.x"
-   },
-   "cn-northwest-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-central-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-central-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-isoe-west-1": {
-    "value": "nodejs18.x"
-   },
-   "eu-north-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-south-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-south-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-3": {
-    "value": "nodejs20.x"
-   },
-   "il-central-1": {
-    "value": "nodejs20.x"
-   },
-   "me-central-1": {
-    "value": "nodejs20.x"
-   },
-   "me-south-1": {
-    "value": "nodejs20.x"
-   },
-   "mx-central-1": {
-    "value": "nodejs20.x"
-   },
-   "sa-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-east-2": {
-    "value": "nodejs20.x"
-   },
-   "us-gov-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-gov-west-1": {
-    "value": "nodejs20.x"
-   },
-   "us-iso-east-1": {
-    "value": "nodejs18.x"
-   },
-   "us-iso-west-1": {
-    "value": "nodejs18.x"
-   },
-   "us-isob-east-1": {
-    "value": "nodejs18.x"
-   },
-   "us-isob-west-1": {
-    "value": "nodejs18.x"
-   },
-   "us-west-1": {
-    "value": "nodejs20.x"
-   },
-   "us-west-2": {
-    "value": "nodejs20.x"
-   }
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
   }
  },
  "Outputs": {
@@ -1751,42 +1696,30 @@
     ]
    }
   },
-  "ExportsOutputFnGetAttDenyListBucketC1C9D3D9Arn00FDD6F6": {
+  "PublishOutputFnGetAttDenyListBucketC1C9D3D9ArnA844555D": {
    "Value": {
     "Fn::GetAtt": [
      "DenyListBucketC1C9D3D9",
      "Arn"
     ]
-   },
-   "Export": {
-    "Name": "DenyListInteg:ExportsOutputFnGetAttDenyListBucketC1C9D3D9Arn00FDD6F6"
    }
   },
-  "ExportsOutputRefDenyListBucketC1C9D3D90E2E16C4": {
+  "PublishOutputRefDenyListBucketC1C9D3D92B422E1B": {
    "Value": {
     "Ref": "DenyListBucketC1C9D3D9"
-   },
-   "Export": {
-    "Name": "DenyListInteg:ExportsOutputRefDenyListBucketC1C9D3D90E2E16C4"
    }
   },
-  "ExportsOutputFnGetAttMockDataBucket4719A0C1ArnAE5BBF6D": {
+  "PublishOutputFnGetAttMockDataBucket4719A0C1Arn7D757E0A": {
    "Value": {
     "Fn::GetAtt": [
      "MockDataBucket4719A0C1",
      "Arn"
     ]
-   },
-   "Export": {
-    "Name": "DenyListInteg:ExportsOutputFnGetAttMockDataBucket4719A0C1ArnAE5BBF6D"
    }
   },
-  "ExportsOutputRefMockDataBucket4719A0C16191E52D": {
+  "PublishOutputRefMockDataBucket4719A0C18943629C": {
    "Value": {
     "Ref": "MockDataBucket4719A0C1"
-   },
-   "Export": {
-    "Name": "DenyListInteg:ExportsOutputRefMockDataBucket4719A0C16191E52D"
    }
   }
  },

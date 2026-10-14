@@ -131,15 +131,7 @@
       "Arn"
      ]
     },
-    "Runtime": {
-     "Fn::FindInMap": [
-      "LatestNodeRuntimeMap",
-      {
-       "Ref": "AWS::Region"
-      },
-      "value"
-     ]
-    },
+    "Runtime": "nodejs24.x",
     "Description": {
      "Fn::Join": [
       "",
@@ -164,7 +156,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "d3adb8f8245549682ed42bc738adfed018ab3d9442ade840a7f42553830499d4.zip"
+     "S3Key": "98f62bef9320f8c0a0a7be21d7c746f069131f196f51ffe3008a6bb730b368ec.zip"
     },
     "Description": "/opt/awscli/aws"
    }
@@ -189,6 +181,7 @@
     "DestinationBucketName": {
      "Ref": "PackageData6651D4CA"
     },
+    "WaitForDistributionInvalidation": true,
     "Prune": true,
     "OutputObjectKeys": true
    },
@@ -323,11 +316,14 @@
   "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "9a1fcb4a7ecba81ad70e9d3fb241f6794497da945dae5f25924e4dd002b65f2d.zip"
+     "S3Key": "35328da138f26fbd9160297abc9a2522d93dbf75878cd5114a9c050419fc1ce0.zip"
     },
     "Environment": {
      "Variables": {
@@ -340,19 +336,39 @@
       "Ref": "MockCatalogAwsCliLayerC68E9719"
      }
     ],
+    "MemorySize": 1024,
     "Role": {
      "Fn::GetAtt": [
       "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
       "Arn"
      ]
     },
-    "Runtime": "python3.11",
+    "Runtime": "python3.13",
     "Timeout": 900
    },
    "DependsOn": [
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
    ]
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CLogGroup817B64E9": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
   },
   "MonitoringWatchfulDashboard9EB9FD4D": {
    "Type": "AWS::CloudWatch::Dashboard",
@@ -468,7 +484,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "be70f2626cafeae65e6e41e49bedd838de5e951ef061ef1dad7629890b47dd9a.zip"
+     "S3Key": "c0d1d165b710eebc909c712b6b7e314d7aee10cfffd09acf7d892104d6333042.zip"
     },
     "Description": "Splits package list into chunks for parallel processing",
     "Environment": {
@@ -627,7 +643,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "a46ddf70ef69d6d06487acfd9b5d65cee4b27492a36e7cac386d66a90f1afa3a.zip"
+     "S3Key": "190e916d99b7321088a3a3d2e302d377360d1325327856a1c46fddfa07e9e9f2.zip"
     },
     "Description": "Processes a chunk of packages to get NPM stats",
     "Environment": {
@@ -787,7 +803,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "2a6d23f333808f038084f94df00fc97f7fedaf8fba8dade8c9a363ddba7e146d.zip"
+     "S3Key": "7147ddaadfdcffc6026ef7bfb6cb1e2189a0004c88fb3f7b197b3849ef87a197.zip"
     },
     "Description": "Aggregates processed chunks into final stats.json",
     "Environment": {
@@ -1121,15 +1137,7 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Handler": "index.handler",
-    "Runtime": {
-     "Fn::FindInMap": [
-      "LatestNodeRuntimeMap",
-      {
-       "Ref": "AWS::Region"
-      },
-      "value"
-     ]
-    },
+    "Runtime": "nodejs24.x",
     "Timeout": 900,
     "Code": {
      "S3Bucket": {
@@ -1173,136 +1181,6 @@
    }
   }
  },
- "Mappings": {
-  "LatestNodeRuntimeMap": {
-   "af-south-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-east-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-east-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-3": {
-    "value": "nodejs20.x"
-   },
-   "ap-south-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-south-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-3": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-4": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-5": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-7": {
-    "value": "nodejs20.x"
-   },
-   "ca-central-1": {
-    "value": "nodejs20.x"
-   },
-   "ca-west-1": {
-    "value": "nodejs20.x"
-   },
-   "cn-north-1": {
-    "value": "nodejs20.x"
-   },
-   "cn-northwest-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-central-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-central-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-isoe-west-1": {
-    "value": "nodejs18.x"
-   },
-   "eu-north-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-south-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-south-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-3": {
-    "value": "nodejs20.x"
-   },
-   "il-central-1": {
-    "value": "nodejs20.x"
-   },
-   "me-central-1": {
-    "value": "nodejs20.x"
-   },
-   "me-south-1": {
-    "value": "nodejs20.x"
-   },
-   "mx-central-1": {
-    "value": "nodejs20.x"
-   },
-   "sa-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-east-2": {
-    "value": "nodejs20.x"
-   },
-   "us-gov-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-gov-west-1": {
-    "value": "nodejs20.x"
-   },
-   "us-iso-east-1": {
-    "value": "nodejs18.x"
-   },
-   "us-iso-west-1": {
-    "value": "nodejs18.x"
-   },
-   "us-isob-east-1": {
-    "value": "nodejs18.x"
-   },
-   "us-isob-west-1": {
-    "value": "nodejs18.x"
-   },
-   "us-west-1": {
-    "value": "nodejs20.x"
-   },
-   "us-west-2": {
-    "value": "nodejs20.x"
-   }
-  }
- },
  "Outputs": {
   "MonitoringWatchfulWatchfulDashboard1D7DDB1C": {
    "Value": {
@@ -1321,12 +1199,9 @@
     ]
    }
   },
-  "ExportsOutputRefPackageStatsStateMachine28DD16FB5A9D586D": {
+  "PublishOutputRefPackageStatsStateMachine28DD16FBFBA7B725": {
    "Value": {
     "Ref": "PackageStatsStateMachine28DD16FB"
-   },
-   "Export": {
-    "Name": "PackageStatsInteg:ExportsOutputRefPackageStatsStateMachine28DD16FB5A9D586D"
    }
   }
  },
