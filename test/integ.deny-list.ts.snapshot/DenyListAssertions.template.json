@@ -45,14 +45,26 @@
        "Effect": "Allow",
        "Resource": [
         {
-         "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttDenyListBucketC1C9D3D9Arn00FDD6F6"
+         "Fn::GetStackOutput": {
+          "StackName": "DenyListInteg",
+          "Region": {
+           "Ref": "AWS::Region"
+          },
+          "OutputName": "PublishOutputFnGetAttDenyListBucketC1C9D3D9ArnA844555D"
+         }
         },
         {
          "Fn::Join": [
           "",
           [
            {
-            "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttDenyListBucketC1C9D3D9Arn00FDD6F6"
+            "Fn::GetStackOutput": {
+             "StackName": "DenyListInteg",
+             "Region": {
+              "Ref": "AWS::Region"
+             },
+             "OutputName": "PublishOutputFnGetAttDenyListBucketC1C9D3D9ArnA844555D"
+            }
            },
            "/*"
           ]
@@ -81,17 +93,29 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "480eb299eec58f5449f8699b57b2cbe09bf98efb76a61f59352684db25691e9a.zip"
+     "S3Key": "da1bca1cd2a7d83db5d41eddeaf5092c701d5d7eaefadffc6a2ad8d3dea56163.zip"
     },
     "Description": "__tests__/backend/deny-list/mocks/client-test.lambda.ts",
     "Environment": {
      "Variables": {
       "BUCKET_NAME": {
-       "Fn::ImportValue": "DenyListInteg:ExportsOutputRefDenyListBucketC1C9D3D90E2E16C4"
+       "Fn::GetStackOutput": {
+        "StackName": "DenyListInteg",
+        "Region": {
+         "Ref": "AWS::Region"
+        },
+        "OutputName": "PublishOutputRefDenyListBucketC1C9D3D92B422E1B"
+       }
       },
       "FILE_NAME": "deny-list.json",
       "DENY_LIST_BUCKET_NAME": {
-       "Fn::ImportValue": "DenyListInteg:ExportsOutputRefDenyListBucketC1C9D3D90E2E16C4"
+       "Fn::GetStackOutput": {
+        "StackName": "DenyListInteg",
+        "Region": {
+         "Ref": "AWS::Region"
+        },
+        "OutputName": "PublishOutputRefDenyListBucketC1C9D3D92B422E1B"
+       }
       },
       "DENY_LIST_OBJECT_KEY": "deny-list.json"
      }
@@ -109,6 +133,25 @@
     "ClientTestServiceRoleDefaultPolicy3CB30A97",
     "ClientTestServiceRole4F7802CF"
    ]
+  },
+  "ClientTestLogGroupAC433E42": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "ClientTestBE4CEC14"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
   },
   "PruneTestServiceRole91D2E3A2": {
    "Type": "AWS::IAM::Role",
@@ -155,14 +198,26 @@
        "Effect": "Allow",
        "Resource": [
         {
-         "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttMockDataBucket4719A0C1ArnAE5BBF6D"
+         "Fn::GetStackOutput": {
+          "StackName": "DenyListInteg",
+          "Region": {
+           "Ref": "AWS::Region"
+          },
+          "OutputName": "PublishOutputFnGetAttMockDataBucket4719A0C1Arn7D757E0A"
+         }
         },
         {
          "Fn::Join": [
           "",
           [
            {
-            "Fn::ImportValue": "DenyListInteg:ExportsOutputFnGetAttMockDataBucket4719A0C1ArnAE5BBF6D"
+            "Fn::GetStackOutput": {
+             "StackName": "DenyListInteg",
+             "Region": {
+              "Ref": "AWS::Region"
+             },
+             "OutputName": "PublishOutputFnGetAttMockDataBucket4719A0C1Arn7D757E0A"
+            }
            },
            "/*"
           ]
@@ -191,13 +246,19 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "f4556d9aee50939a09006bddc7e28de6a34d2745fb410c7290636c9388bb3970.zip"
+     "S3Key": "3f2d19e088343a10ed65f790967ecdeb8f7bb937daced745847fdfa400b87e6e.zip"
     },
     "Description": "__tests__/backend/deny-list/mocks/prune-test.lambda.ts",
     "Environment": {
      "Variables": {
       "BUCKET_NAME": {
-       "Fn::ImportValue": "DenyListInteg:ExportsOutputRefMockDataBucket4719A0C16191E52D"
+       "Fn::GetStackOutput": {
+        "StackName": "DenyListInteg",
+        "Region": {
+         "Ref": "AWS::Region"
+        },
+        "OutputName": "PublishOutputRefMockDataBucket4719A0C18943629C"
+       }
       },
       "TIMEOUT_SEC": "120",
       "EXPECTED_KEYS": "[\"data/your/v1.2.4/world.txt\",\"data/your/v1.2.4/hello.txt\"]"
@@ -217,6 +278,25 @@
     "PruneTestServiceRoleDefaultPolicyBD33ABA2",
     "PruneTestServiceRole91D2E3A2"
    ]
+  },
+  "PruneTestLogGroupF6385E6E": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "PruneTest66C7D9FC"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
   },
   "LambdaInvoke430db2f4c412d720946178d9d90463aa": {
    "Type": "Custom::DeployAssert@SdkCallLambdainvoke",
@@ -245,7 +325,7 @@
      }
     },
     "flattenResponse": "false",
-    "salt": "1765379827749"
+    "salt": "1791970890266"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
@@ -380,20 +460,12 @@
   "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
-    "Runtime": {
-     "Fn::FindInMap": [
-      "LatestNodeRuntimeMap",
-      {
-       "Ref": "AWS::Region"
-      },
-      "value"
-     ]
-    },
+    "Runtime": "nodejs24.x",
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "530055f7515b3f0a47900f5df37e729ba40ca977b2d07b952bdefa2b8f883f42.zip"
+     "S3Key": "13c53d1af041ac32db1c99c5bae43b3bd7d29a12d9113921a925efd959ba10dc.zip"
     },
     "Timeout": 120,
     "Handler": "index.handler",
@@ -402,6 +474,10 @@
       "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
       "Arn"
      ]
+    },
+    "LoggingConfig": {
+     "LogFormat": "JSON",
+     "ApplicationLogLevel": "FATAL"
     }
    }
   },
@@ -432,7 +508,7 @@
      }
     },
     "flattenResponse": "false",
-    "salt": "1765379827749"
+    "salt": "1791970890267"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
@@ -468,136 +544,6 @@
      "LambdaInvoke45d0cbc8aab3b3eab09591e2f0644115",
      "assertion"
     ]
-   }
-  }
- },
- "Mappings": {
-  "LatestNodeRuntimeMap": {
-   "af-south-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-east-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-east-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-northeast-3": {
-    "value": "nodejs20.x"
-   },
-   "ap-south-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-south-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-1": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-2": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-3": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-4": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-5": {
-    "value": "nodejs20.x"
-   },
-   "ap-southeast-7": {
-    "value": "nodejs20.x"
-   },
-   "ca-central-1": {
-    "value": "nodejs20.x"
-   },
-   "ca-west-1": {
-    "value": "nodejs20.x"
-   },
-   "cn-north-1": {
-    "value": "nodejs20.x"
-   },
-   "cn-northwest-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-central-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-central-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-isoe-west-1": {
-    "value": "nodejs18.x"
-   },
-   "eu-north-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-south-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-south-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-1": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-2": {
-    "value": "nodejs20.x"
-   },
-   "eu-west-3": {
-    "value": "nodejs20.x"
-   },
-   "il-central-1": {
-    "value": "nodejs20.x"
-   },
-   "me-central-1": {
-    "value": "nodejs20.x"
-   },
-   "me-south-1": {
-    "value": "nodejs20.x"
-   },
-   "mx-central-1": {
-    "value": "nodejs20.x"
-   },
-   "sa-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-east-2": {
-    "value": "nodejs20.x"
-   },
-   "us-gov-east-1": {
-    "value": "nodejs20.x"
-   },
-   "us-gov-west-1": {
-    "value": "nodejs20.x"
-   },
-   "us-iso-east-1": {
-    "value": "nodejs18.x"
-   },
-   "us-iso-west-1": {
-    "value": "nodejs18.x"
-   },
-   "us-isob-east-1": {
-    "value": "nodejs18.x"
-   },
-   "us-isob-west-1": {
-    "value": "nodejs18.x"
-   },
-   "us-west-1": {
-    "value": "nodejs20.x"
-   },
-   "us-west-2": {
-    "value": "nodejs20.x"
    }
   }
  },

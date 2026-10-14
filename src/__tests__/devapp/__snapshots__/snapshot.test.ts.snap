@@ -2,136 +2,6 @@
 
 exports[`golden snapshot 1`] = `
 {
-  "Mappings": {
-    "LatestNodeRuntimeMap": {
-      "af-south-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-east-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs20.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-4": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-5": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-7": {
-        "value": "nodejs20.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs20.x",
-      },
-      "ca-west-1": {
-        "value": "nodejs20.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs20.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-isoe-west-1": {
-        "value": "nodejs18.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs20.x",
-      },
-      "il-central-1": {
-        "value": "nodejs20.x",
-      },
-      "me-central-1": {
-        "value": "nodejs20.x",
-      },
-      "me-south-1": {
-        "value": "nodejs20.x",
-      },
-      "mx-central-1": {
-        "value": "nodejs20.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-east-2": {
-        "value": "nodejs20.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs20.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-west-1": {
-        "value": "nodejs20.x",
-      },
-      "us-west-2": {
-        "value": "nodejs20.x",
-      },
-    },
-  },
   "Outputs": {
     "ConstructHubDenyListSnapshotCommand3E133B03": {
       "Description": "Snapshot dev/ConstructHub/DenyList/Bucket",
@@ -305,7 +175,7 @@ exports[`golden snapshot 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9d043014be736e8162bcc7ec5590cc6d2ff24fd0d9c73a5c5d595151c5fdad00.zip",
+          "S3Key": "9b8fce7ae7f25ef82fdbaf6b72523b99d0875c0c9c826642819fb51f11d9b125.zip",
         },
         "Handler": "index.handler",
         "Role": {
@@ -314,15 +184,7 @@ exports[`golden snapshot 1`] = `
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs24.x",
         "Timeout": 120,
       },
       "Type": "AWS::Lambda::Function",
@@ -367,7 +229,7 @@ exports[`golden snapshot 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b585179dc46d9100f31367c1eb03e063c4e1a396f99a6a188ac4a05a16ae4fa5.zip",
+          "S3Key": "fae8b01d672b4358f1599a33d169a0c6f86e8d50677c9f50779567c206dcd285.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -377,15 +239,7 @@ exports[`golden snapshot 1`] = `
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs24.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -483,7 +337,6 @@ exports[`golden snapshot 1`] = `
     },
     "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": {
       "DependsOn": [
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
         "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
       ],
       "Properties": {
@@ -607,7 +460,7 @@ def sort_filter_rules(json_obj):
             "Arn",
           ],
         },
-        "Runtime": "python3.11",
+        "Runtime": "python3.13",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
@@ -642,27 +495,6 @@ def sort_filter_rules(json_obj):
         ],
       },
       "Type": "AWS::IAM::Role",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": {
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "s3:PutBucketNotification",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "Roles": [
-          {
-            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubApplication64E14E14": {
       "Properties": {
@@ -722,23 +554,23 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Usage","ResourceCount","Class","Standard/OnDemand","Resource","vCPU","Service","Fargate","Type","Resource",{"label":"Fargate vCPU Usage (On-Demand)","stat":"Maximum","id":"mFargateUsage"}],[{"label":"Fargate vCPU Quota (On-Demand)","expression":"SERVICE_QUOTA(mFargateUsage)"}],[{"label":"CPU Utilization","expression":"100 * FILL(mCpuUtilized, 0) / FILL(mCpuReserved, REPEAT)","yAxis":"right"}],["ECS/ContainerInsights","CpuReserved","ClusterName","",
+              "","metrics":[["AWS/Usage","ResourceCount","Class","Standard/OnDemand","Resource","vCPU","Service","Fargate","Type","Resource",{"label":"Fargate vCPU Usage (On-Demand)","id":"mFargateUsage","stat":"Maximum"}],[{"label":"Fargate vCPU Quota (On-Demand)","expression":"SERVICE_QUOTA(mFargateUsage)"}],[{"label":"CPU Utilization","expression":"100 * FILL(mCpuUtilized, 0) / FILL(mCpuReserved, REPEAT)","yAxis":"right"}],["ECS/ContainerInsights","CpuReserved","ClusterName","",
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"stat":"Maximum","visible":false,"id":"mCpuReserved"}],["ECS/ContainerInsights","CpuUtilized","ClusterName","",
+              "",{"id":"mCpuReserved","visible":false,"stat":"Maximum"}],["ECS/ContainerInsights","CpuUtilized","ClusterName","",
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"stat":"Maximum","visible":false,"id":"mCpuUtilized"}],[{"label":"Memory Utilization","expression":"100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)","yAxis":"right"}],["ECS/ContainerInsights","MemoryReserved","ClusterName","",
+              "",{"id":"mCpuUtilized","visible":false,"stat":"Maximum"}],[{"label":"Memory Utilization","expression":"100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)","yAxis":"right"}],["ECS/ContainerInsights","MemoryReserved","ClusterName","",
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"stat":"Maximum","visible":false,"id":"mMemoryReserved"}],["ECS/ContainerInsights","MemoryUtilized","ClusterName","",
+              "",{"id":"mMemoryReserved","visible":false,"stat":"Maximum"}],["ECS/ContainerInsights","MemoryUtilized","ClusterName","",
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"stat":"Maximum","visible":false,"id":"mMemoryUtilized"}]],"yAxis":{"left":{"min":0},"right":{"label":"Percent","min":0,"max":100,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":10,"properties":{"view":"timeSeries","title":"ECS Resources","region":"",
+              "",{"id":"mMemoryUtilized","visible":false,"stat":"Maximum"}]],"yAxis":{"left":{"min":0},"right":{"label":"Percent","min":0,"max":100,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":10,"properties":{"view":"timeSeries","title":"ECS Resources","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -746,15 +578,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"label":"Received Bytes","stat":"Maximum","visible":false,"id":"m67cc14db3275d4a2af71847df2ebb376a00b015f62c4ff9d1aedb9bc615a6cf0"}],[{"label":"Transmitted Bytes","expression":"FILL(md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1, 0)"}],["ECS/ContainerInsights","NetworkTxBytes","ClusterName","",
+              "",{"label":"Received Bytes","id":"m67cc14db3275d4a2af71847df2ebb376a00b015f62c4ff9d1aedb9bc615a6cf0","visible":false,"stat":"Maximum"}],[{"label":"Transmitted Bytes","expression":"FILL(md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1, 0)"}],["ECS/ContainerInsights","NetworkTxBytes","ClusterName","",
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"label":"Transmitted Bytes","stat":"Maximum","visible":false,"id":"md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1"}],[{"label":"Task Count","expression":"FILL(mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd, 0)","yAxis":"right"}],["ECS/ContainerInsights","TaskCount","ExecutionMetrics","",
+              "",{"label":"Transmitted Bytes","id":"md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1","visible":false,"stat":"Maximum"}],[{"label":"Task Count","expression":"FILL(mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd, 0)","yAxis":"right"}],["ECS/ContainerInsights","TaskCount","ExecutionMetrics","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Task Count","stat":"Sum","visible":false,"id":"mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":16,"properties":{"view":"timeSeries","title":"ECS Task Monitor","region":"",
+              "",{"label":"Task Count","id":"mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd","visible":false,"stat":"Sum"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":16,"properties":{"view":"timeSeries","title":"ECS Task Monitor","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -868,11 +700,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
+              "",{"label":"Invocations","id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2","visible":false,"stat":"Sum"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}],["ConstructHub/PackageSource/NpmJs/Follower","RemainingTime",{"label":"Remaining Time","stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":59,"properties":{"view":"timeSeries","title":"Stager Health","region":"",
+              "",{"label":"Errors","id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55","visible":false,"stat":"Sum"}],["ConstructHub/PackageSource/NpmJs/Follower","RemainingTime",{"label":"Remaining Time","stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":59,"properties":{"view":"timeSeries","title":"Stager Health","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -880,11 +712,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
-              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
+              "",{"label":"Invocations","id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2","visible":false,"stat":"Sum"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}],["AWS/Lambda","Duration","FunctionName","",
+              "",{"label":"Errors","id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55","visible":false,"stat":"Sum"}],["AWS/Lambda","Duration","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
@@ -892,15 +724,15 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Change Count","expression":"FILL(mf6a938229aec623f5cf21e3ae3401901e7f7c6ebd5774ab6ac6e74af83efd121, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","ChangeCount",{"label":"Change Count","stat":"Sum","visible":false,"id":"mf6a938229aec623f5cf21e3ae3401901e7f7c6ebd5774ab6ac6e74af83efd121"}],[{"label":"Unprocessable","expression":"FILL(m5b235d813bd8ded65d7de9a1345c9b49a8cf2af40e7e98ddbb8cb73e00783a8a, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","UnprocessableEntity",{"label":"Unprocessable","stat":"Sum","visible":false,"id":"m5b235d813bd8ded65d7de9a1345c9b49a8cf2af40e7e98ddbb8cb73e00783a8a"}],[{"label":"Lag to npmjs.com","expression":"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","NpmJsChangeAge",{"label":"Lag to npmjs.com","stat":"Minimum","visible":false,"id":"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b"}],[{"label":"Package Version Age","expression":"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package Version Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":65,"properties":{"view":"timeSeries","title":"CouchDB Changes","region":"",
+              "","metrics":[[{"label":"Change Count","expression":"FILL(mf6a938229aec623f5cf21e3ae3401901e7f7c6ebd5774ab6ac6e74af83efd121, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","ChangeCount",{"label":"Change Count","id":"mf6a938229aec623f5cf21e3ae3401901e7f7c6ebd5774ab6ac6e74af83efd121","visible":false,"stat":"Sum"}],[{"label":"Unprocessable","expression":"FILL(m5b235d813bd8ded65d7de9a1345c9b49a8cf2af40e7e98ddbb8cb73e00783a8a, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","UnprocessableEntity",{"label":"Unprocessable","id":"m5b235d813bd8ded65d7de9a1345c9b49a8cf2af40e7e98ddbb8cb73e00783a8a","visible":false,"stat":"Sum"}],[{"label":"Lag to npmjs.com","expression":"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","NpmJsChangeAge",{"label":"Lag to npmjs.com","id":"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b","visible":false,"stat":"Minimum"}],[{"label":"Package Version Age","expression":"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package Version Age","id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4","visible":false,"stat":"Maximum"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":65,"properties":{"view":"timeSeries","title":"CouchDB Changes","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Last Sequence Number","expression":"FILL(mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500, REPEAT)"}],["ConstructHub/PackageSource/NpmJs/Follower","LastSeq",{"label":"Last Sequence Number","stat":"Maximum","visible":false,"id":"mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500"}]],"yAxis":{},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":71,"properties":{"view":"timeSeries","title":"Feed Reliability","region":"",
+              "","metrics":[[{"label":"Last Sequence Number","expression":"FILL(mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500, REPEAT)"}],["ConstructHub/PackageSource/NpmJs/Follower","LastSeq",{"label":"Last Sequence Number","id":"mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500","visible":false,"stat":"Maximum"}]],"yAxis":{},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":71,"properties":{"view":"timeSeries","title":"Feed Reliability","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","stat":"Sum","visible":false,"id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","stat":"Maximum","visible":false,"id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","stat":"Sum","visible":false,"id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","stat":"Sum","visible":false,"id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665"}],[{"label":"Missing Packuments","expression":"FILL(m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackuments",{"label":"Missing Packuments","stat":"Sum","visible":false,"id":"m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62"}],[{"label":"Missing Packuments Recovered","expression":"FILL(m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentsRecovered",{"label":"Missing Packuments Recovered","stat":"Sum","visible":false,"id":"m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7"}],[{"label":"Missing Packument Give-Ups","expression":"FILL(m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentGiveUps",{"label":"Missing Packument Give-Ups","stat":"Sum","visible":false,"id":"m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","stat":"Sum","visible":false,"id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Packument Queue","region":"",
+              "","metrics":[[{"label":"Late Changes","expression":"FILL(m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeCount",{"label":"Late Changes","id":"m97b26d9c3912f8122fc8cbc26c10d7e362f10a1b01dd7b6fc615793a0614ffd5","visible":false,"stat":"Sum"}],[{"label":"Laggy Packuments","expression":"FILL(m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackuments",{"label":"Laggy Packuments","id":"m7542c42c2a42804f45673f1b7a1e208ef9657546e83a7fed66558c0c9a9458fc","visible":false,"stat":"Maximum"}],[{"label":"Laggy Packuments Recovered","expression":"FILL(meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentsRecovered",{"label":"Laggy Packuments Recovered","id":"meebc873175632650e3dbd407c0e22f4395c7b945fffbd66f17cc225c7f3c5ab7","visible":false,"stat":"Sum"}],[{"label":"Laggy Packument Give-Ups","expression":"FILL(m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","LaggyPackumentGiveUps",{"label":"Laggy Packument Give-Ups","id":"m25c8aa905abbcebe79405fb8d308d3b26cc11789e67b7b432396024cc3688665","visible":false,"stat":"Sum"}],[{"label":"Missing Packuments","expression":"FILL(m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackuments",{"label":"Missing Packuments","id":"m01772d2035c66bb758d8af88685f9a5f508aac1982cd26d7b1ed107a5e948e62","visible":false,"stat":"Sum"}],[{"label":"Missing Packuments Recovered","expression":"FILL(m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentsRecovered",{"label":"Missing Packuments Recovered","id":"m65c59efca9f729008affb3924f59d4dc66e24297ee63442794b259b64a2a85e7","visible":false,"stat":"Sum"}],[{"label":"Missing Packument Give-Ups","expression":"FILL(m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MissingPackumentGiveUps",{"label":"Missing Packument Give-Ups","id":"m853f955d255e0171792576a2bb4142132ad90c73ede7d119e6bdd8c383111e72","visible":false,"stat":"Sum"}],[{"label":"Metadata Fetch Failures","expression":"FILL(mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb, 0)"}],["ConstructHub/PackageSource/NpmJs/Follower","MetadataFetchFailures",{"label":"Metadata Fetch Failures","id":"mb4ba2ab8081f9474c7f13c3726c05a8d8243b0432c76e4ce05db82f5f80bf5bb","visible":false,"stat":"Sum"}],["ConstructHub/PackageSource/NpmJs/Follower","LateChangeLag",{"label":"Late Change Lag (max)","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"Scan Window","value":21600000,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Packument Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -936,14 +768,14 @@ def sort_filter_rules(json_obj):
                   "QueueName",
                 ],
               },
-              "",{"label":"Visible Messages","stat":"Maximum","visible":false,"id":"m96c7bb4160011a049b6b07c0feab8fb02e5a8d4aa466939592829f864dde6400"}],[{"label":"Invisible Messages","expression":"FILL(mf74066283a392fc98a0cd7a405f2aa9b5af544d3a87542f06fff7fd069fd8578, 0)"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
+              "",{"label":"Visible Messages","id":"m96c7bb4160011a049b6b07c0feab8fb02e5a8d4aa466939592829f864dde6400","visible":false,"stat":"Maximum"}],[{"label":"Invisible Messages","expression":"FILL(mf74066283a392fc98a0cd7a405f2aa9b5af544d3a87542f06fff7fd069fd8578, 0)"}],["AWS/SQS","ApproximateNumberOfMessagesNotVisible","QueueName","",
               {
                 "Fn::GetAtt": [
                   "ConstructHubSourcesStagerDLQ80BD2600",
                   "QueueName",
                 ],
               },
-              "",{"label":"Invisible Messages","stat":"Maximum","visible":false,"id":"mf74066283a392fc98a0cd7a405f2aa9b5af544d3a87542f06fff7fd069fd8578"}],["AWS/SQS","ApproximateAgeOfOldestMessage","QueueName","",
+              "",{"label":"Invisible Messages","id":"mf74066283a392fc98a0cd7a405f2aa9b5af544d3a87542f06fff7fd069fd8578","visible":false,"stat":"Maximum"}],["AWS/SQS","ApproximateAgeOfOldestMessage","QueueName","",
               {
                 "Fn::GetAtt": [
                   "ConstructHubSourcesStagerDLQ80BD2600",
@@ -993,11 +825,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
+              "",{"label":"Invocations","id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2","visible":false,"stat":"Sum"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":91,"properties":{"view":"timeSeries","title":"Input Queue","region":"",
+              "",{"label":"Errors","id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55","visible":false,"stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":91,"properties":{"view":"timeSeries","title":"Input Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1026,7 +858,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","stacked":true,"metrics":[[{"label":"Invalid Assemblies","expression":"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)"}],["ConstructHub/Ingestion","InvalidAssembly",{"label":"Invalid Assemblies","stat":"Sum","visible":false,"id":"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3"}],[{"label":"Invalid Tarball","expression":"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)"}],["ConstructHub/Ingestion","InvalidTarball",{"label":"Invalid Tarball","stat":"Sum","visible":false,"id":"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1"}],[{"label":"Ineligible License","expression":"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)"}],["ConstructHub/Ingestion","IneligibleLicense",{"label":"Ineligible License","stat":"Sum","visible":false,"id":"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6"}],[{"label":"Mismatched Identity","expression":"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)"}],["ConstructHub/Ingestion","MismatchedIdentityRejections",{"label":"Mismatched Identity","stat":"Sum","visible":false,"id":"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b"}],[{"label":"Found License file","expression":"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)"}],["ConstructHub/Ingestion","FoundLicenseFile",{"label":"Found License file","stat":"Sum","visible":false,"id":"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661"}]],"yAxis":{"left":{"label":"Count","min":0,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":97,"properties":{"view":"timeSeries","title":"Dead Letters","region":"",
+              "","stacked":true,"metrics":[[{"label":"Invalid Assemblies","expression":"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)"}],["ConstructHub/Ingestion","InvalidAssembly",{"label":"Invalid Assemblies","id":"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3","visible":false,"stat":"Sum"}],[{"label":"Invalid Tarball","expression":"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)"}],["ConstructHub/Ingestion","InvalidTarball",{"label":"Invalid Tarball","id":"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1","visible":false,"stat":"Sum"}],[{"label":"Ineligible License","expression":"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)"}],["ConstructHub/Ingestion","IneligibleLicense",{"label":"Ineligible License","id":"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6","visible":false,"stat":"Sum"}],[{"label":"Mismatched Identity","expression":"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)"}],["ConstructHub/Ingestion","MismatchedIdentityRejections",{"label":"Mismatched Identity","id":"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b","visible":false,"stat":"Sum"}],[{"label":"Found License file","expression":"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)"}],["ConstructHub/Ingestion","FoundLicenseFile",{"label":"Found License file","id":"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661","visible":false,"stat":"Sum"}]],"yAxis":{"left":{"label":"Count","min":0,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":97,"properties":{"view":"timeSeries","title":"Dead Letters","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1090,11 +922,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Started","stat":"Sum","visible":false,"id":"m392141ff4cfa3bbe1889b2db42bcf20599513e199a0b9fb8dc736cde893c1d7c"}],[{"label":"Succeeded","expression":"FILL(md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1, 0)"}],["AWS/States","ExecutionsSucceeded","StateMachineArn","",
+              "",{"label":"Started","id":"m392141ff4cfa3bbe1889b2db42bcf20599513e199a0b9fb8dc736cde893c1d7c","visible":false,"stat":"Sum"}],[{"label":"Succeeded","expression":"FILL(md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1, 0)"}],["AWS/States","ExecutionsSucceeded","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Succeeded","stat":"Sum","visible":false,"id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1"}],["AWS/States","ExecutionTime","StateMachineArn","",
+              "",{"label":"Succeeded","id":"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1","visible":false,"stat":"Sum"}],["AWS/States","ExecutionTime","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -1106,19 +938,19 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Aborted","stat":"Sum","visible":false,"id":"m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08"}],[{"label":"Failed","expression":"FILL(m503cb5a7568675222eb2ac827982f88ad300c986505dabfafe1707080946e597, 0)"}],["AWS/States","ExecutionsFailed","StateMachineArn","",
+              "",{"label":"Aborted","id":"m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08","visible":false,"stat":"Sum"}],[{"label":"Failed","expression":"FILL(m503cb5a7568675222eb2ac827982f88ad300c986505dabfafe1707080946e597, 0)"}],["AWS/States","ExecutionsFailed","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Failed","stat":"Sum","visible":false,"id":"m503cb5a7568675222eb2ac827982f88ad300c986505dabfafe1707080946e597"}],[{"label":"Throttled","expression":"FILL(m278670a6ffa3ce32fec8fcb73c1cfdc4c965389617e2387ab5852ebb00b2a81f, 0)"}],["AWS/States","ExecutionThrottled","StateMachineArn","",
+              "",{"label":"Failed","id":"m503cb5a7568675222eb2ac827982f88ad300c986505dabfafe1707080946e597","visible":false,"stat":"Sum"}],[{"label":"Throttled","expression":"FILL(m278670a6ffa3ce32fec8fcb73c1cfdc4c965389617e2387ab5852ebb00b2a81f, 0)"}],["AWS/States","ExecutionThrottled","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Throttled","stat":"Sum","visible":false,"id":"m278670a6ffa3ce32fec8fcb73c1cfdc4c965389617e2387ab5852ebb00b2a81f"}],[{"label":"Timed Out","expression":"FILL(m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21, 0)"}],["AWS/States","ExecutionsTimedOut","StateMachineArn","",
+              "",{"label":"Throttled","id":"m278670a6ffa3ce32fec8fcb73c1cfdc4c965389617e2387ab5852ebb00b2a81f","visible":false,"stat":"Sum"}],[{"label":"Timed Out","expression":"FILL(m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21, 0)"}],["AWS/States","ExecutionsTimedOut","StateMachineArn","",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "",{"label":"Timed Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":111,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
+              "",{"label":"Timed Out","id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21","visible":false,"stat":"Sum"}]],"yAxis":{"left":{"min":0,"label":"Count","showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":0,"y":111,"properties":{"view":"timeSeries","title":"Dead Letter Queue","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1178,7 +1010,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Rules","expression":"FILL(m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f, REPEAT)"}],["ConstructHub/DenyList","DenyListRuleCount",{"label":"Rules","stat":"Maximum","visible":false,"id":"m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f"}],["AWS/SQS","NumberOfMessagesDeleted","QueueName","",
+              "","metrics":[[{"label":"Rules","expression":"FILL(m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f, REPEAT)"}],["ConstructHub/DenyList","DenyListRuleCount",{"label":"Rules","id":"m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f","visible":false,"stat":"Maximum"}],["AWS/SQS","NumberOfMessagesDeleted","QueueName","",
               {
                 "Fn::GetAtt": [
                   "ConstructHubDenyListPruneDeleteQueueBBF60185",
@@ -1193,11 +1025,11 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
+              "",{"label":"Invocations","id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2","visible":false,"stat":"Sum"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)"}],["AWS/Lambda","Errors","FunctionName","",
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":125,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
+              "",{"label":"Errors","id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55","visible":false,"stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":125,"properties":{"markdown":"# Package Stats\\n\\n[button:primary:Package Stats Object](/s3/object/",
               {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
@@ -1221,7 +1053,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":127,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Packages with stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages with stats","id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f","visible":false,"stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":127,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1245,7 +1077,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":135,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
+              "","metrics":[[{"label":"Package versions recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d, REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package versions recorded","id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d","visible":false,"stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":135,"properties":{"view":"timeSeries","title":"Invocation Duration","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1318,7 +1150,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Packages with release notes","expression":"FILL(m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d, REPEAT)"}],["ConstructHub/ReleaseNotes","PackageWithChangeLog",{"label":"Packages with release notes","stat":"Sum","visible":false,"id":"m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":143,"properties":{"view":"timeSeries","title":"Release notes generation Errors","region":"",
+              "","metrics":[[{"label":"Packages with release notes","expression":"FILL(m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d, REPEAT)"}],["ConstructHub/ReleaseNotes","PackageWithChangeLog",{"label":"Packages with release notes","id":"m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d","visible":false,"stat":"Sum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":143,"properties":{"view":"timeSeries","title":"Release notes generation Errors","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -1326,7 +1158,7 @@ def sort_filter_rules(json_obj):
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Limit","expression":"FILL(mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d, REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsLimit",{"label":"Limit","stat":"Maximum","visible":false,"id":"mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d"}],[{"label":"Used","expression":"FILL(mc54991399581cec857a3c1773e2649cbfb65cef7ea4e459f2ada3ee31c60782e, REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsUsed",{"label":"Used","stat":"Maximum","visible":false,"id":"mc54991399581cec857a3c1773e2649cbfb65cef7ea4e459f2ada3ee31c60782e"}],[{"label":"Remaining","expression":"FILL(m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a, REPEAT)"}],["ConstructHub/ReleaseNotes","GhRateLimitsRemaining",{"label":"Remaining","stat":"Minimum","visible":false,"id":"m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a"}]],"yAxis":{}}}]}",
+              "","metrics":[[{"label":"Limit","expression":"FILL(mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d, REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsLimit",{"label":"Limit","id":"mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d","visible":false,"stat":"Maximum"}],[{"label":"Used","expression":"FILL(mc54991399581cec857a3c1773e2649cbfb65cef7ea4e459f2ada3ee31c60782e, REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsUsed",{"label":"Used","id":"mc54991399581cec857a3c1773e2649cbfb65cef7ea4e459f2ada3ee31c60782e","visible":false,"stat":"Maximum"}],[{"label":"Remaining","expression":"FILL(m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a, REPEAT)"}],["ConstructHub/ReleaseNotes","GhRateLimitsRemaining",{"label":"Remaining","id":"m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a","visible":false,"stat":"Minimum"}]],"yAxis":{}}}]}",
             ],
           ],
         },
@@ -1840,7 +1672,7 @@ def sort_filter_rules(json_obj):
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e169d5991e1e07cc2f4e2fceecf6056cc6a612cad3892f76837cf01bcbbe3ce.zip",
+          "S3Key": "98f62bef9320f8c0a0a7be21d7c746f069131f196f51ffe3008a6bb730b368ec.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -1849,6 +1681,7 @@ def sort_filter_rules(json_obj):
     "ConstructHubDenyListBucketDeploymentCustomResourceF835956B": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
+        "ConstructHubDenyListBucketNotificationsHandlerPolicy7A3FE4D6",
         "ConstructHubDenyListBucketNotifications2269EB2A",
       ],
       "Properties": {
@@ -1872,6 +1705,7 @@ def sort_filter_rules(json_obj):
         "SourceObjectKeys": [
           "6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263.zip",
         ],
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
@@ -1879,6 +1713,7 @@ def sort_filter_rules(json_obj):
     "ConstructHubDenyListBucketNotifications2269EB2A": {
       "DependsOn": [
         "ConstructHubDenyListBucketAllowBucketNotificationsTodevConstructHubDenyListPrunePruneHandler8F0BBF5E2222C5D6",
+        "ConstructHubDenyListBucketNotificationsHandlerPolicy7A3FE4D6",
         "ConstructHubDenyListBucketPolicyA1878E10",
       ],
       "Properties": {
@@ -1924,6 +1759,32 @@ def sort_filter_rules(json_obj):
         "SkipDestinationValidation": false,
       },
       "Type": "Custom::S3BucketNotifications",
+    },
+    "ConstructHubDenyListBucketNotificationsHandlerPolicy7A3FE4D6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:PutBucketNotification",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubDenyListBucket1B3C2C2E",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubDenyListBucketNotificationsHandlerPolicy7A3FE4D6",
+        "Roles": [
+          {
+            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubDenyListBucketPolicyA1878E10": {
       "Properties": {
@@ -3092,6 +2953,7 @@ Direct link to the function: /lambda/home#/functions/",
           {
             "Expression": "m1 + m2",
             "Id": "expr_1",
+            "ReturnData": true,
           },
           {
             "Id": "m1",
@@ -3151,7 +3013,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e169d5991e1e07cc2f4e2fceecf6056cc6a612cad3892f76837cf01bcbbe3ce.zip",
+          "S3Key": "98f62bef9320f8c0a0a7be21d7c746f069131f196f51ffe3008a6bb730b368ec.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -3179,6 +3041,7 @@ Direct link to the function: /lambda/home#/functions/",
         "SourceObjectKeys": [
           "b32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0.zip",
         ],
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
@@ -4922,7 +4785,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e169d5991e1e07cc2f4e2fceecf6056cc6a612cad3892f76837cf01bcbbe3ce.zip",
+          "S3Key": "98f62bef9320f8c0a0a7be21d7c746f069131f196f51ffe3008a6bb730b368ec.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -5029,6 +4892,7 @@ Direct link to function: /lambda/home#/functions/",
         "SourceObjectKeys": [
           "223de5a326d28fb85eb628b9b7d2c3f0b16f6f36c1944f4b09ddb60eb88d33dd.zip",
         ],
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
@@ -5345,7 +5209,6 @@ Direct link to function: /lambda/home#/functions/",
     },
     "ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneHandler8F0BBF5EDurationAlarm073AF5CE": {
       "Properties": {
-        "AlarmActions": [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
         "ComparisonOperator": "GreaterThanThreshold",
         "EvaluationPeriods": 3,
@@ -5378,7 +5241,6 @@ Direct link to function: /lambda/home#/functions/",
     },
     "ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneHandler8F0BBF5EErrorsAlarm615741A8": {
       "Properties": {
-        "AlarmActions": [],
         "AlarmDescription": "Over 0 errors per minute",
         "ComparisonOperator": "GreaterThanThreshold",
         "Dimensions": [
@@ -5400,7 +5262,6 @@ Direct link to function: /lambda/home#/functions/",
     },
     "ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneHandler8F0BBF5EThrottlesAlarm310F7D39": {
       "Properties": {
-        "AlarmActions": [],
         "AlarmDescription": "Over 0 throttles per minute",
         "ComparisonOperator": "GreaterThanThreshold",
         "Dimensions": [
@@ -5422,7 +5283,6 @@ Direct link to function: /lambda/home#/functions/",
     },
     "ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneQueueHandlerB847E57CDurationAlarm09AF9418": {
       "Properties": {
-        "AlarmActions": [],
         "AlarmDescription": "p99 latency >= 48s (80%)",
         "ComparisonOperator": "GreaterThanThreshold",
         "EvaluationPeriods": 3,
@@ -5455,7 +5315,6 @@ Direct link to function: /lambda/home#/functions/",
     },
     "ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneQueueHandlerB847E57CErrorsAlarmCAA191E1": {
       "Properties": {
-        "AlarmActions": [],
         "AlarmDescription": "Over 0 errors per minute",
         "ComparisonOperator": "GreaterThanThreshold",
         "Dimensions": [
@@ -5477,7 +5336,6 @@ Direct link to function: /lambda/home#/functions/",
     },
     "ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneQueueHandlerB847E57CThrottlesAlarm19D4ADCD": {
       "Properties": {
-        "AlarmActions": [],
         "AlarmDescription": "Over 0 throttles per minute",
         "ComparisonOperator": "GreaterThanThreshold",
         "Dimensions": [
@@ -6035,6 +5893,7 @@ RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           {
             "Expression": "DIFF(FILL(m1, REPEAT))",
             "Id": "expr_1",
+            "ReturnData": true,
           },
           {
             "Id": "m1",
@@ -6313,6 +6172,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "Expression": "m1 + m2",
             "Id": "expr_1",
             "Label": "Dead-Letter Queue not empty",
+            "ReturnData": true,
           },
           {
             "Id": "m1",
@@ -6376,6 +6236,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
           {
             "Expression": "100 * mexecutionsFailed / mexecutionsStarted",
             "Id": "expr_1",
+            "ReturnData": true,
           },
           {
             "Id": "mexecutionsFailed",
@@ -10017,6 +9878,7 @@ Request a service quota increase for lambda functions",
             "Expression": "mLambdaUsage / mLambdaQuota * 100",
             "Id": "expr_1",
             "Label": "Concurrent executions quota usage %",
+            "ReturnData": true,
           },
           {
             "Id": "mLambdaUsage",
@@ -10051,51 +9913,51 @@ Request a service quota increase for lambda functions",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}],[{"label":"PruneHandlerLambda quota usage %","expression":"m1 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"id":"mLambdaUsage","visible":false,"stat":"Maximum"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}],[{"label":"PruneHandlerLambda quota usage %","expression":"m1 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubDenyListPrunePruneHandler30B33551",
               },
-              "",{"label":"PruneHandlerLambda","stat":"Maximum","visible":false,"id":"m1"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"lambdaQuotaLimit"}],[{"label":"PruneQueueHandlerLambda quota usage %","expression":"m2 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"PruneHandlerLambda","id":"m1","visible":false,"stat":"Maximum"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"lambdaQuotaLimit"}],[{"label":"PruneQueueHandlerLambda quota usage %","expression":"m2 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "",{"label":"PruneQueueHandlerLambda","stat":"Maximum","visible":false,"id":"m2"}],[{"label":"updateFeedFunction quota usage %","expression":"m3 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"PruneQueueHandlerLambda","id":"m2","visible":false,"stat":"Maximum"}],[{"label":"updateFeedFunction quota usage %","expression":"m3 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubFeedBuilderReleaseNotesUpdateFeedBB0BA91D",
               },
-              "",{"label":"updateFeedFunction","stat":"Maximum","visible":false,"id":"m3"}],[{"label":"CatalogBuilderLambda quota usage %","expression":"m4 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"updateFeedFunction","id":"m3","visible":false,"stat":"Maximum"}],[{"label":"CatalogBuilderLambda quota usage %","expression":"m4 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
               },
-              "",{"label":"CatalogBuilderLambda","stat":"Maximum","visible":false,"id":"m4"}],[{"label":"NeedsCatalogUpdateLambda quota usage %","expression":"m5 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"CatalogBuilderLambda","id":"m4","visible":false,"stat":"Maximum"}],[{"label":"NeedsCatalogUpdateLambda quota usage %","expression":"m5 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
               },
-              "",{"label":"NeedsCatalogUpdateLambda","stat":"Maximum","visible":false,"id":"m5"}],[{"label":"releaseNotesTrigger quota usage %","expression":"m6 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"NeedsCatalogUpdateLambda","id":"m5","visible":false,"stat":"Maximum"}],[{"label":"releaseNotesTrigger quota usage %","expression":"m6 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubReleaseNotesReleaseNotesTriggerDD939C4F",
               },
-              "",{"label":"releaseNotesTrigger","stat":"Maximum","visible":false,"id":"m6"}],[{"label":"releaseNoteGenerateForPackage quota usage %","expression":"m7 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"releaseNotesTrigger","id":"m6","visible":false,"stat":"Maximum"}],[{"label":"releaseNoteGenerateForPackage quota usage %","expression":"m7 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubReleaseNotesGithubChangelogFetcher1616748C",
               },
-              "",{"label":"releaseNoteGenerateForPackage","stat":"Maximum","visible":false,"id":"m7"}],[{"label":"IngestionLambda quota usage %","expression":"m8 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"releaseNoteGenerateForPackage","id":"m7","visible":false,"stat":"Maximum"}],[{"label":"IngestionLambda quota usage %","expression":"m8 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "",{"label":"IngestionLambda","stat":"Maximum","visible":false,"id":"m8"}],[{"label":"NpmJsLambda quota usage %","expression":"m9 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"IngestionLambda","id":"m8","visible":false,"stat":"Maximum"}],[{"label":"NpmJsLambda quota usage %","expression":"m9 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "",{"label":"NpmJsLambda","stat":"Maximum","visible":false,"id":"m9"}],[{"label":"NpmJs-StageAndNotifyLambda quota usage %","expression":"m10 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"NpmJsLambda","id":"m9","visible":false,"stat":"Maximum"}],[{"label":"NpmJs-StageAndNotifyLambda quota usage %","expression":"m10 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
               },
-              "",{"label":"NpmJs-StageAndNotifyLambda","stat":"Maximum","visible":false,"id":"m10"}],[{"label":"CanaryResourceLambda quota usage %","expression":"m11 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              "",{"label":"NpmJs-StageAndNotifyLambda","id":"m10","visible":false,"stat":"Maximum"}],[{"label":"CanaryResourceLambda quota usage %","expression":"m11 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
               {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
               },
-              "",{"label":"CanaryResourceLambda","stat":"Maximum","visible":false,"id":"m11"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}},{"type":"custom","width":12,"height":8,"x":0,"y":8,"properties":{"endpoint":"",
+              "",{"label":"CanaryResourceLambda","id":"m11","visible":false,"stat":"Maximum"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}},{"type":"custom","width":12,"height":8,"x":0,"y":8,"properties":{"endpoint":"",
               {
                 "Fn::GetAtt": [
                   "SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885366DDBD5",
@@ -10737,6 +10599,7 @@ Consider either using GitHub application.",
             "Expression": "100 * rateLimitUsed / rateLimitLimit",
             "Id": "expr_1",
             "Label": "GHT Rate limit Percent Used",
+            "ReturnData": true,
           },
           {
             "Id": "rateLimitUsed",
@@ -11557,6 +11420,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
           {
             "Expression": "MAX([mDwell, mTTC])",
             "Id": "expr_1",
+            "ReturnData": true,
           },
           {
             "Id": "mDwell",
@@ -12062,6 +11926,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
         "ConstructHubLicenseListAwsCliLayer59592811",
         "ConstructHubLicenseListCustomResource323F0FD4",
       ],
+      "Metadata": {
+        "aws:cdk:do-not-refactor": true,
+      },
       "Properties": {
         "FunctionName": {
           "Ref": "ConstructHubSourcesNpmJsKnownVersionsMigrationFunctionEB7112AF",
@@ -12475,8 +12342,6 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             {
               "Action": [
                 "dynamodb:BatchGetItem",
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
                 "dynamodb:Query",
                 "dynamodb:GetItem",
                 "dynamodb:Scan",
@@ -12486,6 +12351,19 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
                 "dynamodb:UpdateItem",
                 "dynamodb:DeleteItem",
                 "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
               ],
               "Effect": "Allow",
               "Resource": {
@@ -13104,8 +12982,6 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             {
               "Action": [
                 "dynamodb:BatchGetItem",
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
                 "dynamodb:Query",
                 "dynamodb:GetItem",
                 "dynamodb:Scan",
@@ -13115,6 +12991,19 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
                 "dynamodb:UpdateItem",
                 "dynamodb:DeleteItem",
                 "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ConstructHubSourcesKnownVersions1480B28B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
               ],
               "Effect": "Allow",
               "Resource": {
@@ -17543,7 +17432,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e169d5991e1e07cc2f4e2fceecf6056cc6a612cad3892f76837cf01bcbbe3ce.zip",
+          "S3Key": "98f62bef9320f8c0a0a7be21d7c746f069131f196f51ffe3008a6bb730b368ec.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -17555,7 +17444,7 @@ function handler(event) {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "2e169d5991e1e07cc2f4e2fceecf6056cc6a612cad3892f76837cf01bcbbe3ce.zip",
+          "S3Key": "98f62bef9320f8c0a0a7be21d7c746f069131f196f51ffe3008a6bb730b368ec.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -17601,6 +17490,7 @@ function handler(event) {
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
         },
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
@@ -17633,6 +17523,7 @@ function handler(event) {
         "SystemMetadata": {
           "cache-control": "public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate",
         },
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
@@ -18035,11 +17926,14 @@ function handler(event) {
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiBServiceRoleBA21DBC1",
       ],
       "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
         "Code": {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9a1fcb4a7ecba81ad70e9d3fb241f6794497da945dae5f25924e4dd002b65f2d.zip",
+          "S3Key": "35328da138f26fbd9160297abc9a2522d93dbf75878cd5114a9c050419fc1ce0.zip",
         },
         "Environment": {
           "Variables": {
@@ -18059,7 +17953,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "python3.11",
+        "Runtime": "python3.13",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -18203,11 +18097,14 @@ function handler(event) {
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
       ],
       "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
         "Code": {
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9a1fcb4a7ecba81ad70e9d3fb241f6794497da945dae5f25924e4dd002b65f2d.zip",
+          "S3Key": "35328da138f26fbd9160297abc9a2522d93dbf75878cd5114a9c050419fc1ce0.zip",
         },
         "Environment": {
           "Variables": {
@@ -18220,13 +18117,14 @@ function handler(event) {
             "Ref": "ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA",
           },
         ],
+        "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
             "Arn",
           ],
         },
-        "Runtime": "python3.11",
+        "Runtime": "python3.13",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -18461,15 +18359,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs24.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -18515,15 +18405,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs24.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",

@@ -75,7 +75,7 @@ test('adds lambda function to concurrent usage graph', () => {
             {
               Ref: 'AWS::Region',
             },
-            '","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}],[{"label":"',
+            '","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"id":"mLambdaUsage","visible":false,"stat":"Maximum"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}],[{"label":"',
             {
               Ref: 'Fn9270CBC0',
             },
@@ -87,7 +87,7 @@ test('adds lambda function to concurrent usage graph', () => {
             {
               Ref: 'Fn9270CBC0',
             },
-            '","stat":"Maximum","visible":false,"id":"m1"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"lambdaQuotaLimit"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}}]}',
+            '","id":"m1","visible":false,"stat":"Maximum"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"lambdaQuotaLimit"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}}]}',
           ],
         ],
       },
@@ -125,7 +125,7 @@ test('It adds cloud front distribution to the dashboard when present', () => {
             {
               Ref: 'AWS::Region',
             },
-            '","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}},{"type":"metric","width":12,"height":8,"x":0,"y":8,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"',
+            '","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"id":"mLambdaUsage","visible":false,"stat":"Maximum"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}},{"type":"metric","width":12,"height":8,"x":0,"y":8,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"',
             {
               Ref: 'AWS::Region',
             },

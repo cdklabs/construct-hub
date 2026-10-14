@@ -85,7 +85,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8.zip"
+     "S3Key": "ffb21b7e396cc684c46812aea1d2ff7ea22401e05038c047ae9f071082c68586.zip"
     },
     "Handler": "index.certificateRequestHandler",
     "Role": {
@@ -94,13 +94,32 @@
       "Arn"
      ]
     },
-    "Runtime": "nodejs20.x",
+    "Runtime": "nodejs24.x",
     "Timeout": 900
    },
    "DependsOn": [
     "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicy54E1AEDA",
     "MyDomainRedirectCertificateCertificateRequestorFunctionServiceRole27FAC43B"
    ]
+  },
+  "MyDomainRedirectCertificateCertificateRequestorFunctionLogGroup3379BD25": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "MyDomainRedirectCertificateCertificateRequestorFunctionD2A136F7"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
   },
   "MyDomainRedirectCertificateCertificateRequestorResourceFBF8557C": {
    "Type": "AWS::CloudFormation::CustomResource",

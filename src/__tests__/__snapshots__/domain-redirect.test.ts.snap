@@ -11,134 +11,6 @@ exports[`a bucket is created for each redirect target 1`] = `
         "zoneId": "Z3RFFRIM2A3IF5",
       },
     },
-    "LatestNodeRuntimeMap": {
-      "af-south-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-east-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs20.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-4": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-5": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-7": {
-        "value": "nodejs20.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs20.x",
-      },
-      "ca-west-1": {
-        "value": "nodejs20.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs20.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-isoe-west-1": {
-        "value": "nodejs18.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs20.x",
-      },
-      "il-central-1": {
-        "value": "nodejs20.x",
-      },
-      "me-central-1": {
-        "value": "nodejs20.x",
-      },
-      "me-south-1": {
-        "value": "nodejs20.x",
-      },
-      "mx-central-1": {
-        "value": "nodejs20.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-east-2": {
-        "value": "nodejs20.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs20.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-west-1": {
-        "value": "nodejs20.x",
-      },
-      "us-west-2": {
-        "value": "nodejs20.x",
-      },
-    },
   },
   "Parameters": {
     "BootstrapVersion": {
@@ -210,7 +82,7 @@ exports[`a bucket is created for each redirect target 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8.zip",
+          "S3Key": "ffb21b7e396cc684c46812aea1d2ff7ea22401e05038c047ae9f071082c68586.zip",
         },
         "Handler": "index.certificateRequestHandler",
         "Role": {
@@ -219,15 +91,7 @@ exports[`a bucket is created for each redirect target 1`] = `
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs24.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -458,7 +322,7 @@ exports[`a bucket is created for each redirect target 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8.zip",
+          "S3Key": "ffb21b7e396cc684c46812aea1d2ff7ea22401e05038c047ae9f071082c68586.zip",
         },
         "Handler": "index.certificateRequestHandler",
         "Role": {
@@ -467,15 +331,7 @@ exports[`a bucket is created for each redirect target 1`] = `
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs24.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -730,7 +586,7 @@ exports[`a bucket is created for each redirect target 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8.zip",
+          "S3Key": "ffb21b7e396cc684c46812aea1d2ff7ea22401e05038c047ae9f071082c68586.zip",
         },
         "Handler": "index.certificateRequestHandler",
         "Role": {
@@ -739,15 +595,7 @@ exports[`a bucket is created for each redirect target 1`] = `
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs24.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -958,134 +806,6 @@ exports[`minimal usage 1`] = `
         "zoneId": "Z3RFFRIM2A3IF5",
       },
     },
-    "LatestNodeRuntimeMap": {
-      "af-south-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-east-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs20.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-4": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-5": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-7": {
-        "value": "nodejs20.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs20.x",
-      },
-      "ca-west-1": {
-        "value": "nodejs20.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs20.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-isoe-west-1": {
-        "value": "nodejs18.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs20.x",
-      },
-      "il-central-1": {
-        "value": "nodejs20.x",
-      },
-      "me-central-1": {
-        "value": "nodejs20.x",
-      },
-      "me-south-1": {
-        "value": "nodejs20.x",
-      },
-      "mx-central-1": {
-        "value": "nodejs20.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-east-2": {
-        "value": "nodejs20.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs20.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-west-1": {
-        "value": "nodejs20.x",
-      },
-      "us-west-2": {
-        "value": "nodejs20.x",
-      },
-    },
   },
   "Parameters": {
     "BootstrapVersion": {
@@ -1169,7 +889,7 @@ exports[`minimal usage 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b073cebcf4d61fb152a30f5a5e57a94df7f980a549fdf1a79a0b18c5750522d8.zip",
+          "S3Key": "ffb21b7e396cc684c46812aea1d2ff7ea22401e05038c047ae9f071082c68586.zip",
         },
         "Handler": "index.certificateRequestHandler",
         "Role": {
@@ -1178,15 +898,7 @@ exports[`minimal usage 1`] = `
             "Arn",
           ],
         },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
+        "Runtime": "nodejs24.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",

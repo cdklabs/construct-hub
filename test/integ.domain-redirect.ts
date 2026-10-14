@@ -55,6 +55,11 @@ new DomainRedirect(stack, 'MyDomainRedirect', {
   targetDomainName: 'constructs.dev',
 });
 
-new IntegTest(app, 'domain-redirect-integ', {
+const integ = new IntegTest(app, 'domain-redirect-integ', {
   testCases: [stack],
+});
+// This test has no assertions, so its assertion stack has no resources.
+core.Validations.of(integ).acknowledge({
+  id: 'CloudFormation-Validate::F0001',
+  reason: 'The assertion stack of a test without assertions is empty',
 });
