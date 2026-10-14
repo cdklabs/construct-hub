@@ -14,6 +14,17 @@ import { PackumentProcessor } from './packument-processor';
 import { IDenyList } from '../../backend/deny-list/api';
 import { ILicenseList } from '../../backend/license-list/api';
 
+/** The timeout of the packument processor function. */
+const FUNCTION_TIMEOUT = Duration.minutes(5);
+
+/**
+ * The visibility timeout of both queues, which the function reads. Lambda
+ * requires at least the function timeout; AWS recommends 6x.
+ */
+const QUEUE_VISIBILITY_TIMEOUT = Duration.minutes(
+  6 * FUNCTION_TIMEOUT.toMinutes()
+);
+
 export interface PackumentQueueProcessorProps {
   /** The table recording the package versions that were processed. */
   readonly knownVersions: ITableV2;
@@ -54,13 +65,14 @@ export class PackumentQueueProcessor extends Construct {
     this.deadLetterQueue = new Queue(this, 'DLQ', {
       encryption: QueueEncryption.KMS_MANAGED,
       retentionPeriod: Duration.days(14),
+      visibilityTimeout: QUEUE_VISIBILITY_TIMEOUT,
     });
     this.queue = new Queue(this, 'Queue', {
       encryption: QueueEncryption.KMS_MANAGED,
       retentionPeriod: Duration.days(14),
       // Only used when the processor cannot schedule the next attempt itself,
-      // for example on a timeout. AWS recommends 6x the function timeout.
-      visibilityTimeout: Duration.minutes(30),
+      // for example on a timeout.
+      visibilityTimeout: QUEUE_VISIBILITY_TIMEOUT,
       deadLetterQueue: {
         queue: this.deadLetterQueue,
         maxReceiveCount: PACKUMENT_MAX_ATTEMPTS,
@@ -77,7 +89,7 @@ export class PackumentQueueProcessor extends Construct {
         [ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN]: this.deadLetterQueue.queueArn,
       },
       memorySize: 2_048,
-      timeout: Duration.minutes(5),
+      timeout: FUNCTION_TIMEOUT,
       tracing: Tracing.ACTIVE,
     });
     this.function.addEventSource(
