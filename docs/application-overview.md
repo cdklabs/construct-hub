@@ -37,16 +37,18 @@ ConstructHub provides two package source implementations: `NpmJs` and
 `CodeArtifact`.
 
 * The `NpmJs` source interfaces with the `npmjs.com` CouchDB replica (which is
-  at `replicate.npmjs.com/registry`) by scanning it's `_changes` stream in
-  search of relevant packages. When such a package is identified, a stager
-  function is invoked, which stages the package tarball into an S3 bucket then
-  notifies the ConstructHub ingestion SQS queue. The CouchDB follower is
-  scheduled to run every `5 minutes`, and stores its state (receipts for the
-  change entries received, and time/sequence checkpoints) in a specific object
-  in the S3 bucket used for staging package tarballs.
+  at `replicate.npmjs.com/registry`) by scanning it's `_changes` stream.
+  The CouchDB follower is scheduled to run every `5 minutes`. It sends every
+  new change entry to a queue, and stores its state (receipts for the change
+  entries received, and time/sequence checkpoints) in a specific object in the
+  S3 bucket used for staging package tarballs.
+  A packument processor function works through the queue. It fetches each
+  package from `registry.npmjs.org`, and for every relevant package version, a
+  stager function is invoked, which stages the package tarball into an S3
+  bucket then notifies the ConstructHub ingestion SQS queue.
   When the registry serves an older revision of a package than the feed
-  announced, the package is sent to a queue, and a packument processor function
-  checks it again, with growing waits, for about a day.
+  announced, or no packument at all yet, the processor checks it again, with
+  growing waits. After a day it gives up on the package.
   The package versions it has processed are recorded in a DynamoDB table, so
   each version is only processed once.
   Existing deployments kept this list in the S3 bucket; it is copied to the

@@ -34,10 +34,13 @@ test('creates a retained, backed-up, on-demand known versions table', () => {
   });
 });
 
-test('passes the known versions table to the follower', () => {
+test('passes the known versions table to the packument processor', () => {
   const template = synth(new NpmJs());
 
   template.hasResourceProperties('AWS::Lambda::Function', {
+    Description: Match.stringLikeRegexp(
+      'Processes packages from the npm registry'
+    ),
     Environment: {
       Variables: Match.objectLike({
         KNOWN_VERSIONS_TABLE_NAME: Match.anyValue(),
@@ -110,7 +113,7 @@ test('the known versions migration can be turned off', () => {
   ).toHaveLength(0);
 });
 
-test('retries laggy packuments through a queue that moves give-ups to a dead-letter queue', () => {
+test('retries packuments through a queue, with a dead-letter queue as a backstop', () => {
   const template = synth(new NpmJs());
 
   const dlqs = template.findResources('AWS::SQS::Queue', {
@@ -123,7 +126,7 @@ test('retries laggy packuments through a queue that moves give-ups to a dead-let
       deadLetterTargetArn: {
         'Fn::GetAtt': [Match.stringLikeRegexp('PackumentProcessorDLQ'), 'Arn'],
       },
-      maxReceiveCount: 10,
+      maxReceiveCount: 20,
     },
   });
   expect(
@@ -138,26 +141,35 @@ test('retries laggy packuments through a queue that moves give-ups to a dead-let
     },
   });
   expect(Object.keys(processors)).toHaveLength(1);
+  const [processorId, processor] = Object.entries(processors)[0] as [
+    string,
+    any
+  ];
   template.hasResourceProperties('AWS::Lambda::EventSourceMapping', {
-    FunctionName: { Ref: Object.keys(processors)[0] },
+    FunctionName: { Ref: processorId },
     BatchSize: 10,
     FunctionResponseTypes: ['ReportBatchItemFailures'],
-    ScalingConfig: { MaximumConcurrency: 2 },
+    ScalingConfig: { MaximumConcurrency: 10 },
   });
 
-  // The same function reads the dead-letter queue, to log give-ups.
-  const mappings = Object.values(
+  // It only reads the main queue, which hides messages for longer than the
+  // function runs.
+  const queueIds = Object.values(
     template.findResources('AWS::Lambda::EventSourceMapping', {
-      Properties: { FunctionName: { Ref: Object.keys(processors)[0] } },
+      Properties: { FunctionName: { Ref: processorId } },
     })
-  ).map((mapping: any) => JSON.stringify(mapping.Properties.EventSourceArn));
-  expect(mappings).toHaveLength(2);
-  expect(mappings.some((arn) => arn.includes('PackumentProcessorDLQ'))).toBe(
-    true
-  );
+  ).map((mapping: any) => mapping.Properties.EventSourceArn['Fn::GetAtt'][0]);
+  expect(queueIds).toHaveLength(1);
+  expect(queueIds[0]).not.toContain('DLQ');
+  const queues = template.findResources('AWS::SQS::Queue');
+  for (const queueId of queueIds) {
+    // Unset means the SQS default of 30 seconds.
+    const visibility = queues[queueId].Properties.VisibilityTimeout ?? 30;
+    expect(visibility).toBeGreaterThanOrEqual(processor.Properties.Timeout);
+  }
 
   // There is no alarm on the dead-letter queue (it is only graphed), and no
-  // alarm on the give-up metric.
+  // alarm on give-ups.
   const alarmNames = Object.values(
     template.findResources('AWS::CloudWatch::Alarm')
   ).map((alarm: any) => String(alarm.Properties.AlarmName));
@@ -167,26 +179,30 @@ test('retries laggy packuments through a queue that moves give-ups to a dead-let
         name.endsWith('DLQNotEmpty') && name.includes('PackumentProcessor')
     )
   ).toBe(false);
-  expect(
-    alarmNames.some((name) => name.endsWith('LaggyPackumentGiveUps'))
-  ).toBe(false);
+  expect(alarmNames.some((name) => name.includes('GiveUps'))).toBe(false);
 
-  // A burst of missing packuments within 3 hours raises an alarm.
+  // Many packages waiting for the registry for 3 hours raise an alarm.
   template.hasResourceProperties('AWS::CloudWatch::Alarm', {
-    AlarmName: 'Test/ConstructHub/Sources/NpmJs/Follower/MissingPackumentsHigh',
-    MetricName: 'MissingPackuments',
-    Period: 3 * 60 * 60,
-    Statistic: 'Sum',
-    Threshold: 1_500,
+    AlarmName:
+      'Test/ConstructHub/Sources/NpmJs/PackumentProcessor/PendingPackumentsHigh',
+    MetricName: 'ApproximateNumberOfMessagesNotVisible',
+    Namespace: 'AWS/SQS',
+    Period: 60 * 60,
+    Statistic: 'Minimum',
+    EvaluationPeriods: 3,
+    Threshold: 2_000,
   });
-  // So does a high laggy packument lag.
+  expect(
+    alarmNames.some((name) => name.endsWith('MissingPackumentsHigh'))
+  ).toBe(false);
+  // So does a high packument delay. The alarm keeps its name.
   template.hasResourceProperties('AWS::CloudWatch::Alarm', {
     AlarmName:
       'Test/ConstructHub/Sources/NpmJs/PackumentProcessor/LaggyPackumentLagHigh',
-    MetricName: 'LaggyPackumentLag',
+    MetricName: 'PackumentDelay',
     Period: 3 * 60 * 60,
     ExtendedStatistic: 'p90',
-    Threshold: 6 * 60 * 60 * 1_000,
+    Threshold: 6 * 60 * 60,
   });
 
   // Processor failures raise a low severity alarm too.
@@ -204,32 +220,34 @@ test('retries laggy packuments through a queue that moves give-ups to a dead-let
   });
 });
 
-test('every queue the packument processor reads hides messages for longer than the function runs', () => {
+test('the follower only reads the feed and sends requests to the packument queue', () => {
   const template = synth(new NpmJs());
 
-  const [processorId, processor] = Object.entries(
-    template.findResources('AWS::Lambda::Function', {
-      Properties: {
-        Description: Match.stringLikeRegexp(
-          'Processes packages from the npm registry'
-        ),
-      },
-    })
-  )[0] as [string, any];
-  const queues = template.findResources('AWS::SQS::Queue');
-  const mappings = Object.values(
-    template.findResources('AWS::Lambda::EventSourceMapping', {
-      Properties: { FunctionName: { Ref: processorId } },
-    })
-  ) as any[];
+  const followers = template.findResources('AWS::Lambda::Function', {
+    Properties: {
+      Description: Match.stringLikeRegexp('Periodically query npmjs.com'),
+    },
+  });
+  expect(Object.keys(followers)).toHaveLength(1);
+  const [follower] = Object.values(followers) as any[];
+  expect(Object.keys(follower.Properties.Environment.Variables).sort()).toEqual(
+    ['AWS_EMF_ENVIRONMENT', 'BUCKET_NAME', 'PACKUMENT_QUEUE_URL']
+  );
+  expect(follower.Properties.MemorySize).toBe(2_048);
 
-  expect(mappings).toHaveLength(2);
-  for (const mapping of mappings) {
-    const queueId = mapping.Properties.EventSourceArn['Fn::GetAtt'][0];
-    // Unset means the SQS default of 30 seconds.
-    const visibility = queues[queueId].Properties.VisibilityTimeout ?? 30;
-    expect(visibility).toBeGreaterThanOrEqual(processor.Properties.Timeout);
-  }
+  // Its role has no access to the known versions table or the stager.
+  const roleRef = follower.Properties.Role['Fn::GetAtt'][0];
+  const policies = Object.values(
+    template.findResources('AWS::IAM::Policy')
+  ).filter((policy: any) =>
+    JSON.stringify(policy.Properties.Roles).includes(roleRef)
+  );
+  const actions = JSON.stringify(
+    policies.map((policy: any) => policy.Properties.PolicyDocument.Statement)
+  );
+  expect(actions).not.toContain('dynamodb:');
+  expect(actions).not.toContain('lambda:InvokeFunction');
+  expect(actions).toContain('sqs:SendMessage');
 });
 
 test('the billing mode of the known versions table is configurable', () => {

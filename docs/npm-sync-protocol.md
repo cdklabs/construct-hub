@@ -114,18 +114,19 @@ The pre-migration feed also once froze its `update_seq` entirely for hours ([stu
 
 ## How ConstructHub compensates
 
-The *NpmJs Follower* runs on a regular schedule and fetches packuments from the registry to identify new versions.
-It does not track a single high-water mark:
+The *NpmJs Follower* runs on a regular schedule and reads the changes feed.
+It sends every change entry to a queue, where the *Packument Processor* fetches the packument from the registry to identify new versions.
+The follower does not track a single high-water mark:
 it keeps a receipt for every change entry it has received,
 and every run re-reads a trailing window of the feed,
-processing any entry it has no receipt for.
+sending any entry it has no receipt for.
 Rolling checkpoints map times to feed positions, and derive the window's starting position.
 On top of that baseline, each gap has a dedicated mitigation:
 
 | Gap              | Mitigation                                                                                                                                                                                                    | Detection                                                                                                                                                                                                                                             |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Late insertion   | Every scan re-covers the trailing window; a periodic deep scan covers the full state retention                                                                                                                | `LateChangeCount` / `LateChangeLag` metrics; `LateChangeLagHigh` alarm                                                                                                                                                                                |
-| Laggy packuments | Process every packument the registry serves immediately; queue a re-check of the announced revision (also when the registry has no packument yet), retried with back-off for about 29 hours, then given up on | `LaggyPackuments` / `LaggyPackumentsRecovered` / `LaggyPackumentGiveUps` / `LaggyPackumentLag` and `MissingPackuments` / `MissingPackumentsRecovered` / `MissingPackumentGiveUps` metrics; `LaggyPackumentLagHigh` and `MissingPackumentsHigh` alarms |
+| Laggy packuments | Process every packument the registry serves immediately; queue a re-check of the announced revision (also when the registry has no packument yet), retried with back-off for a day, then given up on | `FailedPackumentRetrievals`, `PackumentGiveUps` (by `Reason`) and `PackumentDelay` metrics; `PendingPackumentsHigh` and `LaggyPackumentLagHigh` alarms |
 | Lost events      | None possible; the missed versions self-heal on the package's next publish                                                                                                                                    | Package canary (`Canary/SLA-Breached`) covers the probe package                                                                                                                                                                                       |
 | Head regression  | The follower discards its position state and reseeds at the new head when the feed head drops below its newest checkpoint                                                                                     | `LastSeq` metric                                                                                                                                                                                                                                      |
 
@@ -155,6 +156,7 @@ A consumer that never re-reads previously covered ranges has no way to notice th
 
 - Operator runbook sections for the alarms named above: [operator-runbook.md](./operator-runbook.md)
 - Follower implementation: `src/package-sources/npmjs/npm-js-follower.lambda.ts`
+- Packument processor implementation: `src/package-sources/npmjs/packument-processor.lambda.ts`
 - Incident that motivated the windowed scan: internal reference V2376798198 *(our observation)*
 
 [152515]: https://github.com/orgs/community/discussions/152515

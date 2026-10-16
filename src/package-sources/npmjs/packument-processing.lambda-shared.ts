@@ -14,6 +14,13 @@ import { LAMBDA_CLIENT } from '../../backend/shared/aws.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
+/**
+ * The release date of `aws-cdk@0.8.0`. A package last modified before this
+ * cannot be a constructs-based package. Skipping these speeds up a backfill
+ * from the beginning of the feed.
+ */
+const DAWN_OF_CONSTRUCTS = new Date('2018-07-31T13:43:04.615Z');
+
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set([
   'cdk',
   'aws-cdk',
@@ -49,8 +56,18 @@ export async function processPackuments(
   metrics: MetricsLogger,
   context: PackumentProcessingContext
 ): Promise<number> {
+  const recent = changes.filter((change) => {
+    const modified = modifiedOf(change.doc);
+    if (modified != null && modified < DAWN_OF_CONSTRUCTS) {
+      console.log(
+        `Skipping ${change.id}: last modified ${modified.toISOString()}, before constructs existed`
+      );
+      return false;
+    }
+    return true;
+  });
   const versionInfos = await getRelevantVersionInfos(
-    changes as unknown as readonly Change[],
+    recent as unknown as readonly Change[],
     metrics,
     context.denyList,
     context.licenseList,
@@ -85,17 +102,7 @@ export interface PackumentRequest {
   readonly seq?: number;
   /** When the request was first made (epoch milliseconds). */
   readonly firstSeen: number;
-  /**
-   * Why the package is checked again: the registry served an older revision
-   * than announced (`laggy`), or no packument at all (`missing`).
-   *
-   * @default 'laggy'
-   */
-  readonly reason?: PackumentRequestReason;
 }
-
-/** Why a package is checked again. */
-export type PackumentRequestReason = 'laggy' | 'missing';
 
 /** The outcome of `checkPackument`. */
 export type PackumentCheckResult =
@@ -106,20 +113,31 @@ export type PackumentCheckResult =
   /** The registry has no packument for the package (HTTP 404). */
   | 'missing';
 
+/** What `checkPackument` found. */
+export interface PackumentCheck {
+  readonly result: PackumentCheckResult;
+  /** The sequential revision the registry served, if any. */
+  readonly servedRev?: number;
+  /** When the served packument was last modified, if known. */
+  readonly modified?: Date;
+}
+
 /**
  * Fetches the packument a request is about from the registry, processes the
  * versions it contains (whatever revision it is at), and reports whether the
  * registry has caught up with the expected revision.
+ *
+ * @throws if the registry could not be reached (other than HTTP 404).
  */
 export async function checkPackument(
   npm: CouchChanges,
   request: PackumentRequest,
   metrics: MetricsLogger,
   context: PackumentProcessingContext
-): Promise<PackumentCheckResult> {
+): Promise<PackumentCheck> {
   const doc = await npm.getPackageDoc(request.name);
   if (doc == null || doc._rev == null) {
-    return 'missing';
+    return { result: 'missing' };
   }
   const change: DatabaseChange = {
     changes: [{ rev: doc._rev as string }],
@@ -129,9 +147,18 @@ export async function checkPackument(
     doc,
   };
   await processPackuments([change], metrics, context);
-  return parseSequentialRevision(doc._rev as string) >= request.expectedRev
-    ? 'caught-up'
-    : 'laggy';
+  const servedRev = parseSequentialRevision(doc._rev as string);
+  return {
+    result: servedRev >= request.expectedRev ? 'caught-up' : 'laggy',
+    servedRev,
+    modified: modifiedOf(doc),
+  };
+}
+
+function modifiedOf(doc: unknown): Date | undefined {
+  const modified = (doc as { time?: { modified?: string } } | undefined)?.time
+    ?.modified;
+  return modified ? new Date(modified) : undefined;
 }
 
 /**

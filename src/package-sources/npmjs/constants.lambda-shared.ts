@@ -39,54 +39,62 @@ export const enum MetricName {
    */
   METADATA_FETCH_FAILURES = 'MetadataFetchFailures',
 
-  /**
-   * The number of packages for which the registry packument is still behind
-   * the revision announced by the `_changes` feed ("laggy packuments"). The
-   * versions served so far have been processed; the follower keeps re-checking
-   * for the announced revision.
-   */
+  /** No longer emitted. */
   LAGGY_PACKUMENTS = 'LaggyPackuments',
 
-  /**
-   * Number of laggy packuments for which the registry caught up with the
-   * revision announced by the `_changes` feed.
-   */
+  /** No longer emitted. */
   LAGGY_PACKUMENTS_RECOVERED = 'LaggyPackumentsRecovered',
 
-  /**
-   * Number of laggy packuments given up on: the registry never
-   * served the revision announced by the `_changes` feed within the maximum
-   * retry age. Any versions the registry did serve have been processed, but a
-   * version announced by the feed may be missing until the package publishes
-   * again.
-   */
+  /** No longer emitted, see `PACKUMENT_GIVE_UPS`. */
   LAGGY_PACKUMENT_GIVE_UPS = 'LaggyPackumentGiveUps',
 
-  /**
-   * How long a laggy packument took to catch up (or until it was given up
-   * on), measured from when the follower first saw it.
-   */
+  /** No longer emitted, see `PACKUMENT_DELAY`. */
   LAGGY_PACKUMENT_LAG = 'LaggyPackumentLag',
 
-  /**
-   * Number of change entries for which the registry had no packument at all
-   * (HTTP 404) when the follower processed them. Usually a new package that
-   * has not replicated to the registry yet; they are re-checked like laggy
-   * packuments.
-   */
+  /** No longer emitted. */
   MISSING_PACKUMENTS = 'MissingPackuments',
 
-  /**
-   * Number of missing packuments the registry has since served.
-   */
+  /** No longer emitted. */
   MISSING_PACKUMENTS_RECOVERED = 'MissingPackumentsRecovered',
 
-  /**
-   * Number of missing packuments given up on: the registry never served a
-   * packument for the package within the maximum retry age. Usually an old
-   * change entry for a deleted package.
-   */
+  /** No longer emitted, see `PACKUMENT_GIVE_UPS`. */
   MISSING_PACKUMENT_GIVE_UPS = 'MissingPackumentGiveUps',
+
+  /**
+   * Number of packument checks where the registry did not serve the announced
+   * revision: it served an older one, had no packument, or could not be
+   * reached. Counted on every check, so it shows registry trouble while it
+   * happens.
+   */
+  FAILED_PACKUMENT_RETRIEVALS = 'FailedPackumentRetrievals',
+
+  /**
+   * Number of packument requests given up on, because the registry still had
+   * not served the announced revision after a day. Emitted with a `Reason`
+   * dimension (see `PackumentGiveUpReason`), and without it for the total. A
+   * version announced by the changes feed may be missing until the package
+   * publishes again.
+   */
+  PACKUMENT_GIVE_UPS = 'PackumentGiveUps',
+
+  /**
+   * For packuments the registry served only after earlier checks failed: how
+   * long that took, in seconds, from when the follower read the change entry.
+   */
+  PACKUMENT_DELAY = 'PackumentDelay',
+}
+
+/**
+ * Why a packument request was given up on: the value of the `Reason`
+ * dimension of the `PackumentGiveUps` metric. Decided by the last check.
+ */
+export const enum PackumentGiveUpReason {
+  /** The registry served an older revision than announced. */
+  LAGGY = 'Laggy',
+  /** The registry had no packument for the package (HTTP 404). */
+  MISSING = 'Missing',
+  /** The registry could not be reached. */
+  UNREACHABLE = 'Unreachable',
 }
 
 export const enum S3KeyPrefix {
@@ -171,18 +179,6 @@ export const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 export const ENV_PACKUMENT_QUEUE_URL = 'PACKUMENT_QUEUE_URL';
 
 /**
- * The environment variable holding the ARN of the packument dead-letter queue.
- * The packument processor reads both queues, and tells them apart by this.
- */
-export const ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN =
-  'PACKUMENT_DEAD_LETTER_QUEUE_ARN';
-
-/**
- * How long a new packument request waits before it is first processed.
- */
-export const PACKUMENT_INITIAL_DELAY_SECONDS = 5 * 60; // 5 minutes
-
-/**
  * The shortest and longest wait before the next attempt. In between, a request
  * waits as long as it is already old, so waits double with each attempt. SQS
  * caps a visibility timeout at 12 hours.
@@ -197,8 +193,16 @@ export const PACKUMENT_MAX_RETRY_DELAY_SECONDS = 6 * 60 * 60; // 6 hours
 export const PACKUMENT_RETRY_JITTER = 0.2;
 
 /**
- * The number of attempts before a request moves to the dead-letter queue (the
- * queue's `maxReceiveCount`). With the waits above, that is after about 29
- * hours.
+ * How old a request gets before it is given up on, if its last check still
+ * did not find the announced revision.
  */
-export const PACKUMENT_MAX_ATTEMPTS = 10;
+export const PACKUMENT_MAX_AGE_MS = 24 * 60 * 60 * 1_000; // 24 hours
+
+/**
+ * The number of attempts before a request moves to the dead-letter queue (the
+ * queue's `maxReceiveCount`). Only a backstop for requests that keep failing
+ * the processor: with the waits above, a request passes `PACKUMENT_MAX_AGE_MS`
+ * after about 12 attempts, and the rest leaves room for attempts that timed
+ * out.
+ */
+export const PACKUMENT_MAX_ATTEMPTS = 20;
