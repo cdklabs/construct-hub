@@ -336,7 +336,7 @@ export class Orchestration extends Construct {
       .addRetry({
         errors: [
           'Lambda.TooManyRequestsException',
-          'Lambda.Unknown', // how Lambda timeouts used to be reported
+          'Lambda.Unknown', // happens when a lambda times out.
         ],
         ...THROTTLE_RETRY_POLICY,
       })
