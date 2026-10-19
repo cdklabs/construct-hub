@@ -505,6 +505,13 @@ class ReprocessIngestionWorkflow extends Construct {
           interval: Duration.minutes(1),
           maxAttempts: 30,
         })
+        // A dropped or stalled S3 read fails one package; the next attempt gets a new connection.
+        .addRetry({
+          errors: ['Sandbox.Timedout', 'Error'],
+          interval: Duration.seconds(5),
+          backoffRate: 2,
+          maxAttempts: 3,
+        })
     );
 
     const isThereMore = new Choice(this, 'Is there more?')
