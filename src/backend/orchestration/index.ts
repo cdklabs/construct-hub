@@ -327,9 +327,16 @@ export class Orchestration extends Construct {
       }
     )
       .addRetry({
+        // a Lambda timeout arrives as Sandbox.Timedout
+        errors: ['Sandbox.Timedout'],
+        interval: Duration.seconds(5),
+        backoffRate: 2,
+        maxAttempts: 3,
+      })
+      .addRetry({
         errors: [
           'Lambda.TooManyRequestsException',
-          'Lambda.Unknown', // happens when a lambda times out.
+          'Lambda.Unknown', // how Lambda timeouts used to be reported
         ],
         ...THROTTLE_RETRY_POLICY,
       })
