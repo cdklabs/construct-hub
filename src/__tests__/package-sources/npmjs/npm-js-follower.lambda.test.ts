@@ -1,20 +1,10 @@
-import { gunzipSync, gzipSync } from 'zlib';
+import { gunzipSync } from 'zlib';
 import {
-  BatchWriteItemCommand,
-  DynamoDBClient,
-  QueryCommand,
-} from '@aws-sdk/client-dynamodb';
-import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
-import {
-  GetObjectCommand,
   PutObjectCommand,
+  GetObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import {
-  GetQueueAttributesCommand,
-  SendMessageBatchCommand,
-  SQSClient,
-} from '@aws-sdk/client-sqs';
+import { SendMessageBatchCommand, SQSClient } from '@aws-sdk/client-sqs';
 import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Unit } from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
@@ -22,17 +12,10 @@ import { mockClient } from 'aws-sdk-client-mock';
 import 'aws-sdk-client-mock-jest';
 import nock from 'nock';
 import {
-  ENV_DENY_LIST_BUCKET_NAME,
-  ENV_DENY_LIST_OBJECT_KEY,
-} from '../../../backend/deny-list/constants';
-import { EnvironmentVariables as LicenseListEnv } from '../../../backend/license-list/constants';
-import {
-  ENV_KNOWN_VERSIONS_TABLE_NAME,
   ENV_PACKUMENT_QUEUE_URL,
   FOLLOWER_STATE_FILE_NAME,
   MARKER_FILE_NAME,
   MetricName,
-  PACKUMENT_INITIAL_DELAY_SECONDS,
 } from '../../../package-sources/npmjs/constants.lambda-shared';
 import { FollowerState } from '../../../package-sources/npmjs/follower-state.lambda-shared';
 import { handler } from '../../../package-sources/npmjs/npm-js-follower.lambda';
@@ -61,23 +44,14 @@ mockMetricScope.mockImplementation((cb) => {
 });
 
 const REPLICA = 'https://replicate.npmjs.com';
-const REGISTRY = 'https://registry.npmjs.org';
 
 const MOCK_BUCKET = 'mock-staging-bucket';
-const MOCK_STAGING_FUNCTION = 'mock-staging-function';
-const MOCK_KNOWN_VERSIONS_TABLE = 'mock-known-versions-table';
 const MOCK_PACKUMENT_QUEUE_URL =
   'https://sqs.us-east-1.amazonaws.com/123456789012/mock-packument-queue';
-const MOCK_DENY_LIST_BUCKET = 'deny-list-bucket-name';
-const MOCK_DENY_LIST_OBJECT = 'my-deny-list.json';
-const MOCK_LICENSE_LIST_BUCKET = 'license-list-bucket-name';
-const MOCK_LICENSE_LIST_OBJECT = 'license-list.json';
 
 const HOUR = 60 * 60 * 1_000;
 
 const mockS3 = mockClient(S3Client);
-const mockLambda = mockClient(LambdaClient);
-const mockDynamoDB = mockClient(DynamoDBClient);
 const mockSQS = mockClient(SQSClient);
 
 const context: Context = {
@@ -91,66 +65,23 @@ const event: ScheduledEvent = {} as any;
 
 beforeEach(() => {
   mockS3.reset();
-  mockLambda.reset();
-  mockDynamoDB.reset();
   mockSQS.reset();
   mockPutMetric.mockClear();
 
   process.env.BUCKET_NAME = MOCK_BUCKET;
-  process.env.FUNCTION_NAME = MOCK_STAGING_FUNCTION;
-  process.env[ENV_KNOWN_VERSIONS_TABLE_NAME] = MOCK_KNOWN_VERSIONS_TABLE;
   process.env[ENV_PACKUMENT_QUEUE_URL] = MOCK_PACKUMENT_QUEUE_URL;
-  process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
-  process.env[ENV_DENY_LIST_OBJECT_KEY] = MOCK_DENY_LIST_OBJECT;
-  process.env[LicenseListEnv.BUCKET_NAME] = MOCK_LICENSE_LIST_BUCKET;
-  process.env[LicenseListEnv.OBJECT_KEY] = MOCK_LICENSE_LIST_OBJECT;
 
-  // Empty deny list
-  mockS3
-    .on(GetObjectCommand, {
-      Bucket: MOCK_DENY_LIST_BUCKET,
-      Key: MOCK_DENY_LIST_OBJECT,
-    })
-    .resolves({ Body: stringToStream(JSON.stringify({})) });
-  // License list allowing Apache-2.0
-  mockS3
-    .on(GetObjectCommand, {
-      Bucket: MOCK_LICENSE_LIST_BUCKET,
-      Key: MOCK_LICENSE_LIST_OBJECT,
-    })
-    .resolves({ Body: stringToStream(JSON.stringify(['Apache-2.0'])) });
   // No legacy marker by default
   mockS3
     .on(GetObjectCommand, { Bucket: MOCK_BUCKET, Key: MARKER_FILE_NAME })
     .rejects(noSuchKey());
-
-  // Empty known versions table
-  mockDynamoDB.on(QueryCommand).resolves({ Items: [] });
-  mockDynamoDB.on(BatchWriteItemCommand).resolves({ UnprocessedItems: {} });
-
-  // Empty packument queue
-  mockSQS.on(SendMessageBatchCommand).resolves({ Successful: [], Failed: [] });
-  mockSQS.on(GetQueueAttributesCommand).resolves({
-    Attributes: {
-      ApproximateNumberOfMessages: '0',
-      ApproximateNumberOfMessagesNotVisible: '0',
-      ApproximateNumberOfMessagesDelayed: '0',
-    },
-  });
-
   mockS3.on(PutObjectCommand).resolves({});
-  mockLambda.on(InvokeCommand).resolves({ StatusCode: 202 });
+  mockSQS.on(SendMessageBatchCommand).resolves({ Successful: [], Failed: [] });
 });
 
 afterEach(() => {
   delete process.env.BUCKET_NAME;
-  delete process.env.FUNCTION_NAME;
-  delete process.env[ENV_KNOWN_VERSIONS_TABLE_NAME];
   delete process.env[ENV_PACKUMENT_QUEUE_URL];
-  delete process.env[ENV_DENY_LIST_BUCKET_NAME];
-  delete process.env[ENV_DENY_LIST_OBJECT_KEY];
-  delete process.env[LicenseListEnv.BUCKET_NAME];
-  delete process.env[LicenseListEnv.OBJECT_KEY];
   nock.cleanAll();
 });
 
@@ -191,6 +122,17 @@ function givenLegacyMarker(marker: number) {
     .resolves({ Body: stringToStream(JSON.stringify({ marker })) });
 }
 
+function givenChanges(since: number, results: object[], lastSeq: number): void {
+  nock(REPLICA)
+    .get('/registry/_changes')
+    .query({ limit: '10000', since: String(since) })
+    .reply(200, { results, last_seq: lastSeq });
+}
+
+function change(seq: number, id: string, rev = '1-aaaaaa', deleted = false) {
+  return { seq, id, changes: [{ rev }], deleted };
+}
+
 function savedState(): FollowerState {
   const calls = mockS3
     .commandCalls(PutObjectCommand)
@@ -204,79 +146,55 @@ function savedState(): FollowerState {
   return FollowerState.fromText(body.toString('utf-8'));
 }
 
-function packageDoc(name: string, rev: string, ...versions: string[]) {
-  const time: Record<string, string> = {
-    created: '2023-01-01T00:00:00.000Z',
-    modified: '2023-06-01T00:00:00.000Z',
-  };
-  const versionInfos: Record<string, unknown> = {};
-  for (const [i, version] of versions.entries()) {
-    time[version] = `2023-06-01T00:0${i}:00.000Z`;
-    versionInfos[version] = {
-      dependencies: { constructs: '^10.0.0' },
-      dist: {
-        shasum: 'mock-shasum',
-        tarball: `${REGISTRY}/${name}/-/${name}-${version}.tgz`,
-      },
-      jsii: {},
-      keywords: ['cdk'],
-      license: 'Apache-2.0',
-      name,
-      version,
-    };
-  }
-  return {
-    _id: name,
-    _rev: rev,
-    'dist-tags': { latest: versions[versions.length - 1] },
-    name,
-    time,
-    versions: versionInfos,
-  };
+function statePutCount(): number {
+  return mockS3
+    .commandCalls(PutObjectCommand)
+    .filter((call) => call.args[0].input.Key === FOLLOWER_STATE_FILE_NAME)
+    .length;
 }
 
-function stagedPackages(): Array<{ name: string; version: string }> {
-  return mockLambda.commandCalls(InvokeCommand).map((call) => {
-    const payload = JSON.parse(
-      Buffer.from(call.args[0].input.Payload! as Uint8Array).toString('utf-8')
-    );
-    return { name: payload.name, version: payload.version };
-  });
+/** The packument requests sent to the packument queue. */
+function queuedRequests(): any[] {
+  return mockSQS.commandCalls(SendMessageBatchCommand).flatMap((call) =>
+    call.args[0].input.Entries!.map((entry) => ({
+      ...JSON.parse(entry.MessageBody!),
+      delaySeconds: entry.DelaySeconds,
+    }))
+  );
 }
 
-test('seeds from the legacy marker and processes fresh changes', async () => {
+test('seeds from the legacy marker and queues fresh changes', async () => {
   givenHead(1_010);
   givenNoStateFile();
   givenLegacyMarker(1_000);
-
   // The scan starts at the seeded marker position and finds one new entry.
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '1000' })
-    .reply(200, {
-      results: [
-        {
-          seq: 1_005,
-          id: 'fresh-package',
-          changes: [{ rev: '1-aaaaaa' }],
-          deleted: false,
-        },
-      ],
-      last_seq: 1_005,
-    });
-  nock(REGISTRY)
-    .get('/fresh-package')
-    .reply(200, packageDoc('fresh-package', '1-aaaaaa', '1.0.0'));
+  givenChanges(1_000, [change(1_005, 'fresh-package', '3-aaaaaa')], 1_005);
 
+  const before = Date.now();
   await handler(event, context);
 
-  expect(stagedPackages()).toEqual([
-    { name: 'fresh-package', version: '1.0.0' },
-  ]);
+  // The follower queues the change for the packument processor, right away.
+  const [request] = queuedRequests();
+  expect(request).toMatchObject({
+    name: 'fresh-package',
+    expectedRev: 3,
+    seq: 1_005,
+    delaySeconds: 0,
+  });
+  expect(request.reason).toBeUndefined();
+  expect(request.firstSeen).toBeGreaterThanOrEqual(before);
+  expect(mockSQS).toHaveReceivedCommandWith(SendMessageBatchCommand, {
+    QueueUrl: MOCK_PACKUMENT_QUEUE_URL,
+  });
   // Entries above the previously covered position are fresh, not late.
   expect(mockPutMetric).toHaveBeenCalledWith(
     MetricName.LATE_CHANGE_COUNT,
     0,
+    Unit.Count
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.CHANGE_COUNT,
+    1,
     Unit.Count
   );
 
@@ -288,7 +206,7 @@ test('seeds from the legacy marker and processes fresh changes', async () => {
   expect(state.lastDeepScanAt).toBeDefined();
 });
 
-test('discovers and stages late-inserted changes', async () => {
+test('discovers and queues late-inserted changes', async () => {
   const now = Date.now();
   givenHead(1_000);
 
@@ -302,36 +220,21 @@ test('discovers and stages late-inserted changes', async () => {
   state.completeDeepScan(now - 2 * HOUR);
   givenStateFile(state);
 
-  // Regular scan: floor is the checkpoint at/bordering (now - window), i.e.
-  // seq 500. Only the late entry's packument may be fetched.
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '500' })
-    .reply(200, {
-      results: [
-        {
-          seq: 550,
-          id: 'already-seen-package',
-          changes: [{ rev: '1-cccccc' }],
-          deleted: false,
-        },
-        {
-          seq: 600,
-          id: 'late-package',
-          changes: [{ rev: '2-dddddd' }],
-          deleted: false,
-        },
-      ],
-      last_seq: 600,
-    });
-  nock(REGISTRY)
-    .get('/late-package')
-    .reply(200, packageDoc('late-package', '2-dddddd', '1.2.3'));
+  // Regular scan: the floor is the checkpoint at (now - window), seq 500.
+  givenChanges(
+    500,
+    [
+      change(550, 'already-seen-package'),
+      change(600, 'late-package', '2-dddddd'),
+    ],
+    600
+  );
 
   await handler(event, context);
 
-  expect(stagedPackages()).toEqual([
-    { name: 'late-package', version: '1.2.3' },
+  // Only the entry without a receipt is queued.
+  expect(queuedRequests()).toEqual([
+    expect.objectContaining({ name: 'late-package', seq: 600 }),
   ]);
   expect(mockPutMetric).toHaveBeenCalledWith(
     MetricName.LATE_CHANGE_COUNT,
@@ -351,159 +254,28 @@ test('discovers and stages late-inserted changes', async () => {
   expect(saved.newestCheckpointSeq()).toBe(1_000);
 });
 
-/** The packument requests sent to the packument queue. */
-function queuedRequests(): any[] {
-  return mockSQS.commandCalls(SendMessageBatchCommand).flatMap((call) =>
-    call.args[0].input.Entries!.map((entry) => ({
-      ...JSON.parse(entry.MessageBody!),
-      delaySeconds: entry.DelaySeconds,
-    }))
-  );
-}
-
-test('laggy packument: processes served versions and sends it to the packument queue', async () => {
+test('a failure to queue a chunk leaves its entries without a receipt', async () => {
   givenHead(2_010);
   givenNoStateFile();
   givenLegacyMarker(2_000);
-
-  // The feed announces rev 5, but the registry only serves rev 3.
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '2000' })
-    .reply(200, {
-      results: [
-        {
-          seq: 2_005,
-          id: 'laggy-package',
-          changes: [{ rev: '5-eeeeee' }],
-          deleted: false,
-        },
-      ],
-      last_seq: 2_005,
-    });
-  nock(REGISTRY)
-    .get('/laggy-package')
-    .reply(200, packageDoc('laggy-package', '3-ffffff', '1.0.0'));
-  mockSQS.on(GetQueueAttributesCommand).resolves({
-    Attributes: {
-      ApproximateNumberOfMessages: '0',
-      ApproximateNumberOfMessagesNotVisible: '0',
-      ApproximateNumberOfMessagesDelayed: '1',
-    },
-  });
-
-  const before = Date.now();
-  await handler(event, context);
-
-  // The versions the registry did serve are processed anyway.
-  expect(stagedPackages()).toEqual([
-    { name: 'laggy-package', version: '1.0.0' },
-  ]);
-  // ... and a request to check for rev 5 is queued, delayed.
-  const [request] = queuedRequests();
-  expect(request).toMatchObject({
-    name: 'laggy-package',
-    expectedRev: 5,
-    seq: 2_005,
-    reason: 'laggy',
-    delaySeconds: PACKUMENT_INITIAL_DELAY_SECONDS,
-  });
-  expect(request.firstSeen).toBeGreaterThanOrEqual(before);
-  expect(mockSQS).toHaveReceivedCommandWith(SendMessageBatchCommand, {
-    QueueUrl: MOCK_PACKUMENT_QUEUE_URL,
-  });
-  // The gauge reports the size of the packument queue.
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.LAGGY_PACKUMENTS,
-    1,
-    Unit.Count
-  );
-  // The receipt is recorded.
-  expect(savedState().has(2_005)).toBe(true);
-});
-
-test('laggy packument: a failure to queue it leaves the entry without a receipt', async () => {
-  givenHead(2_010);
-  givenNoStateFile();
-  givenLegacyMarker(2_000);
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '2000' })
-    .reply(200, {
-      results: [
-        {
-          seq: 2_005,
-          id: 'laggy-package',
-          changes: [{ rev: '5-eeeeee' }],
-          deleted: false,
-        },
-      ],
-      last_seq: 2_005,
-    });
-  nock(REGISTRY)
-    .get('/laggy-package')
-    .reply(200, packageDoc('laggy-package', '3-ffffff', '1.0.0'));
+  givenChanges(2_000, [change(2_005, 'some-package')], 2_005);
   mockSQS.on(SendMessageBatchCommand).rejects(new Error('network'));
 
   await expect(handler(event, context)).rejects.toThrow(/network/);
 
-  // The next run processes the entry again.
+  // The next run sends the entry again.
   expect(savedState().has(2_005)).toBe(false);
 });
 
-test('missing packument: a change entry the registry has no packument for yet is sent to the packument queue', async () => {
+test('an entry that announces no revision expects any packument', async () => {
   givenHead(2_010);
   givenNoStateFile();
   givenLegacyMarker(2_000);
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '2000' })
-    .reply(200, {
-      results: [
-        {
-          seq: 2_005,
-          id: 'brand-new-package',
-          changes: [{ rev: '1-aaaaaa' }],
-          deleted: false,
-        },
-      ],
-      last_seq: 2_005,
-    });
-  nock(REGISTRY).get('/brand-new-package').reply(404, 'not found');
-
-  await handler(event, context);
-
-  expect(stagedPackages()).toEqual([]);
-  expect(queuedRequests()).toEqual([
-    expect.objectContaining({
-      name: 'brand-new-package',
-      expectedRev: 1,
-      seq: 2_005,
-      reason: 'missing',
-    }),
-  ]);
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.MISSING_PACKUMENTS,
-    1,
-    Unit.Count
+  givenChanges(
+    2_000,
+    [{ seq: 2_005, id: 'no-rev-package', changes: [], deleted: false }],
+    2_005
   );
-  expect(savedState().has(2_005)).toBe(true);
-});
-
-test('missing packument: an entry that announces no revision expects any packument', async () => {
-  givenHead(2_010);
-  givenNoStateFile();
-  givenLegacyMarker(2_000);
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '2000' })
-    .reply(200, {
-      results: [
-        { seq: 2_005, id: 'no-rev-package', changes: [], deleted: false },
-      ],
-      last_seq: 2_005,
-    });
-  nock(REGISTRY).get('/no-rev-package').reply(404, 'not found');
 
   await handler(event, context);
 
@@ -516,25 +288,15 @@ test('ignores change entries for deleted packages, as if they were not in the fe
   givenHead(2_010);
   givenNoStateFile();
   givenLegacyMarker(2_000);
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '2000' })
-    .reply(200, {
-      results: [
-        {
-          seq: 2_005,
-          id: 'deleted-package',
-          changes: [{ rev: '3-aaaaaa' }],
-          deleted: true,
-        },
-      ],
-      last_seq: 2_005,
-    });
+  givenChanges(
+    2_000,
+    [change(2_005, 'deleted-package', '3-aaaaaa', true)],
+    2_005
+  );
 
   await handler(event, context);
 
-  // No packument fetch (nock would fail on an unexpected request), nothing
-  // queued, nothing counted, and no receipt.
+  // Nothing queued, nothing counted, and no receipt.
   expect(queuedRequests()).toEqual([]);
   expect(mockPutMetric).toHaveBeenCalledWith(
     MetricName.CHANGE_COUNT,
@@ -548,29 +310,12 @@ test('seeds at the beginning of the feed on first deployment (automatic backfill
   givenHead(1_010);
   givenNoStateFile();
   // No legacy marker either: this is a brand-new deployment.
-
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '0' })
-    .reply(200, {
-      results: [
-        {
-          seq: 1_005,
-          id: 'historic-package',
-          changes: [{ rev: '1-bbbbbb' }],
-          deleted: false,
-        },
-      ],
-      last_seq: 1_005,
-    });
-  nock(REGISTRY)
-    .get('/historic-package')
-    .reply(200, packageDoc('historic-package', '1-bbbbbb', '1.0.0'));
+  givenChanges(0, [change(1_005, 'historic-package')], 1_005);
 
   await handler(event, context);
 
-  expect(stagedPackages()).toEqual([
-    { name: 'historic-package', version: '1.0.0' },
+  expect(queuedRequests()).toEqual([
+    expect.objectContaining({ name: 'historic-package' }),
   ]);
   const state = savedState();
   expect(state.has(1_005)).toBe(true);
@@ -599,12 +344,7 @@ test('records interim checkpoints so an interrupted scan resumes mid-window', as
     .reply(200, () => {
       remaining = 30_000; // exhaust the budget after this page
       return {
-        results: seqs.map((seq) => ({
-          seq,
-          id: `package-${seq}`,
-          changes: [{ rev: '1-aaaaaa' }],
-          deleted: false,
-        })),
+        results: seqs.map((seq) => change(seq, `package-${seq}`)),
         last_seq: 20_000,
       };
     });
@@ -615,106 +355,13 @@ test('records interim checkpoints so an interrupted scan resumes mid-window', as
     (context as any).getRemainingTimeInMillis = () => 300_000;
   }
 
-  // Nothing needed staging (everything was receipted), and no packument was
-  // fetched (no registry nock exists). The interim checkpoint was recorded,
-  // so the next run resumes from seq 20000 instead of the floor.
-  expect(mockLambda).not.toHaveReceivedCommand(InvokeCommand);
+  // Everything was receipted, so nothing was queued. The interim checkpoint
+  // was recorded, so the next run resumes from seq 20000 instead of the floor.
+  expect(mockSQS).not.toHaveReceivedCommand(SendMessageBatchCommand);
   const saved = savedState();
   expect(saved.newestCheckpointSeq()).toBe(20_000);
   // The interrupted (deep) scan did not complete.
   expect(saved.lastDeepScanAt).toBeUndefined();
-});
-
-test('retries truncated gzip responses from the registry', async () => {
-  givenHead(1_010);
-  givenNoStateFile();
-  givenLegacyMarker(1_000);
-
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '1000' })
-    .reply(200, {
-      results: [
-        {
-          seq: 1_005,
-          id: 'flaky-package',
-          changes: [{ rev: '1-aaaaaa' }],
-          deleted: false,
-        },
-      ],
-      last_seq: 1_005,
-    });
-  // First packument response is a truncated gzip body (Z_BUF_ERROR), the
-  // retry succeeds.
-  const fullBody = gzipSync(
-    Buffer.from(
-      JSON.stringify(packageDoc('flaky-package', '1-aaaaaa', '1.0.0'))
-    )
-  );
-  nock(REGISTRY)
-    .get('/flaky-package')
-    .reply(200, fullBody.subarray(0, fullBody.length - 8), {
-      'content-encoding': 'gzip',
-    });
-  nock(REGISTRY)
-    .get('/flaky-package')
-    .reply(200, packageDoc('flaky-package', '1-aaaaaa', '1.0.0'));
-
-  await handler(event, context);
-
-  expect(stagedPackages()).toEqual([
-    { name: 'flaky-package', version: '1.0.0' },
-  ]);
-  expect(savedState().has(1_005)).toBe(true);
-});
-
-test('does not receipt entries whose metadata fetch failed, so a later scan retries them', async () => {
-  givenHead(1_010);
-  givenNoStateFile();
-  givenLegacyMarker(1_000);
-
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '1000' })
-    .reply(200, {
-      results: [
-        {
-          seq: 1_004,
-          id: 'broken-package',
-          changes: [{ rev: '1-aaaaaa' }],
-          deleted: false,
-        },
-        {
-          seq: 1_006,
-          id: 'good-package',
-          changes: [{ rev: '1-bbbbbb' }],
-          deleted: false,
-        },
-      ],
-      last_seq: 1_006,
-    });
-  // A client error is used so the request is not retried until the
-  // transient-error deadline.
-  nock(REGISTRY).get('/broken-package').reply(403, 'forbidden');
-  nock(REGISTRY)
-    .get('/good-package')
-    .reply(200, packageDoc('good-package', '1-bbbbbb', '1.0.0'));
-
-  await handler(event, context);
-
-  // The healthy entry was processed and receipted; the failed one was not
-  // receipted, so the next scan will retry it.
-  expect(stagedPackages()).toEqual([
-    { name: 'good-package', version: '1.0.0' },
-  ]);
-  const state = savedState();
-  expect(state.has(1_006)).toBe(true);
-  expect(state.has(1_004)).toBe(false);
-  expect(mockPutMetric).toHaveBeenCalledWith(
-    MetricName.METADATA_FETCH_FAILURES,
-    1,
-    Unit.Count
-  );
 });
 
 test('persists its state even when the scan fails part-way', async () => {
@@ -735,59 +382,22 @@ test('persists its state even when the scan fails part-way', async () => {
   expect(savedState().newestCheckpointSeq()).toBe(1_000);
 });
 
-function nonConstructDoc(name: string) {
-  return {
-    _id: name,
-    _rev: '1-aaaaaa',
-    'dist-tags': { latest: '1.0.0' },
-    name,
-    time: {
-      created: '2023-01-01T00:00:00.000Z',
-      modified: '2023-06-01T00:00:00.000Z',
-      '1.0.0': '2023-06-01T00:00:00.000Z',
-    },
-    versions: {
-      '1.0.0': {
-        dist: { shasum: 'mock-shasum', tarball: `${REGISTRY}/${name}.tgz` },
-        name,
-        version: '1.0.0',
-      },
-    },
-  };
-}
-
-function statePutCount(): number {
-  return mockS3
-    .commandCalls(PutObjectCommand)
-    .filter((call) => call.args[0].input.Key === FOLLOWER_STATE_FILE_NAME)
-    .length;
-}
-
-test('persists its progress after every processed chunk', async () => {
+test('persists its progress after every chunk', async () => {
   givenHead(20_000);
   givenNoStateFile();
   givenLegacyMarker(1_000);
 
   // 1,500 unreceipted entries: two chunks of work.
-  const entries = Array.from({ length: 1_500 }, (_, i) => ({
-    seq: 1_001 + i,
-    id: `bulk-package-${i}`,
-    changes: [{ rev: '1-aaaaaa' }],
-    deleted: false,
-  }));
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '1000' })
-    .reply(200, { results: entries, last_seq: 2_500 });
-  nock(REGISTRY)
-    .persist()
-    .get(/^\/bulk-package-\d+$/)
-    .reply(200, (uri) => nonConstructDoc(uri.slice(1)));
+  const entries = Array.from({ length: 1_500 }, (_, i) =>
+    change(1_001 + i, `bulk-package-${i}`)
+  );
+  givenChanges(1_000, entries, 2_500);
 
   await handler(event, context);
 
   // One state save per chunk (2), plus the final save.
   expect(statePutCount()).toBeGreaterThanOrEqual(3);
+  expect(queuedRequests()).toHaveLength(1_500);
   const state = savedState();
   expect(state.has(1_001)).toBe(true);
   expect(state.has(2_500)).toBe(true);
@@ -798,20 +408,10 @@ test('stops between chunks when the time budget is exhausted, keeping completed 
   givenNoStateFile();
   givenLegacyMarker(1_000);
 
-  const entries = Array.from({ length: 1_500 }, (_, i) => ({
-    seq: 1_001 + i,
-    id: `bulk-package-${i}`,
-    changes: [{ rev: '1-aaaaaa' }],
-    deleted: false,
-  }));
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '1000' })
-    .reply(200, { results: entries, last_seq: 2_500 });
-  nock(REGISTRY)
-    .persist()
-    .get(/^\/bulk-package-\d+$/)
-    .reply(200, (uri) => nonConstructDoc(uri.slice(1)));
+  const entries = Array.from({ length: 1_500 }, (_, i) =>
+    change(1_001 + i, `bulk-package-${i}`)
+  );
+  givenChanges(1_000, entries, 2_500);
 
   // Exhaust the budget as soon as the first chunk persists.
   let remaining = 300_000;
@@ -827,8 +427,9 @@ test('stops between chunks when the time budget is exhausted, keeping completed 
     (context as any).getRemainingTimeInMillis = () => 300_000;
   }
 
-  // The first chunk (1,000 entries) was processed and persisted; the second
+  // The first chunk (1,000 entries) was queued and persisted; the second
   // was not: its entries carry no receipt and no checkpoint moved past them.
+  expect(queuedRequests()).toHaveLength(1_000);
   const state = savedState();
   expect(state.has(1_001)).toBe(true);
   expect(state.has(2_000)).toBe(true);
@@ -848,105 +449,12 @@ test('resets its position when the feed head regresses below the newest checkpoi
   givenStateFile(state);
 
   // After the reset, the scan starts from the new head.
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '3000' })
-    .reply(200, { results: [], last_seq: 3_000 });
+  givenChanges(3_000, [], 3_000);
 
   await handler(event, context);
 
-  expect(mockLambda).not.toHaveReceivedCommand(InvokeCommand);
+  expect(mockSQS).not.toHaveReceivedCommand(SendMessageBatchCommand);
   const saved = savedState();
   expect(saved.newestCheckpointSeq()).toBe(3_000);
   expect(saved.has(4_500)).toBe(false);
 });
-
-//#region Known versions table
-function givenKnownVersionsInTable(name: string, versions: string[]) {
-  mockDynamoDB
-    .on(QueryCommand, {
-      ExpressionAttributeValues: { ':name': { S: name } },
-    })
-    .resolves({
-      Items: versions.map((version) => ({ version: { S: version } })),
-    });
-}
-
-/** The `name@version` keys recorded in the table, sorted. */
-function recordedVersions(): string[] {
-  return mockDynamoDB
-    .commandCalls(BatchWriteItemCommand)
-    .flatMap(
-      (call) => call.args[0].input.RequestItems![MOCK_KNOWN_VERSIONS_TABLE]
-    )
-    .map(
-      (request) =>
-        `${request.PutRequest!.Item!.name.S}@${
-          request.PutRequest!.Item!.version.S
-        }`
-    )
-    .sort();
-}
-
-function givenOneChange(id: string, doc: object) {
-  nock(REPLICA)
-    .get('/registry/_changes')
-    .query({ limit: '10000', since: '1000' })
-    .reply(200, {
-      results: [
-        { seq: 1_005, id, changes: [{ rev: '1-aaaaaa' }], deleted: false },
-      ],
-      last_seq: 1_005,
-    });
-  nock(REGISTRY).get(`/${id}`).reply(200, doc);
-}
-
-test('stages only versions not recorded in the table, and records them', async () => {
-  givenHead(1_010);
-  givenNoStateFile();
-  givenLegacyMarker(1_000);
-  givenOneChange(
-    'known-package',
-    packageDoc('known-package', '1-aaaaaa', '1.0.0', '1.1.0')
-  );
-  givenKnownVersionsInTable('known-package', ['1.0.0']);
-
-  await handler(event, context);
-
-  expect(stagedPackages()).toEqual([
-    { name: 'known-package', version: '1.1.0' },
-  ]);
-  expect(recordedVersions()).toEqual(['known-package@1.1.0']);
-});
-
-test('records versions before the follower state, so a failed save never skips a version', async () => {
-  givenHead(1_010);
-  givenNoStateFile();
-  givenLegacyMarker(1_000);
-  givenOneChange(
-    'fresh-package',
-    packageDoc('fresh-package', '1-aaaaaa', '1.0.0')
-  );
-  mockDynamoDB.on(BatchWriteItemCommand).rejects(new Error('network'));
-
-  await expect(handler(event, context)).rejects.toThrow(/network/);
-
-  // The chunk's receipts were not saved: the next run processes it again.
-  const statePuts = mockS3
-    .commandCalls(PutObjectCommand)
-    .filter((call) => call.args[0].input.Key === FOLLOWER_STATE_FILE_NAME);
-  expect(statePuts).toHaveLength(0);
-});
-
-test('does not query the table for packages without construct library versions', async () => {
-  givenHead(1_010);
-  givenNoStateFile();
-  givenLegacyMarker(1_000);
-  givenOneChange('boring-package', nonConstructDoc('boring-package'));
-
-  await handler(event, context);
-
-  expect(mockDynamoDB).not.toHaveReceivedCommand(QueryCommand);
-  expect(mockLambda).not.toHaveReceivedCommand(InvokeCommand);
-});
-//#endregion

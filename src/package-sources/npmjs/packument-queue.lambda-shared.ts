@@ -1,11 +1,10 @@
 import {
   ChangeMessageVisibilityCommand,
-  GetQueueAttributesCommand,
   SendMessageBatchCommand,
   SendMessageBatchRequestEntry,
 } from '@aws-sdk/client-sqs';
+import { Sema } from 'async-sema';
 import {
-  PACKUMENT_INITIAL_DELAY_SECONDS,
   PACKUMENT_MAX_RETRY_DELAY_SECONDS,
   PACKUMENT_MIN_RETRY_DELAY_SECONDS,
   PACKUMENT_RETRY_JITTER,
@@ -19,31 +18,52 @@ const SEND_BATCH_SIZE = 10;
 /** How often the failed entries of a batch send are retried. */
 const MAX_SEND_ATTEMPTS = 3;
 
+/** The maximum number of concurrent `SendMessageBatch` requests. */
+const MAX_CONCURRENT_SENDS = 25;
+
+/** SQS delays a new message by at most 15 minutes. */
+const MAX_SQS_DELAY_SECONDS = 15 * 60;
+
+const SEND_SEMAPHORE = new Sema(MAX_CONCURRENT_SENDS);
+
 /**
- * Sends packument requests to the packument queue. The first attempt happens
- * after `PACKUMENT_INITIAL_DELAY_SECONDS`.
+ * Sends packument requests to the packument queue.
  *
+ * @param delaySeconds how long the requests wait before their first attempt
+ *        (at most 15 minutes).
  * @throws if any request could not be sent.
  */
 export async function enqueuePackumentRequests(
   queueUrl: string,
-  requests: readonly PackumentRequest[]
+  requests: readonly PackumentRequest[],
+  delaySeconds: number = 0
 ): Promise<void> {
   const batches = new Array<PackumentRequest[]>();
   for (let i = 0; i < requests.length; i += SEND_BATCH_SIZE) {
     batches.push(requests.slice(i, i + SEND_BATCH_SIZE));
   }
-  await Promise.all(batches.map((batch) => sendBatch(queueUrl, batch)));
+  const delay = Math.min(Math.round(delaySeconds), MAX_SQS_DELAY_SECONDS);
+  await Promise.all(
+    batches.map(async (batch) => {
+      await SEND_SEMAPHORE.acquire();
+      try {
+        await sendBatch(queueUrl, batch, delay);
+      } finally {
+        SEND_SEMAPHORE.release();
+      }
+    })
+  );
 }
 
 async function sendBatch(
   queueUrl: string,
-  batch: readonly PackumentRequest[]
+  batch: readonly PackumentRequest[],
+  delaySeconds: number
 ): Promise<void> {
   let entries: SendMessageBatchRequestEntry[] = batch.map((request, i) => ({
     Id: i.toString(),
     MessageBody: JSON.stringify(request),
-    DelaySeconds: PACKUMENT_INITIAL_DELAY_SECONDS,
+    DelaySeconds: delaySeconds,
   }));
   for (let attempt = 1; ; attempt++) {
     const response = await SQS_CLIENT.send(
@@ -66,7 +86,8 @@ async function sendBatch(
 }
 
 /**
- * Parses the body of a packument queue message.
+ * Parses the body of a packument queue message. Messages sent by earlier
+ * versions may have a `reason`, which is ignored.
  *
  * @throws if the body is not a packument request.
  */
@@ -75,10 +96,7 @@ export function parsePackumentRequest(body: string): PackumentRequest {
   if (
     typeof request.name !== 'string' ||
     typeof request.expectedRev !== 'number' ||
-    typeof request.firstSeen !== 'number' ||
-    (request.reason != null &&
-      request.reason !== 'laggy' &&
-      request.reason !== 'missing')
+    typeof request.firstSeen !== 'number'
   ) {
     throw new Error(`Not a packument request: ${body}`);
   }
@@ -121,29 +139,5 @@ export async function setVisibilityTimeout(
       ReceiptHandle: receiptHandle,
       VisibilityTimeout: seconds,
     })
-  );
-}
-
-/**
- * The approximate number of requests in the packument queue: waiting, being
- * processed, and waiting for their next attempt.
- */
-export async function queuedPackumentRequests(
-  queueUrl: string
-): Promise<number> {
-  const { Attributes: attributes = {} } = await SQS_CLIENT.send(
-    new GetQueueAttributesCommand({
-      QueueUrl: queueUrl,
-      AttributeNames: [
-        'ApproximateNumberOfMessages',
-        'ApproximateNumberOfMessagesNotVisible',
-        'ApproximateNumberOfMessagesDelayed',
-      ],
-    })
-  );
-  return (
-    Number(attributes.ApproximateNumberOfMessages ?? 0) +
-    Number(attributes.ApproximateNumberOfMessagesNotVisible ?? 0) +
-    Number(attributes.ApproximateNumberOfMessagesDelayed ?? 0)
   );
 }

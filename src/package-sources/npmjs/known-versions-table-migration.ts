@@ -18,8 +18,11 @@ export interface KnownVersionsTableMigrationProps {
   /** The table to copy the known versions to. */
   readonly table: ITableV2;
 
-  /** The follower function, which is only updated once the copy completed. */
-  readonly follower: Function;
+  /**
+   * The functions that use the table. They are only updated once the copy
+   * completed.
+   */
+  readonly users: Function[];
 }
 
 /**
@@ -27,11 +30,11 @@ export interface KnownVersionsTableMigrationProps {
  * to the known versions table, when the table is created. The copy runs in two
  * passes:
  *
- * - Before the follower function is updated, so the new follower code never
- *   runs against an empty table. If this copy fails, the deployment fails and
- *   rolls back.
- * - After the follower function is updated, to pick up the versions the old
- *   follower code recorded in the file while the first copy ran.
+ * - Before the functions that use the table are updated, so their new code
+ *   never runs against an empty table. If this copy fails, the deployment
+ *   fails and rolls back.
+ * - After they are updated, to pick up the versions the old follower code
+ *   recorded in the file while the first copy ran.
  *
  * Copying is idempotent, so the second pass only adds what is missing.
  */
@@ -44,7 +47,7 @@ export class KnownVersionsTableMigration extends Construct {
     super(scope, id);
 
     const handler = new KnownVersionsMigration(this, 'Function', {
-      description: `[${props.follower.node.path}] Copies the known versions from the staging bucket to the known versions table`,
+      description: `[${this.node.path}] Copies the known versions from the staging bucket to the known versions table`,
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         [ENV_KNOWN_VERSIONS_TABLE_NAME]: props.table.tableName,
@@ -57,10 +60,12 @@ export class KnownVersionsTableMigration extends Construct {
     props.bucket.grantRead(handler, MARKER_FILE_NAME);
     props.table.grantWriteData(handler);
 
-    // The function resource only, not the follower's whole scope (which may
-    // contain this construct).
-    const followerFunction = props.follower.node.defaultChild as CfnFunction;
+    // The function resources only, not their whole scopes (which may contain
+    // this construct).
+    const users = props.users.map((fn) => fn.node.defaultChild as CfnFunction);
 
+    // The ids stay "Follower" for existing deployments: a new id would run the
+    // migration again.
     new Trigger(this, 'BeforeFollowerUpdate', {
       handler,
       invocationType: InvocationType.REQUEST_RESPONSE,
@@ -70,7 +75,7 @@ export class KnownVersionsTableMigration extends Construct {
       // Only when the trigger is created, not on later updates.
       executeOnHandlerChange: false,
       executeAfter: [props.table],
-      executeBefore: [followerFunction],
+      executeBefore: users,
     });
 
     new Trigger(this, 'AfterFollowerUpdate', {
@@ -78,7 +83,7 @@ export class KnownVersionsTableMigration extends Construct {
       // Nothing waits for this one; a failure is retried by Lambda.
       invocationType: InvocationType.EVENT,
       executeOnHandlerChange: false,
-      executeAfter: [followerFunction],
+      executeAfter: users,
     });
   }
 }

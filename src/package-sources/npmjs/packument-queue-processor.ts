@@ -6,7 +6,6 @@ import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import {
   ENV_KNOWN_VERSIONS_TABLE_NAME,
-  ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN,
   ENV_PACKUMENT_QUEUE_URL,
   PACKUMENT_MAX_ATTEMPTS,
 } from './constants.lambda-shared';
@@ -18,8 +17,8 @@ import { ILicenseList } from '../../backend/license-list/api';
 const FUNCTION_TIMEOUT = Duration.minutes(5);
 
 /**
- * The visibility timeout of both queues, which the function reads. Lambda
- * requires at least the function timeout; AWS recommends 6x.
+ * The visibility timeout of the queue the function reads. Lambda requires at
+ * least the function timeout; AWS recommends 6x.
  */
 const QUEUE_VISIBILITY_TIMEOUT = Duration.minutes(
   6 * FUNCTION_TIMEOUT.toMinutes()
@@ -38,16 +37,16 @@ export interface PackumentQueueProcessorProps {
 
 /**
  * A queue of requests to process a package from the npm registry, and the
- * function that works through it. A request is retried with back-off until the
- * registry serves the revision the changes feed announced. After about 29
- * hours it moves to the dead-letter queue, where the same function logs it as
- * given up on.
+ * function that works through it. The follower sends a request for every
+ * change entry. A request is retried with back-off until the registry serves
+ * the revision the changes feed announced, or given up on after a day. Only
+ * requests that keep failing the function move to the dead-letter queue.
  */
 export class PackumentQueueProcessor extends Construct {
   /** The packument requests. */
   public readonly queue: IQueue;
 
-  /** The packument requests that were given up on. */
+  /** The packument requests that kept failing the function. */
   public readonly deadLetterQueue: IQueue;
 
   /** The function processing the requests. */
@@ -60,12 +59,9 @@ export class PackumentQueueProcessor extends Construct {
   ) {
     super(scope, id);
 
-    // Given-up requests. The function logs and deletes them right away; they
-    // are only kept while it is broken.
     this.deadLetterQueue = new Queue(this, 'DLQ', {
       encryption: QueueEncryption.KMS_MANAGED,
       retentionPeriod: Duration.days(14),
-      visibilityTimeout: QUEUE_VISIBILITY_TIMEOUT,
     });
     this.queue = new Queue(this, 'Queue', {
       encryption: QueueEncryption.KMS_MANAGED,
@@ -86,7 +82,6 @@ export class PackumentQueueProcessor extends Construct {
         FUNCTION_NAME: props.stager.functionName,
         [ENV_KNOWN_VERSIONS_TABLE_NAME]: props.knownVersions.tableName,
         [ENV_PACKUMENT_QUEUE_URL]: this.queue.queueUrl,
-        [ENV_PACKUMENT_DEAD_LETTER_QUEUE_ARN]: this.deadLetterQueue.queueArn,
       },
       memorySize: 2_048,
       timeout: FUNCTION_TIMEOUT,
@@ -96,14 +91,8 @@ export class PackumentQueueProcessor extends Construct {
       new SqsEventSource(this.queue, {
         batchSize: 10,
         reportBatchItemFailures: true,
-        // Be gentle with the npm registry.
-        maxConcurrency: 2,
-      })
-    );
-    this.function.addEventSource(
-      new SqsEventSource(this.deadLetterQueue, {
-        batchSize: 10,
-        reportBatchItemFailures: true,
+        // Up to 100 packuments fetched at once, like the follower did before.
+        maxConcurrency: 10,
       })
     );
     props.knownVersions.grantReadWriteData(this.function);
