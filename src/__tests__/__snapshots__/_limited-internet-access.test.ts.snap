@@ -929,15 +929,24 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubgitIPv48bddd6d40cd8b3ed9535170fe60e258bba595a33": {
+    "githubgitIPv43f191964fbe164dcbbff81a93f6c11f8a4935bbc": {
       "Properties": {
         "AddressFamily": "IPv4",
         "Entries": [
+          {
+            "Cidr": "135.235.149.144/28",
+          },
           {
             "Cidr": "140.82.112.0/20",
           },
           {
             "Cidr": "143.55.64.0/20",
+          },
+          {
+            "Cidr": "172.130.153.16/28",
+          },
+          {
+            "Cidr": "172.130.201.80/28",
           },
           {
             "Cidr": "172.182.252.130/32",
@@ -949,10 +958,22 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "172.182.252.135/32",
           },
           {
+            "Cidr": "172.194.155.208/28",
+          },
+          {
+            "Cidr": "172.194.218.192/28",
+          },
+          {
             "Cidr": "185.199.108.0/22",
           },
           {
             "Cidr": "192.30.252.0/22",
+          },
+          {
+            "Cidr": "20.169.109.160/28",
+          },
+          {
+            "Cidr": "20.172.24.160/28",
           },
           {
             "Cidr": "20.175.192.146/32",
@@ -1033,6 +1054,9 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "20.26.156.215/32",
           },
           {
+            "Cidr": "20.27.163.208/28",
+          },
+          {
             "Cidr": "20.27.177.113/32",
           },
           {
@@ -1060,6 +1084,21 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "20.87.245.4/32",
           },
           {
+            "Cidr": "4.149.173.80/28",
+          },
+          {
+            "Cidr": "4.186.157.192/28",
+          },
+          {
+            "Cidr": "4.187.247.160/28",
+          },
+          {
+            "Cidr": "4.195.217.80/28",
+          },
+          {
+            "Cidr": "4.196.32.112/28",
+          },
+          {
             "Cidr": "4.208.26.193/32",
           },
           {
@@ -1078,6 +1117,9 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "4.225.11.200/32",
           },
           {
+            "Cidr": "4.225.187.240/28",
+          },
+          {
             "Cidr": "4.228.31.144/32",
           },
           {
@@ -1085,6 +1127,9 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
           },
           {
             "Cidr": "4.228.31.150/32",
+          },
+          {
+            "Cidr": "4.236.95.112/28",
           },
           {
             "Cidr": "4.237.22.36/32",
@@ -1102,6 +1147,33 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "4.249.131.164/32",
           },
           {
+            "Cidr": "40.121.125.128/28",
+          },
+          {
+            "Cidr": "40.121.125.144/28",
+          },
+          {
+            "Cidr": "40.121.125.160/28",
+          },
+          {
+            "Cidr": "40.121.125.176/28",
+          },
+          {
+            "Cidr": "40.121.125.192/28",
+          },
+          {
+            "Cidr": "40.121.125.208/28",
+          },
+          {
+            "Cidr": "40.121.125.32/28",
+          },
+          {
+            "Cidr": "48.200.82.112/28",
+          },
+          {
+            "Cidr": "48.202.10.80/28",
+          },
+          {
             "Cidr": "48.202.248.38/32",
           },
           {
@@ -1114,12 +1186,12 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "48.204.201.6/32",
           },
         ],
-        "MaxEntries": 60,
+        "MaxEntries": 84,
         "PrefixListName": "github.git.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubgitIPv48bddd6d40cd8b3ed9535170fe60e258bba595a3366C4FC3F": {
+    "githubgitIPv43f191964fbe164dcbbff81a93f6c11f8a4935bbcB7BAE119": {
       "Properties": {
         "GroupDescription": "TestStack/github.git-IPv4",
         "Tags": [
@@ -1134,19 +1206,19 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubgitIPv48bddd6d40cd8b3ed9535170fe60e258bba595a33toTestStackgithubgitIPv48bddd6d40cd8b3ed9535170fe60e258bba595a3344304B3710F": {
+    "githubgitIPv43f191964fbe164dcbbff81a93f6c11f8a4935bbctoTestStackgithubgitIPv43f191964fbe164dcbbff81a93f6c11f8a4935bbc443E3FD3AFE": {
       "Properties": {
         "Description": "to github.git (IPv4)",
         "DestinationPrefixListId": {
           "Fn::GetAtt": [
-            "githubgitIPv48bddd6d40cd8b3ed9535170fe60e258bba595a33",
+            "githubgitIPv43f191964fbe164dcbbff81a93f6c11f8a4935bbc",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": {
           "Fn::GetAtt": [
-            "githubgitIPv48bddd6d40cd8b3ed9535170fe60e258bba595a3366C4FC3F",
+            "githubgitIPv43f191964fbe164dcbbff81a93f6c11f8a4935bbcB7BAE119",
             "GroupId",
           ],
         },
@@ -1155,15 +1227,24 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubwebIPv44d5269d755b39293610381b518684b11320ec258": {
+    "githubwebIPv479949a7ca0c566dbaf2b5628d33853aecc8a0a08": {
       "Properties": {
         "AddressFamily": "IPv4",
         "Entries": [
+          {
+            "Cidr": "135.235.149.144/28",
+          },
           {
             "Cidr": "140.82.112.0/20",
           },
           {
             "Cidr": "143.55.64.0/20",
+          },
+          {
+            "Cidr": "172.130.153.16/28",
+          },
+          {
+            "Cidr": "172.130.201.80/28",
           },
           {
             "Cidr": "172.182.252.130/32",
@@ -1172,10 +1253,22 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "172.182.252.133/32",
           },
           {
+            "Cidr": "172.194.155.208/28",
+          },
+          {
+            "Cidr": "172.194.218.192/28",
+          },
+          {
             "Cidr": "185.199.108.0/22",
           },
           {
             "Cidr": "192.30.252.0/22",
+          },
+          {
+            "Cidr": "20.169.109.160/28",
+          },
+          {
+            "Cidr": "20.172.24.160/28",
           },
           {
             "Cidr": "20.175.192.147/32",
@@ -1226,6 +1319,9 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "20.26.156.215/32",
           },
           {
+            "Cidr": "20.27.163.208/28",
+          },
+          {
             "Cidr": "20.27.177.113/32",
           },
           {
@@ -1244,6 +1340,21 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "20.87.245.2/32",
           },
           {
+            "Cidr": "4.149.173.80/28",
+          },
+          {
+            "Cidr": "4.186.157.192/28",
+          },
+          {
+            "Cidr": "4.187.247.160/28",
+          },
+          {
+            "Cidr": "4.195.217.80/28",
+          },
+          {
+            "Cidr": "4.196.32.112/28",
+          },
+          {
             "Cidr": "4.208.26.193/32",
           },
           {
@@ -1256,10 +1367,16 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "4.225.11.199/32",
           },
           {
+            "Cidr": "4.225.187.240/28",
+          },
+          {
             "Cidr": "4.228.31.144/32",
           },
           {
             "Cidr": "4.228.31.150/32",
+          },
+          {
+            "Cidr": "4.236.95.112/28",
           },
           {
             "Cidr": "4.237.22.36/32",
@@ -1271,18 +1388,45 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "4.249.131.164/32",
           },
           {
+            "Cidr": "40.121.125.128/28",
+          },
+          {
+            "Cidr": "40.121.125.144/28",
+          },
+          {
+            "Cidr": "40.121.125.160/28",
+          },
+          {
+            "Cidr": "40.121.125.176/28",
+          },
+          {
+            "Cidr": "40.121.125.192/28",
+          },
+          {
+            "Cidr": "40.121.125.208/28",
+          },
+          {
+            "Cidr": "40.121.125.32/28",
+          },
+          {
+            "Cidr": "48.200.82.112/28",
+          },
+          {
+            "Cidr": "48.202.10.80/28",
+          },
+          {
             "Cidr": "48.202.248.40/32",
           },
           {
             "Cidr": "48.204.201.5/32",
           },
         ],
-        "MaxEntries": 39,
+        "MaxEntries": 63,
         "PrefixListName": "github.web.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubwebIPv44d5269d755b39293610381b518684b11320ec25815A90363": {
+    "githubwebIPv479949a7ca0c566dbaf2b5628d33853aecc8a0a08A699B8F9": {
       "Properties": {
         "GroupDescription": "TestStack/github.web-IPv4",
         "Tags": [
@@ -1297,19 +1441,19 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubwebIPv44d5269d755b39293610381b518684b11320ec258toTestStackgithubwebIPv44d5269d755b39293610381b518684b11320ec2584430764A3BB": {
+    "githubwebIPv479949a7ca0c566dbaf2b5628d33853aecc8a0a08toTestStackgithubwebIPv479949a7ca0c566dbaf2b5628d33853aecc8a0a084430D84D7F9": {
       "Properties": {
         "Description": "to github.web (IPv4)",
         "DestinationPrefixListId": {
           "Fn::GetAtt": [
-            "githubwebIPv44d5269d755b39293610381b518684b11320ec258",
+            "githubwebIPv479949a7ca0c566dbaf2b5628d33853aecc8a0a08",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": {
           "Fn::GetAtt": [
-            "githubwebIPv44d5269d755b39293610381b518684b11320ec25815A90363",
+            "githubwebIPv479949a7ca0c566dbaf2b5628d33853aecc8a0a08A699B8F9",
             "GroupId",
           ],
         },
