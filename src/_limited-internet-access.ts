@@ -14,6 +14,7 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { S3PrefixList } from './s3';
+import { mergeCidrs } from './util/cidr-manipulation';
 
 /**
  * Creates SecurityGroups where "sensitive" operations should be listed,
@@ -55,11 +56,15 @@ export function createRestrictedSecurityGroups(
     }
     const [, namespace, ipLabel] = matches;
 
-    const entries = parsePrefixList(join(ALLOW_LIST_DIR, file));
+    let entries = parsePrefixList(join(ALLOW_LIST_DIR, file));
 
     if (entries.length === 0) {
       continue;
     }
+
+    // The list of IP ranges may grow large, and Security Groups can have at most 60 rules (every entry in a prefix
+    // list is treated as a separate rule by EC2). We merge CIDR blocks to stay under the limit.
+    entries = mergeCidrs(60, entries);
 
     // We use a SHA-1 digest of the list of prefixes to be sure we create a
     // whole new prefix list whenever it changes, so we are never bothered by
@@ -179,7 +184,7 @@ export function parsePrefixList(filePath: string): CidrBlock[] {
   );
 }
 
-interface CidrBlock {
+export interface CidrBlock {
   readonly cidr: string;
 }
 
