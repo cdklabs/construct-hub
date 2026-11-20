@@ -38,7 +38,7 @@
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
         "RELEASE_TAG_PREFIX": "",
-        "BUMP_PACKAGE": "commit-and-tag-version@^12"
+        "BUMP_PACKAGE": "commit-and-tag-version@^13"
       },
       "steps": [
         {
@@ -826,30 +826,39 @@
       "name": "clobber",
       "description": "hard resets to HEAD of origin and cleans the local repo",
       "env": {
-        "BRANCH": "$(git branch --show-current)"
+        "BRANCH": "$(git branch --show-current)",
+        "HEAD_COMMIT": "$(git rev-parse --short HEAD)"
       },
       "steps": [
         {
-          "exec": "git checkout -b scratch",
-          "name": "save current HEAD in \"scratch\" branch"
+          "exec": "git checkout -B \"scratch-$HEAD_COMMIT\"",
+          "name": "save current HEAD in a \"scratch-<commit>\" branch"
         },
         {
-          "exec": "git checkout $BRANCH"
+          "exec": "git checkout \"$BRANCH\""
         },
         {
-          "exec": "git fetch origin",
+          "execArgs": [
+            "git",
+            "fetch",
+            "origin"
+          ],
           "name": "fetch latest changes from origin"
         },
         {
-          "exec": "git reset --hard origin/$BRANCH",
+          "exec": "git reset --hard \"origin/$BRANCH\"",
           "name": "hard reset to origin commit"
         },
         {
-          "exec": "git clean -fdx",
+          "execArgs": [
+            "git",
+            "clean",
+            "-fdx"
+          ],
           "name": "clean all untracked files"
         },
         {
-          "say": "ready to rock! (unpushed commits are under the \"scratch\" branch)"
+          "say": "ready to rock! (unpushed commits are under a \"scratch-<commit>\" branch)"
         }
       ],
       "condition": "git diff --exit-code > /dev/null"
@@ -859,7 +868,13 @@
       "description": "Perform API compatibility check against latest version",
       "steps": [
         {
-          "exec": "jsii-diff npm:$(node -p \"require('./package.json').name\") -k --ignore-file .compatignore || (echo \"\nUNEXPECTED BREAKING CHANGES: add keys such as 'removed:constructs.Node.of' to .compatignore to skip.\n\" && exit 1)"
+          "execArgs": [
+            "jsii-diff",
+            "npm:construct-hub",
+            "-k",
+            "--ignore-file",
+            ".compatignore"
+          ]
         }
       ]
     },
@@ -1091,7 +1106,18 @@
       },
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ test src/__tests__ projenrc .projenrc.ts",
+          "execArgs": [
+            "eslint",
+            "--ext",
+            ".ts,.tsx",
+            "--fix",
+            "--no-error-on-unmatched-pattern",
+            "$@",
+            "test",
+            "src/__tests__",
+            "projenrc",
+            ".projenrc.ts"
+          ],
           "receiveArgs": true
         }
       ]
@@ -1199,7 +1225,11 @@
       },
       "steps": [
         {
-          "exec": "rm -fr dist"
+          "execArgs": [
+            "rm",
+            "-fr",
+            "dist"
+          ]
         },
         {
           "spawn": "bump"
@@ -1213,7 +1243,8 @@
         {
           "exec": "git diff --ignore-space-at-eol --exit-code"
         }
-      ]
+      ],
+      "condition": "git log --oneline -1 | grep -v \"chore(release):\" > /dev/null"
     },
     "rosetta:extract": {
       "name": "rosetta:extract",
@@ -1229,7 +1260,11 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "jest --passWithNoTests --updateSnapshot",
+          "execArgs": [
+            "jest",
+            "--passWithNoTests",
+            "--updateSnapshot"
+          ],
           "receiveArgs": true
         },
         {
@@ -1245,7 +1280,10 @@
       "description": "Run jest in watch mode",
       "steps": [
         {
-          "exec": "jest --watch"
+          "execArgs": [
+            "jest",
+            "--watch"
+          ]
         }
       ]
     },
@@ -1258,7 +1296,7 @@
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
         "RELEASE_TAG_PREFIX": "",
-        "BUMP_PACKAGE": "commit-and-tag-version@^12"
+        "BUMP_PACKAGE": "commit-and-tag-version@^13"
       },
       "steps": [
         {
