@@ -28,23 +28,29 @@ jobs:
       CI: "true"
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
       - name: Set git identity
+        id: set_git_identity
         run: |-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: Enable corepack
+        id: enable_corepack
         run: corepack enable
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        id: setup_node_js
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: lts/*
           package-manager-cache: false
       - name: Install dependencies
+        id: install_dependencies
         run: yarn install --immutable
       - name: release
+        id: release
         run: yarn projen release
       - name: Check if version has already been tagged
         id: check_tag_exists
@@ -61,13 +67,14 @@ jobs:
           cat $GITHUB_OUTPUT
         shell: bash
       - name: Backup artifact permissions
+        id: backup_artifact_permissions
         if: ${{ steps.git_remote.outputs.latest_commit == github.sha }}
         run: cd dist && getfacl -R . > permissions-backup.acl
         continue-on-error: true
       - name: Upload artifact
         id: upload_artifact
         if: ${{ steps.git_remote.outputs.latest_commit == github.sha }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: build-artifact
           path: dist
@@ -83,23 +90,31 @@ jobs:
     environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: lts/*
           package-manager-cache: false
       - name: Download build artifacts
-        uses: actions/download-artifact@v8
+        id: download_build_artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           artifact-ids: ${{ needs.release.outputs.artifact_id }}
           path: dist
       - name: Restore build artifact permissions
+        id: restore_build_artifact_permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
       - name: Release
+        id: release
         if: ${{ !inputs.dry_run }}
         env:
+          RELEASE_TAG_FILE: dist/releasetag.txt
+          CHANGELOG_FILE: dist/changelog.md
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt) --target $GITHUB_SHA 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
+        run: |-
+          tag=$(cat "$RELEASE_TAG_FILE") &&
+          gh release view "$tag" -R "$GITHUB_REPOSITORY" 2>/dev/null ||
+          gh release create "$tag" -R "$GITHUB_REPOSITORY" -F "$CHANGELOG_FILE" -t "$tag" --target "$GITHUB_SHA"
   release_npm:
     name: Publish to npm
     needs: release
@@ -110,39 +125,49 @@ jobs:
     environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: lts/*
           package-manager-cache: false
       - name: Download build artifacts
-        uses: actions/download-artifact@v8
+        id: download_build_artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           artifact-ids: ${{ needs.release.outputs.artifact_id }}
           path: dist
       - name: Restore build artifact permissions
+        id: restore_build_artifact_permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
       - name: Enable corepack
+        id: enable_corepack
         run: corepack enable
       - name: Checkout
-        uses: actions/checkout@v6
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           path: .repo
       - name: Install Dependencies
+        id: install_dependencies
         run: cd .repo && yarn install --immutable
       - name: Extract build artifact
+        id: extract_build_artifact
         run: tar --strip-components=1 -xzvf dist/js/*.tgz -C .repo
       - name: Move build artifact out of the way
+        id: move_build_artifact_out_of_the_way
         run: mv dist dist.old
       - name: Create js artifact
+        id: create_js_artifact
         run: cd .repo && yarn projen package:js
       - name: Collect js artifact
+        id: collect_js_artifact
         run: mv .repo/dist dist
       - name: Release
+        id: release
         env:
           NPM_DIST_TAG: latest
           NPM_REGISTRY: registry.npmjs.org
           NPM_CONFIG_PROVENANCE: "true"
           NPM_TRUSTED_PUBLISHER: "true"
           PUBLIB_DRYRUN: ${{ inputs.dry_run }}
-        run: npx -p publib@latest publib-npm
+        run: npx '-p' 'publib@latest' 'publib-npm'
