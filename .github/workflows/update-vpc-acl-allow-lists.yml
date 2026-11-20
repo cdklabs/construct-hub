@@ -13,16 +13,21 @@ jobs:
       pull-requests: write
     steps:
       - name: Check Out
+        id: check_out
         uses: actions/checkout@v2
       - name: Update CloudFlare IP lists
+        id: update_cloudflare_ip_lists
         run: |-
           curl -SsL "https://www.cloudflare.com/ips-v4" \
                -o resources/vpc-allow-lists/cloudflare-IPv4.txt
       - name: Setup Node
+        id: setup_node
         uses: actions/setup-node@v2
       - name: Update GitHub IP lists
+        id: update_github_ip_lists
         run: node ./update-github-ip-allowlist.js
       - name: Make Pull Request
+        id: make_pull_request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
