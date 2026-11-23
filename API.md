@@ -4,7 +4,7 @@
 
 ### ConstructHub <a name="ConstructHub" id="construct-hub.ConstructHub"></a>
 
-- *Implements:* aws-cdk-lib.aws_iam.IGrantable
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.aws_iam.IGrantable
 
 Construct Hub.
 
@@ -242,6 +242,8 @@ The function operators can use to reprocess a specific package version through t
 
 
 ### S3StorageFactory <a name="S3StorageFactory" id="construct-hub.S3StorageFactory"></a>
+
+- *Implements:* constructs.IConstruct, constructs.IDependable
 
 Create s3 storage resources.
 
